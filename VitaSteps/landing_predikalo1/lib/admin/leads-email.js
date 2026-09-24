@@ -12,6 +12,14 @@ const supabase = createClient(
 
 const TEMPLATES = [
     {
+        id: 'email_1_3_days_before_correction',
+        title: '⚠️ 1. HELYESBÍTÉS – Javított linkkel (Kizárólag a korábbi 7 címzettnek)',
+        path: 'leads_0927/email_1_3_days_before_correction.html',
+        defaultSubject: '⚠️ [Helyesbítés] {{NAME}}, az előző levélben a gomb nem működött jól – itt a jó link!',
+        description: 'Helyesbítő levél elnézéskéréssel és javított linkkel kizárólag azoknak, akiknek korábban kiment a hibás linkes levél.',
+        targetOnlySentOf: 'email_1_3_days_before'
+    },
+    {
         id: 'email_1_3_days_before',
         title: '📧 1. Sablon – 3 nappal előtte (Szept. 24.)',
         path: 'leads_0927/email_1_3_days_before.html',
@@ -276,7 +284,7 @@ async function handleSendLeadsEmail(req, res) {
 
     const rawTemplateHtml = fs.readFileSync(templatePath, 'utf8');
     const DEADLINE_STR = '2026. szeptember 27.';
-    const CHECKOUT_URL = 'https://vitastepsss.vercel.app/checkout.html?c=pilis';
+    const LANDING_URL = 'https://vitastepsss.vercel.app/nagykevely/index.html';
     const daysLeft = getDaysRemaining();
 
     const smtpPassword = process.env.SMTP_PASSWORD;
@@ -304,7 +312,8 @@ async function handleSendLeadsEmail(req, res) {
             .replace(/\{\{FIRST_NAME\}\}/g, testName)
             .replace(/\{\{DAYS_LEFT\}\}/g, daysLeft)
             .replace(/\{\{DEADLINE\}\}/g, DEADLINE_STR)
-            .replace(/\{\{CHECKOUT_URL\}\}/g, CHECKOUT_URL)
+            .replace(/\{\{CHECKOUT_URL\}\}/g, LANDING_URL)
+            .replace(/\{\{LANDING_URL\}\}/g, LANDING_URL)
             .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
 
         const subject = custom_subject ?
@@ -362,10 +371,20 @@ async function handleSendLeadsEmail(req, res) {
             if (!sentEmailsMap[templateConfig.id]) {
                 sentEmailsMap[templateConfig.id] = [];
             }
-            const alreadySentSet = new Set(sentEmailsMap[templateConfig.id].map(e => (e || '').toLowerCase().trim()));
+            const alreadySentSet = new Set((sentEmailsMap[templateConfig.id] || []).map(e => (e || '').toLowerCase().trim()));
+
+            // Restrict audience to parent template recipients if targetOnlySentOf is defined
+            let baseList = fullTargetList;
+            if (templateConfig.targetOnlySentOf) {
+                const parentSentSet = new Set((sentEmailsMap[templateConfig.targetOnlySentOf] || []).map(e => (e || '').toLowerCase().trim()));
+                baseList = fullTargetList.filter(r => {
+                    const cleanEmail = (r.email || '').toLowerCase().trim();
+                    return cleanEmail && parentSentSet.has(cleanEmail);
+                });
+            }
 
             // Filter out already sent recipients
-            const targetList = fullTargetList.filter(r => {
+            const targetList = baseList.filter(r => {
                 const cleanEmail = (r.email || '').toLowerCase().trim();
                 return cleanEmail && !alreadySentSet.has(cleanEmail);
             });
@@ -402,7 +421,8 @@ async function handleSendLeadsEmail(req, res) {
                     .replace(/\{\{FIRST_NAME\}\}/g, firstName)
                     .replace(/\{\{DAYS_LEFT\}\}/g, daysLeft)
                     .replace(/\{\{DEADLINE\}\}/g, DEADLINE_STR)
-                    .replace(/\{\{CHECKOUT_URL\}\}/g, CHECKOUT_URL)
+                    .replace(/\{\{CHECKOUT_URL\}\}/g, LANDING_URL)
+                    .replace(/\{\{LANDING_URL\}\}/g, LANDING_URL)
                     .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
 
                 const subject = custom_subject ?

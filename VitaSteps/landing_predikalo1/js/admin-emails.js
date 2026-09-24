@@ -51,7 +51,10 @@ function renderEmails() {
 
     const alreadySentList = sentMap[selectedTemplateId] || [];
     const alreadySentCount = alreadySentList.length;
-    const pendingToSendCount = Math.max(0, stats.targetActive - alreadySentCount);
+    const targetAudienceSize = activeTemplate.targetOnlySentOf
+        ? (sentMap[activeTemplate.targetOnlySentOf] || []).length
+        : stats.targetActive;
+    const pendingToSendCount = Math.max(0, targetAudienceSize - alreadySentCount);
     
     if (!customSubject && activeTemplate.defaultSubject) {
         customSubject = activeTemplate.defaultSubject;
@@ -61,7 +64,7 @@ function renderEmails() {
     if (previewHtml) {
         const testName = 'Kovács Péter (Minta)';
         const unsubUrl = `https://vitastepsss.vercel.app/api/unsubscribe?email=pelda@domain.com`;
-        const checkoutUrl = 'https://vitastepsss.vercel.app/checkout.html?c=pilis';
+        const landingUrl = 'https://vitastepsss.vercel.app/nagykevely/index.html';
         const deadlineStr = '2026. szeptember 27.';
         const daysLeft = emailData.daysRemaining || '3 napod';
 
@@ -70,7 +73,8 @@ function renderEmails() {
             .replace(/\{\{FIRST_NAME\}\}/g, testName)
             .replace(/\{\{DAYS_LEFT\}\}/g, daysLeft)
             .replace(/\{\{DEADLINE\}\}/g, deadlineStr)
-            .replace(/\{\{CHECKOUT_URL\}\}/g, checkoutUrl)
+            .replace(/\{\{CHECKOUT_URL\}\}/g, landingUrl)
+            .replace(/\{\{LANDING_URL\}\}/g, landingUrl)
             .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
     }
 
@@ -141,7 +145,10 @@ function renderEmails() {
                 ${templates.map(t => {
                     const isSelected = t.id === selectedTemplateId;
                     const tSentCount = (sentMap[t.id] || []).length;
-                    const tPendingCount = Math.max(0, stats.targetActive - tSentCount);
+                    const tAudienceSize = t.targetOnlySentOf
+                        ? (sentMap[t.targetOnlySentOf] || []).length
+                        : stats.targetActive;
+                    const tPendingCount = Math.max(0, tAudienceSize - tSentCount);
                     return `
                     <div onclick="selectEmailTemplate('${t.id}')" style="cursor: pointer; padding: 0.85rem 1rem; border-radius: 8px; border: 2px solid ${isSelected ? '#c4ff00' : 'var(--border)'}; background: ${isSelected ? 'rgba(196, 255, 0, 0.08)' : 'rgba(255, 255, 255, 0.02)'}; transition: all 0.2s;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem;">
@@ -154,7 +161,7 @@ function renderEmails() {
                             ${t.description}
                         </div>
                         <div style="font-size: 0.72rem; color: ${tPendingCount > 0 ? '#4ade80' : '#94a3b8'}; margin-top: 0.4rem; font-weight: 600;">
-                            ${tPendingCount > 0 ? `⚡ ${tPendingCount} új lead várja` : '✅ Mindenkinek elküldve'}
+                            ${tPendingCount > 0 ? `⚡ ${tPendingCount} lead várja` : '✅ Mindenkinek elküldve'}
                         </div>
                     </div>
                     `;
@@ -268,7 +275,10 @@ function triggerEmailConfirmation(mode) {
 
     const alreadySentList = sentMap[selectedTemplateId] || [];
     const alreadySentCount = alreadySentList.length;
-    const pendingToSendCount = Math.max(0, stats.targetActive - alreadySentCount);
+    const targetAudienceSize = activeTemplate.targetOnlySentOf
+        ? (sentMap[activeTemplate.targetOnlySentOf] || []).length
+        : stats.targetActive;
+    const pendingToSendCount = Math.max(0, targetAudienceSize - alreadySentCount);
 
     if (!modal || !modalBody) return;
 
