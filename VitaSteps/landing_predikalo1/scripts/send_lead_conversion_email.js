@@ -27,7 +27,7 @@ const supabase = createClient(
 // Beállítások
 const DEADLINE_STR = '2026. szeptember 27.';
 const TARGET_DATE = new Date('2026-09-27T23:59:59+02:00');
-const CHECKOUT_URL = 'https://vitasteps.vercel.app/checkout.html?c=pilis';
+const CHECKOUT_URL = 'https://vitastepsss.vercel.app/checkout.html?c=pilis';
 
 // Sablon betöltése
 const templatePath = path.join(__dirname, '../email_templates/lead_conversion_reminder.html');
@@ -118,7 +118,7 @@ async function main() {
 
     for (let i = 0; i < targetRecipients.length; i++) {
         const recipient = targetRecipients[i];
-        const unsubUrl = `https://vitasteps.vercel.app/api/unsubscribe?email=${encodeURIComponent(recipient.email)}`;
+        const unsubUrl = `https://vitastepsss.vercel.app/api/unsubscribe?email=${encodeURIComponent(recipient.email)}`;
         const personalizedHtml = templateHtml
             .replace(/\{\{NAME\}\}/g, recipient.name)
             .replace(/\{\{DAYS_LEFT\}\}/g, daysLeft)

@@ -45,8 +45,13 @@ function renderEmails() {
     if (!container || !emailData) return;
 
     const stats = emailData.stats || { total: 0, targetActive: 0, converted: 0, unsubscribed: 0 };
+    const sentMap = emailData.sentEmailsMap || {};
     const templates = emailData.templates || [];
     const activeTemplate = templates.find(t => t.id === selectedTemplateId) || templates[0] || {};
+
+    const alreadySentList = sentMap[selectedTemplateId] || [];
+    const alreadySentCount = alreadySentList.length;
+    const pendingToSendCount = Math.max(0, stats.targetActive - alreadySentCount);
     
     if (!customSubject && activeTemplate.defaultSubject) {
         customSubject = activeTemplate.defaultSubject;
@@ -55,8 +60,8 @@ function renderEmails() {
     let previewHtml = activeTemplate.previewHtml || '';
     if (previewHtml) {
         const testName = 'Kovács Péter (Minta)';
-        const unsubUrl = `https://vitasteps.vercel.app/api/unsubscribe?email=pelda@domain.com`;
-        const checkoutUrl = 'https://vitasteps.vercel.app/checkout.html?c=pilis';
+        const unsubUrl = `https://vitastepsss.vercel.app/api/unsubscribe?email=pelda@domain.com`;
+        const checkoutUrl = 'https://vitastepsss.vercel.app/checkout.html?c=pilis';
         const deadlineStr = '2026. szeptember 27.';
         const daysLeft = emailData.daysRemaining || '3 napod';
 
@@ -72,29 +77,29 @@ function renderEmails() {
     let html = `
         <!-- 1. KPI Summary Cards -->
         <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-            <!-- Célközönség -->
+            <!-- Még Kiküldendő Lead -->
             <div class="card" style="background: linear-gradient(145deg, rgba(34, 197, 94, 0.12) 0%, rgba(12, 16, 26, 0.95) 100%); border: 1px solid rgba(34, 197, 94, 0.4);">
                 <div class="metric-title" style="color: #4ade80; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">
-                    🎯 Célközönség (Kiküldendő)
+                    🎯 Még Kiküldendő (Aktív)
                 </div>
                 <div class="metric-value" style="color: #4ade80; font-size: 1.75rem; font-family: 'Outfit', monospace; margin-top: 0.35rem;">
-                    ${stats.targetActive} <span style="font-size: 0.9rem; color: #86efac; font-weight: 600;">fő</span>
+                    ${pendingToSendCount} <span style="font-size: 0.9rem; color: #86efac; font-weight: 600;">fő</span>
                 </div>
                 <div style="font-size: 0.75rem; color: #86efac; margin-top: 0.25rem;">
-                    unsubscribed=FALSE & converted=FALSE
+                    ${alreadySentCount > 0 ? `+ ${alreadySentCount} főnek már elküldve` : 'Még egyetlen lead sem kapta meg'}
                 </div>
             </div>
 
             <!-- Összes regisztrált lead -->
             <div class="card" style="background: var(--surface); border: 1px solid var(--border);">
                 <div class="metric-title" style="color: var(--text-mid); font-size: 0.75rem; font-weight: 700;">
-                    📥 Összes Letöltő (Leads)
+                    📥 Összes Egyedi Lead
                 </div>
                 <div class="metric-value" style="color: #fff; font-size: 1.5rem; margin-top: 0.35rem;">
                     ${stats.total} <span style="font-size: 0.85rem; color: var(--text-mid);">fő</span>
                 </div>
                 <div style="font-size: 0.75rem; color: var(--text-mid); margin-top: 0.25rem;">
-                    Útvonalat & Kalandkönyvet letöltők
+                    ${stats.totalRecords ? `(${stats.totalRecords} letöltésből összevonva)` : 'Útvonalat & Kalandkönyvet letöltők'}
                 </div>
             </div>
 
@@ -135,13 +140,21 @@ function renderEmails() {
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.75rem;">
                 ${templates.map(t => {
                     const isSelected = t.id === selectedTemplateId;
+                    const tSentCount = (sentMap[t.id] || []).length;
+                    const tPendingCount = Math.max(0, stats.targetActive - tSentCount);
                     return `
                     <div onclick="selectEmailTemplate('${t.id}')" style="cursor: pointer; padding: 0.85rem 1rem; border-radius: 8px; border: 2px solid ${isSelected ? '#c4ff00' : 'var(--border)'}; background: ${isSelected ? 'rgba(196, 255, 0, 0.08)' : 'rgba(255, 255, 255, 0.02)'}; transition: all 0.2s;">
-                        <div style="font-weight: 800; font-size: 0.88rem; color: ${isSelected ? '#c4ff00' : '#fff'}; margin-bottom: 0.25rem;">
-                            ${t.title}
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem;">
+                            <div style="font-weight: 800; font-size: 0.88rem; color: ${isSelected ? '#c4ff00' : '#fff'};">
+                                ${t.title}
+                            </div>
+                            ${tSentCount > 0 ? `<span style="font-size: 0.7rem; background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); padding: 2px 6px; border-radius: 4px; font-weight: 700;">${tSentCount} elküldve</span>` : ''}
                         </div>
                         <div style="font-size: 0.75rem; color: var(--text-mid); line-height: 1.4;">
                             ${t.description}
+                        </div>
+                        <div style="font-size: 0.72rem; color: ${tPendingCount > 0 ? '#4ade80' : '#94a3b8'}; margin-top: 0.4rem; font-weight: 600;">
+                            ${tPendingCount > 0 ? `⚡ ${tPendingCount} új lead várja` : '✅ Mindenkinek elküldve'}
                         </div>
                     </div>
                     `;
@@ -167,7 +180,7 @@ function renderEmails() {
                     🚀 Kampány Kiküldési Vezérlő
                 </div>
                 <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem;">
-                    Kiválasztott sablon: <strong style="color: #c4ff00;">${activeTemplate.title}</strong> | Célközönség: <strong style="color: #38bdf8;">${stats.targetActive} fő aktív lead</strong>
+                    Kiválasztott sablon: <strong style="color: #c4ff00;">${activeTemplate.title}</strong> | Még kiküldendő: <strong style="color: #38bdf8;">${pendingToSendCount} fő</strong> ${alreadySentCount > 0 ? `| Már megkapta: <strong style="color: #a855f7;">${alreadySentCount} fő</strong>` : ''}
                 </div>
             </div>
 
@@ -175,8 +188,8 @@ function renderEmails() {
                 <button class="btn btn-grey" onclick="triggerEmailConfirmation('test')" style="width: auto; padding: 0.65rem 1.25rem; font-size: 0.88rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.2);">
                     🧪 Teszt Küldés (admexgm@gmail.com)
                 </button>
-                <button class="btn btn-primary" onclick="triggerEmailConfirmation('live')" style="width: auto; padding: 0.65rem 1.5rem; font-size: 0.88rem; font-weight: 900; background: #c4ff00; color: #000; box-shadow: 0 4px 20px rgba(196, 255, 0, 0.35);">
-                    🚀 Éles Kiküldés (${stats.targetActive} fő)
+                <button class="btn btn-primary" onclick="triggerEmailConfirmation('live')" ${pendingToSendCount === 0 ? 'disabled style="opacity:0.5;"' : ''} style="width: auto; padding: 0.65rem 1.5rem; font-size: 0.88rem; font-weight: 900; background: #c4ff00; color: #000; box-shadow: 0 4px 20px rgba(196, 255, 0, 0.35);">
+                    🚀 Éles Kiküldés (${pendingToSendCount} fő még nem kapta meg)
                 </button>
             </div>
         </div>
@@ -222,7 +235,7 @@ function renderEmails() {
                         🧪 Küldés tesztben (admexgm@gmail.com)
                     </button>
                     <button class="btn btn-primary" id="btn-modal-live" onclick="executeEmailSend('send_live')" style="width: auto; padding: 0.55rem 1.25rem; font-size: 0.85rem; font-weight: 800; background: #ef4444; color: #fff;">
-                        🚀 Küldés élesben (${stats.targetActive} fő)
+                        🚀 Küldés élesben (${pendingToSendCount} új főnek)
                     </button>
                 </div>
             </div>
@@ -249,8 +262,13 @@ function triggerEmailConfirmation(mode) {
     const btnTest = document.getElementById('btn-modal-test');
     const btnLive = document.getElementById('btn-modal-live');
     const stats = emailData?.stats || { targetActive: 0 };
+    const sentMap = emailData?.sentEmailsMap || {};
     const templates = emailData?.templates || [];
     const activeTemplate = templates.find(t => t.id === selectedTemplateId) || {};
+
+    const alreadySentList = sentMap[selectedTemplateId] || [];
+    const alreadySentCount = alreadySentList.length;
+    const pendingToSendCount = Math.max(0, stats.targetActive - alreadySentCount);
 
     if (!modal || !modalBody) return;
 
@@ -274,12 +292,13 @@ function triggerEmailConfirmation(mode) {
             <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); padding: 0.85rem 1rem; border-radius: 8px; margin-bottom: 1rem;">
                 <strong style="color: #f87171;">⚠️ ÉLES KIKÜLDÉSI FIGYELMEZTETÉS!</strong>
                 <div style="font-size: 0.82rem; color: #fca5a5; margin-top: 0.25rem;">
-                    Ez a művelet éles e-mailt küld ki <strong style="color: #fff;">${stats.targetActive} db</strong> meleg leadnek, akiknél <code style="background: rgba(0,0,0,0.4); padding: 2px 4px; border-radius: 3px; color: #fff;">unsubscribed=FALSE</code> és <code style="background: rgba(0,0,0,0.4); padding: 2px 4px; border-radius: 3px; color: #fff;">converted=FALSE</code>!
+                    Ez a művelet éles e-mailt küld ki <strong style="color: #fff;">${pendingToSendCount} db</strong> új meleg leadnek!
                 </div>
             </div>
             <p><strong>Kiválasztott sablon:</strong> ${activeTemplate.title}</p>
             <p><strong>Tárgymező:</strong> <span style="color: #fff;">${customSubject}</span></p>
-            <p><strong>Címzettek száma:</strong> <span style="color: #4ade80; font-weight: 800;">${stats.targetActive} fő</span></p>
+            <p><strong>Új címzettek száma:</strong> <span style="color: #4ade80; font-weight: 800;">${pendingToSendCount} fő</span></p>
+            ${alreadySentCount > 0 ? `<p style="font-size: 0.8rem; color: #94a3b8;">🔒 Korábban már elküldve ennek a sablonnak: <strong>${alreadySentCount} fő</strong> (kizárva, nem kapják meg újra).</p>` : ''}
             <p style="margin-top: 0.75rem; font-size: 0.82rem; color: #fca5a5;">
                 Biztosan elindítod az éles kiküldést? A folyamat elindulása után nem visszavonható.
             </p>

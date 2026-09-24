@@ -67,6 +67,54 @@ function getDaysRemaining() {
     return `${diffDays} napod`;
 }
 
+async function getSentEmailsMap() {
+    try {
+        const { data, error } = await supabase.storage
+            .from('medals')
+            .download('campaigns/sent_leads_emails.json');
+        if (data && !error) {
+            const text = await data.text();
+            if (text && text.trim().length > 0) {
+                return JSON.parse(text);
+            }
+        }
+    } catch (e) {
+        console.warn('Could not load sent emails from storage:', e.message);
+    }
+
+    try {
+        const localPath = path.resolve(__dirname, '../../config/sent_leads_emails.json');
+        if (fs.existsSync(localPath)) {
+            return JSON.parse(fs.readFileSync(localPath, 'utf8'));
+        }
+    } catch (e) {
+        console.warn('Could not load local sent emails fallback:', e.message);
+    }
+
+    return {};
+}
+
+async function saveSentEmailsMap(sentMap) {
+    const jsonStr = JSON.stringify(sentMap, null, 2);
+    try {
+        await supabase.storage
+            .from('medals')
+            .upload('campaigns/sent_leads_emails.json', Buffer.from(jsonStr, 'utf8'), {
+                upsert: true,
+                contentType: 'application/json'
+            });
+    } catch (e) {
+        console.warn('Failed to upload sent emails to storage:', e.message);
+    }
+
+    try {
+        const localPath = path.resolve(__dirname, '../../config/sent_leads_emails.json');
+        fs.writeFileSync(localPath, jsonStr, 'utf8');
+    } catch (e) {
+        // Safe ignore on read-only serverless
+    }
+}
+
 function aggregateUniqueLeads(allLeads, convertedEmailSet) {
     const unsubscribedEmailSet = new Set();
     const leadConvertedEmailSet = new Set();
@@ -188,6 +236,8 @@ async function handleGetLeadsData(req, res) {
             };
         });
 
+        const sentEmailsMap = await getSentEmailsMap();
+
         return res.status(200).json({
             stats: {
                 total: totalUnique,
@@ -196,6 +246,7 @@ async function handleGetLeadsData(req, res) {
                 converted: convertedCount,
                 unsubscribed: unsubscribedCount
             },
+            sentEmailsMap: sentEmailsMap,
             targetLeads: targetLeads.slice(0, 100),
             templates: templatesWithContent,
             daysRemaining: getDaysRemaining(),
@@ -225,7 +276,7 @@ async function handleSendLeadsEmail(req, res) {
 
     const rawTemplateHtml = fs.readFileSync(templatePath, 'utf8');
     const DEADLINE_STR = '2026. szeptember 27.';
-    const CHECKOUT_URL = 'https://vitasteps.vercel.app/checkout.html?c=pilis';
+    const CHECKOUT_URL = 'https://vitastepsss.vercel.app/checkout.html?c=pilis';
     const daysLeft = getDaysRemaining();
 
     const smtpPassword = process.env.SMTP_PASSWORD;
@@ -246,7 +297,7 @@ async function handleSendLeadsEmail(req, res) {
     if (sendMode === 'send_test') {
         const testEmail = 'admexgm@gmail.com';
         const testName = 'Ádám (Teszt)';
-        const unsubUrl = `https://vitasteps.vercel.app/api/unsubscribe?email=${encodeURIComponent(testEmail)}`;
+        const unsubUrl = `https://vitastepsss.vercel.app/api/unsubscribe?email=${encodeURIComponent(testEmail)}`;
 
         const personalizedHtml = rawTemplateHtml
             .replace(/\{\{NAME\}\}/g, testName)
@@ -304,14 +355,28 @@ async function handleSendLeadsEmail(req, res) {
                 });
             }
 
-            const { targetLeads: targetList } = aggregateUniqueLeads(leads, convertedEmailSet);
+            const { targetLeads: fullTargetList } = aggregateUniqueLeads(leads, convertedEmailSet);
+
+            // Load persistent sent list for this template
+            const sentEmailsMap = await getSentEmailsMap();
+            if (!sentEmailsMap[templateConfig.id]) {
+                sentEmailsMap[templateConfig.id] = [];
+            }
+            const alreadySentSet = new Set(sentEmailsMap[templateConfig.id].map(e => (e || '').toLowerCase().trim()));
+
+            // Filter out already sent recipients
+            const targetList = fullTargetList.filter(r => {
+                const cleanEmail = (r.email || '').toLowerCase().trim();
+                return cleanEmail && !alreadySentSet.has(cleanEmail);
+            });
 
             if (targetList.length === 0) {
                 return res.status(200).json({
                     success: true,
                     mode: 'live',
                     count: 0,
-                    message: 'Nincs kiküldendő aktív lead az adatbázisban.'
+                    alreadySentCount: alreadySentSet.size,
+                    message: `Minden jogosult lead (${alreadySentSet.size} fő) már korábban megkapta ezt a sablont.`
                 });
             }
 
@@ -324,14 +389,14 @@ async function handleSendLeadsEmail(req, res) {
                 const r = targetList[i];
                 const cleanEmail = (r.email || '').toLowerCase().trim();
 
-                // Double guard: skip if already processed in this batch
-                if (!cleanEmail || processedEmailSet.has(cleanEmail)) {
+                // Double guard: skip if already processed in this batch or already sent
+                if (!cleanEmail || processedEmailSet.has(cleanEmail) || alreadySentSet.has(cleanEmail)) {
                     continue;
                 }
                 processedEmailSet.add(cleanEmail);
 
                 const firstName = r.name || 'Túrázó';
-                const unsubUrl = `https://vitasteps.vercel.app/api/unsubscribe?email=${encodeURIComponent(cleanEmail)}`;
+                const unsubUrl = `https://vitastepsss.vercel.app/api/unsubscribe?email=${encodeURIComponent(cleanEmail)}`;
                 const personalizedHtml = rawTemplateHtml
                     .replace(/\{\{NAME\}\}/g, firstName)
                     .replace(/\{\{FIRST_NAME\}\}/g, firstName)
@@ -352,6 +417,14 @@ async function handleSendLeadsEmail(req, res) {
                         html: personalizedHtml,
                     });
                     sentCount++;
+
+                    // Mark as sent in persistent log
+                    alreadySentSet.add(cleanEmail);
+                    if (!sentEmailsMap[templateConfig.id].includes(cleanEmail)) {
+                        sentEmailsMap[templateConfig.id].push(cleanEmail);
+                        await saveSentEmailsMap(sentEmailsMap);
+                    }
+
                     await new Promise(resolve => setTimeout(resolve, 800));
                 } catch (err) {
                     failedCount++;
@@ -366,8 +439,9 @@ async function handleSendLeadsEmail(req, res) {
                 count: sentCount,
                 failed: failedCount,
                 totalTargeted: targetList.length,
+                alreadySentPreviously: alreadySentSet.size - sentCount,
                 errors: errors.slice(0, 5),
-                message: `Éles küldés befejezve! Sikeresen elküldve: ${sentCount} db címzettnek${failedCount > 0 ? `, sikertelen: ${failedCount} db` : ''}.`
+                message: `Éles küldés befejezve! Sikeresen elküldve: ${sentCount} db új címzettnek${failedCount > 0 ? `, sikertelen: ${failedCount} db` : ''}.`
             });
 
         } catch (err) {
