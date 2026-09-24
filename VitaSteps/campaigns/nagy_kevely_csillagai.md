@@ -63,7 +63,7 @@ related:
 | **Augusztus 8. – 13.** | **Érmek beérkezése** | Fizikai éremcsomag megérkezése a kínai gyártótól. |
 | **Augusztus 17.** | **Első postázási hullám** | Az első teljesítők érmeinek feladása (Foxpost/Posta). |
 | **Augusztus 28.** | **Retargeting Hirdetések** | Különálló, kis költségvetésű FOMO kampány indítása a hezitálóknak. |
-| **Szeptember 27. (Vasárnap, 23:59)**| **MEGHOSSZABBÍTOTT ZÁRÁS** | A nevezés és teljesítés végső lezárása (eredetileg szept. 18). |
+| **Szeptember 27. (Vasárnap, 23:59)**| **NEVEZÉSI ZÁRÁS** | A nevezési regisztráció végső lezárása (a túra teljesítése időkorlát nélkül, bármikor lehetséges). |
 | **Szeptember 28. – Október 2.** | **Kampányzárás** | Utolsó érmek postázása, pénzügyi elszámolás (P&L), következő kihívás előkészítése. |
 
 ```mermaid

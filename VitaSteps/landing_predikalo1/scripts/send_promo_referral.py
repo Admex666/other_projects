@@ -34,7 +34,7 @@ PORTAL_BASE    = "https://vitastepsss.vercel.app/portal.html"
 EMAIL_SUBJECT = "⛰️ Indul a Nagy-Kevély csillagai – szerezz érmet INGYEN!"
 
 # ===== EMAIL SABLON =====
-TEMPLATE_PATH = os.path.join(PROJECT_ROOT, "email_promo_referral_template.html")
+TEMPLATE_PATH = os.path.join(PROJECT_ROOT, "email_templates", "promo_referral.html")
 with open(TEMPLATE_PATH, encoding="utf-8") as f:
     TEMPLATE_HTML = f.read()
 

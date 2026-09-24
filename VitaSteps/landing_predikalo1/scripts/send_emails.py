@@ -116,8 +116,11 @@ def get_html_email(first_name: str, full_name: str, email: str, km: str, date: s
     completion_link = make_completion_link(full_name, email)
     km_display = f"{km} km" if km and not km.endswith("km") else km or "?"
     
-    template_filename = "email_template.html" if mode == "teljesites" else "email_ping_template.html"
-    template_path = os.path.join(PROJECT_ROOT, template_filename)
+    template_filename = "completion_reminder.html" if mode == "teljesites" else "ping_reminder.html"
+    template_path = os.path.join(PROJECT_ROOT, "email_templates", template_filename)
+    if not os.path.exists(template_path):
+        legacy_filename = "email_template.html" if mode == "teljesites" else "email_ping_template.html"
+        template_path = os.path.join(PROJECT_ROOT, legacy_filename)
     try:
         with open(template_path, "r", encoding="utf-8") as f:
             html = f.read()

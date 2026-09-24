@@ -89,12 +89,14 @@ def send_referral_email(name, email, portal_link):
     first_name = get_first_name(name)
     
     # Load referral template
-    template_path = os.path.join(SCRIPT_DIR, "email_referral_template.html")
+    template_path = os.path.join(SCRIPT_DIR, "..", "email_templates", "referral_promoter.html")
+    if not os.path.exists(template_path):
+        template_path = os.path.join(SCRIPT_DIR, "email_referral_template.html")
     if os.path.exists(template_path):
         with open(template_path, "r", encoding="utf-8") as f:
             html = f.read()
     else:
-        print("❌ Error: email_referral_template.html not found!")
+        print("❌ Error: referral_promoter.html template not found!")
         return False
         
     referral_link = f"https://vitastepsss.vercel.app/checkout-widget.html?ref={urllib.parse.quote(email)}"

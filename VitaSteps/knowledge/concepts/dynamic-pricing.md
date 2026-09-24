@@ -25,4 +25,4 @@ VitaSteps utilizes standard transparent pricing with volume options:
   - 4 medals: 31 960 HUF
   - For each medal in a multi-medal order, individual participant names and emails are captured at checkout.
 * **Home Delivery Surcharge:** **+1 200 HUF** optional upgrade for direct doorstep courier delivery instead of Foxpost locker.
-* **Referral Discount:** **-1 000 HUF** coupon code applied at checkout via [[referral-program|Referral Program]].
+* **Referral Discount:** **10%** coupon discount applied at checkout via [[referral-program|Referral Program]].

@@ -6,7 +6,7 @@ status: active
 description: Procedure for verifying and approving runners who submitted proof via email or social media.
 code:
   - landing_predikalo1/admin.html
-  - landing_predikalo1/api/admin-approve.js
+  - landing_predikalo1/api/admin-data.js
 related:
   - "[[proof-verification|Proof Verification]]"
   - "[[run]]"

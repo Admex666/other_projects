@@ -295,7 +295,11 @@ module.exports = async (req, res) => {
                 let invoiceItems = '';
                 if (stripeItems.length > 0) {
                     invoiceItems = stripeItems.map(item => {
-                        const itemName = item.description || `${campaignName} érem`;
+                        const rawDesc = (item.description || '').toLowerCase();
+                        let itemName = (campaignKey === 'pilis') ? 'Nagy-Kevély csillagai érem' : 'Prédikálószék érem';
+                        if (rawDesc.includes('szállítás') || rawDesc.includes('posta') || rawDesc.includes('házhoz')) {
+                            itemName = 'Házhozszállítás (Magyar Posta)';
+                        }
                         const qty = item.quantity || 1;
                         const totalAmountHuf = Math.round((item.amount_total || 0) / 100);
                         const unitAmountHuf = qty > 0 ? Math.round(totalAmountHuf / qty) : totalAmountHuf;
@@ -313,9 +317,10 @@ module.exports = async (req, res) => {
                     }).join('\n');
                 } else {
                     const singlePrice = medals.length > 0 ? Math.round((totalPaid - (deliveryMethod === 'home' ? 1200 : 0)) / medals.length) : medalPrice;
+                    const cleanMedalName = (campaignKey === 'pilis') ? 'Nagy-Kevély csillagai érem' : 'Prédikálószék érem';
                     const medalItems = medals.map(medal =>
                         `    <tetel>
-      <megnevezes>${campaignName} Nevezési díj (${medal.distance}) – ${medal.name}</megnevezes>
+      <megnevezes>${cleanMedalName}</megnevezes>
       <mennyiseg>1.0</mennyiseg>
       <mennyisegiEgyseg>db</mennyisegiEgyseg>
       <nettoEgysegar>${singlePrice}</nettoEgysegar>
@@ -374,7 +379,7 @@ module.exports = async (req, res) => {
     <sendEmail>true</sendEmail>
   </vevo>
   <tetelek>
-${invoiceItems}${shippingItem}
+${invoiceItems}
   </tetelek>
 </xmlszamla>`;
 
@@ -441,8 +446,8 @@ ${invoiceItems}${shippingItem}
                     : `Üdvözlünk a VitaSteps <strong>${campaignName}</strong> kihívásán! Ezzel megtetted az első lépést afelé, hogy a teljesítményedet és élményeidet egyedi emlékekké alakítsd! 💚`;
 
                 const challengePeriodText = isPlural
-                    ? `A kihívást <strong>${challengePeriod}</strong> között tudjátok teljesíteni.`
-                    : `A kihívást <strong>${challengePeriod}</strong> között tudod teljesíteni.`;
+                    ? `A túrát <strong>bármikor, időkorlát nélkül, a saját időbeosztásotok szerint teljesíthetitek</strong>.`
+                    : `A túrát <strong>bármikor, időkorlát nélkül, a saját időbeosztásod szerint teljesítheted</strong>.`;
 
                 const proofMethodText = isPlural
                     ? `A teljesítést igazolni GPS-es rögzítéssel (pl. Strava, Garmin GPX nyomvonal feltöltésével) és/vagy csúcsfotóval (szelfivel) tudjátok a személyes portálotokon.`
@@ -462,7 +467,10 @@ ${invoiceItems}${shippingItem}
 
                 let welcomeHtml = '';
                 try {
-                    const templatePath = path.join(__dirname, '../email_welcome_template.html');
+                    let templatePath = path.join(__dirname, '../email_templates/welcome.html');
+                    if (!fs.existsSync(templatePath)) {
+                        templatePath = path.join(process.cwd(), 'email_templates/welcome.html');
+                    }
                     const rawTemplate = fs.readFileSync(templatePath, 'utf8');
                     welcomeHtml = rawTemplate
                         .replace('{{GREETING_NAMES}}', greetingNames)
@@ -475,7 +483,7 @@ ${invoiceItems}${shippingItem}
                         .replace('{{DELIVERY_TEXT}}', deliveryText)
                         .replace('{{PORTAL_LINK}}', portalLink);
                 } catch (err) {
-                    console.error('Error reading email_welcome_template.html:', err);
+                    console.error('Error reading email_templates/welcome.html:', err);
                     welcomeHtml = `<p>Kedves ${greetingNames}! Sikeresen regisztráltál a ${campaignName} kihívásra. Jelentkezz be itt: ${portalLink}</p>`;
                 }
 

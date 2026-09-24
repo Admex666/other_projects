@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs');
 
-// Attempt to load .env from multiple potential locations
 const envCandidates = [
     path.resolve(__dirname, '../.env'),
     path.resolve(__dirname, '../../landing_predikalo1/.env'),
@@ -17,11 +16,10 @@ for (const envPath of envCandidates) {
 require('dotenv').config();
 
 const { createClient } = require('@supabase/supabase-js');
+const { handleFeedbackSubmission } = require('./lib/feedback');
 
-// Pushbullet Access Token (from environment variable)
 const PUSHBULLET_TOKEN = process.env.PUSHBULLET_ACCESS_TOKEN;
 
-// Initialize Supabase Client with Service Role
 const supabaseUrl = process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -99,7 +97,12 @@ module.exports = async (req, res) => {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    // Authenticate user via authorization header if present
+    // ── DELEGATE TO FEEDBACK HANDLER IF REQUESTED ─────────────────────────────
+    if (req.query.type === 'feedback' || req.body?.type === 'feedback') {
+        return await handleFeedbackSubmission(req, res);
+    }
+
+    // ── PROOF SUBMISSION LOGIC ───────────────────────────────────────────────
     const authHeader = req.headers.authorization;
     let userEmail = null;
 
@@ -133,7 +136,6 @@ module.exports = async (req, res) => {
 
         console.log(`[submit-proof] Submitting proof for runs: ${targetIds.join(', ')} by user ${userEmail || 'unknown'}`);
 
-        // Update runs using service role client
         const updatePayload = {
             proof_submitted: true,
             proof_urls: proof_urls,
@@ -156,7 +158,6 @@ module.exports = async (req, res) => {
 
         console.log(`[submit-proof] Successfully updated ${data?.length || 0} run(s).`);
 
-        // Send Pushbullet notification to admin (resilient, non-blocking)
         let pushSent = false;
         try {
             const firstRun = data && data[0] ? data[0] : {};

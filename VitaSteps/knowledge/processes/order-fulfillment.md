@@ -8,7 +8,7 @@ code:
   - landing_predikalo1/admin.html
   - landing_predikalo1/js/admin-logistics.js
   - landing_predikalo1/css/admin.css
-  - landing_predikalo1/api/create-foxpost-parcels.js
+  - landing_predikalo1/api/admin-data.js
   - landing_predikalo1/scripts/daily_tracking.py
 related:
   - "[[foxpost]]"

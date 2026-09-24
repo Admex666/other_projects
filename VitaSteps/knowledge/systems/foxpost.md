@@ -8,7 +8,7 @@ source:
   type: api
   endpoint: https://webapi.foxpost.hu/api
 code:
-  - landing_predikalo1/api/create-foxpost-parcels.js
+  - landing_predikalo1/api/admin-data.js
   - landing_predikalo1/scripts/daily_tracking.py
   - landing_predikalo1/admin.html
 related:

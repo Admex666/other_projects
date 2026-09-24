@@ -133,15 +133,18 @@ function setFilter(filter) {
     const isMkt = filter === 'marketing';
     const isFin = filter === 'finance';
     const isFb = filter === 'feedbacks';
+    const isEmails = filter === 'emails';
     const proofListEl = document.getElementById('proof-list');
     const mktEl = document.getElementById('section-marketing');
     const finEl = document.getElementById('section-finance');
     const fbEl = document.getElementById('section-feedbacks');
+    const emailsEl = document.getElementById('section-emails');
 
-    if (proofListEl) proofListEl.style.display = (isMkt || isFin || isFb) ? 'none' : '';
+    if (proofListEl) proofListEl.style.display = (isMkt || isFin || isFb || isEmails) ? 'none' : '';
     if (mktEl) mktEl.style.display = isMkt ? 'block' : 'none';
     if (finEl) finEl.style.display = isFin ? 'block' : 'none';
     if (fbEl) fbEl.style.display = isFb ? 'block' : 'none';
+    if (emailsEl) emailsEl.style.display = isEmails ? 'block' : 'none';
 
     if (isFin) {
         loadFinance();
@@ -149,6 +152,8 @@ function setFilter(filter) {
         loadMarketing();
     } else if (isFb) {
         loadFeedbacks();
+    } else if (isEmails) {
+        loadEmails();
     } else {
         renderList();
     }
@@ -434,7 +439,7 @@ async function approveRun(runId) {
     if (!confirm('Biztosan jóváhagyod a teljesítést? A rendszer gratuláló emailt küld a résztvevőnek.')) return;
 
     try {
-        const res = await fetch('/api/admin-approve', {
+        const res = await fetch('/api/admin-data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'approve', run_id: runId, admin_secret: adminSecret })
@@ -455,7 +460,7 @@ async function rejectRun(runId) {
     if (!confirm('Biztosan elutasítod a feltöltött igazolást? A státusz visszaáll nem teljesítettre.')) return;
 
     try {
-        const res = await fetch('/api/admin-approve', {
+        const res = await fetch('/api/admin-data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'reject', run_id: runId, admin_secret: adminSecret })

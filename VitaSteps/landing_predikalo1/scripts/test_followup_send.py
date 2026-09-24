@@ -32,7 +32,9 @@ print(f"Recipient: {recipient}")
 print(f"Portal Link: {portal_link}")
 
 # Load template
-template_path = "email_feedback_template.html"
+template_path = os.path.join(os.path.dirname(__file__), "..", "email_templates", "feedback_request.html")
+if not os.path.exists(template_path):
+    template_path = "email_feedback_template.html"
 if os.path.exists(template_path):
     with open(template_path, "r", encoding="utf-8") as f:
         html = f.read()

@@ -19,6 +19,11 @@ related:
 Every registered runner receives a unique 6-character referral code (e.g. `ADAM66`) accessible in their [[customer]] portal.
 
 ## Mechanics
-* **Invited Friend:** Gets an immediate **1 000 HUF discount** when entering the code during [[checkout-pipeline|Checkout Pipeline]].
-* **Referring Runner:** Earns a **1 000 HUF credit** / payout reward per successful completion.
+* **Invited Friend:** Gets an immediate **10% discount** when entering the code / referral link during [[checkout-pipeline|Checkout Pipeline]].
+* **Referring Runner:** Earns progressive discounts towards their next challenge:
+  - 👤 1 friend: **10%** discount
+  - 👥 2 friends: **25%** discount
+  - 🏔️ 3 friends: **45%** discount
+  - 🎯 4 friends: **70%** discount
+  - 🏆 5 friends: **100% FREE** medal & entry
 * **Tracking:** Recorded in Supabase `runners.referred_by` and validated dynamically via Stripe checkout session metadata.

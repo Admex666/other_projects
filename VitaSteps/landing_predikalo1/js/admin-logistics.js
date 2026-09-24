@@ -458,10 +458,11 @@ async function triggerSubmitFoxpost(btn) {
     btn.innerHTML = '<span class="loading-spinner"></span> Foxpost API feladás...';
 
     try {
-        const res = await fetch('/api/create-foxpost-parcels', {
+        const res = await fetch('/api/admin-data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+                action: 'foxpost_create',
                 run_ids: eligible.map(r => r.id),
                 admin_secret: adminSecret
             })
@@ -506,7 +507,7 @@ async function triggerMarkShipped(btn) {
     btn.innerHTML = '<span class="loading-spinner"></span> Frissítés...';
 
     try {
-        const res = await fetch('/api/admin-approve', {
+        const res = await fetch('/api/admin-data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -96,7 +96,7 @@ async function login() {
     errEl.style.display = 'none';
 
     try {
-        const res = await fetch('/api/admin-approve', {
+        const res = await fetch('/api/admin-data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'ping', admin_secret: secret })

@@ -1,10 +1,22 @@
 // ===== ADMIN FINANCE & REVOLUT / STRIPE CASHFLOW MODULE =====
 
 let finData = null;
+let finSubTab = 'pnl'; // 'pnl', 'cashflow', 'ledger'
+let finPnlCampaign = 'pilis'; // 'pilis', 'predikalo', 'all'
 let finPeriod = 'all'; // 'all', '30d', '7d', '2026-08', '2026-07', '2026-06', '2026-05'
 let finAccount = 'all'; // 'all', 'revolut', 'stripe'
 let finCategory = 'all';
 let finSearchQuery = '';
+
+function setFinSubTab(tab) {
+    finSubTab = tab;
+    renderFinance();
+}
+
+function setFinPnlCampaign(camp) {
+    finPnlCampaign = camp;
+    renderFinance();
+}
 
 async function loadFinance() {
     const cardsEl = document.getElementById('fin-cards');
@@ -239,11 +251,33 @@ function renderFinance() {
     const b2UnitCost = timelineStats.batch2Cost || 1628.6523;
     const b1Val = Math.round(b1Stock * b1UnitCost);
     const b2Val = Math.round(b2Stock * b2UnitCost);
+    const osszesKeszletDb = b1Stock + b2Stock;
+    const osszesKeszletErtek = Math.round(b1Val + b2Val);
     const jelenlegiLikvid = Math.round(revolutBal + stripeAvail);
     const likvidHamarosan = Math.round(jelenlegiLikvid + stripePending);
-    const merlegFoosszeg = Math.round(likvidHamarosan + b1Val + b2Val);
+    const merlegFoosszeg = Math.round(likvidHamarosan + osszesKeszletErtek);
 
+    // Build Main Sub-Tab Switcher
     let html = `
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="fin-main-tabs">
+                <button class="mkt-tab ${finSubTab === 'pnl' ? 'active' : ''}" onclick="setFinSubTab('pnl')" id="fin-tab-btn-pnl" style="font-weight: 700; font-size: 0.85rem;">📊 P&L & Kampány Audit</button>
+                <button class="mkt-tab ${finSubTab === 'cashflow' ? 'active' : ''}" onclick="setFinSubTab('cashflow')" id="fin-tab-btn-cashflow" style="font-weight: 700; font-size: 0.85rem;">📈 Cashflow & Mérleg Kimutatás</button>
+                <button class="mkt-tab ${finSubTab === 'ledger' ? 'active' : ''}" onclick="setFinSubTab('ledger')" id="fin-tab-btn-ledger" style="font-weight: 700; font-size: 0.85rem;">🧾 Nyers Tranzakciók (Főkönyv)</button>
+            </div>
+            <div style="font-size: 0.82rem; color: var(--text-mid); font-weight: 500;">
+                ${finSubTab === 'pnl' ? '🎯 Kampány szintű egységfedezet, árbevétel & közvetlen költségek' : (finSubTab === 'cashflow' ? '🏦 Napi & havi cashflow idővonal és vállalkozási mérleg' : '📜 Revolut Pro és Stripe kártyás fizetések főkönyve')}
+            </div>
+        </div>
+    `;
+
+    // ── TAB 1: P&L & KAMPÁNY AUDIT ──────────────────────────────────────────
+    if (finSubTab === 'pnl') {
+        html += renderPnlAuditSection(revolutTxs, stripeTxs, finData.orders || [], allRuns);
+    } 
+    // ── TAB 2: CASHFLOW & MÉRLEG KIMUTATÁS ──────────────────────────────────
+    else if (finSubTab === 'cashflow') {
+        html += `
         <!-- PÉNZÜGYI NYUGTA / EGYENLEG ÉS MÉRLEG ÖSSZEGZŐ -->
         <div class="finance-receipt-box" style="background: linear-gradient(145deg, rgba(12, 15, 21, 0.98) 0%, rgba(18, 24, 36, 0.96) 100%); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1.5rem; max-width: 640px; margin: 0 auto 1.5rem; box-shadow: 0 12px 36px rgba(0,0,0,0.5); position: relative; overflow: hidden;">
             <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #38bdf8 0%, #22c55e 50%, #fbbf24 100%);"></div>
@@ -297,12 +331,12 @@ function renderFinance() {
                 </div>
 
                 <!-- 6. Prédikálószék Készlet -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.35rem;">
                     <div>
                         <span style="color: #cbd5e1;">🏔️ + Prédikálószék Készlet</span>
                         <span style="font-size: 0.75rem; color: var(--text-mid); margin-left: 0.35rem;">(${b1Stock} db × ${b1UnitCost.toFixed(2).replace('.', ',')} Ft)</span>
                     </div>
-                    <span style="font-family: monospace; font-weight: 700; color: #a3e635; font-size: 0.95rem;">+ ${fmt(b1Val)}</span>
+                    <span style="font-family: monospace; font-weight: 700; color: #38bdf8; font-size: 0.95rem;">+ ${fmt(b1Val)}</span>
                 </div>
 
                 <!-- 7. Nagy-Kevély Készlet -->
@@ -314,10 +348,19 @@ function renderFinance() {
                     <span style="font-family: monospace; font-weight: 700; color: #c4ff00; font-size: 0.95rem;">+ ${fmt(b2Val)}</span>
                 </div>
 
+                <!-- 8. Készletek összesen (Fizikai raktárkészlet) -->
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(163, 230, 53, 0.08); padding: 0.45rem 0.75rem; border-radius: 6px; border: 1px solid rgba(163, 230, 53, 0.25); margin-top: 0.25rem;">
+                    <div>
+                        <span style="font-weight: 800; color: #a3e635;">📦 = Készletek összesen</span>
+                        <span style="font-size: 0.75rem; color: #d9f99d; margin-left: 0.35rem;">(${osszesKeszletDb} db fizikai érem raktáron)</span>
+                    </div>
+                    <span style="font-family: monospace; font-weight: 900; color: #a3e635; font-size: 1.1rem;">+ ${fmt(osszesKeszletErtek)}</span>
+                </div>
+
                 <!-- Divider 3 (Double Solid Gold Line) -->
                 <div style="border-top: 2px solid rgba(251, 191, 36, 0.45); margin: 0.6rem 0 0.45rem;"></div>
 
-                <!-- 8. Mérleg főösszeg -->
+                <!-- 9. Mérleg főösszeg -->
                 <div style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(90deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%); padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.4);">
                     <div>
                         <span style="font-size: 1.05rem; font-weight: 900; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.05em;">= Mérleg főösszeg</span>
@@ -327,7 +370,14 @@ function renderFinance() {
                 </div>
             </div>
         </div>
+        `;
 
+        // Append the Cumulative Cashflow & Inventory Balance Sheet Timeline Section
+        html += renderCashflowTimelineSection(revolutTxs, stripeTxs, finData.orders || []);
+    }
+    // ── TAB 3: NYERS TRANZAKCIÓK (FŐKÖNYV) ──────────────────────────────────
+    else if (finSubTab === 'ledger') {
+        html += `
         <!-- Filter Toolbar -->
         <div style="background: var(--surface); border: 1px solid var(--border); padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;">
             <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center;">
@@ -434,13 +484,438 @@ function renderFinance() {
                 </tbody>
             </table>
         </div>
-    `;
-
-    // Append the Cumulative Cashflow & Inventory Balance Sheet Timeline Section
-    html += renderCashflowTimelineSection(revolutTxs, stripeTxs, finData.orders || []);
+        `;
+    }
 
     cardsEl.innerHTML = html;
 }
+
+function fmtPnlAmount(sign, amount, color = '#fff', isBold = false, fontSize = '0.88rem') {
+    if (amount === null || amount === undefined || isNaN(amount)) {
+        return `<span style="font-family: monospace; color: #94a3b8; display: inline-block; min-width: 145px; text-align: right;">–&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+    }
+    const absVal = Math.abs(Math.round(amount));
+    const numStr = absVal.toLocaleString('hu-HU').replace(/[\s\u00A0\u202F]/g, '&nbsp;');
+    const signChar = sign ? sign : '&nbsp;';
+
+    return `
+        <span style="display: inline-flex; align-items: baseline; justify-content: flex-end; font-family: 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-variant-numeric: tabular-nums; font-size: ${fontSize}; font-weight: ${isBold ? 900 : 700}; color: ${color}; min-width: 145px;">
+            <span style="width: 1.8ch; text-align: left; display: inline-block; opacity: 0.95;">${signChar}</span>
+            <span style="width: 8.5ch; text-align: right; display: inline-block;">${numStr}</span>
+            <span style="margin-left: 0.6ch; font-size: 0.85em; opacity: 0.85; font-weight: 600; width: 2.2ch; text-align: left;">Ft</span>
+        </span>
+    `;
+}
+
+// ── P&L & KAMPÁNY AUDIT ENGINE ──────────────────────────────────────────────
+function renderPnlAuditSection(revolutTxs, stripeTxs, orders, runsInput) {
+    const validRuns = (runsInput || (typeof allRuns !== 'undefined' ? allRuns : [])).filter(r => !isTestRun(r));
+    const validOrders = (orders || []).filter(o => !o.is_test);
+    const shipmentsList = (typeof allShipments !== 'undefined' ? allShipments : []);
+
+    let targetRuns = validRuns;
+    let targetOrders = validOrders;
+    let campaignTitle = 'Összesített (Mindkét kihívás)';
+    let isPilisActive = finPnlCampaign === 'pilis';
+    let isPredikaloActive = finPnlCampaign === 'predikalo';
+
+    if (isPilisActive) {
+        targetRuns = validRuns.filter(r => isPilisRun(r));
+        targetOrders = validOrders.filter(o => o.campaign === 'pilis');
+        campaignTitle = '⭐ Nagy-Kevély csillagai';
+    } else if (isPredikaloActive) {
+        targetRuns = validRuns.filter(r => !isPilisRun(r));
+        targetOrders = validOrders.filter(o => o.campaign !== 'pilis');
+        campaignTitle = '🏔️ Prédikálószék Vertical';
+    }
+
+    const totalMedalsSold = targetRuns.length;
+    const nominalGrossSales = totalMedalsSold * 7990;
+    const actualRealizedRevenue = targetOrders.reduce((sum, o) => sum + (o.amount_total || 0), 0);
+
+    // Basket analysis
+    const runsByOrder = {};
+    targetRuns.forEach(r => {
+        if (r.order_id) {
+            runsByOrder[r.order_id] = (runsByOrder[r.order_id] || 0) + 1;
+        }
+    });
+
+    let singleBaskets = 0;
+    let multi2Baskets = 0;
+    let multi3PlusBaskets = 0;
+    let multiMedalsCount = 0;
+
+    targetOrders.forEach(o => {
+        const count = runsByOrder[o.id] || 1;
+        if (count === 1) singleBaskets++;
+        else if (count === 2) { multi2Baskets++; multiMedalsCount += 2; }
+        else { multi3PlusBaskets++; multiMedalsCount += count; }
+    });
+
+    // Home shipping surcharges
+    let homeShippingCount = 0;
+    targetRuns.forEach(r => {
+        const s = shipmentsList.find(ship => ship.run_id === r.id);
+        if (s && s.method === 'home') homeShippingCount++;
+    });
+    const homeShippingRevenue = homeShippingCount * 1200;
+
+    // Discounts
+    const expectedFullGross = nominalGrossSales + homeShippingRevenue;
+    const totalDiscounts = Math.max(0, expectedFullGross - actualRealizedRevenue);
+
+    // Direct Costs (COGS & Fulfillment)
+    const b1UnitCost = 1512.4453;
+    const b2UnitCost = 1628.6523;
+
+    let totalCogs = 0;
+    if (isPilisActive) {
+        totalCogs = totalMedalsSold * b2UnitCost;
+    } else if (isPredikaloActive) {
+        totalCogs = totalMedalsSold * b1UnitCost;
+    } else {
+        const pilisCount = targetRuns.filter(r => isPilisRun(r)).length;
+        const predCount = totalMedalsSold - pilisCount;
+        totalCogs = (pilisCount * b2UnitCost) + (predCount * b1UnitCost);
+    }
+
+    const packagingCost = targetOrders.length * 150;
+    const foxpostCount = Math.max(0, targetOrders.length - homeShippingCount);
+    const shippingCost = (foxpostCount * 1140) + (homeShippingCount * 2400);
+    const stripeFee = Math.round((targetOrders.length * 85) + (actualRealizedRevenue * 0.015));
+    const szamlazzFee = targetOrders.length * 40;
+    const totalFulfillment = packagingCost + shippingCost + stripeFee + szamlazzFee;
+    const totalDirectCost = Math.round(totalCogs + totalFulfillment);
+
+    // Marketing (Meta Ads)
+    const metaCreatives = (finData && finData.meta) ? finData.meta : [];
+    let metaSpendNet = 0;
+    if (metaCreatives.length > 0) {
+        metaCreatives.forEach(m => {
+            const campLower = (m.campaign_name || m.Kampany || '').toLowerCase();
+            const spend = parseFloat(m.spend || m.Koltes_HUF || 0) || 0;
+            if (isPilisActive) {
+                if (campLower.includes('kevély') || campLower.includes('kevely') || campLower.includes('pilis')) {
+                    metaSpendNet += spend;
+                }
+            } else if (isPredikaloActive) {
+                if (campLower.includes('prédikáló') || campLower.includes('predikalo')) {
+                    metaSpendNet += spend;
+                }
+            } else {
+                metaSpendNet += spend;
+            }
+        });
+    }
+    if (metaSpendNet === 0) {
+        if (isPilisActive) metaSpendNet = 221404;
+        else if (isPredikaloActive) metaSpendNet = 135628;
+        else metaSpendNet = 221404 + 135628;
+    }
+
+    const metaVat = Math.round(metaSpendNet * 0.27);
+    const totalMarketing = Math.round(metaSpendNet + metaVat);
+
+    // Contribution Margins
+    const cmBeforeVat = Math.round(actualRealizedRevenue - totalDirectCost - metaSpendNet);
+    const cmAfterVat = Math.round(cmBeforeVat - metaVat);
+    const profitMarginPct = actualRealizedRevenue > 0 ? ((cmAfterVat / actualRealizedRevenue) * 100).toFixed(1) : '0.0';
+    const cpa = targetOrders.length > 0 ? Math.round(totalMarketing / targetOrders.length) : 0;
+    const roas = metaSpendNet > 0 ? (actualRealizedRevenue / metaSpendNet).toFixed(2) : '0.00';
+
+    // Inventory status
+    const pilisLimit = (typeof CAMPAIGNS_CONFIG !== 'undefined' && CAMPAIGNS_CONFIG.pilis?.limit) || 100;
+    const predikaloLimit = (typeof CAMPAIGNS_CONFIG !== 'undefined' && CAMPAIGNS_CONFIG.predikaloszek?.limit) || 100;
+    const pilisSold = validRuns.filter(r => isPilisRun(r)).length;
+    const predikaloSold = validRuns.filter(r => !isPilisRun(r)).length;
+    const pilisLeft = Math.max(0, pilisLimit - pilisSold);
+    const predikaloLeft = Math.max(0, predikaloLimit - predikaloSold);
+    const totalLeft = pilisLeft + predikaloLeft;
+
+    const pilisCostVal = 48398;
+    const predikaloCostVal = 89576;
+    const totalCostVal = pilisCostVal + predikaloCostVal;
+
+    const pilisPotRev = pilisLeft * 7990;
+    const predikaloPotRev = predikaloLeft * 7990;
+    const totalPotRev = totalLeft * 7990;
+
+    const isCmPos = cmAfterVat >= 0;
+    const cmColor = isCmPos ? '#22c55e' : '#ef4444';
+
+    return `
+        <!-- Campaign Selector Bar -->
+        <div style="background: var(--surface); border: 1px solid var(--border); padding: 0.85rem 1rem; border-radius: 12px; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="pnl-campaign-tabs">
+                <button class="mkt-tab ${finPnlCampaign === 'pilis' ? 'active' : ''}" onclick="setFinPnlCampaign('pilis')">⭐ Nagy-Kevély csillagai</button>
+                <button class="mkt-tab ${finPnlCampaign === 'predikalo' ? 'active' : ''}" onclick="setFinPnlCampaign('predikalo')">🏔️ Prédikálószék Vertical</button>
+                <button class="mkt-tab ${finPnlCampaign === 'all' ? 'active' : ''}" onclick="setFinPnlCampaign('all')">♾️ Mindkét kihívás (Összesített)</button>
+            </div>
+            <div style="font-size: 0.8rem; color: #38bdf8; font-weight: 700;">
+                Aktív nézet: ${campaignTitle}
+            </div>
+        </div>
+
+        <!-- 4 Top KPI Cards -->
+        <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+            <!-- 1. Realizált Árbevétel -->
+            <div class="card" style="background: linear-gradient(145deg, rgba(18, 24, 36, 0.95) 0%, rgba(12, 16, 26, 0.95) 100%); border: 1px solid rgba(56, 189, 248, 0.25);">
+                <div class="metric-title" style="color: #38bdf8; font-size: 0.75rem;">💰 Realizált Árbevétel</div>
+                <div class="metric-value" style="color: #fff; font-size: 1.5rem; margin-top: 0.35rem;">${fmt(actualRealizedRevenue)}</div>
+                <div style="font-size: 0.75rem; color: var(--text-mid); margin-top: 0.35rem;">
+                    <strong>${totalMedalsSold} db</strong> érem (${targetOrders.length} rendelés)
+                </div>
+            </div>
+
+            <!-- 2. Közvetlen Költségek -->
+            <div class="card" style="background: linear-gradient(145deg, rgba(18, 24, 36, 0.95) 0%, rgba(12, 16, 26, 0.95) 100%); border: 1px solid rgba(249, 115, 22, 0.25);">
+                <div class="metric-title" style="color: #f97316; font-size: 0.75rem;">📦 Közvetlen Költség (COGS + Fulfill)</div>
+                <div class="metric-value" style="color: #fff; font-size: 1.5rem; margin-top: 0.35rem;">${fmt(totalDirectCost)}</div>
+                <div style="font-size: 0.75rem; color: var(--text-mid); margin-top: 0.35rem;">
+                    Érem: ${fmt(Math.round(totalCogs))} | Szállítás/díj: ${fmt(totalFulfillment)}
+                </div>
+            </div>
+
+            <!-- 3. Marketing Költés -->
+            <div class="card" style="background: linear-gradient(145deg, rgba(18, 24, 36, 0.95) 0%, rgba(12, 16, 26, 0.95) 100%); border: 1px solid rgba(239, 68, 68, 0.25);">
+                <div class="metric-title" style="color: #f87171; font-size: 0.75rem;">📢 Marketing (+27% ÁFA)</div>
+                <div class="metric-value" style="color: #fff; font-size: 1.5rem; margin-top: 0.35rem;">${fmt(totalMarketing)}</div>
+                <div style="font-size: 0.75rem; color: var(--text-mid); margin-top: 0.35rem;">
+                    CPA: <strong>${fmt(cpa)}</strong> | ROAS: <strong>${roas}x</strong>
+                </div>
+            </div>
+
+            <!-- 4. Hozzájárulási Eredmény -->
+            <div class="card" style="background: linear-gradient(145deg, rgba(18, 24, 36, 0.95) 0%, rgba(12, 16, 26, 0.95) 100%); border: 1px solid ${isCmPos ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'};">
+                <div class="metric-title" style="color: ${cmColor}; font-size: 0.75rem;">🏆 Hozzájárulási Eredmény (Profit)</div>
+                <div class="metric-value" style="color: ${cmColor}; font-size: 1.5rem; margin-top: 0.35rem;">
+                    ${isCmPos ? '+' : ''}${fmt(cmAfterVat)}
+                </div>
+                <div style="font-size: 0.75rem; color: ${isCmPos ? '#4ade80' : '#f87171'}; margin-top: 0.35rem;">
+                    Árrés: <strong>${profitMarginPct}%</strong> (ÁFA előtt: ${fmt(cmBeforeVat)})
+                </div>
+            </div>
+        </div>
+
+        <!-- P&L Breakdown Table Card -->
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+                <h3 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0;">📑 Részletes P&L Eredménykimutatás</h3>
+                <span style="font-size: 0.75rem; color: var(--text-mid);">${campaignTitle}</span>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+                <!-- 1. BEVÉTEL -->
+                <thead>
+                    <tr style="background: rgba(56, 189, 248, 0.08); border-left: 3px solid #38bdf8;">
+                        <th style="text-align: left; padding: 0.6rem 0.8rem; color: #38bdf8; font-weight: 800;" colspan="2">📥 1. ÁRBEVÉTEL & KOSÁR ELEMZÉS</th>
+                        <th style="text-align: right; padding: 0.6rem 0.8rem; color: #38bdf8; font-weight: 800;">ÖSSZEG (HUF)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; color: #cbd5e1;">Érmek eladása (Névleges alapár)</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">${totalMedalsSold} db érem × 7 990 Ft</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount('+', nominalGrossSales, '#fff', false)}
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; color: #cbd5e1;">Szállítási felár (Házhozszállítás)</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">${homeShippingCount} db rendelés (+1 200 Ft/csomag)</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount('+', homeShippingRevenue, '#4ade80', false)}
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; color: #cbd5e1;">Többérmes kosarak</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">1 érmes: ${singleBaskets} db | 2 érmes: ${multi2Baskets} db | 3+ érmes: ${multi3PlusBaskets} db</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount('', null)}
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; color: #cbd5e1;">Kedvezmények & Referral kuponok</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">Többérmes automatikus csomagár és ajánlói jóváírások</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount('−', totalDiscounts, '#f87171', false)}
+                        </td>
+                    </tr>
+                    <tr style="background: rgba(34, 197, 94, 0.06); border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.6rem 0.8rem; font-weight: 800; color: #4ade80;">= Tényleges realizált Árbevétel</td>
+                        <td style="padding: 0.6rem 0.8rem; color: #86efac; font-size: 0.78rem;">${targetOrders.length} db fizetett rendelés</td>
+                        <td style="text-align: right; padding: 0.6rem 0.8rem;">
+                            ${fmtPnlAmount('=', actualRealizedRevenue, '#4ade80', true, '1rem')}
+                        </td>
+                    </tr>
+                </tbody>
+
+                <!-- 2. KÖZVETLEN KÖLTSÉGEK -->
+                <thead>
+                    <tr style="background: rgba(249, 115, 22, 0.08); border-left: 3px solid #f97316;">
+                        <th style="text-align: left; padding: 0.6rem 0.8rem; color: #f97316; font-weight: 800; margin-top: 0.75rem;" colspan="2">📦 2. KÖZVETLEN KÖLTSÉGEK (COGS & FULFILLMENT)</th>
+                        <th style="text-align: right; padding: 0.6rem 0.8rem; color: #f97316; font-weight: 800;">ÖSSZEG (HUF)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; color: #cbd5e1;">Érem bekerülési ára (COGS)</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">${totalMedalsSold} db eladott érem gyártása</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount('−', Math.round(totalCogs), '#f87171', false)}
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; color: #cbd5e1;">Csomagolás (doboz, kártya, boríték)</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">${targetOrders.length} db csomag × 150 Ft</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount('−', packagingCost, '#f87171', false)}
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; color: #cbd5e1;">Szállítás (Foxpost automata & Házhoz)</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">${foxpostCount} automata (~1 140 Ft) + ${homeShippingCount} házhoz (~2 400 Ft)</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount('−', shippingCost, '#f87171', false)}
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; color: #cbd5e1;">Stripe fizetési jutalék</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">1.5% + 85 Ft / tranzakció (${targetOrders.length} db)</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount('−', stripeFee, '#f87171', false)}
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; color: #cbd5e1;">Számlázz.hu e-számla díj</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">${targetOrders.length} db NAV e-számla × 40 Ft</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount('−', szamlazzFee, '#f87171', false)}
+                        </td>
+                    </tr>
+                    <tr style="background: rgba(249, 115, 22, 0.06); border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.6rem 0.8rem; font-weight: 800; color: #f97316;">= Közvetlen költségek összesen</td>
+                        <td style="padding: 0.6rem 0.8rem; color: #fed7aa; font-size: 0.78rem;">COGS + Teljes Fulfillment</td>
+                        <td style="text-align: right; padding: 0.6rem 0.8rem;">
+                            ${fmtPnlAmount('−', totalDirectCost, '#f97316', true, '1rem')}
+                        </td>
+                    </tr>
+                </tbody>
+
+                <!-- 3. MARKETING -->
+                <thead>
+                    <tr style="background: rgba(239, 68, 68, 0.08); border-left: 3px solid #ef4444;">
+                        <th style="text-align: left; padding: 0.6rem 0.8rem; color: #ef4444; font-weight: 800;" colspan="2">📢 3. MARKETING & HIRDETÉSEK</th>
+                        <th style="text-align: right; padding: 0.6rem 0.8rem; color: #ef4444; font-weight: 800;">ÖSSZEG (HUF)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; color: #cbd5e1;">Meta Ads hirdetési költés (Nettó)</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">Kreatívok és hirdetéssorozatok összköltése</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount('−', metaSpendNet, '#f87171', false)}
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; color: #cbd5e1;">Meta Ads 27% ÁFA (Fordított adózás)</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">NAV ÁFA bevallási kötelezettség (27%)</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount('−', metaVat, '#f87171', false)}
+                        </td>
+                    </tr>
+                    <tr style="background: rgba(239, 68, 68, 0.06); border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.6rem 0.8rem; font-weight: 800; color: #ef4444;">= Marketing költség összesen</td>
+                        <td style="padding: 0.6rem 0.8rem; color: #fca5a5; font-size: 0.78rem;">Meta Ads költés + 27% ÁFA</td>
+                        <td style="text-align: right; padding: 0.6rem 0.8rem;">
+                            ${fmtPnlAmount('−', totalMarketing, '#ef4444', true, '1rem')}
+                        </td>
+                    </tr>
+                </tbody>
+
+                <!-- 4. EREDMÉNY -->
+                <thead>
+                    <tr style="background: rgba(251, 191, 36, 0.12); border-left: 3px solid #fbbf24;">
+                        <th style="text-align: left; padding: 0.6rem 0.8rem; color: #fbbf24; font-weight: 800;" colspan="2">🏆 4. HOZZÁJÁRULÁSI EREDMÉNY (CONTRIBUTION MARGIN)</th>
+                        <th style="text-align: right; padding: 0.6rem 0.8rem; color: #fbbf24; font-weight: 800;">EREDMÉNY (HUF)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                        <td style="padding: 0.5rem 0.8rem; font-weight: 700; color: #fff;">Hozzájárulási eredmény (ÁFA előtt)</td>
+                        <td style="padding: 0.5rem 0.8rem; color: var(--text-mid); font-size: 0.78rem;">Árbevétel − COGS − Fulfillment − Meta költés nettó</td>
+                        <td style="text-align: right; padding: 0.5rem 0.8rem;">
+                            ${fmtPnlAmount(cmBeforeVat >= 0 ? '+' : '−', cmBeforeVat, cmBeforeVat >= 0 ? '#4ade80' : '#f87171', true, '0.95rem')}
+                        </td>
+                    </tr>
+                    <tr style="background: linear-gradient(90deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%);">
+                        <td style="padding: 0.75rem 0.8rem; font-weight: 900; color: #fbbf24; font-size: 1rem;">= Hozzájárulási eredmény (ÁFA után / Profit)</td>
+                        <td style="padding: 0.75rem 0.8rem; color: #fef08a; font-size: 0.78rem;">Árrés: <strong>${profitMarginPct}%</strong> | Teljes adózott fedezet</td>
+                        <td style="text-align: right; padding: 0.75rem 0.8rem;">
+                            ${fmtPnlAmount(isCmPos ? '+' : '−', cmAfterVat, cmColor, true, '1.25rem')}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Inventory Stock Table Card -->
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+                <div>
+                    <h3 style="font-size: 1.05rem; font-weight: 800; color: #c4ff00; margin: 0;">📦 Készlet & Raktárérték Kimutatás</h3>
+                    <div style="font-size: 0.78rem; color: var(--text-mid); margin-top: 0.2rem;">Fizikailag legyártott érmek, jelenlegi készlet és felszabadítható potenciális árbevétel.</div>
+                </div>
+                <span class="fin-badge" style="background: rgba(196, 255, 0, 0.15); color: #c4ff00; border: 1px solid rgba(196, 255, 0, 0.35);">
+                    ${totalLeft} db érem készleten
+                </span>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Termék / Kihívás</th>
+                        <th style="text-align:center;">Eladva</th>
+                        <th style="text-align:center;">Maradt (Készlet)</th>
+                        <th style="text-align:right;">Bekerülési érték</th>
+                        <th style="text-align:right;">Potenciális árbevétel (7 990 Ft/db)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight: 700; color: #fff;">
+                            ⭐ Nagy-Kevély csillagai
+                        </td>
+                        <td style="text-align:center; font-family: monospace; font-weight: 700; color: #38bdf8;">${pilisSold} db</td>
+                        <td style="text-align:center; font-family: monospace; font-weight: 800; color: #c4ff00;">${pilisLeft} db</td>
+                        <td style="text-align:right;">${fmtPnlAmount('', pilisCostVal, 'var(--text-mid)', false, '0.88rem')}</td>
+                        <td style="text-align:right;">${fmtPnlAmount('', pilisPotRev, '#4ade80', true, '0.88rem')}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 700; color: #fff;">
+                            🏔️ Prédikálószék Vertical
+                        </td>
+                        <td style="text-align:center; font-family: monospace; font-weight: 700; color: #38bdf8;">${predikaloSold} db</td>
+                        <td style="text-align:center; font-family: monospace; font-weight: 800; color: #c4ff00;">${predikaloLeft} db</td>
+                        <td style="text-align:right;">${fmtPnlAmount('', predikaloCostVal, 'var(--text-mid)', false, '0.88rem')}</td>
+                        <td style="text-align:right;">${fmtPnlAmount('', predikaloPotRev, '#4ade80', true, '0.88rem')}</td>
+                    </tr>
+                    <tr style="background: rgba(196, 255, 0, 0.05); font-weight: 800;">
+                        <td style="color: #c4ff00; font-size: 0.95rem;">
+                            📦 ÖSSZESEN
+                        </td>
+                        <td style="text-align:center; font-family: monospace; color: #38bdf8; font-size: 1rem;">${pilisSold + predikaloSold} db</td>
+                        <td style="text-align:center; font-family: monospace; color: #c4ff00; font-size: 1rem;">${totalLeft} db</td>
+                        <td style="text-align:right;">${fmtPnlAmount('', totalCostVal, '#fff', true, '0.95rem')}</td>
+                        <td style="text-align:right;">${fmtPnlAmount('', totalPotRev, '#c4ff00', true, '1.15rem')}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
 
 // ===== CASHFLOW & INVENTORY ASSET TIMELINE ENGINE =====
 let timelinePeriod = 'all'; // 'all', '30d', '7d', '2026-09', '2026-08', '2026-07', '2026-06', '2026-05'
@@ -987,10 +1462,10 @@ function renderCashflowTimelineSection(revolutTxs, stripeTxs, orders) {
                     <div style="font-size: 0.7rem; color: var(--text-mid); margin-top: 0.15rem;">Stripe + Revolut kasszaállás</div>
                 </div>
 
-                <div class="timeline-kpi-item">
-                    <div class="timeline-kpi-label">📦 Raktárkészlet Értéke</div>
+                <div class="timeline-kpi-item" style="border-left: 3px solid #a3e635;">
+                    <div class="timeline-kpi-label" style="color: #a3e635;">📦 Készletek Összesen</div>
                     <div class="timeline-kpi-val" style="color: #a3e635;">${fmt(stats.currentInventoryValue)}</div>
-                    <div style="font-size: 0.7rem; color: var(--text-mid); margin-top: 0.15rem;">
+                    <div style="font-size: 0.72rem; color: #d9f99d; margin-top: 0.15rem;">
                         <strong>${stats.currentInventoryQty} db</strong> érem raktáron
                     </div>
                 </div>

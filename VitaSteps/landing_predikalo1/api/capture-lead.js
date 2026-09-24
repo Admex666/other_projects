@@ -116,10 +116,12 @@ module.exports = async (req, res) => {
             let emailHtml = '';
 
             if (fs.existsSync(templatePath)) {
+                const unsubUrl = `${baseUrl}/api/unsubscribe?email=${encodeURIComponent(cleanEmail)}`;
                 emailHtml = fs.readFileSync(templatePath, 'utf8')
                     .replace(/\{\{NAME\}\}/g, cleanName)
                     .replace(/\{\{UNLOCK_URL\}\}/g, unlockUrl)
-                    .replace(/\{\{KALANDKONYV_URL\}\}/g, kalandkonyvUrl);
+                    .replace(/\{\{KALANDKONYV_URL\}\}/g, kalandkonyvUrl)
+                    .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
             } else {
                 console.warn('Template file not found at:', templatePath);
                 emailHtml = `<p>Kedves ${cleanName}!<br>Itt éred el a Kalandkönyvet és a túraútvonalakat: <a href="${unlockUrl}">Megnyitás</a></p>`;

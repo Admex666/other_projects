@@ -2,6 +2,7 @@
 Tests for Dual Auth & Role-Based Access Control (Master Planner vs. Advisor Workspace)
 Validates login redirection, /hub launcher, /advisor route protection, and admin role management.
 """
+import os
 import uuid
 import pytest
 from fastapi.testclient import TestClient
@@ -123,8 +124,10 @@ def test_admin_update_user_role():
 
 def test_adam_admin_account_and_hub_visibility(client):
     """Verify adam login, admin role, and admin card visibility exclusively for admin users."""
-    # 1. Login with adam / ov2026admin
-    login_res = client.post("/login", data={"username": "adam", "password": "ov2026admin"})
+    from app.core.auth import FALLBACK_USERS
+    adam_password = FALLBACK_USERS.get("adam", os.getenv("ADMIN_PASSWORD", "admin_fallback"))
+    # 1. Login with adam credentials
+    login_res = client.post("/login", data={"username": "adam", "password": adam_password})
     assert login_res.status_code == 303
     assert login_res.headers["location"] == "/hub"
 

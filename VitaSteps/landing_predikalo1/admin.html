@@ -233,6 +233,7 @@
             <button class="filter-tab" onclick="setFilter('logistics')" id="tab-logistics" style="margin-left: auto; border: 1px solid rgba(249, 115, 22, 0.4); color: #f97316;">🦊 Logisztika & Csomagolás</button>
             <button class="filter-tab" onclick="setFilter('marketing')" id="tab-marketing" style="border: 1px solid rgba(196, 255, 0, 0.4); color: #c4ff00;">📊 Marketing</button>
             <button class="filter-tab" onclick="setFilter('finance')" id="tab-finance" style="border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8;">💳 Pénzügy & Cashflow</button>
+            <button class="filter-tab" onclick="setFilter('emails')" id="tab-emails" style="border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc;">📧 Hírlevelek & Leadek</button>
         </div>
 
         <!-- Lista és Logisztika Konténer -->
@@ -336,6 +337,23 @@
                 <div class="empty-state"><span class="loading-spinner"></span><div style="margin-top:0.5rem">Pénzügyi adatok betöltése...</div></div>
             </div>
         </div>
+
+        <!-- HÍRLEVELEK & LEAD KAMPÁNYOK SCREEN -->
+        <div id="section-emails" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin: 0;">📧 Hírlevelek & Lead Kampányok</h2>
+                    <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.2rem;">Közvetlen e-mail kiküldés a még nem konvertált és nem leiratkozott meleg érdeklődőknek.</div>
+                </div>
+                <button class="btn btn-grey" style="width: auto; padding: 0.45rem 0.85rem; font-size: 0.82rem;" onclick="loadEmails()">
+                    🔄 Frissítés
+                </button>
+            </div>
+
+            <div id="emails-content">
+                <div class="empty-state"><span class="loading-spinner"></span><div style="margin-top:0.5rem">Leadek és sablonok betöltése...</div></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -354,6 +372,7 @@
 <script src="js/admin-logistics.js"></script>
 <script src="js/admin-marketing.js"></script>
 <script src="js/admin-finance.js"></script>
+<script src="js/admin-emails.js"></script>
 
 </body>
 </html>

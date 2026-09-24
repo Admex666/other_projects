@@ -27,7 +27,10 @@ const PORTAL_BASE = 'https://vitasteps.vercel.app/portal.html';
 const MARKETING_BASE = 'https://vitasteps.vercel.app/nagykevely/index.html';
 
 // ── Load email template ───────────────────────────────────────────────────────
-const templatePath = path.join(__dirname, '../email_promo_referral_template.html');
+let templatePath = path.join(__dirname, '../email_templates/promo_referral.html');
+if (!fs.existsSync(templatePath)) {
+    templatePath = path.join(process.cwd(), 'email_templates/promo_referral.html');
+}
 const templateHtml = fs.readFileSync(templatePath, 'utf8');
 
 // ── Nodemailer transport ──────────────────────────────────────────────────────

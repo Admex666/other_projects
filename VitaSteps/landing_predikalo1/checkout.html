@@ -615,7 +615,7 @@
             const emailEl = document.getElementById('cust-email');
             const email = emailEl ? emailEl.value.trim() : '';
             try {
-                const res = await fetch(`/api/check-referral-discount?email=${encodeURIComponent(email)}&qty=${qty}&referredBy=${encodeURIComponent(referredBy)}&campaign=${encodeURIComponent(campaignKey)}`);
+                const res = await fetch(`/api/check-limit?action=check-referral&email=${encodeURIComponent(email)}&qty=${qty}&referredBy=${encodeURIComponent(referredBy)}&campaign=${encodeURIComponent(campaignKey)}`);
                 if (res.ok) {
                     activeDiscountData = await res.json();
                 }

@@ -6,7 +6,7 @@ status: active
 description: Operational runbook for packaging medals using the admin packing guide and Foxpost bulk API.
 code:
   - landing_predikalo1/admin.html
-  - landing_predikalo1/api/create-foxpost-parcels.js
+  - landing_predikalo1/api/admin-data.js
 related:
   - "[[order-fulfillment|Order Fulfillment]]"
   - "[[foxpost]]"

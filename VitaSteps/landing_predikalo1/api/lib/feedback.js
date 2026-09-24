@@ -3,17 +3,12 @@ const fs = require('fs');
 const path = require('path');
 const nodemailer = require('nodemailer');
 
-// Initialize Supabase Client
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabase = createClient(
+    process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co',
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
-module.exports = async (req, res) => {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-    }
-
-    // Authenticate user via authorization header
+async function handleFeedbackSubmission(req, res) {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         return res.status(401).json({ error: 'No authorization header provided.' });
@@ -46,8 +41,6 @@ module.exports = async (req, res) => {
             photo_url
         } = req.body;
 
-        console.log(`Received feedback submission from ${email} for run ${run_id}...`);
-
         if (!run_id) {
             return res.status(400).json({ error: 'Missing run_id.' });
         }
@@ -61,7 +54,6 @@ module.exports = async (req, res) => {
         if (checkError) throw checkError;
 
         if (existingFeedback) {
-            console.log(`Feedback for run ${run_id} already exists. Skipping duplicate write.`);
             return res.status(200).json({ success: true, message: 'Feedback already submitted.' });
         }
 
@@ -81,24 +73,17 @@ module.exports = async (req, res) => {
                 photo_url: photo_url || null
             });
 
-        if (dbError) {
-            throw dbError;
-        }
+        if (dbError) throw dbError;
 
-        // Fetch run details to find first name and campaign
-        const { data: runData, error: runErr } = await supabase
+        // Fetch run details
+        const { data: runData } = await supabase
             .from('runs')
             .select('*, runners(*)')
             .eq('id', run_id)
             .maybeSingle();
 
-        if (runErr) {
-            console.error("Error fetching run details for feedback email:", runErr);
-        }
-
         const runnerName = runData?.name || runData?.runners?.name || 'Futó Partner';
         const parts = runnerName.trim().split(/\s+/);
-        // Hungarian naming convention: first name is usually the last word (e.g. Jakus Ádám -> Ádám)
         const firstName = parts.pop() || runnerName;
         const campaign = runData?.campaign || 'predikaloszek';
 
@@ -107,16 +92,16 @@ module.exports = async (req, res) => {
         const smtpPassword = process.env.SMTP_PASSWORD;
 
         if (npsVal >= 9 && smtpPassword && campaign !== 'pilis') {
-            console.log(`User ${email} is a promoter (NPS ${npsVal}). Sending referral email...`);
-            
             const isPilis = campaign === 'pilis';
             const portalLink = `https://vitastepsss.vercel.app/portal.html?email=${encodeURIComponent(email)}`;
             const refLink = isPilis
                 ? `https://vitastepsss.vercel.app/nagykevely/checkout-widget.html?ref=${encodeURIComponent(email)}`
                 : `https://vitastepsss.vercel.app/checkout-widget.html?ref=${encodeURIComponent(email)}`;
 
-            // Load email_referral_template.html
-            const templatePath = path.join(process.cwd(), 'email_referral_template.html');
+            let templatePath = path.join(__dirname, '../email_templates/referral_promoter.html');
+            if (!fs.existsSync(templatePath)) {
+                templatePath = path.join(process.cwd(), 'email_templates/referral_promoter.html');
+            }
             if (fs.existsSync(templatePath)) {
                 let html = fs.readFileSync(templatePath, 'utf8');
                 html = html.replace(/{{FIRST_NAME}}/g, firstName);
@@ -130,17 +115,12 @@ module.exports = async (req, res) => {
                     auth: { user: 'vitasteps.team@gmail.com', pass: smtpPassword }
                 });
 
-                const mailOptions = {
+                await transporter.sendMail({
                     from: 'VitaSteps <vitasteps.team@gmail.com>',
                     to: email,
                     subject: '🎁 10% kedvezmény a barátaidnak, ingyenes nevezés Neked!',
                     html: html
-                };
-
-                await transporter.sendMail(mailOptions);
-                console.log(`Referral email successfully sent to ${email}`);
-            } else {
-                console.error(`Referral template not found at path: ${templatePath}`);
+                });
             }
         }
 
@@ -149,4 +129,8 @@ module.exports = async (req, res) => {
         console.error('Submit feedback error:', err);
         return res.status(500).json({ error: err.message });
     }
+}
+
+module.exports = {
+    handleFeedbackSubmission
 };

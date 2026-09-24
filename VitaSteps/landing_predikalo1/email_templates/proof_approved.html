@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sikeres teljesítés jóváhagyva – VitaSteps</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0b0f19;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      color: #ffffff;
+    }
+    .wrapper {
+      width: 100%;
+      background: #0b0f19;
+      padding: 30px 0 40px;
+    }
+    .main {
+      background: #121824;
+      margin: 0 auto;
+      max-width: 600px;
+      border-radius: 12px;
+      border: 1px solid rgba(196, 255, 0, 0.2);
+      overflow: hidden;
+      text-align: left;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .header {
+      padding: 35px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, #161f33 0%, #121824 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .logo {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      margin: 0;
+      color: #ffffff;
+    }
+    .logo span {
+      color: #c4ff00;
+    }
+    .content {
+      padding: 35px 30px;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 22px;
+      color: #c4ff00;
+      margin-top: 0;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    p {
+      font-size: 15px;
+      color: #f1f5f9;
+      margin: 0 0 15px;
+    }
+    .card-box {
+      background: #0b0f19;
+      border: 1px solid rgba(196, 255, 0, 0.25);
+      border-radius: 10px;
+      padding: 24px;
+      margin: 25px 0;
+      text-align: center;
+    }
+    .btn {
+      background: #c4ff00;
+      color: #0b0f19 !important;
+      padding: 14px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      display: inline-block;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 15px rgba(196, 255, 0, 0.25);
+    }
+    .sub-link {
+      display: inline-block;
+      color: #38bdf8;
+      text-decoration: underline;
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: 6px;
+    }
+    .footer {
+      padding: 25px 30px;
+      background: #080b12;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center">
+          <div class="main">
+            <div class="header">
+              <div class="logo">VITA<span>STEPS</span></div>
+            </div>
+            
+            <div class="content">
+              <h1>🏆 Szuper teljesítés!</h1>
+              <p>Kedves <strong>{{RUNNER_NAME}}</strong>,</p>
+              <p>Gratulálunk! Az adminisztrátorunk ellenőrizte és <strong>jóváhagyta</strong> a beküldött igazolásodat a <strong>{{CAMPAIGN_NAME}}</strong> kihíváson! 🎉</p>
+              <p>Hatalmas gratuláció a sikeres teljesítésedhez! {{SHIPPING_TEXT}}</p>
+              
+              <div class="card-box">
+                <p style="margin-top: 0; color: #ffffff; font-weight: 600;">Töltsd le a személyre szabott okleveledet, vagy oszd meg a visszajelzésedet a portálon:</p>
+                <a href="{{PORTAL_LINK}}" class="btn">Belépés a Portálra</a>
+                <br>
+                <a href="{{OKLEVEL_LINK}}" target="_blank" class="sub-link">📜 Közvetlen digitális oklevél megnyitása &rarr;</a>
+              </div>
+              
+              <p style="font-size: 14px; color: #94a3b8; margin-top: 25px;">
+                További szép napot és jó sportolást kívánunk!<br>
+                <strong style="color: #ffffff;">A VitaSteps csapata</strong>
+              </p>
+            </div>
+            
+            <div class="footer">
+              VitaSteps – Alakítsd élménnyé és emlékké a lépéseidet!
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>

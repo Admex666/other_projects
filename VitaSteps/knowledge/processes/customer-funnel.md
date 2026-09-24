@@ -14,7 +14,7 @@ code:
   - landing_predikalo1/portal.html
   - landing_predikalo1/api/submit-proof.js
   - landing_predikalo1/admin.html
-  - landing_predikalo1/api/admin-approve.js
+  - landing_predikalo1/api/admin-data.js
 related:
   - "[[meta-ads|Meta Ads]]"
   - "[[checkout-pipeline|Checkout Pipeline]]"

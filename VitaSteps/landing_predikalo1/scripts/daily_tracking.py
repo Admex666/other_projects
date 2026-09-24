@@ -117,7 +117,9 @@ def send_feedback_email(name, email, campaign):
             campaign_name = campaign
 
     # Load template
-    template_path = os.path.join(SCRIPT_DIR, "..", "email_feedback_template.html")
+    template_path = os.path.join(SCRIPT_DIR, "..", "email_templates", "feedback_request.html")
+    if not os.path.exists(template_path):
+        template_path = os.path.join(SCRIPT_DIR, "..", "email_feedback_template.html")
     if os.path.exists(template_path):
         with open(template_path, "r", encoding="utf-8") as f:
             html = f.read()

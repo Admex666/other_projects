@@ -9,7 +9,7 @@ source:
   ref: supabase.public.runs
 code:
   - landing_predikalo1/api/process-payment.js
-  - landing_predikalo1/api/admin-approve.js
+  - landing_predikalo1/api/admin-data.js
   - landing_predikalo1/portal.html
   - landing_predikalo1/admin.html
 related:

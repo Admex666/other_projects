@@ -1,12 +1,13 @@
+import os
 import secrets
 from fastapi import Request
 from typing import Optional, Dict
 
 # Alapértelmezett vészhelyzeti fiókok (Csak ha az adatbázis teljesen offline)
 FALLBACK_USERS: Dict[str, str] = {
-    "admin": "optivoya2024",
-    "adam": "ov2026admin",
-    "bean": "bean"
+    "admin": os.getenv("ADMIN_PASSWORD", os.getenv("LEGACY_ADMIN_PASSWORD", "admin_fallback")),
+    "adam": os.getenv("ADMIN_PASSWORD", "admin_fallback"),
+    "bean": os.getenv("FALLBACK_ADVISOR_PASSWORD", "bean")
 }
 USERS = FALLBACK_USERS
 
@@ -38,14 +39,11 @@ def get_current_user(request: Request) -> Optional[str]:
 def get_user_role(username: Optional[str]) -> str:
     """
     Visszaadja a felhasználó szerepkörét ('advisor', 'admin', 'planner', stb.).
+    Elsődlegesen a Supabase adatbázisból kérdezi le.
     """
     if not username:
         return "guest"
     u = username.strip().lower()
-    if u in ("admin", "adam"):
-        return "admin"
-    if u == "bean":
-        return "advisor"
     try:
         from app.services.user_service import get_user_by_username
         user_record = get_user_by_username(username)
@@ -53,17 +51,19 @@ def get_user_role(username: Optional[str]) -> str:
             return str(user_record.get("role")).strip().lower()
     except Exception:
         pass
-    return "admin" if u in ("admin", "adam") else ("advisor" if u in FALLBACK_USERS else "planner")
+    # Offline fallback ha az adatbázis nem elérhető
+    if u in ("admin", "adam"):
+        return "admin"
+    if u in FALLBACK_USERS:
+        return "advisor"
+    return "planner"
 
 def is_admin_user(username: Optional[str]) -> bool:
     """
-    Ellenőrzi, hogy a felhasználó rendszeradminisztrátori jogosultsággal rendelkezik-e.
+    Ellenőrzi, hogy a felhasználó rendszeradminisztrátori jogosultsággal rendelkezik-e (Supabase alapján).
     """
     if not username:
         return False
-    u = username.strip().lower()
-    if u in ("admin", "adam"):
-        return True
     return get_user_role(username) == "admin"
 
 def is_advisor_user(username: Optional[str]) -> bool:
@@ -72,11 +72,7 @@ def is_advisor_user(username: Optional[str]) -> bool:
     """
     if not username:
         return False
-    u = username.strip().lower()
-    if u in ("admin", "adam", "bean"):
-        return True
-    role = get_user_role(username)
-    return role in ("advisor", "admin")
+    return get_user_role(username) in ("advisor", "admin")
 
 
 def is_dummy_mode_allowed(username: Optional[str]) -> bool:

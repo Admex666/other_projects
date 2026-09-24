@@ -1,11 +1,7 @@
 const { createClient } = require('@supabase/supabase-js');
-const campaigns = require('../config/campaigns.json');
+const campaigns = require('../../config/campaigns.json');
 
-module.exports = async (req, res) => {
-    if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-    }
-
+async function handleReferralDiscountCheck(req, res) {
     try {
         const email = (req.query.email || '').trim().toLowerCase();
         const qty = parseInt(req.query.qty || '1', 10);
@@ -79,4 +75,8 @@ module.exports = async (req, res) => {
         console.error('Error checking referral discount:', err);
         return res.status(500).json({ error: err.message });
     }
+}
+
+module.exports = {
+    handleReferralDiscountCheck
 };

@@ -30,6 +30,9 @@ The second official challenge of VitaSteps, launched in July 2026.
 * **Options:** 4 modular distances (6 km, 10 km, 15 km, 25 km félmaraton).
 * **Serial Prefix:** `#XXX/100-PK` (e.g. `#001/100-PK`).
 * **Medal Inventory:** 100 limited medals.
+* **Timeline Policy:**
+  - **Registration Deadline:** 2026. szeptember 27. (vasárnap 23:59).
+  - **Completion Window:** Bármikor, időkorlát nélkül (nincs lejárati idő, rugalmas vagy visszamenőleges teljesítés is elfogadott).
 * **Special Features:** 
   - Free printed/PDF **Kalandkönyv** (`nagykevely/kalandkonyv.html`) with astronomical star map, local history, and interactive POIs.
   - Delivery dispatch timeline: August 25, 2026 onward.

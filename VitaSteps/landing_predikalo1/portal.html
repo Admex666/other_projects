@@ -1952,7 +1952,7 @@
                 // 2. Submit to backend API route (Vercel serverless function)
                 const { data: { session } } = await supabaseClient.auth.getSession();
 
-                const response = await fetch('/api/submit-feedback', {
+                const response = await fetch('/api/submit-proof?type=feedback', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

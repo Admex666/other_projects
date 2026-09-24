@@ -19,10 +19,11 @@ related:
 Számlázz.hu automatically issues NAV-compliant electronic PDF invoices for every paid order.
 
 ## Integration Workflow
-* Executed inside `api/process-payment.js` via the Számlázz.hu Agent XML API.
-* **Line Items:**
-  - Challenge entry (e.g. `Prédikálószék Vertical Nevezési díj`, `Nagy-Kevély csillagai Nevezési díj`).
-  - Home delivery fee (if selected).
-  - Referral discount credit (if applied).
+* Executed inside `api/process-payment.js` and `api/stripe-webhook.js` via the Számlázz.hu Agent XML API (`https://www.szamlazz.hu/szamla/`).
+* **Line Items (Egységes Tételmegnevezések):**
+  - Nagy-Kevély érem: `Nagy-Kevély csillagai érem`
+  - Prédikálószék érem: `Prédikálószék érem`
+  - Házhozszállítás: `Házhozszállítás (Magyar Posta)` (1 200 Ft)
+  - Stripe dinamikus kedvezmények: A Stripe Checkout session pontos tételsorából (`stripeItems`) olvassa be a végső fizetett összeget, így az ajánlói és kupon kedvezmények cent / forint pontosan, AAM adókulccsal kerülnek a számlára.
 * **Delivery:** Invoice PDF is stored on Számlázz.hu and emailed directly to the buyer's billing email.
 * **Database Tracking:** The generated `invoice_number` is saved in `orders.invoice_number`.

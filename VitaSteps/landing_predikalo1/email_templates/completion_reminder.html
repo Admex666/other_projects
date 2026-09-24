@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="hu">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VitaSteps – Szállítási adatok megadása</title>
+  <title>VitaSteps – Teljesítés visszaigazolás</title>
   <style>
     body {
       margin: 0;
@@ -13,13 +12,11 @@
       font-family: 'Helvetica Neue', Arial, sans-serif;
       color: #fff;
     }
-
     .wrapper {
       width: 100%;
       background: #0b0f19;
       padding-bottom: 40px;
     }
-
     .main {
       background: #121824;
       margin: 0 auto;
@@ -27,55 +24,46 @@
       border-radius: 12px;
       border: 1px solid rgba(196, 255, 0, 0.15);
     }
-
     .header {
       padding: 40px 20px;
       text-align: center;
       background: linear-gradient(180deg, #161f33 0%, #121824 100%);
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
-
     .logo {
       font-size: 24px;
       font-weight: 900;
       letter-spacing: 4px;
       margin: 0;
     }
-
     .logo span {
       color: #c4ff00;
     }
-
     .content {
       padding: 40px 30px;
     }
-
     h1 {
       font-size: 22px;
       margin-top: 0;
       margin-bottom: 20px;
     }
-
     h2 {
       font-size: 18px;
       color: #c4ff00;
       margin-top: 30px;
       margin-bottom: 10px;
     }
-
     p {
       font-size: 15px;
       line-height: 1.6;
       color: #f1f5f9;
       margin: 0 0 15px;
     }
-
     .highlight {
       color: #c4ff00;
       font-weight: bold;
     }
-
-    .info-box {
+    .stat-box {
       background: rgba(196, 255, 0, 0.06);
       border: 1px solid rgba(196, 255, 0, 0.2);
       border-radius: 8px;
@@ -83,27 +71,23 @@
       margin: 20px 0;
       text-align: center;
     }
-
-    .info-title {
-      font-size: 1.2rem;
+    .stat-km {
+      font-size: 3rem;
       font-weight: 900;
       color: #c4ff00;
-      line-height: 1.2;
+      line-height: 1;
     }
-
-    .info-label {
+    .stat-label {
       font-size: 0.85rem;
       color: #7a8aa0;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      margin-top: 6px;
+      margin-top: 4px;
     }
-
     .cta-container {
       text-align: center;
       padding: 25px 0;
     }
-
     .btn {
       background: #c4ff00;
       color: #000 !important;
@@ -114,18 +98,15 @@
       border-radius: 8px;
       display: inline-block;
     }
-
     .divider {
       border: none;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
       margin: 30px 0;
     }
-
     .footer {
       padding: 30px 20px;
       text-align: center;
     }
-
     .footer p {
       font-size: 11px;
       color: #5d6b82;
@@ -133,7 +114,6 @@
     }
   </style>
 </head>
-
 <body>
   <center class="wrapper">
     <table class="main" width="100%">
@@ -144,55 +124,43 @@
       </tr>
       <tr>
         <td class="content">
-          <h1>Kedves {{FIRST_NAME}}!</h1>
-          <p>Köszönjük, hogy csatlakoztál a <span class="highlight">Prédikálószék Vertical kihíváshoz</span>!</p>
+          <h1>Gratulálunk, {{FIRST_NAME}}! 🎉</h1>
+          <p>Sikeresen teljesítetted a <span class="highlight">Prédikálószék Vertical kihívást</span>!</p>
 
-          <div class="info-box">
-            <div class="info-title">A csúcs hódítása folyamatban van ⛰️</div>
-            <div class="info-label">Teljesítés vége: 2026. június 30.</div>
+          <div class="stat-box">
+            <div class="stat-km">{{KM_DISPLAY}}</div>
+            <div class="stat-label">Teljesített távolság</div>
           </div>
 
-          <p>Mivel a kihívás teljesítési határideje (2026. június 30.) <strong>már lejárt</strong>, átnézzük, hogy
-            mindenki megkapta-e az <span class="highlight">érmet, amit megérdemel</span>.</p>
-
-          <p>Rendszerünkben jelenleg <strong>nem szerepel sem igazolás a teljesítésedről, sem szállítási cím</strong> a
-            részedről, ezért kerestünk meg ezzel a rövid üzenettel.</p>
+          <p>Örülünk, hogy a közösségünk részévé váltál, és így a büszkeségfalunkra is felkerültél! 🏆</p>
 
           <hr class="divider">
 
-          <h2>📋 Tudnál segíteni egy kérdésben?</h2>
-
-          <p>Kérünk, jelezd nekünk, hogy mi a helyzet:</p>
-
-          <ul style="color: #f1f5f9; font-size: 15px; line-height: 2; padding-left: 20px; margin: 0 0 20px;">
-            <li>✅ Már <strong>teljesítettem</strong> a túrát, és szeretnék érmet kapni</li>
-            <li>⏳ Még <strong>nem teljesítettem</strong>, de szeretném majd</li>
-            <li>❌ Nem tervezem teljesíteni (lemondok az éremről)</li>
-          </ul>
-
-          <p>Ha teljesítetted a kihívást és szeretnél érmet kapni, kérjük, tedd meg az alábbi két lépést:</p>
-
-          <h2>1️⃣ Igazold a teljesítésedet</h2>
-          <p>Töltsd fel a GPS adataidat, egy Strava/Garmin linket, vagy egy csúcson készült selfiet az alábbi űrlapon:
-          </p>
-
-          <div class="cta-container">
-            <a href="{{COMPLETION_LINK}}" class="btn" target="_blank">✅ Teljesítés igazolása</a>
-          </div>
-
           <!-- STEP_SHIPPING_START -->
-          <h2 style="margin-top: 30px;">2️⃣ Add meg a szállítási adataidat</h2>
-          <p>Válassz egy <strong>hozzád közeli Foxpost automatát</strong>, vagy add meg a házhozszállítási címed:</p>
+          <h2>📦 1. lépés – Szállítási adatok</h2>
+          <p>Kattints az alábbi gombra, ahol kiválaszthatod a <strong>érmed szállítási címét</strong>.
 
           <div class="cta-container">
-            <a href="{{TALLY_LINK}}" class="btn" style="background: #fff; color: #000;" target="_blank">📦 Szállítási cím megadása</a>
+            <a href="{{TALLY_LINK}}" class="btn" target="_blank">📦 Szállítási cím megadása</a>
           </div>
           <!-- STEP_SHIPPING_END -->
 
           <hr class="divider">
 
-          <p>Ha bármilyen kérdésed van, vagy csak jelezni szeretnéd a szándékaidat, nyugodtan válaszolj erre az emailre.
+          <!-- STEP_DELIVERY_HAS_ADDRESS_START -->
+          <h2>📬 2. lépés – Az érem már úton lesz hozzád!</h2>
+          <p>Mivel a szállítási adataidat már korábban megkaptuk, hamarosan elküldjük a <strong>Prédikálószék érmedet</strong> a
+            megadott címre. Az érmet <strong>várhatóan 1-3 munkanapon belül</strong> feladjuk.
           </p>
+          <!-- STEP_DELIVERY_HAS_ADDRESS_END -->
+          <!-- STEP_DELIVERY_NO_ADDRESS_START -->
+          <h2>📬 2. lépés – Az érem úton lesz hozzád</h2>
+          <p>Amint megkaptuk a szállítási adataidat, elküldjük a <strong>Prédikálószék érmedet</strong> a
+            megadott címre. Az érmet <strong>várhatóan 1-3 munkanapon belül</strong> feladjuk.
+          </p>
+          <!-- STEP_DELIVERY_NO_ADDRESS_END -->
+
+          <p>Ha bármilyen kérdésed van, nyugodtan válaszolj erre az emailre.</p>
           <p style="margin-top:30px;">Üdvözlettel,<br><strong>A VitaSteps Csapata</strong></p>
         </td>
       </tr>
@@ -204,5 +172,4 @@
     </table>
   </center>
 </body>
-
 </html>

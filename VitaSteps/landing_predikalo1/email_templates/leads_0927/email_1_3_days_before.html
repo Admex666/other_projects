@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Szerezd meg a Nagy-Kevély Érmedet! – VitaSteps</title>
+  <title>Megvan már, mikor mész a Nagy-Kevélyre? – VitaSteps</title>
   <style>
     body {
       margin: 0;
@@ -118,6 +118,41 @@
       margin-bottom: 0;
     }
 
+    .promo-card {
+      background: linear-gradient(145deg, rgba(18, 24, 36, 0.95) 0%, rgba(13, 19, 31, 0.95) 100%);
+      border: 1px solid rgba(196, 255, 0, 0.25);
+      border-radius: 10px;
+      padding: 22px 20px;
+      margin: 25px 0;
+    }
+
+    .promo-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #c4ff00;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 0 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rewards-list {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 14px 18px 14px 34px;
+      margin: 12px 0 12px;
+      color: #f1f5f9;
+      font-size: 14.5px;
+      line-height: 1.75;
+    }
+
+    .rewards-list li strong {
+      color: #c4ff00;
+    }
+
     .action-box {
       background: #0d131f;
       border: 1px solid rgba(196, 255, 0, 0.15);
@@ -196,46 +231,76 @@
       <tr>
         <td class="content">
           <h2>Szia {{NAME}}! 👋</h2>
-          
+
           <p>
-            Ha már letöltötted a túraútvonalakat és a kalandkönyvet, akkor valószínűleg te is azok közé tartozol, akik szeretik, ha egy kalandnak kézzelfogható emléke is marad. 🏅
+            Megvan már, mikor mész a Nagy-Kevélyre? 😊
           </p>
 
-          <div class="urgency-box">
-            <p class="urgency-text">⏳ A jelentkezési határidőig még <u>{{DAYS_LEFT}}</u> van!</p>
-          </div>
-
           <p>
-            És a legfontosabb: <strong>a túrát bármikor később, időkorlát nélkül, a saját tempódban teljesítheted!</strong>
+            Ha már letöltötted a túraútvonalakat, akár most is kinézhetsz egy szimpatikus útvonalat, és teljesítheted a Nagy-Kevély kihívást.
           </p>
 
           <div class="highlight-card">
             <p>
-              🌲 Ha már korábban jártál az útvonalon, azt is elfogadjuk – <strong>visszamenőleg is teljesítheted a kihívást.</strong>
+              🌟 <strong>És egy fontos dolog: nem kell most menned.</strong>
             </p>
             <p>
-              🤝 Ha pedig valami miatt nem pont a meghirdetett módon sikerült teljesítened, írj nekünk nyugodtan: <strong>rugalmasak vagyunk a teljesítések elbírálásában.</strong>
+              Ha korábban már túráztál a Nagy-Kevélyen vagy a környékén, azt is elfogadjuk teljesítésként, így azért is jár az érem. 🏅
             </p>
           </div>
 
-          <p>
-            A lényeg, hogy az érmed tényleg egy olyan emlék legyen, amihez egy <strong>saját történeted kapcsolódik</strong>.
-          </p>
+          <div class="urgency-box">
+            <p class="urgency-text">⏳ A jelentkezés viszont már csak 3 napig, szeptember 27-ig tart!</p>
+          </div>
 
-          <p style="margin-bottom: 10px;">Ha szeretnéd megszerezni:</p>
+          <!-- AKCIÓ BLOKK -->
+          <div class="promo-card">
+            <div class="promo-title">🎁 Kedvezmények a Nevezéshez & Ajánlói Program</div>
+            <p style="font-size: 14.5px; margin-bottom: 12px;">
+              Ráadásul több lehetőséged is van még kedvezőbb áron vagy akár <strong>teljesen ingyen</strong> megszerezni az érmet:
+            </p>
+
+            <p style="font-size: 14.5px; margin-bottom: 6px;">
+              1. 👥 <strong>Többérmes / Páros nevezés:</strong> Ha barátaiddal vagy a családdal indulsz, 2 vagy több érem rendelése esetén a fizetésnél automatikusan érvényesül a kedvezményes csomagár és a közös ingyenes szállítás.
+            </p>
+
+            <p style="font-size: 14.5px; margin-bottom: 6px;">
+              2. 🤝 <strong>Ajánlói Program:</strong> Hívd meg túratársaidat a saját ajánlói linkeddel!
+            </p>
+            <p style="font-size: 14px; color: #cbd5e1; margin-bottom: 6px;">
+              • <strong>A barátod</strong> a linkeden keresztül a fizetéskor <strong style="color: #c4ff00;">10% azonnali kedvezményt</strong> kap a nevezési díjából.<br>
+              • <strong>Te pedig</strong> a meghívott barátaid után egyre nagyobb kedvezményt kapsz <strong>az érmed árából</strong>:
+            </p>
+
+            <ul class="rewards-list">
+              <li>👤 1 barát: <strong>10%</strong> kedvezmény az érmedből</li>
+              <li>👥 2 barát: <strong>25%</strong> kedvezmény az érmedből</li>
+              <li>🏔️ 3 barát: <strong>45%</strong> kedvezmény az érmedből</li>
+              <li>🎯 4 barát: <strong>70%</strong> kedvezmény az érmedből</li>
+              <li>🏆 5 barát: <strong>100% INGYENES</strong> saját érem!</li>
+            </ul>
+
+            <p style="font-size: 12.5px; color: #94a3b8; margin: 0; font-style: italic;">
+              * A meghívói kedvezmény a kosaradban lévő saját érmed árából kerül jóváírásra.
+            </p>
+          </div>
 
           <!-- CTA BUTTON -->
           <div class="action-box">
-            <a href="{{CHECKOUT_URL}}" class="btn">👉 MEGSZERZEM AZ ÉRMEM</a>
+            <a href="{{CHECKOUT_URL}}" class="btn">👉 MEGNÉZEM A KIHÍVÁST</a>
             <p class="deadline-note">
-              Ne hagyd az utolsó pillanatra a nevezést – <strong>{{DEADLINE}}-ig</strong> tudsz regisztrálni.
+              Jelentkezési határidő: <strong>2026. szeptember 27. (vasárnap) éjfél</strong>
             </p>
           </div>
 
+          <p style="font-size: 14.5px; color: #94a3b8;">
+            Ha kérdésed van, nyugodtan válaszolj erre az emailre!
+          </p>
+
           <!-- SIGNATURE -->
           <div class="signature">
-            <p style="margin-bottom: 6px;">Jó túrázást és természetjárást kívánunk!</p>
-            <p style="margin: 0;"><strong style="color: #ffffff;">A VitaSteps Csapata</strong></p>
+            <p style="margin-bottom: 4px;">Baráti üdvözlettel,</p>
+            <p style="margin: 0;"><strong style="color: #ffffff;">Ádám</strong> & A VitaSteps Csapata</p>
           </div>
         </td>
       </tr>
@@ -245,7 +310,7 @@
         <td class="footer">
           <p>
             © 2026 VitaSteps. Minden jog fenntartva.<br>
-            Kérdésed van? Írj nekünk bátran: <a href="mailto:vitasteps.team@gmail.com" style="color: #94a3b8; text-decoration: underline;">vitasteps.team@gmail.com</a>
+            Kérdésed van? Írj nekünk: <a href="mailto:vitasteps.team@gmail.com" style="color: #94a3b8; text-decoration: underline;">vitasteps.team@gmail.com</a>
           </p>
           <p style="margin-top: 10px;">
             <a href="{{UNSUBSCRIBE_URL}}" style="color: #475569; text-decoration: underline; font-size: 11px;">Leiratkozás a hírlevelekről</a>

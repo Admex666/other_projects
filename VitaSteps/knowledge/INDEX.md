@@ -30,7 +30,7 @@ Foundational business and architectural principles.
 * [[verified-challenge|Verified Challenge]]: GPS & photo-based validation mechanics for collectible awards.
 * [[unified-campaign-config|Unified Campaign Config]]: Dynamic, config-driven multi-campaign frontend architecture.
 * [[dynamic-pricing|Dynamic Pricing]]: Entry pricing, quantity tiers, home delivery surcharges.
-* [[referral-program|Referral Program]]: 1 000 Ft coupon discount and referrer reward system.
+* [[referral-program|Referral Program]]: 10% coupon discount and progressive tier reward system.
 
 ---
 
@@ -49,6 +49,7 @@ Core end-to-end operational workflows.
 Integrated technical components and infrastructure.
 
 * [[admin-panel|Admin Panel]]: Web dashboard (`admin.html`) for proofs, shipments, and live analytics.
+* [[email-templates|Email Templates]]: Centralized HTML templates (`landing_predikalo1/email_templates/`) for transactional, auth, and nurturing emails.
 * [[supabase|Supabase]]: PostgreSQL schema, Row-Level Security (RLS) policies, database triggers.
 * [[stripe|Stripe]]: Payment processing, session metadata, webhook-free fulfillment.
 * [[revolut|Revolut Pro]]: Business bank account, expense classification, and cashflow ledger.

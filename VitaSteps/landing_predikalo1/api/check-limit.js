@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
+const { handleReferralDiscountCheck } = require('./lib/referral');
 
 function formatDistanceLabel(distanceKm, campaign) {
     if (distanceKm == null || distanceKm === '') return '';
@@ -34,6 +35,12 @@ module.exports = async (req, res) => {
 
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    // ── SUB-HANDLER: Referral discount check ────────────────────────────────
+    const { action } = req.query;
+    if (action === 'check-referral' || action === 'referral' || req.query.check_referral === 'true') {
+        return await handleReferralDiscountCheck(req, res);
     }
 
     // ── SUB-HANDLER: Certificate oklevel data lookup by serial ──────────────
@@ -91,7 +98,7 @@ module.exports = async (req, res) => {
         }
     }
 
-    // ── DEFAULT HANDLER: Campaign limit check ───────────────────────────────
+    // ── DEFAULT HANDLER: Campaign limit check & community km ─────────────────
     try {
         res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate');
 
@@ -103,17 +110,33 @@ module.exports = async (req, res) => {
 
         const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
         
-        // Count runs for this campaign from Supabase
-        const { count: paidCount, error: fetchErr } = await supabase
+        let query = supabase
             .from('runs')
-            .select('id', { count: 'exact', head: true })
-            .eq('is_test', useTestKey)
+            .select('id', { count: 'exact' })
             .eq('campaign', campaignKey);
+
+        if (useTestKey) {
+            query = query.eq('is_test', true);
+        } else {
+            query = query.or('is_test.is.null,is_test.eq.false');
+        }
+
+        const { count: paidCount, error: fetchErr } = await query;
 
         if (fetchErr) {
             console.error('Supabase count error in check-limit:', fetchErr);
             throw fetchErr;
         }
+
+        // Calculate community total km: base 1230 km + all completed distance_km from Supabase
+        const { data: completedRuns } = await supabase
+            .from('runs')
+            .select('distance_km')
+            .eq('completed', true)
+            .eq('is_test', false);
+
+        const sumCompletedKm = (completedRuns || []).reduce((acc, r) => acc + (parseFloat(r.distance_km) || 0), 0);
+        const communityKm = Math.round(1230 + sumCompletedKm);
 
         const limit = isPilis ? 100 : 99;
         const closed = (paidCount || 0) >= limit;
@@ -122,7 +145,9 @@ module.exports = async (req, res) => {
             success: true,
             count: paidCount || 0,
             limit: limit,
-            closed: closed
+            closed: closed,
+            community_km: communityKm,
+            completed_km: Math.round(sumCompletedKm)
         });
     } catch (err) {
         console.error('Error checking checkout limit:', err);

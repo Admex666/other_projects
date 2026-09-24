@@ -1,14 +1,16 @@
 const { createClient } = require('@supabase/supabase-js');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
+require('dotenv').config();
 
 const supabase = createClient(
-    process.env.SUPABASE_URL,
+    process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co',
     process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 function formatPhone(phone, fallbackText = '') {
     let raw = phone ? String(phone).trim() : '';
 
-    // If phone is not a valid sequence of digits, attempt to extract from fallbackText
     if (!raw || !raw.match(/\d/)) {
         if (fallbackText) {
             const m = String(fallbackText).match(/(?:(?:\+|00)?36|06)[\s\-]?[1-9]\d[\s\-]?\d{3}[\s\-]?\d{3,4}/);
@@ -29,7 +31,6 @@ function formatPhone(phone, fallbackText = '') {
         cleaned = '36' + cleaned;
     }
 
-    // Hungarian mobile numbers standard format: +36 (20|30|70|...) XXXXXXX -> length 11 with country code
     if (cleaned.length < 10 || cleaned.length > 12) {
         return null;
     }
@@ -37,20 +38,8 @@ function formatPhone(phone, fallbackText = '') {
     return `+${cleaned}`;
 }
 
-module.exports = async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (req.method === 'OPTIONS') return res.status(200).end();
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-    const { run_ids, admin_secret } = req.body;
-
-    // Validate admin secret
-    if (!admin_secret || admin_secret !== process.env.ADMIN_SECRET) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+async function handleFoxpostCreation(req, res) {
+    const { run_ids } = req.body;
 
     if (!run_ids || !Array.isArray(run_ids) || run_ids.length === 0) {
         return res.status(400).json({ error: 'run_ids (non-empty array) is required' });
@@ -141,7 +130,6 @@ module.exports = async (req, res) => {
 
             const email = primaryRunner.email || '';
 
-            // Find valid phone across the group (checking shipment, runner phone, and billing_address fallback)
             let phone = null;
             for (const r of group) {
                 const rRunner = r.runners || {};
@@ -154,7 +142,6 @@ module.exports = async (req, res) => {
 
             const destination = primaryShipment.parcel_id || primaryRun.parcel_id || '';
 
-            // Validation checks before sending to Foxpost API
             const validationErrors = [];
             if (!phone) {
                 validationErrors.push({ field: 'phone', message: 'Hiányzó vagy érvénytelen telefonszám (pl. +36301234567 szükséges)' });
@@ -223,7 +210,6 @@ module.exports = async (req, res) => {
         }
 
         const resData = await fResponse.json();
-        console.log('Foxpost response data:', JSON.stringify(resData, null, 2));
         const returnedParcels = resData.parcels || [];
 
         // 5. Update Supabase with generated barcodes
@@ -284,4 +270,8 @@ module.exports = async (req, res) => {
         console.error('Foxpost parcel creation error:', err);
         return res.status(500).json({ error: err.message });
     }
+}
+
+module.exports = {
+    handleFoxpostCreation
 };

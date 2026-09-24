@@ -87,12 +87,17 @@ async function main() {
         });
     }
 
-    // 3. Egyedi, még nem vásárolt címzettek szűrése
+    // 3. Egyedi, még nem vásárolt és nem leiratkozott címzettek szűrése
     const recipientsMap = new Map();
 
     leads.forEach(lead => {
         const cleanEmail = (lead.email || '').toLowerCase().trim();
         if (!cleanEmail || !cleanEmail.includes('@')) return;
+
+        // Kizárjuk a leiratkozottakat
+        if (lead.unsubscribed === true || lead.source === 'unsubscribed' || (lead.campaign && lead.campaign.toLowerCase() === 'unsubscribed')) {
+            return;
+        }
 
         // Kizárjuk a már vásároltakat
         if (convertedEmailSet.has(cleanEmail)) return;
@@ -113,11 +118,13 @@ async function main() {
 
     for (let i = 0; i < targetRecipients.length; i++) {
         const recipient = targetRecipients[i];
+        const unsubUrl = `https://vitasteps.vercel.app/api/unsubscribe?email=${encodeURIComponent(recipient.email)}`;
         const personalizedHtml = templateHtml
             .replace(/\{\{NAME\}\}/g, recipient.name)
             .replace(/\{\{DAYS_LEFT\}\}/g, daysLeft)
             .replace(/\{\{DEADLINE\}\}/g, DEADLINE_STR)
-            .replace(/\{\{CHECKOUT_URL\}\}/g, CHECKOUT_URL);
+            .replace(/\{\{CHECKOUT_URL\}\}/g, CHECKOUT_URL)
+            .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
 
         const subject = `🏅 ${recipient.name}, az érmed megszerzésére még ${daysLeft} van! – VitaSteps`;
 
