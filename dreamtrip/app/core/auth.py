@@ -78,16 +78,8 @@ def is_advisor_user(username: Optional[str]) -> bool:
 def is_dummy_mode_allowed(username: Optional[str]) -> bool:
     """
     Ellenőrzi, hogy az adott felhasználó jogosult-e a szimulációs / dummy üzemmód használatára.
-    Jogosult: username == 'bean', username == 'admin', vagy adatbázis szerint id IN (1, 2) vagy role == 'admin'.
-    Fejlesztői és tesztkörnyezetben (IS_PRODUCTION == False) bárki számára engedélyezett.
+    Jogosult: username == 'bean', username == 'admin', 'adam', vagy adatbázis szerint id IN (1, 2) vagy role == 'admin'.
     """
-    try:
-        from app.core.config import IS_PRODUCTION
-        if not IS_PRODUCTION:
-            return True
-    except Exception:
-        pass
-
     if not username:
         return False
     u = username.strip().lower()

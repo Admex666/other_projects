@@ -179,7 +179,48 @@ CREATE TABLE IF NOT EXISTS case_events (
 
 CREATE INDEX IF NOT EXISTS idx_events_case ON case_events(case_id);
 
--- 10. ROW LEVEL SECURITY (RLS) POLICIES
+-- 10. RESEARCH RUNS TABLE (ASYNC LIFECYCLE PERSISTENCE)
+CREATE TABLE IF NOT EXISTS research_runs (
+    id TEXT PRIMARY KEY DEFAULT ('run_' || gen_random_uuid()),
+    case_id TEXT NOT NULL REFERENCES trip_cases(id) ON DELETE CASCADE,
+    agency_id TEXT NOT NULL REFERENCES agencies(id) ON DELETE CASCADE,
+    advisor_id TEXT NOT NULL REFERENCES advisors(id) ON DELETE RESTRICT,
+    strategy TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'queued',
+    progress_pct INT NOT NULL DEFAULT 0,
+    steps_completed JSONB NOT NULL DEFAULT '[]'::jsonb,
+    providers_status JSONB NOT NULL DEFAULT '{}'::jsonb,
+    candidates JSONB NOT NULL DEFAULT '[]'::jsonb,
+    destinations_pool JSONB NOT NULL DEFAULT '[]'::jsonb,
+    flights_pool JSONB NOT NULL DEFAULT '[]'::jsonb,
+    stays_pool JSONB NOT NULL DEFAULT '[]'::jsonb,
+    warnings JSONB NOT NULL DEFAULT '[]'::jsonb,
+    elapsed_seconds NUMERIC,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_research_runs_case ON research_runs(case_id);
+CREATE INDEX IF NOT EXISTS idx_research_runs_agency ON research_runs(agency_id);
+
+-- 11. PROPOSAL SHARES TABLE (SECURE CRYPTOGRAPHIC SHARING)
+CREATE TABLE IF NOT EXISTS proposal_shares (
+    id TEXT PRIMARY KEY DEFAULT ('share_' || gen_random_uuid()),
+    proposal_id TEXT NOT NULL REFERENCES proposals(id) ON DELETE CASCADE,
+    token_hash TEXT NOT NULL UNIQUE,
+    proposal_version_number INT NOT NULL DEFAULT 1,
+    is_revoked BOOLEAN NOT NULL DEFAULT FALSE,
+    revoked_at TIMESTAMPTZ,
+    expires_at TIMESTAMPTZ,
+    access_count INT NOT NULL DEFAULT 0,
+    last_accessed_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_proposal_shares_token ON proposal_shares(token_hash);
+CREATE INDEX IF NOT EXISTS idx_proposal_shares_proposal ON proposal_shares(proposal_id);
+
+-- 12. ROW LEVEL SECURITY (RLS) POLICIES
 ALTER TABLE agencies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE advisors ENABLE ROW LEVEL SECURITY;
 ALTER TABLE clients ENABLE ROW LEVEL SECURITY;
@@ -188,6 +229,8 @@ ALTER TABLE trip_options ENABLE ROW LEVEL SECURITY;
 ALTER TABLE proposals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE advisor_notes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE case_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE research_runs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE proposal_shares ENABLE ROW LEVEL SECURITY;
 
 -- Agency Isolation Helper: Matches app user agency_id claim in JWT
 -- (auth.jwt() ->> 'agency_id')
@@ -203,3 +246,10 @@ CREATE POLICY agency_isolation_cases ON trip_cases
 
 CREATE POLICY agency_isolation_proposals ON proposals
     FOR ALL USING (agency_id = current_setting('request.jwt.claim.agency_id', true) OR current_setting('request.jwt.claim.role', true) = 'super_admin');
+
+CREATE POLICY agency_isolation_research_runs ON research_runs
+    FOR ALL USING (agency_id = current_setting('request.jwt.claim.agency_id', true) OR current_setting('request.jwt.claim.role', true) = 'super_admin');
+
+CREATE POLICY public_read_unrevoked_proposal_shares ON proposal_shares
+    FOR SELECT USING (is_revoked = FALSE AND (expires_at IS NULL OR expires_at > NOW()));
+

@@ -67,6 +67,13 @@ def page(browser, live_server_url):
     )
     page = context.new_page()
     
+    # Inject authenticated session cookie
+    from app.core.auth import create_session
+    sid = create_session("admin")
+    context.add_cookies([
+        {"name": "session_token", "value": sid, "url": live_server_url}
+    ])
+    
     # Capture console error logs
     console_errors = []
     page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)

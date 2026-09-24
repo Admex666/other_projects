@@ -66,6 +66,25 @@ class ResearchScope(str, Enum):
     ACTIVITIES_ONLY = "activities_only"  # Program & POI planning only
 
 
+class ResearchRunStatus(str, Enum):
+    QUEUED = "queued"                    # Research request submitted to async pool
+    RUNNING = "running"                  # Providers currently executing queries
+    PARTIAL = "partial"                  # Some providers returned results, others failed/cached
+    COMPLETED = "completed"              # All required providers finished and synthesized
+    FAILED = "failed"                    # Critical unrecoverable failure across all providers
+    CANCELLED = "cancelled"              # Cancelled by advisor
+
+
+class BudgetHardness(str, Enum):
+    HARD = "hard"                        # Strict ceiling, must NOT be exceeded automatically
+    TARGET = "target"                    # Target budget, suggestions/relaxations allowed with advisor approval
+
+
+class BudgetBasis(str, Enum):
+    PER_PERSON = "per_person"            # Budget given on a per-traveler basis
+    GROUP = "group"                      # Budget given for the entire party
+
+
 class ProposalStatus(str, Enum):
     DRAFT = "draft"
     PUBLISHED = "published"
@@ -76,17 +95,75 @@ class ProposalStatus(str, Enum):
 
 
 # ─────────────────────────────────────────────────────────────
+# 1.5. BUDGET CONSTRAINT MODEL (HARDENED)
+# ─────────────────────────────────────────────────────────────
+
+class ComponentBudget(BaseModel):
+    """
+    Sub-budget limit for a specific travel component (flight, stay, activities, etc.).
+    """
+    amount: Optional[float] = None
+    basis: BudgetBasis = BudgetBasis.GROUP
+    hardness: BudgetHardness = BudgetHardness.HARD
+    currency: str = "HUF"
+
+
+class TotalBudget(BaseModel):
+    """
+    All-inclusive trip budget ceiling or target.
+    """
+    amount: Optional[float] = None
+    basis: BudgetBasis = BudgetBasis.GROUP
+    hardness: BudgetHardness = BudgetHardness.HARD
+    relaxation_allowed: bool = False
+    max_relaxation_pct: float = 10.0      # Maximum allowed relaxation suggestion (e.g., +10%)
+    currency: str = "HUF"
+
+
+class BudgetComponents(BaseModel):
+    flight: Optional[ComponentBudget] = None
+    stay: Optional[ComponentBudget] = None
+    activities: Optional[ComponentBudget] = None
+    local_transport: Optional[ComponentBudget] = None
+
+
+class BudgetConstraint(BaseModel):
+    """
+    Explicit, multi-currency budget model supporting full-trip and component scopes,
+    per-person / group basis, and strict hardness invariant.
+    """
+    currency: str = "HUF"
+    total: TotalBudget = Field(default_factory=TotalBudget)
+    components: BudgetComponents = Field(default_factory=BudgetComponents)
+
+    def get_effective_total_ceiling_huf(self, adults: int = 1, children: int = 0) -> Optional[float]:
+        """Calculates total budget in HUF accounting for group vs per-person basis."""
+        if not self.total.amount:
+            return None
+        travelers = max(adults + children, 1)
+        if self.total.basis == BudgetBasis.PER_PERSON:
+            return float(self.total.amount * travelers)
+        return float(self.total.amount)
+
+    def is_hard(self) -> bool:
+        return self.total.hardness == BudgetHardness.HARD
+
+
+# ─────────────────────────────────────────────────────────────
 # 2. PROVENANCE & DATA FRESHNESS MODEL
 # ─────────────────────────────────────────────────────────────
 
 class ProviderProvenance(BaseModel):
     """
-    Tracks origin, provider freshness TTL, and verification status for every data point.
+    Tracks origin, provider freshness TTL, deep links, and verification status for every data point.
     """
     model_config = ConfigDict(extra="ignore")
 
     provider: str = "Optivoya"                 # "Kiwi", "Cozycozy", "Open-Meteo", "Numbeo", "OSM", "Manual"
+    source_type: str = "api"                   # "api", "aggregator", "website", "manual", "cache", "estimate"
     source_url: Optional[str] = None
+    deep_link: Optional[str] = None
+    booking_url: Optional[str] = None
     checked_at: datetime = Field(default_factory=utc_now)
     expires_at: Optional[datetime] = None
     freshness_ttl_seconds: int = 1800          # Default 30 min TTL
@@ -250,15 +327,29 @@ class NiceToHave(BaseModel):
     central_location: bool = True
 
 
+class AdvisorOverrideEntry(BaseModel):
+    """
+    Individual audited advisor override record.
+    """
+    id: str = Field(default_factory=lambda: generate_uuid("ovr"))
+    actor_id: str
+    timestamp: datetime = Field(default_factory=utc_now)
+    field: str
+    previous_value: Any = None
+    new_value: Any = None
+    reason: Optional[str] = None
+
+
 class AdvisorOverrides(BaseModel):
     """
-    Manual advisor overrides and pinned selections.
+    Manual advisor overrides and pinned selections with audit trail.
     """
     pinned_destination: Optional[str] = None
     pinned_flight_id: Optional[str] = None
     pinned_stay_id: Optional[str] = None
     custom_markup_huf: float = 0.0
     manual_notes: Optional[str] = None
+    history: List[AdvisorOverrideEntry] = Field(default_factory=list)
 
 
 class ResolvedTripPreferences(BaseModel):
@@ -291,6 +382,9 @@ class TripCase(BaseModel):
     scope: ResearchScope = ResearchScope.FULL_TRIP
     budget_mode: BudgetMode = BudgetMode.TOTAL_BUDGET
 
+    # Hardened Budget model
+    budget_constraint: BudgetConstraint = Field(default_factory=BudgetConstraint)
+
     # Travel logistics
     origin: str = "Budapest (BUD)"
     destination_focus: Optional[str] = None    # Specific city or None for discovery
@@ -307,7 +401,7 @@ class TripCase(BaseModel):
     min_stay_nights: Optional[int] = None
     max_stay_nights: Optional[int] = None
 
-    # Budget ceilings
+    # Budget ceilings (Legacy compatibility properties)
     total_budget_huf: Optional[float] = None
     flight_budget_huf: Optional[float] = None
     stay_budget_huf: Optional[float] = None
@@ -323,6 +417,123 @@ class TripCase(BaseModel):
     research_time_saved_minutes: float = 0.0
     created_at: datetime = Field(default_factory=utc_now)
     updated_at: datetime = Field(default_factory=utc_now)
+
+    def sync_budget_models(self) -> None:
+        """Syncs legacy budget fields with the hardened BudgetConstraint model."""
+        if self.total_budget_huf is not None and not self.budget_constraint.total.amount:
+            self.budget_constraint.total.amount = self.total_budget_huf
+            self.budget_constraint.total.currency = "HUF"
+        elif self.budget_constraint.total.amount is not None:
+            self.total_budget_huf = self.budget_constraint.total.amount
+
+        if self.flight_budget_huf is not None:
+            if not self.budget_constraint.components.flight:
+                self.budget_constraint.components.flight = ComponentBudget(amount=self.flight_budget_huf)
+            else:
+                self.budget_constraint.components.flight.amount = self.flight_budget_huf
+
+        if self.stay_budget_huf is not None:
+            if not self.budget_constraint.components.stay:
+                self.budget_constraint.components.stay = ComponentBudget(amount=self.stay_budget_huf)
+            else:
+                self.budget_constraint.components.stay.amount = self.stay_budget_huf
+
+
+# ─────────────────────────────────────────────────────────────
+# 6.5. RESEARCH RUNS & RESEARCH CANDIDATES
+# ─────────────────────────────────────────────────────────────
+
+class ResearchCandidate(BaseModel):
+    """
+    Individual raw or intermediate inventory candidate generated during research.
+    """
+    id: str = Field(default_factory=lambda: generate_uuid("cand"))
+    case_id: str
+    research_run_id: Optional[str] = None
+    type: str                                  # "destination", "flight", "stay", "activity", "package"
+    name: str
+    provider: str = "Optivoya"
+    source_url: Optional[str] = None
+    deep_link: Optional[str] = None
+    booking_url: Optional[str] = None
+    price: float = 0.0
+    currency: str = "HUF"
+    availability_status: str = "available"     # "available", "limited", "sold_out", "cached"
+    metrics: Dict[str, Any] = Field(default_factory=dict)
+    constraint_fit: Dict[str, Any] = Field(default_factory=dict)
+    score: float = 0.0
+    warnings: List[str] = Field(default_factory=list)
+    provenance: ProviderProvenance = Field(default_factory=ProviderProvenance)
+    raw_reference: Optional[str] = None
+
+
+class ResearchRun(BaseModel):
+    """
+    Persistent Async Research Run aggregate tracking provider lifecycle and errors.
+    """
+    id: str = Field(default_factory=lambda: generate_uuid("run"))
+    case_id: str
+    agency_id: str = "agency_default_lux"
+    advisor_id: str = "adv_default"
+    strategy: str = "full_trip_optimization"
+    status: ResearchRunStatus = ResearchRunStatus.QUEUED
+    scope: ResearchScope = ResearchScope.FULL_TRIP
+    progress_pct: int = 0
+    step_details: List[str] = Field(default_factory=list)
+    steps_completed: List[str] = Field(default_factory=list)
+    providers_status: Dict[str, Dict[str, Any]] = Field(default_factory=lambda: {
+        "kiwi": {"status": "pending", "count": 0, "error": None},
+        "cozycozy": {"status": "pending", "count": 0, "error": None},
+        "open_meteo": {"status": "pending", "count": 0, "error": None},
+        "poi_wikidata": {"status": "pending", "count": 0, "error": None}
+    })
+    candidate_counts: Dict[str, int] = Field(default_factory=dict)
+    candidates: List[Dict[str, Any]] = Field(default_factory=list)
+    destinations_pool: List[Dict[str, Any]] = Field(default_factory=list)
+    flights_pool: List[Dict[str, Any]] = Field(default_factory=list)
+    stays_pool: List[Dict[str, Any]] = Field(default_factory=list)
+    warnings: List[str] = Field(default_factory=list)
+    elapsed_seconds: Optional[float] = None
+    options_count: int = 0
+    error_message: Optional[str] = None
+    created_at: datetime = Field(default_factory=utc_now)
+    updated_at: datetime = Field(default_factory=utc_now)
+    completed_at: Optional[datetime] = None
+
+
+class OptionSet(BaseModel):
+    """
+    Versioned set of synthesized decision options associated with a research run.
+    """
+    id: str = Field(default_factory=lambda: generate_uuid("optset"))
+    case_id: str
+    research_run_id: Optional[str] = None
+    options: List[Dict[str, Any]] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=utc_now)
+
+
+class ProposalShare(BaseModel):
+    """
+    Cryptographically secure, revocable token for public client-facing proposal access.
+    """
+    id: str = Field(default_factory=lambda: generate_uuid("share"))
+    proposal_id: str
+    proposal_version_number: int = 1
+    token: str = Field(default_factory=lambda: str(uuid.uuid4()).replace("-", ""))
+    token_hash: Optional[str] = None
+    created_at: datetime = Field(default_factory=utc_now)
+    expires_at: Optional[datetime] = None
+    revoked_at: Optional[datetime] = None
+    is_revoked: bool = False
+    access_count: int = 0
+    last_accessed_at: Optional[datetime] = None
+
+    def is_valid(self) -> bool:
+        if self.is_revoked or self.revoked_at is not None:
+            return False
+        if self.expires_at and utc_now() > self.expires_at:
+            return False
+        return True
 
 
 # ─────────────────────────────────────────────────────────────
@@ -405,6 +616,7 @@ class CaseEvent(BaseModel):
     id: str = Field(default_factory=lambda: generate_uuid("evt"))
     case_id: str
     event_type: str                            # "brief_created", "research_completed", "options_generated", "proposal_sent", "client_feedback", "re_optimized"
+    title: Optional[str] = None
     description: str
     metadata: Dict[str, Any] = Field(default_factory=dict)
     created_at: datetime = Field(default_factory=utc_now)

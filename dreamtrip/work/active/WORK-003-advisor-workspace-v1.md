@@ -7,10 +7,19 @@ status: in_progress
 description: Az Optivoya B2B Advisor Workspace v1 fázisonkénti feladatlistája, hard/soft feltételrendszere, shared intelligence rétege, providencia modellje, hibatűrése, perzisztenciája és átvételi kritériumai (Acceptance Criteria).
 
 created_at: 2026-09-17
-updated_at: 2026-09-17
+updated_at: 2026-09-24
 
 related:
   - "[[advisor-workspace-blueprint]]"
+  - "[[advisor-workspace-ux-specification]]"
+  - "[[advisor-budget-and-constraints]]"
+  - "[[advisor-option-generation]]"
+  - "[[advisor-research-pipeline]]"
+  - "[[advisor-provenance-and-verification]]"
+  - "[[advisor-security-and-multitenancy]]"
+  - "[[advisor-research-run-lifecycle]]"
+  - "[[advisor-api-contract]]"
+  - "[[advisor-proposal-versioning]]"
   - "[[trip-case]]"
   - "[[master-planner-blueprint]]"
   - "[[ANTI_AI_SLOP_POLICY]]"
@@ -60,7 +69,13 @@ Ez a dokumentum tartalmazza az **Optivoya Advisor Workspace v1** teljes, 10 fáz
   - [x] `Agency`, `Advisor` (Multi-tenant szervezeti hierarchia).
   - [x] `Client`, `ClientPreferences` (Ügyfélprofil tartós preferenciákkal).
   - [x] `TripCase`, `TripCasePreferences` (Központi ügy aggregátum).
-  - [x] `TripOption`, `OptionComponent` (Teljes utazási opciók és elemeik).
+  - [x] `BudgetConstraint` (Hard/Target hardness, Per-person/Group basis, Component-level limits: flight, stay, activities, transport).
+  - [x] `ResearchRun` & `ResearchRunStatus` (`QUEUED`, `RUNNING`, `PARTIAL`, `COMPLETED`, `FAILED`, `CANCELLED`).
+  - [x] `ResearchCandidate` (Provenance-kötött jelöltek szűrt listája).
+  - [x] `ProviderProvenance` (provider, source_type, source_url, deep_link, booking_url, checked_at, freshness_ttl, verification_status).
+  - [x] `AdvisorOverride` / `AdvisorOverrideEntry` (Audited actor_id, timestamp, field, previous_value, new_value, reason).
+  - [x] `ProposalShare` (Kriptográfiailag biztonságos token_hash, opcionális expiry, revocable flag, access auditing).
+  - [x] `TripOption`, `OptionComponent`, `OptionSet` (Teljes utazási opciók és elemeik).
   - [x] `Shortlist`, `AdvisorNote`, `CaseEvent` (Audit timeline napló).
   - [x] `Proposal`, `ProposalVersion` (Ajánlatok és verziótörténet).
 - [x] **Hard vs. Soft Constraint Modell (`ResolvedTripPreferences`):**
@@ -95,7 +110,8 @@ Ez a dokumentum tartalmazza az **Optivoya Advisor Workspace v1** teljes, 10 fáz
 - [x] **REST API Szerződés & Végpontok (`app/routers/advisor_api.py`):**
   - [x] Szabványos kérés/válasz sémák, hibakontraktus, validáció, lapozás és szűrés.
   - [x] Idempotens végpontok (`Idempotency-Key` támogatás).
-  - [x] Aszinkron kutatási státusz végpontok (`job_id` polling / SSE).
+  - [x] Aszinkron kutatási státusz és leállítási végpontok (`GET /cases/{case_id}/research/{run_id}`, `POST .../cancel`).
+  - [x] Kriptográfiai megosztási végpontok (`POST /proposals/{id}/share`, `POST .../revoke-share`, `GET /public/proposals/{token}`).
 - [x] **Frontend Alaprendszer (`templates/advisor/`, `static/js/advisor/`):**
   - [x] `advisor_workspace.html` (Desktop-first, 1280px+ optimalizált, bal oldali navigáció, kontextus panel).
   - [x] `advisor_state.js` (Reaktív állapot: currentAdvisor, currentClient, currentCase, draftState, options, shortlist).
@@ -121,10 +137,11 @@ Ez a dokumentum tartalmazza az **Optivoya Advisor Workspace v1** teljes, 10 fáz
 - [x] **Új Utazási Ügy & Brief Képernyő (`/advisor/cases/new`, `advisor_brief.js`):**
   - [x] Ügyfél kiválasztása vagy azonnali létrehozása.
   - [x] Alapadatok: Indulás, Utasok (felnőtt/gyerek), Cél fókusz, Dátumok, Időtartam ablak.
-  - [x] **3-módú Költségvetési Modell:**
+  - [x] **3-módú Költségvetési Modell & Hardness:**
     - [x] *Mode A:* Teljes összköltségkeret (pl. 300 000 Ft).
     - [x] *Mode B:* Komponens keretek (max. járat, max. szállás, max. program, max. transzfer).
     - [x] *Mode C:* Keresési hatókör (Search Scope kijelölés: pl. csak járat + hotel).
+    - [x] *Hardness:* `hard` (zéró túllépés megengedett) vs `target` (explicit tanácsadói jóváhagyással lazítható max %-ig).
   - [x] **Hard/Soft Megkötések & Avoid Szabályok Bevitele.**
 - [x] **`PreferenceResolver` Szolgáltatás (`app/services/preference_resolver.py`):**
   - [x] Szigorú prioritási sorrend: `Advisor Overrides > Case Brief > Client Profile > System Defaults`.
@@ -150,10 +167,11 @@ Ez a dokumentum tartalmazza az **Optivoya Advisor Workspace v1** teljes, 10 fáz
   - [x] 7. *Mixed-Scope Research* (Több város párhuzamos összehasonlítása csak repülő+hotelre).
   - [x] 8. *Re-Optimization Workflow* (Meglévő eset újraszámolása módosított feltétellel).
   - [x] 9. *Find Better Workflow* (Egy kiválasztott opció célzott finomhangolása).
-- [x] **Hibatűrés & Provider Hibakezelés (Resilience Layer):**
+- [x] **Aszinkron Életciklus & Hibatűrés (ResearchRun Lifecycle):**
+  - [x] `QUEUED` $\rightarrow$ `RUNNING` $\rightarrow$ `PARTIAL` / `COMPLETED` / `FAILED` / `CANCELLED` állapotgép.
   - [x] Kiwi timeout kezelése, Cozycozy részleges eredmények feldolgozása, Open-Meteo fallback.
   - [x] Rate limit kezelés és lejárt gyorsítótár (Stale Cache) fallback transzparens jelöléssel.
-  - [x] Egy provider kiesése nem blokkolja a többi komponens megjelenítését.
+  - [x] Egy provider kiesése nem blokkolja a többi komponens megjelenítését (`PARTIAL` run status).
 - [x] **Kutatási Felület & Progresszív Betöltés (`/advisor/cases/:id/research`, `advisor_research.js`):**
   - [x] Mindig látható kontextus sáv (Ügyfél, Keret, Dátumok, Fő megkötések).
   - [x] Folyamatjelző kártya lépésenkénti vizualizációval (Destinations ✓, Flights ✓, Hotels ●, Scoring ○).
@@ -181,47 +199,51 @@ Ez a dokumentum tartalmazza az **Optivoya Advisor Workspace v1** teljes, 10 fáz
   - [x] Hivatalos Optivoya logó (`/static/logo.png`) elhelyezése a bal felső sidebar sávban.
 - [x] **Anti-AI-Slop Irányelvek Érvényesítése (`ANTI_AI_SLOP_POLICY.md`):**
   - [x] 0% AI lila-kék/neon gradient, 0% fluoreszkáló glow fényudvar.
-  - [x] Felesleges és halmozott glassmorphism (túlzott háttérelmosás) megszüntetése, tiszta Material 3 felületi rétegződés alkalmazása.
+  - [x] Felesleges és halmozott glassmorphism megszüntetése, tiszta Material 3 felületi rétegződés alkalmazása.
   - [x] 0% Emoji gombokon, badge-eken és navigációs tabokon $\rightarrow$ tiszta Material Symbols Outlined ikonok (`calendar_today`, `flight`, `hotel`, `local_activity`).
   - [x] 0% elcsépelt marketing buzzword (*Unlock, Elevate, Supercharge*), helyettük konkrét mérnöki adatok.
 - [x] **3-Szintű Tipográfiai Hierarchia (`DESIGN_SYSTEM.md`):**
   - [x] `--font-display`: `'Plus Jakarta Sans', sans-serif` (főcímek, szekciófejlécek).
   - [x] `--font-body`: `'Inter', -apple-system, sans-serif` (folyószöveg, űrlapcímkék, gombok).
-  - [x] `--font-mono`: `'JetBrains Mono', monospace` (árak, időpontok, időtartamok, PROMETHEE értékek, kódok).
+  - [x] `--font-mono`: `'JetBrains Mono', monospace` (árak, időpontok, időtartamok, kódok).
 - [x] **UX Alapelvek & Döntéstámogató Ergonómia (`UX_PRINCIPLES.md`, `UX_PATTERNS.md`):**
   - [x] *Plain Language Invariant:* Nincsenek tudományos rövidítések és akadémikus zsargon a UI felületén.
-  - [x] *4 Valódi Állapot minden modulban:* Empty State (segítőkész indító kártya), Loading State (progresszív státusz), Error State (emberi magyarázat és helyreállítás), Success State (tiszta adatok).
+  - [x] *4 Valódi Állapot minden modulban:* Empty State, Loading State, Error State, Success State.
   - [x] *Domináns Primary CTA:* Minden nézeten pontosan egy kiemelt fő akció gomb.
 - [x] **Quality Gates & DoD Bekötés (`QUALITY_GATES.md`, `DEFINITION_OF_DONE.md`):**
   - [x] Funkcionalitási, UX/Dizájn, Architektúra és Knowledge validációs kapuk érvényesítése minden módosítás előtt.
 
 ### 🎯 Phase 4.5 Acceptance Criteria
 1. [x] Az Advisor Workspace felülete (`/advisor`) azonnal felismerhetően az Optivoya kanonikus zöld stílusát, hivatalos logóját (`/static/logo.png`) és 3-szintű tipográfiáját használja.
-2. [x] A felület mentes minden AI-slop tünettől (nincs kék-lila neon gradient, nincs emoji-spam a gombokon, nincs akadémikus zsargon).
+2. [x] A felület mentes minden AI-slop tünettől.
 3. [x] A `python scripts/knowledge/validate.py` 100%-os zöld eredménnyel fut le.
 
 ---
 
 ## 📌 Phase 5: Multi-Option Generation & Archetypes
-> **Cél:** 3 valós trade-offokkal rendelkező, teljes értékű utazási opció előállítása.
+> **Cél:** 3 valós trade-offokkal rendelkező, teljes értékű utazási opció előállítása normalizált célfüggvényekkel és magic numberök nélkül.
 
 - [x] **`MultiOptionEngine` Implementálása (`app/services/multi_option_engine.py`):**
   - [x] Teljes utazási kombinációk előállítása a kutatási poolból.
   - [x] Érvénytelen (hard constraintet sértő) kombinációk kizárása.
-  - [x] **3 Alapértelmezett Archetípus Kijelölése:**
-    - [x] **Option A — BEST OVERALL:** Legmagasabb kiegyensúlyozott pontszám.
-    - [x] **Option B — BEST VALUE:** Alacsonyabb összköltség, kiemelkedő ár-érték arány.
-    - [x] **Option C — BEST EXPERIENCE:** Legerősebb élmény- és programilleszkedés.
-- [x] **Diverzitási Szabályok (Diversity Constraints):**
-  - [x] A 3 opciónak érdemben különböznie kell (különböző város VAGY szignifikáns árkülönbség VAGY eltérő járattípus/szálláskategória).
+  - [x] **3 Normalizált Célprofil (Objective Profiles):**
+    - [x] **Option A — BEST OVERALL:** Legmagasabb TripScore kiegyensúlyozott súlyokkal.
+    - [x] **Option B — BEST VALUE:** Normalizált Value Efficiency ($0..100$) mutató alapján.
+    - [x] **Option C — BEST EXPERIENCE:** Normalizált Experience Score ($0..100$) szállás, programok és vibe súlyozásával.
+  - [x] **3-Opciós Szabály (3-Option Rule):**
+    - [x] Target: 3, Preferred: 3, Acceptable: 2, Minimum: 1.
+    - [x] Tilos gyenge/nem illeszkedő hotelt vagy járatot mesterségesen behelyettesíteni csak a 3 kártya kedvéért.
+  - [x] **Diverzitási Szabályok (Diversity Constraints):**
+    - [x] Valódi kompromisszumok létrehozása anélkül, hogy a diverzitás kedvéért lerondanánk a minőséget.
 - [x] **Option Kártyák Renderelése (`advisor_options.js`):**
   - [x] Teljes ár és egy főre jutó költség.
   - [x] Repülő és szállás összefoglaló, időtartam, megbízhatósági státusz (*Verified / Estimated / Needs review*).
   - [x] Strukturált illeszkedési indoklás (*Why it fits*) és kompromisszumok (*Trade-offs*).
 
 ### 🎯 Phase 5 Acceptance Criteria
-1. [x] A generált 3 opció ugyanabból a hiteles adatpoolból származik, minden hard constraintet tiszteletben tart.
-2. [x] A 3 opció között mérhető és világosan kommunikált kompromisszumok (trade-offok) vannak.
+1. [x] A generált opciók ugyanabból a hiteles adatpoolból származnak, minden hard constraintet tiszteletben tartanak.
+2. [x] A célfüggvények mentesek az önkényes magic numberöktől, normalizáltak ($0..100$).
+3. [x] 2 valódi opció esetén a rendszer nem gyárt mesterséges harmadik rossz opciót.
 
 ---
 
@@ -230,109 +252,93 @@ Ez a dokumentum tartalmazza az **Optivoya Advisor Workspace v1** teljes, 10 fáz
 
 - [x] **Side-by-Side Összehasonlító Mátrix (`/advisor/cases/:id/compare`, `advisor_option_compare.js`):**
   - [x] Desktop egymás melletti táblázat: Ár, Járattípus, Menetidő, Szállás csillag/értékelés, Strand, Gasztro, Kultúra.
-  - [x] **Relatív Összehasonlító Logika:** Nem csak abszolút számok, hanem relatív különbségek (pl. *"Kréta 46 000 Ft-tal olcsóbb, de Mallorca repülőútja 4 órával kényelmesebb"*).
+  - [x] **Relatív Összehasonlító Logika:** Abszolút értékek, relatív különbségek és százalékos delaták ahol értelmezhető.
 - [x] **Adatvezérelt "Why This Option?" Generátor:**
   - [x] Scoring delta és constraint kielégítés alapján előállított indoklás (LLM hallucinációk nélkül).
 - [x] **"Find Better" Célzott Finomhangolási Modál (`find_better_modal.js`):**
-  - [x] Célzott keresés: Alacsonyabb ár, kényelmesebb járat, jobb hotel, több program.
+  - [x] Célzott keresés az alapadatok és hard megkötések megőrzése mellett (Lower price, Better flight, Better hotel, Better experience).
 - [x] **Advisor Override & Whitebox Ergonomics:**
-  - [x] Ajánlások kézi szerkesztése.
   - [x] Jelöltek kitűzése (Pin), törlése, vagy manuális hozzáadása.
-  - [x] Sorrend kézi felülírása indoklás rögzítésével (`override_reason`).
+  - [x] Auditált felülbírálás `AdvisorOverrideEntry` rögzítéssel (`actor_id`, `timestamp`, `field`, `previous_value`, `new_value`, `reason`).
 
 ### 🎯 Phase 6 Acceptance Criteria
-1. [x] Az összehasonlító felület világosan megmutatja a 3 opció egymáshoz viszonyított előnyeit és hátrányait.
-2. [x] Az advisor manuálisan módosíthatja vagy kicserélheti az opciók bármely elemét, a rendszer nem viselkedik zárt black-boxként.
+1. [x] Az összehasonlító felület világosan megmutatja az opciók egymáshoz viszonyított relatív előnyeit és hátrányait.
+2. [x] Az advisor manuálisan módosíthatja vagy kicserélheti az opciók bármely elemét; minden felülbírálás auditált.
 
 ---
 
 ## 📌 Phase 7: Constraint Relaxation, Verification & Risk Engine
-> **Cél:** Zsákutcák megszüntetése (No dead-ends) és kockázati figyelmeztetések.
+> **Cél:** Zsákutcák megszüntetése (No dead-ends), explicit jóváhagyás és kockázati figyelmeztetések.
 
 - [x] **`ConstraintRelaxationService` Implementálása (`app/services/constraint_relaxation_service.py`):**
   - [x] 0 találat esetén pontos ok-okozati diagnózis (mely feltételek ütköznek).
-  - [x] 1-kattintásos enyhítési javaslatok számszerűsített új találati számmal (pl. *"+1 átszállás engedélyezése $\rightarrow$ 12 új opció"*, *"+40 000 Ft keret $\rightarrow$ 7 új opció"*).
-  - [x] A megkötéseket a rendszer csak tanácsadói jóváhagyással módosítja.
+  - [x] 1-kattintásos enyhítési javaslatok számszerűsített új találati számmal.
+  - [x] **Hard Constraint Védelem:** A rendszer soha nem lazít automatikusan/csendben hard megkötést; kizárólag explicit advisor jóváhagyással léptethető életbe.
 - [x] **`VerificationService` & Provenance Ellenőrzés (`app/services/verification_service.py`):**
   - [x] Ár, menetrend, szoba elérhetőség hitelesítési státuszai (`VERIFIED`, `ESTIMATED`, `NEEDS_REVIEW`).
+  - [x] Deep linkek, forrás URL-ek és frissességi időbélyegek megjelenítése.
 - [x] **`TripRiskService` & Figyelmeztető Motor (`app/services/trip_risk_service.py`):**
-  - [x] Kockázatok azonosítása: <60 perces átszállás, éjszakai érkezés, rejtett üdülőhelyi díj (resort fee), hiányzó reptéri transzfer, nyitvatartási ütközés.
+  - [x] Kockázatok azonosítása: <60 perces átszállás, éjszakai érkezés, rejtett üdülőhelyi díj, hiányzó reptéri transzfer, nyitvatartási ütközés.
   - [x] Prioritási szintek: `Critical`, `Warning`, `Info`.
 
 ### 🎯 Phase 7 Acceptance Criteria
-1. [x] Nincs olyan szűrési kombináció, ami zsákutcába (üres hibaüzenetbe) fut: a rendszer mindig konkrét feloldási javaslatokat kínál.
-2. [x] Minden releváns utazási kockázat (pl. szűk átszállási idő) figyelmeztető kártyaként jelenik meg.
+1. [x] Nincs olyan szűrési kombináció, ami zsákutcába fut: a rendszer mindig konkrét feloldási javaslatokat kínál.
+2. [x] Hard constraint soha nem lazul automatikusan.
 
 ---
 
 ## 📌 Phase 8: Shortlist & Multi-Option Proposal
-> **Cél:** Multi-Option ügyfélajánlat generálás, szerkesztés, verziókezelés és nyomtatás/PDF export.
+> **Cél:** Multi-Option ügyfélajánlat generálás, szerkesztés, verziókezelés, biztonságos megosztás és nyomtatás/PDF export.
 
 - [x] **Shortlist Kezelés (`/advisor/cases/:id/shortlist`, `advisor_shortlist.js`):**
   - [x] Kiválasztott 1–3 opció véglegesítése az ajánlathoz.
-  - [x] Belső tanácsadói jegyzetek hozzáadása (`advisor_notes` — ügyfél előtt rejtve).
+  - [x] Belső tanácsadói jegyzetek hozzáadása (`advisor_notes` — ügyfél előtt szigorúan rejtve).
 - [x] **Multi-Option Ügyfélajánlat Generátor (`/advisor/cases/:id/proposal`, `advisor_proposal.js`):**
   - [x] 1–3 opciót tartalmazó egységes ügyféldokumentum renderelése.
-  - [x] **Beépített Ajánlatszerkesztő:**
-    - [x] Cím, személyes bevezető szöveg szerkesztése.
-    - [x] Opciók sorrendje és ki/be kapcsolása (járat, hotel, programok, árak, foglalási linkek).
-    - [x] Tanácsadói ajánlás és konklúzió hozzáadása.
+  - [x] **Beépített Ajánlatszerkesztő:** Cím, bevezető, opciók ki/be kapcsolása, konklúzió.
+  - [x] **Immutable Proposal Snapshot:** Rögzített állapot a generálás pillanatában.
   - [x] **Verziókezelés:** Proposal v1, v2, v3 tárolása, előzmények megőrzése.
+  - [x] **Kriptográfiai Megosztás (`ProposalShare`):** URL-safe token, kliens-biztonságos adatszűrés (belső jegyzetek és árrés nélkül), visszavonási lehetőség (`revoke`).
   - [x] **Nyomtatási & PDF Export:** A4 méretre optimalizált stíluslapok (`@media print`), ügynökségi branding és logó.
 
 ### 🎯 Phase 8 Acceptance Criteria
 1. [x] Az ajánlat 1, 2 vagy 3 opciót is hibátlanul prezentál összehasonlító vagy szekvenciális nézetben.
-2. [x] A generált PDF/nyomtatási kép tördelése professzionális, minden ár és komponens forrás-hitelesített.
+2. [x] A publikus megosztási link nem enged hozzáférést a teljes Case-hez vagy belső tanácsadói jegyzetekhez.
 
 ---
 
 ## 📌 Phase 9: Client Feedback, Timeline & Re-Optimization
 > **Cél:** Ügyféli visszajelzések kezelése és zökkenőmentes újragenerálás.
 
-- [x] **Ügyfél Visszajelzés Rögzítése:**
-  - [x] Gyors visszajelzési pontok (pl. *"Mallorca tetszik, de olcsóbb hotel kell"*).
-- [x] **Re-Optimization Workflow:**
-  - [x] Módosított megkötésekkel történő újratervezés az ügyfél-eset újrakezdése nélkül.
-  - [x] Automatikus Proposal v2 létrehozás a v1 megőrzésével.
-- [x] **Eset Idővonal & Audit Napló (`advisor_timeline.js`):**
-  - [x] Időbélyeges eseménynapló (Brief rögzítve $\rightarrow$ Kutatás $\rightarrow$ 3 opció $\rightarrow$ Ajánlat v1 $\rightarrow$ Visszajelzés $\rightarrow$ Ajánlat v2).
+- [x] **Ügyfél Visszajelzés Rögzítése:** Gyors visszajelzési pontok rögzítése.
+- [x] **Re-Optimization Workflow:** Módosított megkötésekkel történő újratervezés Proposal v2 létrehozásával.
+- [x] **Eset Idővonal & Audit Napló (`advisor_timeline.js`):** Időbélyeges eseménynapló.
 
 ### 🎯 Phase 9 Acceptance Criteria
-1. [x] Az ügyfél visszajelzése után 1 kattintással újragenerálható a csomag anélkül, hogy elölről kellene kezdeni a folyamatot.
-2. [x] Az idővonal pontosan naplózza a tervezési folyamat minden lépését és a megtakarított kutatási időt.
+1. [x] Az ügyfél visszajelzése után 1 kattintással újragenerálható a csomag.
+2. [x] Az idővonal pontosan naplózza a tervezési folyamat minden lépését.
 
 ---
 
-## 📌 Phase 10: Hardening, Playwright E2E Tesztek & Minőségkapuk
-> **Cél:** 20 automatizált E2E teszt, reszponzivitási audit és 100%-os tudásgráf-integritás.
+## 📌 Phase 10: Hardening, Egység-, Integrációs & E2E Tesztek
+> **Cél:** Átfogó tesztelési lefedettség a megerősített architektúrán és 100%-os tudásgráf-integritás.
 
-- [x] **20 Átfogó Playwright E2E Teszt (`tests/e2e/test_advisor_workspace_e2e.py`):**
-  - [x] `test_advisor_dashboard_load`
-  - [x] `test_client_create_and_profile`
-  - [x] `test_trip_case_create`
-  - [x] `test_brief_completion_with_hard_soft_constraints`
-  - [x] `test_budget_modes_total_and_component`
-  - [x] `test_search_scope_component_only`
-  - [x] `test_research_execution_and_progress`
-  - [x] `test_multi_option_generation_3_archetypes`
-  - [x] `test_option_diversity_verification`
-  - [x] `test_side_by_side_comparison_matrix`
-  - [x] `test_relative_comparison_why_this_option`
-  - [x] `test_find_better_modal_workflow`
-  - [x] `test_constraint_relaxation_on_zero_results`
-  - [x] `test_provider_failure_resilience_and_stale_cache`
-  - [x] `test_risk_engine_warnings_display`
-  - [x] `test_shortlist_management`
-  - [x] `test_multi_option_proposal_generation_and_export`
-  - [x] `test_client_feedback_and_proposal_v2_reoptimization`
-  - [x] `test_unauthorized_case_access_isolation`
-  - [x] `test_b2c_master_planner_zero_regression`
-- [x] **UI Reszponzivitás, DOM Pixel Audit & Billentyűzet UX:**
-  - [x] 0 horizontális túlcsordulás desktopon (1280px+) és mobilon (<768px).
-  - [x] Gyorsbillentyűk ellenőrzése.
+- [x] **Hardening Unit & Integration Tesztek (`tests/test_advisor_workspace_hardening.py`):**
+  - [x] `test_budget_constraint_semantics_hard_vs_target`
+  - [x] `test_advisor_override_audit_trail`
+  - [x] `test_multi_option_engine_objective_profiles_and_diversity`
+  - [x] `test_multi_option_engine_3_option_rule_never_pads_fake_options`
+  - [x] `test_provider_provenance_structure_and_freshness`
+  - [x] `test_async_research_run_lifecycle_and_cancel`
+  - [x] `test_proposal_share_token_security_and_revocation`
+  - [x] `test_public_proposal_view_sanitization`
+  - [x] `test_api_contract_validation_and_idempotency`
+  - [x] `test_b2c_master_planner_regression_protection`
+- [x] **Playwright E2E Tesztek (`tests/e2e/test_advisor_workspace_e2e.py`):**
+  - [x] 20 automatizált végpontok közötti teszt a teljes tanácsadói folyamatra.
 - [x] **Knowledge Graph Validáció:**
-  - [x] `python scripts/knowledge/validate.py` sikeres futása (181 node, 740 wikilink, 0 error).
+  - [x] `python scripts/knowledge/validate.py` sikeres futása.
 
 ### 🎯 Phase 10 Acceptance Criteria
-1. [x] Mind a 20 Advisor E2E teszt és az összes meglévő B2C teszt hibátlanul átmegy (100% Pass Rate: 74/74 teszt zöld).
+1. [x] Az összes hardening teszt, B2C regressziós teszt és E2E teszt hibátlanul lefut.
 2. [x] A teljes tudástár és a forráskód kapcsolatai 100%-ban érvényesek.

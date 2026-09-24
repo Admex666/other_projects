@@ -132,14 +132,26 @@
             // Show/hide active case section in sidebar
             if (activeCaseSection) {
                 if (activeCase) {
+                    const wasHidden = activeCaseSection.style.display === 'none' || activeCaseSection.style.display === '';
                     activeCaseSection.style.display = 'block';
                     const titleEl = document.getElementById('sidebarActiveCaseTitle');
                     if (titleEl) titleEl.innerText = activeCase.title || 'Aktív Ügy';
                     const clientEl = document.getElementById('sidebarActiveCaseClient');
                     const client = window.AdvisorState.getActiveClient();
                     if (clientEl) clientEl.innerText = client ? client.name : 'Ügyfél';
+
+                    // Trigger reveal animation whenever the case context is opened/switched
+                    activeCaseSection.classList.remove('case-revealed');
+                    // Force reflow so removing + re-adding the class restarts CSS animations
+                    void activeCaseSection.offsetWidth;
+                    activeCaseSection.classList.add('case-revealed');
+                    clearTimeout(activeCaseSection._revealTimer);
+                    activeCaseSection._revealTimer = setTimeout(() => {
+                        activeCaseSection.classList.remove('case-revealed');
+                    }, 1400);
                 } else {
                     activeCaseSection.style.display = 'none';
+                    activeCaseSection.classList.remove('case-revealed');
                 }
             }
 
@@ -153,6 +165,7 @@
 
         updateHeaderBreadcrumbs() {
             const breadcrumbsContainer = document.getElementById('headerBreadcrumbs');
+            const pillContainer = document.getElementById('headerActiveCasePill');
             if (!breadcrumbsContainer) return;
 
             const state = window.AdvisorState.state;
@@ -201,31 +214,35 @@
                 crumbs.push(`<span class="breadcrumb-separator">/</span><span class="breadcrumb-current">Beállítások</span>`);
             }
 
-            // Case context summary pill
-            let casePill = '';
-            if (activeCase) {
-                const dest = activeCase.research_scope?.candidate_destinations?.[0] || 'Több célpont';
-                const budget = activeCase.total_budget_huf ? (activeCase.total_budget_huf).toLocaleString('hu-HU') + ' Ft' : 'Büdzsé nincs megadva';
-                casePill = `
-                    <div class="active-case-pill">
-                        <span class="material-symbols-outlined" style="font-size:14px; color:var(--secondary-container);">trip_origin</span>
-                        <span>${dest} (${activeCase.duration_days_min} nap)</span>
-                        <span style="opacity:0.4;">•</span>
-                        <span style="font-family:var(--font-mono); color:#a7f540;">${budget}</span>
-                        <button type="button" class="btn-exit-case" onclick="window.AdvisorNavigation.exitActiveCase()" title="Kilépés az ügyből">✕</button>
-                    </div>
-                `;
-            }
-
+            // Render breadcrumbs only (no pill here)
             breadcrumbsContainer.innerHTML = `
-                <div style="display:flex; align-items:center; gap:8px; flex:1; overflow:hidden;">
+                <div style="display:flex; align-items:center; gap:8px; min-width:0; overflow:hidden;">
                     ${crumbs.join('')}
                 </div>
-                ${casePill}
             `;
+
+            // Render active-case pill in dedicated zone
+            if (pillContainer) {
+                if (activeCase) {
+                    const dest = activeCase.research_scope?.candidate_destinations?.[0] || 'Több célpont';
+                    const budget = activeCase.total_budget_huf ? (activeCase.total_budget_huf).toLocaleString('hu-HU') + ' Ft' : 'Büdzsé nincs megadva';
+                    pillContainer.innerHTML = `
+                        <div class="active-case-pill">
+                            <span class="material-symbols-outlined" style="font-size:14px; color:var(--secondary-container); flex-shrink:0;">trip_origin</span>
+                            <span>${dest} (${activeCase.duration_days_min} nap) &nbsp;•&nbsp; <span style="font-family:var(--font-mono); color:#a7f540;">${budget}</span></span>
+                            <button type="button" class="btn-exit-case" onclick="window.AdvisorNavigation.exitActiveCase()" title="Kilépés az ügyből">✕</button>
+                        </div>
+                    `;
+                } else {
+                    pillContainer.innerHTML = '';
+                }
+            }
         }
 
-        openNewCaseModal() {
+        async openNewCaseModal() {
+            if (!window.AdvisorState.state.clients || window.AdvisorState.state.clients.length === 0) {
+                await window.AdvisorState.refreshClients();
+            }
             this.populateClientSelectDropdown();
             const modal = document.getElementById('newCaseModal');
             if (modal) {
@@ -254,11 +271,11 @@
             if (!select) return;
 
             const clients = window.AdvisorState.state.clients || [];
-            select.innerHTML = clients.map(c => `
-                <option value="${c.id}">${c.name} (${c.email || 'Nincs email'})</option>
-            `).join('');
-
-            if (clients.length === 0) {
+            if (clients.length > 0) {
+                select.innerHTML = clients.map(c => `
+                    <option value="${c.id}">${c.name} (${c.email || 'Nincs email'})</option>
+                `).join('');
+            } else {
                 select.innerHTML = '<option value="">Előbb hozz létre egy ügyfelet!</option>';
             }
         }
@@ -334,4 +351,23 @@
             setTimeout(() => toast.remove(), 300);
         }, 3500);
     };
+
+    // --- + New dropdown helpers ---
+    window._toggleNewDropdown = function () {
+        const menu = document.getElementById('btnNewDropdownMenu');
+        if (!menu) return;
+        menu.classList.toggle('open');
+    };
+    window._closeNewDropdown = function () {
+        const menu = document.getElementById('btnNewDropdownMenu');
+        if (menu) menu.classList.remove('open');
+    };
+    // Close on outside click
+    document.addEventListener('click', function (e) {
+        const wrapper = document.getElementById('btnNewDropdownWrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+            window._closeNewDropdown();
+        }
+    });
+
 })();

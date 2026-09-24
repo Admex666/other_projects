@@ -35,7 +35,16 @@ from app.services.trip_risk_service import TripRiskService
 class TestAdvisorWorkspaceE2E:
 
     @pytest.fixture(autouse=True)
-    def handle_dialogs(self, page: Page):
+    def setup_advisor_session(self, page: Page):
+        from app.core.auth import create_session
+        token = create_session("bean")
+        domain = "localhost"
+        page.context.add_cookies([{
+            "name": "session_token",
+            "value": token,
+            "domain": domain,
+            "path": "/"
+        }])
         page.on("dialog", lambda dialog: dialog.accept())
         yield
 

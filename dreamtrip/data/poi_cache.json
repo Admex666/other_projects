@@ -20840,15 +20840,15 @@
     ]
   },
   "lisbon_pt": {
-    "timestamp": 1789198129.104695,
+    "timestamp": 1790253558.7126198,
     "pois": [
       {
         "id": "mock_lisbon_pt_attraction_0",
         "city_id": "lisbon_pt",
-        "name": "Belém-torony & Jerónimos-kolostor",
+        "name": "Főtér és Történelmi Városközpont",
         "type": "attraction",
-        "rating": 4.9,
-        "user_ratings_total": 1620,
+        "rating": 4.8,
+        "user_ratings_total": 14153,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -20935,19 +20935,19 @@
           ]
         },
         "location": {
-          "lat": 38.70548807924412,
-          "lng": -9.14615053877819
+          "lat": 38.733133752211195,
+          "lng": -9.155256447449787
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 105."
+        "address": "Lisszabon, Main Street 100."
       },
       {
         "id": "mock_lisbon_pt_attraction_1",
         "city_id": "lisbon_pt",
-        "name": "Sárga 28-as Villamos & Alfama Negyed",
+        "name": "Királyi Palota és Vármúzeum",
         "type": "attraction",
         "rating": 4.8,
-        "user_ratings_total": 8026,
+        "user_ratings_total": 10120,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -21034,19 +21034,19 @@
           ]
         },
         "location": {
-          "lat": 38.733740301557255,
-          "lng": -9.129032229910237
+          "lat": 38.7348558259127,
+          "lng": -9.14337819867327
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 109."
+        "address": "Lisszabon, Main Street 4."
       },
       {
         "id": "mock_lisbon_pt_attraction_2",
         "city_id": "lisbon_pt",
-        "name": "Szent György Vár (Castelo de São Jorge)",
+        "name": "Modern Művészeti Galéria",
         "type": "attraction",
-        "rating": 4.7,
-        "user_ratings_total": 2925,
+        "rating": 4.3,
+        "user_ratings_total": 1348,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -21133,19 +21133,19 @@
           ]
         },
         "location": {
-          "lat": 38.70404257500397,
-          "lng": -9.150388823192023
+          "lat": 38.737698497411294,
+          "lng": -9.12897229795487
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 135."
+        "address": "Lisszabon, Main Street 107."
       },
       {
         "id": "mock_lisbon_pt_attraction_3",
         "city_id": "lisbon_pt",
-        "name": "Miradouro de Santa Luzia Kilátó",
+        "name": "Botanikus Kert és Pálmaház",
         "type": "attraction",
-        "rating": 4.9,
-        "user_ratings_total": 3326,
+        "rating": 4.6,
+        "user_ratings_total": 1990,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -21232,19 +21232,19 @@
           ]
         },
         "location": {
-          "lat": 38.72850112322301,
-          "lng": -9.133778880297076
+          "lat": 38.737930357718085,
+          "lng": -9.14868154203869
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 124."
+        "address": "Lisszabon, Main Street 107."
       },
       {
         "id": "mock_lisbon_pt_attraction_4",
         "city_id": "lisbon_pt",
-        "name": "Time Out Market Gasztronómiai Vásárcsarnok",
+        "name": "Szent Katedrális",
         "type": "attraction",
-        "rating": 4.7,
-        "user_ratings_total": 2176,
+        "rating": 4.8,
+        "user_ratings_total": 7277,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -21331,19 +21331,19 @@
           ]
         },
         "location": {
-          "lat": 38.70302126418128,
-          "lng": -9.12329471968591
+          "lat": 38.73804880201631,
+          "lng": -9.143234653053876
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 135."
+        "address": "Lisszabon, Main Street 38."
       },
       {
         "id": "mock_lisbon_pt_attraction_5",
         "city_id": "lisbon_pt",
         "name": "Néprajzi Szabadtéri Múzeum",
         "type": "attraction",
-        "rating": 4.7,
-        "user_ratings_total": 622,
+        "rating": 4.5,
+        "user_ratings_total": 1721,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -21430,11 +21430,11 @@
           ]
         },
         "location": {
-          "lat": 38.71994298903371,
-          "lng": -9.145852303186334
+          "lat": 38.70310811544005,
+          "lng": -9.142328344984792
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 15."
+        "address": "Lisszabon, Main Street 139."
       },
       {
         "id": "mock_lisbon_pt_attraction_6",
@@ -21442,7 +21442,7 @@
         "name": "Városi Népkert és Csónakázótó",
         "type": "attraction",
         "rating": 4.6,
-        "user_ratings_total": 3440,
+        "user_ratings_total": 7452,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -21529,19 +21529,19 @@
           ]
         },
         "location": {
-          "lat": 38.72166937505132,
-          "lng": -9.133400250560674
+          "lat": 38.738196569444234,
+          "lng": -9.143969988337883
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 145."
+        "address": "Lisszabon, Main Street 108."
       },
       {
         "id": "mock_lisbon_pt_attraction_7",
         "city_id": "lisbon_pt",
         "name": "Tudományos és Technológiai Központ",
         "type": "attraction",
-        "rating": 4.7,
-        "user_ratings_total": 1663,
+        "rating": 4.5,
+        "user_ratings_total": 1954,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -21628,19 +21628,19 @@
           ]
         },
         "location": {
-          "lat": 38.72647624497547,
-          "lng": -9.154972161334944
+          "lat": 38.72396410092093,
+          "lng": -9.131083937099842
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 1."
+        "address": "Lisszabon, Main Street 37."
       },
       {
         "id": "mock_lisbon_pt_restaurant_0",
         "city_id": "lisbon_pt",
         "name": "Bistro Lisszabon - Helyi Ízek",
         "type": "restaurant",
-        "rating": 4.8,
-        "user_ratings_total": 646,
+        "rating": 4.7,
+        "user_ratings_total": 1345,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -21727,19 +21727,19 @@
           ]
         },
         "location": {
-          "lat": 38.71368627185083,
-          "lng": -9.153517545434296
+          "lat": 38.7182007485509,
+          "lng": -9.138250877687408
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 107."
+        "address": "Lisszabon, Main Street 3."
       },
       {
         "id": "mock_lisbon_pt_restaurant_1",
         "city_id": "lisbon_pt",
         "name": "La Piazza Trattoria",
         "type": "restaurant",
-        "rating": 4.5,
-        "user_ratings_total": 1962,
+        "rating": 4.6,
+        "user_ratings_total": 868,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -21826,11 +21826,11 @@
           ]
         },
         "location": {
-          "lat": 38.73706538583775,
-          "lng": -9.150478560910324
+          "lat": 38.72814789890511,
+          "lng": -9.138070136128457
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 22."
+        "address": "Lisszabon, Main Street 74."
       },
       {
         "id": "mock_lisbon_pt_restaurant_2",
@@ -21838,7 +21838,7 @@
         "name": "Gourmet Garden Fine Dining",
         "type": "restaurant",
         "rating": 4.7,
-        "user_ratings_total": 583,
+        "user_ratings_total": 426,
         "price_level": 3,
         "opening_hours": {
           "open_now": true,
@@ -21925,19 +21925,19 @@
           ]
         },
         "location": {
-          "lat": 38.74047188990372,
-          "lng": -9.125997122645193
+          "lat": 38.71180472517345,
+          "lng": -9.13717876080196
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 120."
+        "address": "Lisszabon, Main Street 20."
       },
       {
         "id": "mock_lisbon_pt_restaurant_3",
         "city_id": "lisbon_pt",
         "name": "The Rusty Anchor Fish & Chips",
         "type": "restaurant",
-        "rating": 4.4,
-        "user_ratings_total": 198,
+        "rating": 4.3,
+        "user_ratings_total": 956,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -22024,19 +22024,19 @@
           ]
         },
         "location": {
-          "lat": 38.70275120039647,
-          "lng": -9.139936261372785
+          "lat": 38.73759731247649,
+          "lng": -9.14361572342534
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 56."
+        "address": "Lisszabon, Main Street 97."
       },
       {
         "id": "mock_lisbon_pt_restaurant_4",
         "city_id": "lisbon_pt",
         "name": "Burger & Craft Beer House",
         "type": "restaurant",
-        "rating": 4.5,
-        "user_ratings_total": 1348,
+        "rating": 4.4,
+        "user_ratings_total": 507,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -22123,19 +22123,19 @@
           ]
         },
         "location": {
-          "lat": 38.7089963764989,
-          "lng": -9.155935129782579
+          "lat": 38.70622636427373,
+          "lng": -9.140181414885387
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 68."
+        "address": "Lisszabon, Main Street 29."
       },
       {
         "id": "mock_lisbon_pt_restaurant_5",
         "city_id": "lisbon_pt",
         "name": "Zöld Kert Vegetáriánus Étterem",
         "type": "restaurant",
-        "rating": 4.5,
-        "user_ratings_total": 151,
+        "rating": 4.6,
+        "user_ratings_total": 632,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -22222,11 +22222,11 @@
           ]
         },
         "location": {
-          "lat": 38.72316087780523,
-          "lng": -9.130817434786414
+          "lat": 38.715644746549735,
+          "lng": -9.121971350458098
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 135."
+        "address": "Lisszabon, Main Street 40."
       },
       {
         "id": "mock_lisbon_pt_cafe_0",
@@ -22234,7 +22234,7 @@
         "name": "The Daily Grind Specialty Cafe",
         "type": "cafe",
         "rating": 4.8,
-        "user_ratings_total": 322,
+        "user_ratings_total": 370,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -22321,11 +22321,11 @@
           ]
         },
         "location": {
-          "lat": 38.72902103754901,
-          "lng": -9.130308993165634
+          "lat": 38.734003099908875,
+          "lng": -9.13757230162604
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 38."
+        "address": "Lisszabon, Main Street 13."
       },
       {
         "id": "mock_lisbon_pt_cafe_1",
@@ -22333,7 +22333,7 @@
         "name": "Vintage Coffee & Bookshop",
         "type": "cafe",
         "rating": 4.7,
-        "user_ratings_total": 363,
+        "user_ratings_total": 331,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -22420,11 +22420,11 @@
           ]
         },
         "location": {
-          "lat": 38.715105878833086,
-          "lng": -9.130438275978559
+          "lat": 38.70233842952213,
+          "lng": -9.14276787118559
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 45."
+        "address": "Lisszabon, Main Street 47."
       },
       {
         "id": "mock_lisbon_pt_cafe_2",
@@ -22432,7 +22432,7 @@
         "name": "Central Park Espresso Bar",
         "type": "cafe",
         "rating": 4.5,
-        "user_ratings_total": 517,
+        "user_ratings_total": 317,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -22519,11 +22519,11 @@
           ]
         },
         "location": {
-          "lat": 38.73595619810353,
-          "lng": -9.13448834134242
+          "lat": 38.72598396446764,
+          "lng": -9.145081493541968
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 4."
+        "address": "Lisszabon, Main Street 57."
       },
       {
         "id": "mock_lisbon_pt_cafe_3",
@@ -22531,7 +22531,7 @@
         "name": "Grand Patisserie és Kávéház",
         "type": "cafe",
         "rating": 4.6,
-        "user_ratings_total": 557,
+        "user_ratings_total": 962,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -22618,19 +22618,19 @@
           ]
         },
         "location": {
-          "lat": 38.71230137250348,
-          "lng": -9.128301982773536
+          "lat": 38.71431108964311,
+          "lng": -9.123262869075536
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 111."
+        "address": "Lisszabon, Main Street 101."
       },
       {
         "id": "mock_lisbon_pt_viewpoint_0",
         "city_id": "lisbon_pt",
         "name": "Lisszabon Panoráma Kilátóterasz",
         "type": "viewpoint",
-        "rating": 4.8,
-        "user_ratings_total": 1090,
+        "rating": 4.7,
+        "user_ratings_total": 4344,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -22717,19 +22717,19 @@
           ]
         },
         "location": {
-          "lat": 38.724380321168695,
-          "lng": -9.13871781546503
+          "lat": 38.71581998282015,
+          "lng": -9.13024858463372
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 23."
+        "address": "Lisszabon, Main Street 86."
       },
       {
         "id": "mock_lisbon_pt_viewpoint_1",
         "city_id": "lisbon_pt",
         "name": "Várhegy Kilátópont",
         "type": "viewpoint",
-        "rating": 4.7,
-        "user_ratings_total": 1290,
+        "rating": 4.8,
+        "user_ratings_total": 3450,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -22816,11 +22816,11 @@
           ]
         },
         "location": {
-          "lat": 38.73635920992782,
-          "lng": -9.145074999904491
+          "lat": 38.70620780956645,
+          "lng": -9.145676823604463
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 12."
+        "address": "Lisszabon, Main Street 10."
       },
       {
         "id": "mock_lisbon_pt_viewpoint_2",
@@ -22828,7 +22828,7 @@
         "name": "TV-Torony SkyBar",
         "type": "viewpoint",
         "rating": 4.3,
-        "user_ratings_total": 727,
+        "user_ratings_total": 483,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -22915,11 +22915,11 @@
           ]
         },
         "location": {
-          "lat": 38.70357699745101,
-          "lng": -9.149602874327893
+          "lat": 38.712930177361685,
+          "lng": -9.12103323366009
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Lisszabon, Main Street 32."
+        "address": "Lisszabon, Main Street 79."
       }
     ]
   },
@@ -97944,6 +97944,6258 @@
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
         "address": "London, Main Street 87."
+      }
+    ]
+  },
+  "nice": {
+    "timestamp": 1790255634.484152,
+    "pois": [
+      {
+        "id": "mock_nice_attraction_0",
+        "city_id": "nice",
+        "name": "Főtér és Történelmi Városközpont",
+        "type": "attraction",
+        "rating": 4.8,
+        "user_ratings_total": 8036,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.38982558723176,
+          "lng": 2.1780578633049887
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 75."
+      },
+      {
+        "id": "mock_nice_attraction_1",
+        "city_id": "nice",
+        "name": "Királyi Palota és Vármúzeum",
+        "type": "attraction",
+        "rating": 4.8,
+        "user_ratings_total": 19266,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.378920320562564,
+          "lng": 2.1547522455619768
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 35."
+      },
+      {
+        "id": "mock_nice_attraction_2",
+        "city_id": "nice",
+        "name": "Modern Művészeti Galéria",
+        "type": "attraction",
+        "rating": 4.3,
+        "user_ratings_total": 3831,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.36978306049569,
+          "lng": 2.159900049644096
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 81."
+      },
+      {
+        "id": "mock_nice_attraction_3",
+        "city_id": "nice",
+        "name": "Botanikus Kert és Pálmaház",
+        "type": "attraction",
+        "rating": 4.5,
+        "user_ratings_total": 5179,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.39619406483608,
+          "lng": 2.183950735484047
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 20."
+      },
+      {
+        "id": "mock_nice_attraction_4",
+        "city_id": "nice",
+        "name": "Szent Katedrális",
+        "type": "attraction",
+        "rating": 4.8,
+        "user_ratings_total": 2566,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37161470883415,
+          "lng": 2.1544409126642012
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 95."
+      },
+      {
+        "id": "mock_nice_attraction_5",
+        "city_id": "nice",
+        "name": "Néprajzi Szabadtéri Múzeum",
+        "type": "attraction",
+        "rating": 4.5,
+        "user_ratings_total": 1717,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37964859416155,
+          "lng": 2.154632240303296
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 17."
+      },
+      {
+        "id": "mock_nice_attraction_6",
+        "city_id": "nice",
+        "name": "Városi Népkert és Csónakázótó",
+        "type": "attraction",
+        "rating": 4.4,
+        "user_ratings_total": 2234,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.367668978166705,
+          "lng": 2.18748766813411
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 141."
+      },
+      {
+        "id": "mock_nice_attraction_7",
+        "city_id": "nice",
+        "name": "Tudományos és Technológiai Központ",
+        "type": "attraction",
+        "rating": 4.7,
+        "user_ratings_total": 2669,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.38590153387563,
+          "lng": 2.1729545253893527
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 112."
+      },
+      {
+        "id": "mock_nice_restaurant_0",
+        "city_id": "nice",
+        "name": "Bistro Nice - Helyi Ízek",
+        "type": "restaurant",
+        "rating": 4.6,
+        "user_ratings_total": 606,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.39661815931511,
+          "lng": 2.1638666755579603
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 113."
+      },
+      {
+        "id": "mock_nice_restaurant_1",
+        "city_id": "nice",
+        "name": "La Piazza Trattoria",
+        "type": "restaurant",
+        "rating": 4.6,
+        "user_ratings_total": 430,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.3729422113443,
+          "lng": 2.1841847952066407
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 132."
+      },
+      {
+        "id": "mock_nice_restaurant_2",
+        "city_id": "nice",
+        "name": "Gourmet Garden Fine Dining",
+        "type": "restaurant",
+        "rating": 4.8,
+        "user_ratings_total": 131,
+        "price_level": 3,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.38990645928185,
+          "lng": 2.152563153445579
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 38."
+      },
+      {
+        "id": "mock_nice_restaurant_3",
+        "city_id": "nice",
+        "name": "The Rusty Anchor Fish & Chips",
+        "type": "restaurant",
+        "rating": 4.4,
+        "user_ratings_total": 714,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37590593354735,
+          "lng": 2.184350519701196
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 128."
+      },
+      {
+        "id": "mock_nice_restaurant_4",
+        "city_id": "nice",
+        "name": "Burger & Craft Beer House",
+        "type": "restaurant",
+        "rating": 4.5,
+        "user_ratings_total": 1367,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.3884899323719,
+          "lng": 2.174744089917639
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 126."
+      },
+      {
+        "id": "mock_nice_restaurant_5",
+        "city_id": "nice",
+        "name": "Zöld Kert Vegetáriánus Étterem",
+        "type": "restaurant",
+        "rating": 4.6,
+        "user_ratings_total": 307,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.39613578945409,
+          "lng": 2.189800750065187
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 123."
+      },
+      {
+        "id": "mock_nice_cafe_0",
+        "city_id": "nice",
+        "name": "The Daily Grind Specialty Cafe",
+        "type": "cafe",
+        "rating": 4.6,
+        "user_ratings_total": 238,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.364646061850564,
+          "lng": 2.160350382967767
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 92."
+      },
+      {
+        "id": "mock_nice_cafe_1",
+        "city_id": "nice",
+        "name": "Vintage Coffee & Bookshop",
+        "type": "cafe",
+        "rating": 4.5,
+        "user_ratings_total": 489,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.36513370519462,
+          "lng": 2.1861913575335463
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 120."
+      },
+      {
+        "id": "mock_nice_cafe_2",
+        "city_id": "nice",
+        "name": "Central Park Espresso Bar",
+        "type": "cafe",
+        "rating": 4.3,
+        "user_ratings_total": 626,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.399376392961116,
+          "lng": 2.179784141792773
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 117."
+      },
+      {
+        "id": "mock_nice_cafe_3",
+        "city_id": "nice",
+        "name": "Grand Patisserie és Kávéház",
+        "type": "cafe",
+        "rating": 4.5,
+        "user_ratings_total": 1535,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.392212400220416,
+          "lng": 2.172554958017043
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 34."
+      },
+      {
+        "id": "mock_nice_viewpoint_0",
+        "city_id": "nice",
+        "name": "Nice Panoráma Kilátóterasz",
+        "type": "viewpoint",
+        "rating": 4.9,
+        "user_ratings_total": 2820,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 41.36214760402935,
+          "lng": 2.1593847154936325
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 143."
+      },
+      {
+        "id": "mock_nice_viewpoint_1",
+        "city_id": "nice",
+        "name": "Várhegy Kilátópont",
+        "type": "viewpoint",
+        "rating": 4.7,
+        "user_ratings_total": 6990,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 41.397276169161564,
+          "lng": 2.175463962023677
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 13."
+      },
+      {
+        "id": "mock_nice_viewpoint_2",
+        "city_id": "nice",
+        "name": "TV-Torony SkyBar",
+        "type": "viewpoint",
+        "rating": 4.3,
+        "user_ratings_total": 611,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 41.3875613581636,
+          "lng": 2.160847840675286
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nice, Main Street 133."
+      }
+    ]
+  },
+  "nizza": {
+    "timestamp": 1790256312.632262,
+    "pois": [
+      {
+        "id": "mock_nizza_attraction_0",
+        "city_id": "nizza",
+        "name": "Főtér és Történelmi Városközpont",
+        "type": "attraction",
+        "rating": 4.7,
+        "user_ratings_total": 3446,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.3622444502733,
+          "lng": 2.1624325609192065
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 50."
+      },
+      {
+        "id": "mock_nizza_attraction_1",
+        "city_id": "nizza",
+        "name": "Királyi Palota és Vármúzeum",
+        "type": "attraction",
+        "rating": 4.7,
+        "user_ratings_total": 7774,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.39153825776097,
+          "lng": 2.1707522468583655
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 91."
+      },
+      {
+        "id": "mock_nizza_attraction_2",
+        "city_id": "nizza",
+        "name": "Modern Művészeti Galéria",
+        "type": "attraction",
+        "rating": 4.4,
+        "user_ratings_total": 2451,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37534158281159,
+          "lng": 2.1639219304168544
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 86."
+      },
+      {
+        "id": "mock_nizza_attraction_3",
+        "city_id": "nizza",
+        "name": "Botanikus Kert és Pálmaház",
+        "type": "attraction",
+        "rating": 4.6,
+        "user_ratings_total": 3960,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.370018834610526,
+          "lng": 2.161386568942814
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 114."
+      },
+      {
+        "id": "mock_nizza_attraction_4",
+        "city_id": "nizza",
+        "name": "Szent Katedrális",
+        "type": "attraction",
+        "rating": 4.8,
+        "user_ratings_total": 10855,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37174716678046,
+          "lng": 2.178413380854217
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 114."
+      },
+      {
+        "id": "mock_nizza_attraction_5",
+        "city_id": "nizza",
+        "name": "Néprajzi Szabadtéri Múzeum",
+        "type": "attraction",
+        "rating": 4.4,
+        "user_ratings_total": 2094,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.36049641589771,
+          "lng": 2.186921242449772
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 122."
+      },
+      {
+        "id": "mock_nizza_attraction_6",
+        "city_id": "nizza",
+        "name": "Városi Népkert és Csónakázótó",
+        "type": "attraction",
+        "rating": 4.4,
+        "user_ratings_total": 3190,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.39775655300879,
+          "lng": 2.1694861113267283
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 65."
+      },
+      {
+        "id": "mock_nizza_attraction_7",
+        "city_id": "nizza",
+        "name": "Tudományos és Technológiai Központ",
+        "type": "attraction",
+        "rating": 4.5,
+        "user_ratings_total": 1910,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.371880172044996,
+          "lng": 2.1679781580333457
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 85."
+      },
+      {
+        "id": "mock_nizza_restaurant_0",
+        "city_id": "nizza",
+        "name": "Bistro Nizza - Helyi Ízek",
+        "type": "restaurant",
+        "rating": 4.8,
+        "user_ratings_total": 546,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.39879480523842,
+          "lng": 2.1588208190787515
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 18."
+      },
+      {
+        "id": "mock_nizza_restaurant_1",
+        "city_id": "nizza",
+        "name": "La Piazza Trattoria",
+        "type": "restaurant",
+        "rating": 4.5,
+        "user_ratings_total": 2884,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.363971745184415,
+          "lng": 2.1860562562071606
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 118."
+      },
+      {
+        "id": "mock_nizza_restaurant_2",
+        "city_id": "nizza",
+        "name": "Gourmet Garden Fine Dining",
+        "type": "restaurant",
+        "rating": 4.6,
+        "user_ratings_total": 658,
+        "price_level": 3,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37837386459268,
+          "lng": 2.173259935185239
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 114."
+      },
+      {
+        "id": "mock_nizza_restaurant_3",
+        "city_id": "nizza",
+        "name": "The Rusty Anchor Fish & Chips",
+        "type": "restaurant",
+        "rating": 4.4,
+        "user_ratings_total": 691,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.39848822282552,
+          "lng": 2.157811676839752
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 115."
+      },
+      {
+        "id": "mock_nizza_restaurant_4",
+        "city_id": "nizza",
+        "name": "Burger & Craft Beer House",
+        "type": "restaurant",
+        "rating": 4.4,
+        "user_ratings_total": 1363,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37965646304686,
+          "lng": 2.1776832635763017
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 19."
+      },
+      {
+        "id": "mock_nizza_restaurant_5",
+        "city_id": "nizza",
+        "name": "Zöld Kert Vegetáriánus Étterem",
+        "type": "restaurant",
+        "rating": 4.4,
+        "user_ratings_total": 234,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37478244934882,
+          "lng": 2.1702219481367075
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 107."
+      },
+      {
+        "id": "mock_nizza_cafe_0",
+        "city_id": "nizza",
+        "name": "The Daily Grind Specialty Cafe",
+        "type": "cafe",
+        "rating": 4.6,
+        "user_ratings_total": 600,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.386341596248485,
+          "lng": 2.1571143721163546
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 28."
+      },
+      {
+        "id": "mock_nizza_cafe_1",
+        "city_id": "nizza",
+        "name": "Vintage Coffee & Bookshop",
+        "type": "cafe",
+        "rating": 4.7,
+        "user_ratings_total": 852,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.36878240234864,
+          "lng": 2.1729982135914208
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 150."
+      },
+      {
+        "id": "mock_nizza_cafe_2",
+        "city_id": "nizza",
+        "name": "Central Park Espresso Bar",
+        "type": "cafe",
+        "rating": 4.3,
+        "user_ratings_total": 158,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37043025306478,
+          "lng": 2.1656271065316632
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 51."
+      },
+      {
+        "id": "mock_nizza_cafe_3",
+        "city_id": "nizza",
+        "name": "Grand Patisserie és Kávéház",
+        "type": "cafe",
+        "rating": 4.5,
+        "user_ratings_total": 1729,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.3959154321419,
+          "lng": 2.1752229860700565
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 4."
+      },
+      {
+        "id": "mock_nizza_viewpoint_0",
+        "city_id": "nizza",
+        "name": "Nizza Panoráma Kilátóterasz",
+        "type": "viewpoint",
+        "rating": 4.8,
+        "user_ratings_total": 1253,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 41.38460971219413,
+          "lng": 2.1553510617849274
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 26."
+      },
+      {
+        "id": "mock_nizza_viewpoint_1",
+        "city_id": "nizza",
+        "name": "Várhegy Kilátópont",
+        "type": "viewpoint",
+        "rating": 4.6,
+        "user_ratings_total": 1530,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 41.39910614847108,
+          "lng": 2.1629739545179487
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 105."
+      },
+      {
+        "id": "mock_nizza_viewpoint_2",
+        "city_id": "nizza",
+        "name": "TV-Torony SkyBar",
+        "type": "viewpoint",
+        "rating": 4.5,
+        "user_ratings_total": 315,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 41.379182624973055,
+          "lng": 2.1575933746384277
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Nizza, Main Street 79."
+      }
+    ]
+  },
+  "valami_kultúrális": {
+    "timestamp": 1790261093.2745366,
+    "pois": [
+      {
+        "id": "mock_valami_kultúrális_attraction_0",
+        "city_id": "valami_kultúrális",
+        "name": "Főtér és Történelmi Városközpont",
+        "type": "attraction",
+        "rating": 4.7,
+        "user_ratings_total": 7879,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37035633931606,
+          "lng": 2.162016556094883
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 126."
+      },
+      {
+        "id": "mock_valami_kultúrális_attraction_1",
+        "city_id": "valami_kultúrális",
+        "name": "Királyi Palota és Vármúzeum",
+        "type": "attraction",
+        "rating": 4.8,
+        "user_ratings_total": 4072,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37887594326587,
+          "lng": 2.1548671456888897
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 115."
+      },
+      {
+        "id": "mock_valami_kultúrális_attraction_2",
+        "city_id": "valami_kultúrális",
+        "name": "Modern Művészeti Galéria",
+        "type": "attraction",
+        "rating": 4.3,
+        "user_ratings_total": 3489,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37397775654338,
+          "lng": 2.1743800620330616
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 3."
+      },
+      {
+        "id": "mock_valami_kultúrális_attraction_3",
+        "city_id": "valami_kultúrális",
+        "name": "Botanikus Kert és Pálmaház",
+        "type": "attraction",
+        "rating": 4.5,
+        "user_ratings_total": 4951,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.38324917597893,
+          "lng": 2.188440684282484
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 6."
+      },
+      {
+        "id": "mock_valami_kultúrális_attraction_4",
+        "city_id": "valami_kultúrális",
+        "name": "Szent Katedrális",
+        "type": "attraction",
+        "rating": 4.9,
+        "user_ratings_total": 10236,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.366800124582795,
+          "lng": 2.1887336399571153
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 25."
+      },
+      {
+        "id": "mock_valami_kultúrális_attraction_5",
+        "city_id": "valami_kultúrális",
+        "name": "Néprajzi Szabadtéri Múzeum",
+        "type": "attraction",
+        "rating": 4.7,
+        "user_ratings_total": 2738,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.36690243803646,
+          "lng": 2.1666046059486077
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 67."
+      },
+      {
+        "id": "mock_valami_kultúrális_attraction_6",
+        "city_id": "valami_kultúrális",
+        "name": "Városi Népkert és Csónakázótó",
+        "type": "attraction",
+        "rating": 4.6,
+        "user_ratings_total": 5663,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37948502773185,
+          "lng": 2.1648555093799566
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 27."
+      },
+      {
+        "id": "mock_valami_kultúrális_attraction_7",
+        "city_id": "valami_kultúrális",
+        "name": "Tudományos és Technológiai Központ",
+        "type": "attraction",
+        "rating": 4.5,
+        "user_ratings_total": 551,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.39127488024904,
+          "lng": 2.1669515635268826
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 8."
+      },
+      {
+        "id": "mock_valami_kultúrális_restaurant_0",
+        "city_id": "valami_kultúrális",
+        "name": "Bistro valami kultúrális - Helyi Ízek",
+        "type": "restaurant",
+        "rating": 4.7,
+        "user_ratings_total": 779,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.365757671358885,
+          "lng": 2.1734701467695734
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 58."
+      },
+      {
+        "id": "mock_valami_kultúrális_restaurant_1",
+        "city_id": "valami_kultúrális",
+        "name": "La Piazza Trattoria",
+        "type": "restaurant",
+        "rating": 4.6,
+        "user_ratings_total": 2641,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.36871482752729,
+          "lng": 2.152094072131804
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 79."
+      },
+      {
+        "id": "mock_valami_kultúrális_restaurant_2",
+        "city_id": "valami_kultúrális",
+        "name": "Gourmet Garden Fine Dining",
+        "type": "restaurant",
+        "rating": 4.7,
+        "user_ratings_total": 580,
+        "price_level": 3,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.39657825983191,
+          "lng": 2.1860840045228227
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 127."
+      },
+      {
+        "id": "mock_valami_kultúrális_restaurant_3",
+        "city_id": "valami_kultúrális",
+        "name": "The Rusty Anchor Fish & Chips",
+        "type": "restaurant",
+        "rating": 4.4,
+        "user_ratings_total": 366,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37271516880737,
+          "lng": 2.1898379070043075
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 80."
+      },
+      {
+        "id": "mock_valami_kultúrális_restaurant_4",
+        "city_id": "valami_kultúrális",
+        "name": "Burger & Craft Beer House",
+        "type": "restaurant",
+        "rating": 4.5,
+        "user_ratings_total": 311,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37385388660548,
+          "lng": 2.1537204533552923
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 75."
+      },
+      {
+        "id": "mock_valami_kultúrális_restaurant_5",
+        "city_id": "valami_kultúrális",
+        "name": "Zöld Kert Vegetáriánus Étterem",
+        "type": "restaurant",
+        "rating": 4.6,
+        "user_ratings_total": 464,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.39192477886338,
+          "lng": 2.187562778119027
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 111."
+      },
+      {
+        "id": "mock_valami_kultúrális_cafe_0",
+        "city_id": "valami_kultúrális",
+        "name": "The Daily Grind Specialty Cafe",
+        "type": "cafe",
+        "rating": 4.8,
+        "user_ratings_total": 298,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.36426409504733,
+          "lng": 2.1756190516694147
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 36."
+      },
+      {
+        "id": "mock_valami_kultúrális_cafe_1",
+        "city_id": "valami_kultúrális",
+        "name": "Vintage Coffee & Bookshop",
+        "type": "cafe",
+        "rating": 4.5,
+        "user_ratings_total": 591,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37150775624249,
+          "lng": 2.184303825631794
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 50."
+      },
+      {
+        "id": "mock_valami_kultúrális_cafe_2",
+        "city_id": "valami_kultúrális",
+        "name": "Central Park Espresso Bar",
+        "type": "cafe",
+        "rating": 4.6,
+        "user_ratings_total": 770,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.37222413503257,
+          "lng": 2.182363544604417
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 44."
+      },
+      {
+        "id": "mock_valami_kultúrális_cafe_3",
+        "city_id": "valami_kultúrális",
+        "name": "Grand Patisserie és Kávéház",
+        "type": "cafe",
+        "rating": 4.5,
+        "user_ratings_total": 627,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 41.393198977869524,
+          "lng": 2.1794363086814528
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 82."
+      },
+      {
+        "id": "mock_valami_kultúrális_viewpoint_0",
+        "city_id": "valami_kultúrális",
+        "name": "valami kultúrális Panoráma Kilátóterasz",
+        "type": "viewpoint",
+        "rating": 4.9,
+        "user_ratings_total": 1764,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 41.375231164951416,
+          "lng": 2.1581596623591053
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 67."
+      },
+      {
+        "id": "mock_valami_kultúrális_viewpoint_1",
+        "city_id": "valami_kultúrális",
+        "name": "Várhegy Kilátópont",
+        "type": "viewpoint",
+        "rating": 4.7,
+        "user_ratings_total": 2079,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 41.3740334960202,
+          "lng": 2.1745328601502276
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 119."
+      },
+      {
+        "id": "mock_valami_kultúrális_viewpoint_2",
+        "city_id": "valami_kultúrális",
+        "name": "TV-Torony SkyBar",
+        "type": "viewpoint",
+        "rating": 4.3,
+        "user_ratings_total": 1144,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 41.38606554150836,
+          "lng": 2.159651184909938
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "valami kultúrális, Main Street 139."
       }
     ]
   }

@@ -101,6 +101,12 @@ class AdvisorOrchestrationService:
             "progress_pct": 10,
             "steps_completed": [],
             "warnings": [],
+            "providers_status": {
+                "kiwi": {"status": "running", "count": 0, "error": None},
+                "cozycozy": {"status": "running", "count": 0, "error": None},
+                "open_meteo": {"status": "running", "count": 0, "error": None},
+                "poi_wikidata": {"status": "running", "count": 0, "error": None}
+            },
             "provenance_summary": [],
             "candidates": [],
             "flights_pool": [],
@@ -172,6 +178,31 @@ class AdvisorOrchestrationService:
             # Store in candidate pool for this case
             cls._CANDIDATES_POOL[trip_case.id] = job_record["candidates"]
 
+            # Persist ResearchRun to DB / Persistent SQLite
+            try:
+                from app.repositories.advisor_repository import ResearchRunRepository
+                from app.models.advisor_models import ResearchRun, ResearchRunStatus
+                run = ResearchRun(
+                    id=job_id,
+                    case_id=trip_case.id,
+                    agency_id=trip_case.agency_id or "agency_default_lux",
+                    advisor_id=trip_case.advisor_id or "adv_adam_lead",
+                    strategy=strategy,
+                    status=ResearchRunStatus.COMPLETED,
+                    progress_pct=100,
+                    steps_completed=job_record.get("steps_completed", []),
+                    providers_status=job_record.get("providers_status", {}),
+                    candidates=job_record.get("candidates", []),
+                    destinations_pool=job_record.get("destinations_pool", []),
+                    flights_pool=job_record.get("flights_pool", []),
+                    stays_pool=job_record.get("stays_pool", []),
+                    warnings=job_record.get("warnings", []),
+                    elapsed_seconds=elapsed
+                )
+                ResearchRunRepository.save_run(run)
+            except Exception as pe:
+                logger.warning(f"ResearchRun persistence failed: {pe}")
+
             return job_record
 
         except Exception as e:
@@ -179,6 +210,26 @@ class AdvisorOrchestrationService:
             job_record["status"] = "failed"
             job_record["error"] = str(e)
             job_record["progress_pct"] = 100
+
+            try:
+                from app.repositories.advisor_repository import ResearchRunRepository
+                from app.models.advisor_models import ResearchRun, ResearchRunStatus
+                run = ResearchRun(
+                    id=job_id,
+                    case_id=trip_case.id,
+                    agency_id=trip_case.agency_id or "agency_default_lux",
+                    advisor_id=trip_case.advisor_id or "adv_adam_lead",
+                    strategy=strategy,
+                    status=ResearchRunStatus.FAILED,
+                    progress_pct=100,
+                    steps_completed=job_record.get("steps_completed", []),
+                    providers_status=job_record.get("providers_status", {}),
+                    warnings=job_record.get("warnings", []) + [str(e)]
+                )
+                ResearchRunRepository.save_run(run)
+            except Exception:
+                pass
+
             return job_record
 
     # ─────────────────────────────────────────────────────────────
@@ -830,3 +881,56 @@ class AdvisorOrchestrationService:
                 is_estimated=True
             ).model_dump()
         }
+
+    @classmethod
+    def get_research_job(cls, job_id: str) -> Optional[Dict[str, Any]]:
+        """Returns the status, progress, and results of an async research job."""
+        job = cls._RESEARCH_JOBS.get(job_id)
+        if job:
+            return job
+
+        try:
+            from app.repositories.advisor_repository import ResearchRunRepository
+            run = ResearchRunRepository.get_run(job_id)
+            if run:
+                return {
+                    "job_id": run.id,
+                    "case_id": run.case_id,
+                    "strategy": run.strategy,
+                    "status": run.status.value if hasattr(run.status, "value") else str(run.status),
+                    "progress_pct": run.progress_pct,
+                    "steps_completed": run.steps_completed,
+                    "providers_status": run.providers_status,
+                    "candidates": run.candidates,
+                    "destinations_pool": run.destinations_pool,
+                    "flights_pool": run.flights_pool,
+                    "stays_pool": run.stays_pool,
+                    "warnings": run.warnings,
+                    "elapsed_seconds": run.elapsed_seconds
+                }
+        except Exception:
+            pass
+        return None
+
+    @classmethod
+    def cancel_research_job(cls, job_id: str) -> bool:
+        """Cancels a running or queued research job."""
+        job = cls._RESEARCH_JOBS.get(job_id)
+        if job:
+            job["status"] = "cancelled"
+            job["progress_pct"] = 0
+            job["warnings"].append("Research cancelled by advisor.")
+
+        try:
+            from app.repositories.advisor_repository import ResearchRunRepository
+            from app.models.advisor_models import ResearchRunStatus
+            run = ResearchRunRepository.get_run(job_id)
+            if run:
+                run.status = ResearchRunStatus.CANCELLED
+                run.warnings.append("Research cancelled by advisor.")
+                ResearchRunRepository.save_run(run)
+                return True
+        except Exception:
+            pass
+
+        return bool(job)

@@ -4,15 +4,16 @@ type: system
 name: Optivoya Advisor Workspace Blueprint & Architecture Specification
 status: active
 
-description: Az Optivoya B2B Travel Advisor Workspace v1 teljes, részletes műszaki specifikációja (Master Architecture Blueprint). Matematikai képletekkel, döntési modellekkel, adatstruktúrákkal, a 9 kutatási munkafolyamattal, a 3 archetípus szintézisével, a relatív összehasonlító motorral, a feltétel-enyhítési diagnosztikával, az audit idővonallal és az API szerződésekkel.
+description: Az Optivoya B2B Travel Advisor Workspace v1 teljes, részletes műszaki specifikációja (Master Architecture Blueprint). Matematikai képletekkel, döntési modellekkel, adatstruktúrákkal, a 9 kutatási munkafolyamattal, a 3 archetípus szintézisével, a relatív összehasonlító motorral, a feltétel-enyhítési diagnosztikával, az audit idővonallal, a biztonsági/többügynökséges izolációval és az API szerződésekkel.
 
 source:
   type: code
   ref: app.services.advisor_orchestration_service
 
 code:
-  - app/routers/advisor_api.py
   - app/models/advisor_models.py
+  - app/repositories/advisor_repository.py
+  - app/routers/advisor_api.py
   - app/services/advisor_orchestration_service.py
   - app/services/preference_resolver.py
   - app/services/multi_option_engine.py
@@ -45,6 +46,15 @@ related:
   - "[[QUALITY_GATES]]"
   - "[[DEFINITION_OF_DONE]]"
   - "[[ADR-010-dual-auth-and-app-switcher]]"
+  - "[[advisor-workspace-ux-specification]]"
+  - "[[advisor-research-pipeline]]"
+  - "[[advisor-budget-and-constraints]]"
+  - "[[advisor-option-generation]]"
+  - "[[advisor-provenance-and-verification]]"
+  - "[[advisor-security-and-multitenancy]]"
+  - "[[advisor-research-run-lifecycle]]"
+  - "[[advisor-api-contract]]"
+  - "[[advisor-proposal-versioning]]"
 
 used_by:
   - "[[fastapi-backend]]"
@@ -58,282 +68,225 @@ Ez a dokumentum az **Optivoya B2B Travel Advisor Workspace** teljes, implementá
 
 ## 1. Termékstratégia & Rendszerarchitektúra
 
-Az Optivoya termékcsalád egy közös, leválasztott döntési motor rétegre (**Shared Intelligence Layer**) épül, amelyből két különálló felhasználói élmény ágazik el:
+### 1.1 Cél és Szerepkör
+Az Optivoya B2B Advisor Workspace egy **Desktop-First döntéstámogató és ajánlatkészítő munkaállomás** független utazási tanácsadók, concierge irodák és boutique utazási ügynökségek számára.
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
-│                        ALKALMAZÁSVÁLASZTÓ HUB                          │
-│                                (/hub)                                  │
-└───────────────────┬────────────────────────────────┬───────────────────┘
-                    │                                │
-                    ▼                                ▼
-       ┌────────────────────────┐       ┌────────────────────────┐
-       │  Master Travel Planner │       │   Advisor Workspace    │
-       │       (/planner)       │       │       (/advisor)       │
-       │   B2C / Személyes      │       │     B2B Tanácsadói     │
-       │   Lineáris varázsló    │       │     Pult & CRM         │
-       └────────────┬───────────┘       └────────────┬───────────┘
-                    │                                │
-                    └────────────────┬───────────────┘
-                                     │
-                                     ▼
-       ┌─────────────────────────────────────────────────────────┐
-       │              SHARED INTELLIGENCE LAYER                  │
-       │  ├─ AHP Súlyozás & PROMETHEE II Rangsorolás             │
-       │  ├─ Kiwi.com Járatkereső & Menetrend-analízis           │
-       │  ├─ Cozycozy Szállásaggregáció & Ár-Érték Modell        │
-       │  ├─ Open-Meteo Éghajlati & Hőmérsékleti Motor           │
-       │  ├─ Numbeo Determinisztikus Megélhetési Modell          │
-       │  ├─ 6-Fázisú Élmény- & Aktivitás Profilozás (OSM/Wiki)  │
-       │  └─ Provenance, Hitelesítés & Kockázatelemző Motor      │
-       └─────────────────────────────────────────────────────────┘
+│                       OPTIVOYA ARCHITEKTÚRA RÉTEGEK                    │
+├────────────────────────────────────────────────────────────────────────┤
+│ 1. Post-Login Hub (`/hub`) → [Master Planner] | [Advisor Workspace]     │
+├────────────────────────────────────────────────────────────────────────┤
+│ 2. Presentation Layer:                                                 │
+│    - B2C Master Planner UI (`/planner`)                                │
+│    - B2B Advisor Workspace Desktop Shell (`/advisor`)                  │
+├────────────────────────────────────────────────────────────────────────┤
+│ 3. Shared Intelligence & Decision Layer (Közös Motorok):              │
+│    - `DestinationMatchingService` & `ExperienceIntelligenceService`    │
+│    - `FlightIntelligenceService` (Kiwi.com GraphQL)                    │
+│    - `AccommodationIntelligenceService` (Cozycozy Scraper)             │
+│    - `TripScoreService` (Harmonizált 4-pilléres kompozit index)        │
+│    - `AHPEngine` & `PrometheeEngine` (MCDM rangsoroló motorok)         │
+│    - `ItineraryOptimizationService` & `ProposalRenderer`               │
+├────────────────────────────────────────────────────────────────────────┤
+│ 4. Advisor Core Orchestration Layer (`app/services/`):                 │
+│    - `AdvisorOrchestrationService` (9 specializált kutatási stratégia) │
+│    - `PreferenceResolver` (4 rétegű prioritási hierarchia)             │
+│    - `MultiOptionEngine` (3 döntési archetípus szintézise)             │
+│    - `RelativeComparisonService` (Relatív trade-off mátrix)            │
+│    - `ConstraintRelaxationService` (0-találat feloldási motor)         │
+│    - `VerificationService` & `TripRiskService` (Provenance & Kockázat) │
+│    - `ProposalService` & `TimelineReoptimizationService`               │
+├────────────────────────────────────────────────────────────────────────┤
+│ 5. Data & Persistence Layer:                                           │
+│    - Supabase Cloud PostgreSQL (`beta_users`, `trip_cases`, `clients`) │
+│    - Helyi SQLite fallback (`data/analytics.db`)                       │
+└────────────────────────────────────────────────────────────────────────┘
 ```
-
-### 1.1 Fő Értékajánlat & KPI
-* **Értékígéret:** *„Ügyféligényből 3 megalapozott, összehasonlítható és exportálható utazási döntési opció percek alatt.”*
-* **Elsődleges Északi Csillag Metrika (North Star KPI):** **Total Research Time Saved / Case** (ügyenkénti kutatási idő csökkentése a korábbi 120+ percről $\le 45$ percre).
 
 ---
 
-## 2. Adatmodell & Entitás-specifikáció (`app/models/advisor_models.py`)
+## 2. Adatmodellek & Entitások (`app/models/advisor_models.py`)
 
-A rendszer relációs és Pydantic modelljei tiszta, multi-tenant struktúrát követnek:
+### 2.1 Multi-Tenant Szervezeti Modell
+* `Agency`: Ügynökségi entitás (`id`, `name`, `slug`, `branding`, `is_active`).
+* `AgencyBranding`: Ügynökségi arculati beállítások (`company_name`, `primary_color`, `accent_color`, `logo_url`, `contact_email`, `footer_text`).
+* `Advisor`: Utazási tanácsadó profilja (`id`, `agency_id`, `name`, `email`, `role`, `default_origin`, `default_currency`).
 
-```mermaid
-erDiagram
-    Agency ||--o{ Advisor : employs
-    Agency ||--o{ Client : manages
-    Advisor ||--o{ TripCase : owns
-    Client ||--o{ TripCase : requests
-    TripCase ||--o{ TripOption : contains
-    TripCase ||--o{ CaseEvent : logs
-    TripCase ||--o{ AdvisorNote : annotates
-    TripCase ||--o| Proposal : generates
-    Proposal ||--o{ ProposalVersion : versions
-```
+### 2.2 Ügyfélprofil & Tartós Preferenciák
+* `Client`: Ügyfél rekord (`id`, `agency_id`, `advisor_id`, `name`, `email`, `phone`, `passport_country`, `tags`, `preferences`, `notes`).
+* `ClientPreferences`: Tartós utazási profil (`preferred_origins`, `preferred_airlines`, `avoid_airlines`, `hotel_min_stars`, `hotel_min_rating`, `direct_flights_only`, `interests`, `travel_style`).
 
-### 2.1 Entitás Struktúrák & Invariánsok
-
-#### A) `TripCase` (Központi Ügy Aggregátum)
-* `id` (`str`): Egyedi azonosító (`case_xxxxxxxx-xxxx-xxxx...`).
-* `agency_id`, `advisor_id`, `client_id` (`str`): Multi-tenant kapcsolatok.
-* `title` (`str`): Ügy megnevezése (pl. *„Olasz Tengerparti Nyaralás — Kovács Család”*).
-* `status` (`TripCaseStatus`): Állapotgép (`brief` $\rightarrow$ `research` $\rightarrow$ `shortlist` $\rightarrow$ `proposal` $\rightarrow$ `waiting` $\rightarrow$ `revision` $\rightarrow$ `closed`).
-* `scope` (`ResearchScope`): `FULL_TRIP`, `DESTINATION_DISCOVERY`, `FLIGHT_AND_STAY`, `FLIGHT_ONLY`, `STAY_ONLY`, `ACTIVITIES_ONLY`.
-* `budget_mode` (`BudgetMode`): `TOTAL_BUDGET`, `COMPONENT_BUDGETS`, `SCOPE_ONLY`.
-* `origin` (`str`), `destination_focus` (`Optional[str]`): Indulási és cél-fókusz.
-* `adults` (`int`), `children` (`int`), `duration_days` (`int`): Utasok és időtartam.
-* `date_mode` (`str`): `exact` (fix dátumok), `interval` (időablak), `month` (adott hónap).
-* `total_budget_huf` (`Optional[float]`): Felső költségplafon forintban.
-* `preferences` (`ResolvedTripPreferences`): Feloldott szigorú és súlyozott feltételrendszer.
-
-#### B) `ProviderProvenance` (Adat-Eredet & Frissesség)
-Minden külső adatpont (repülőjegy, szálloda, POI, időjárás) rendelkezik saját eredet-statisztikával:
-* `provider` (`str`): `Kiwi`, `Cozycozy`, `Open-Meteo`, `Numbeo`, `OSM`, `Manual`.
-* `checked_at` (`datetime`): Lekérés időpontja (UTC).
-* `expires_at` (`datetime`): Lejárati idő a gyorsítótárban.
-* `freshness_ttl_seconds` (`int`):
-  * Kiwi járatok: $1800\,\text{s}$ ($30$ perc).
-  * Cozycozy szállások: $3600\,\text{s}$ ($60$ perc).
-  * Open-Meteo klíma: $86400\,\text{s}$ ($24$ óra).
-  * Numbeo árak: $2592000\,\text{s}$ ($30$ nap).
-* `verification_status` (`VerificationStatus`): `VERIFIED`, `ESTIMATED`, `STALE`, `NEEDS_REVIEW`, `UNAVAILABLE`.
-* `raw_reference` (`Optional[str]`): Külső API foglalási azonosító vagy token.
+### 2.3 TripCase & Döntési Aggregátum
+* `TripCase`: Központi döntési aggregátum (`id`, `agency_id`, `advisor_id`, `client_id`, `title`, `status`, `scope`, `budget_mode`, `budget_constraint`, `origin`, `destination_focus`, `adults`, `children`, `duration_days`, `out_date`, `in_date`, `preferences`, `shortlist_ids`, `selected_option_ids`).
 
 ---
 
 ## 3. Preferencia-feloldási Hierarchia (`PreferenceResolver`)
 
-A rendszer a preferenciákat és szűrési szabályokat szigorúan **4 prioritási szinten** oldja fel:
+A rendszer a preferenciákat szigorúan **4 prioritási szinten** oldja fel:
 
 $$\text{Advisor Overrides} \succ \text{Case Brief} \succ \text{Client Profile} \succ \text{System Defaults}$$
 
-```text
-1. Advisor Overrides (Manuálisan zárolt célpont, kiválasztott járat/szállás, egyedi árrés)
-       ↓ felülírja
-2. Case Brief (Az adott utazási igényhez megadott specifikus költségkeret, dátum és kényelmi igény)
-       ↓ kiegészíti
-3. Client Profile (Az ügyfél CRM profiljában rögzített tartós preferenciák: kedvenc légitársaságok, min. csillagszám)
-       ↓ alapértelmezi
-4. System Defaults (Alapértelmezett indulás: BUD, min. 3★, 2 felnőtt, 7 nap, 24°C ideális hőmérséklet)
-```
-
 ### 3.1 Feltétel Kategóriák
 1. **Hard Constraints (Szigorú Megkötések — Pass/Fail):**
-   * $\text{Price} \le \text{TotalBudget} \cdot 1.35$ (max. 35%-os flexibilitási küszöb a kizárás előtt).
+   * $\text{Price} \le \text{TotalBudget}$ (Hard ceiling, szigorúan betartva).
    * $\text{Stops} = 0$, ha $\text{direct\_flights\_only} = \text{True}$.
    * $\text{HotelStars} \ge \text{min\_hotel\_stars}$.
    * $\text{HotelRating} \ge \text{min\_hotel\_rating}$.
-2. **Soft Preferences (Súlyozott Döntési Preferenciák — Skálázás 0–100):**
+2. **Soft Preferences (Súlyozott Döntési Preferenciák — 0–100 skálán):**
    * AHP 4-Pillér Súlyok: $w_{\text{dest}} + w_{\text{flight}} + w_{\text{stay}} + w_{\text{exp}} = 100$.
    * Vibe preferenciák: kultúra, gasztronómia, tengerpart, természet, éjszakai élet.
-   * Járat prioritások: ár vs. menetidő vs. átszállások száma.
 3. **Avoid Rules (Büntetett vagy Tiltott Elemek):**
-   * Hajnali indulás ($\le 06:00$) vagy késő éjszakai érkezés ($\ge 23:30$) elkerülése.
+   * Hajnali indulás ($\le 06:00$) vagy késő éjszakai érkezés ($\ge 23:30$).
    * Tiltott légitársaságok vagy célállomások.
 4. **Nice-to-Have (Pozitív Bónusz Pontok):**
-   * Reggeli az árban ($+5$ pont), medence ($+3$ pont), ingyenes lemondás ($+5$ pont), központi lokáció ($+5$ pont).
+   * Reggeli az árban ($+5$), medence ($+3$), ingyenes lemondás ($+5$).
 
 ---
 
-## 4. A 9 Tanácsadói Kutatási Stratégia (Research Pipelines)
+## 4. A 9 Tanácsadói Kutatási Stratégia (`[[advisor-research-pipeline]]`)
 
-Az [`AdvisorOrchestrationService`](file:///e:/Data/other_projects/dreamtrip/app/services/advisor_orchestration_service.py) 9 dedikált kutatási stratégiát hajt végre a `scope` és az igény alapján:
-
-| # | Stratégia Megnevezése | Bemeneti Paraméterek | Végrehajtási Lépések | Eredmény |
-|---|---|---|---|---|
-| **1** | **Destination Discovery** | Indulási pont, dátum, költségkeret, preferenciák. | 1. 45+ célállomás szűrése klíma és költség alapján<br>2. Top 5 város kiválasztása<br>3. Párhuzamos járat- és szállásgyűjtés<br>4. 3 Archetípus szintetizálása. | 3 Opció különböző városokra. |
-| **2** | **Known Destination** | Konkrét város (pl. Róma), dátum, költség. | 1. Célállomás validálása<br>2. Járatkínálat PROMETHEE II rangsorolása<br>3. Szálláskínálat mély szűrése<br>4. 3 Archetípus felépítése ugyanarra a városra. | 3 eltérő árfekvésű/stílusú opció a kiválasztott városra. |
-| **3** | **Flight-First** | Indulás, dátum, repülési preferenciák. | 1. Kiwi járatmátrix lekérése<br>2. Legkedvezőbb járatok kiválasztása<br>3. Kapcsolódó szállások és transzferek hozzáillesztése. | Kiváló menetrendű csomagok. |
-| **4** | **Stay-First** | Célváros vagy régió, szállás preferenciák. | 1. Prémium szállások keresése (Cozycozy)<br>2. Csatlakozó járatok felkutatása<br>3. Helyi programok szintézise. | Szállásközpontú opciók. |
-| **5** | **Full-Trip Optimization** | Teljes bemeneti mátrix. | 1. Minden pillér együttes párhuzamos optimalizálása<br>2. TripScore harmonizálás. | Globálisan optimalizált csomag. |
-| **6** | **Component-Only** | Csak járat vagy csak szállás kérés. | 1. Kizárólag a kért komponenst kutatja<br>2. Provenance csatolása. | Célzott komponenslista. |
-| **7** | **Mixed-Scope** | 2–3 konkrét város összevetése. | 1. Párhuzamos csomagépítés a megadott városokra<br>2. Relatív összehasonlítás. | Városok közötti döntési mátrix. |
-| **8** | **Re-Optimization** | Meglévő ügy + módosított megkötés. | 1. Meglévő stabil komponensek zárolása<br>2. Csak az érintett komponens újraszámolása<br>3. Audit esemény rögzítése. | Frissített 3 opció a kontextus megőrzésével. |
-| **9** | **Find Better** | 1 kiválasztott opció finomhangolása. | 1. Lokális keresés a jobb hotelre vagy olcsóbb járatra<br>2. Trade-off kalkuláció. | Finomított alternatíva. |
+Az [`AdvisorOrchestrationService`](file:///e:/Data/other_projects/dreamtrip/app/services/advisor_orchestration_service.py) 9 dedikált munkafolyamatot valósít meg:
+1. `DESTINATION_DISCOVERY`: 45+ európai város párhuzamos rangsorolása.
+2. `KNOWN_DESTINATION`: Konkrét városra fókuszált mély járat- és szálláskutatás.
+3. `FLIGHT_FIRST`: Járatmenetrend és kedvező viteldíjak priorizálása.
+4. `STAY_FIRST`: Prémium 4-5★ szállodák elérhetősége által vezérelt csomagépítés.
+5. `FULL_TRIP_OPTIMIZATION`: Egyidejű, többcélú Pareto-optimalizálás.
+6. `COMPONENT_ONLY`: Csak járat vagy csak szállás keresése.
+7. `MIXED_SCOPE`: 2–4 konkrét célállomás egymás melletti versenyeztetése.
+8. `RE_OPTIMIZATION`: 1-kattintásos újrahangolás megváltozott feltételekkel.
+9. `FIND_BETTER`: Célzott komponens-csere a globális kontextus megőrzésével.
 
 ---
 
-## 5. A 3 Döntési Archetípus Szintézise (`MultiOptionEngine`)
+## 5. A 3 Döntési Archetípus Szintézise (`[[advisor-option-generation]]`)
 
-A nyers jelöltcsomagokból a motor **pontosan 3 diszjunkt, döntésre kész archetípust** állít elő:
+A motor objektív, standardizált $[0, 100]$ skálájú profilok alapján állítja elő a csomagokat:
 
 ```text
-Nyers Jelölt Halmaz (Raw Inventory Pool: 10–50 csomag)
-                        │
-                        ▼  [1. Hard Constraint Filter]
-             Érvényes Jelöltek (Valid Candidates)
-                        │
-       ┌────────────────┼────────────────┐
-       ▼                ▼                ▼
-  Option A         Option B         Option C
-BEST OVERALL      BEST VALUE     BEST EXPERIENCE
+┌──────────────────────────────┬──────────────────────────────┬──────────────────────────────┐
+│  🏆 OPTION A: BEST OVERALL   │   💡 OPTION B: BEST VALUE    │ 🌟 OPTION C: BEST EXPERIENCE │
+├──────────────────────────────┼──────────────────────────────┼──────────────────────────────┤
+│ Kiegyensúlyozott menetrend,  │ Optimális költségvetés,      │ 4-5★ prémium szállás,        │
+│ optimális ár-érték és a      │ okos járatválasztás a szilárd│ gazdag programkínálat és     │
+│ legmagasabb TripScore index. │ minőségi alapok mellett.     │ maximális élmény/vibe fit.   │
+└──────────────────────────────┴──────────────────────────────┴──────────────────────────────┘
 ```
 
-### 5.1 Matematikai Szelekciós Képletek
+### 5.1 Objektív Pontszámítási Képletek
 
-#### Option A: `BEST_OVERALL` (Kiegyensúlyozott Legjobb)
-A legmagasabb összetett harmonizált `TripScore`-ral rendelkező jelölt:
+#### Option A: `BEST_OVERALL`
+$$\text{Score}_{\text{Overall}} = \text{TripScore} \in [0, 100]$$
 
-$$\text{Option A} = \arg\max_{c \in \text{Valid}} \text{TripScore}(c)$$
+#### Option B: `BEST_VALUE`
+$$\text{Score}_{\text{Value}} = \min\left(100.0, \frac{\text{TripScore}}{\max\left(\frac{\text{Price}}{\text{Budget}_{\text{ref}}}, 0.3\right)} \times 0.8\right)$$
 
-$$\text{TripScore}(c) = \frac{w_{\text{dest}} S_{\text{dest}} + w_{\text{flight}} S_{\text{flight}} + w_{\text{stay}} S_{\text{stay}} + w_{\text{exp}} S_{\text{exp}}}{w_{\text{dest}} + w_{\text{flight}} + w_{\text{stay}} + w_{\text{exp}}}$$
+#### Option C: `BEST_EXPERIENCE`
+$$\text{Score}_{\text{Exp}} = 0.35 \cdot S_{\text{stay}} + 0.25 \cdot S_{\text{act}} + 0.25 \cdot S_{\text{vibe}} + 0.15 \cdot S_{\text{flight}}$$
+Ahol:
+- $S_{\text{stay}} = \left(\frac{\text{Stars}}{5.0} \times 50\right) + \left(\frac{\text{Rating}}{10.0} \times 50\right)$
+- $S_{\text{act}} = \min\left(\frac{N_{\text{activities}}}{4.0}, 1.0\right) \times 100$
+- $S_{\text{vibe}} = \text{VibeMatchScore} \in [0, 100]$
+- $S_{\text{flight}} = 100.0 \text{ (közvetlen)}, 75.0 \text{ (1 átszállás)}, 50.0 \text{ (2+ átszállás)}$
 
-#### Option B: `BEST_VALUE` (Legjobb Ár-Érték Arány)
-A forintonként elérhető legmagasabb minőségi index:
-
-$$\text{Option B} = \arg\max_{c \in \text{Valid} \setminus \{\text{Option A}\}} \left( \frac{\text{TripScore}(c)}{\max\left(\frac{\text{Price}_{\text{HUF}}(c)}{10\,000}, 1.0\right)} \right)$$
-
-#### Option C: `BEST_EXPERIENCE` (Maximális Élmény & Prémium Kategória)
-A legmagasabb kényelmi, szállodai és élményfaktor összeg:
-
-$$\text{Option C} = \arg\max_{c \in \text{Valid} \setminus \{\text{Option A}, \text{Option B}\}} \left( 10 \cdot \text{Stars}(c) + 5 \cdot \text{Rating}_{\text{norm}}(c) + 4 \cdot N_{\text{activities}}(c) + 0.5 \cdot \text{TripScore}(c) \right)$$
-
-### 5.2 Diverzitási Védelem (Diversity Safeguard)
-Ha az adatbázisban kevés a jelölt és az algoritmus azonos csomagot választana az A, B vagy C helyre, a motor permutációs kereséssel automatikusan eltérő szállodát vagy járatot társít, garantálva a **3 valóban különböző alternatívát**.
+### 5.2 A 3-Option Szabály (Quality Invariant)
+```text
+Cél: 3 opció | Előnyben részesített: 3 | Elfogadható: 2 | Minimum: 1
+```
+*Tilos gyenge minőségű hotelt vagy kényelmetlen járatot mesterségesen beilleszteni kizárólag azért, hogy meglegyen a 3 kártya.*
 
 ---
 
 ## 6. Relatív Összehasonlító Motor (`RelativeComparisonService`)
 
-A tanácsadói munka kulcsa a választási alternatívák közötti **különbségek és kompromisszumok (trade-offok)** azonnali láttatása:
-
-### 6.1 Relatív Delta Számítások
 Az `Option A` (Best Overall) képezi a viszonyítási bázist ($P_{\text{base}}$):
-
-$$\Delta \text{Price}_{\text{nominal}} = \text{Price}_i - P_{\text{base}}$$
-
-$$\Delta \text{Price}_{\%} = \frac{\text{Price}_i - P_{\text{base}}}{P_{\text{base}}} \cdot 100\%$$
-
-$$\Delta \text{FlightDuration} = T_i^{\text{flight}} - T_{\text{base}}^{\text{flight}}$$
-
-### 6.2 Összehasonlítási Dimenziók
-1. **Teljes Csomagár & Ár/Fő** (legkedvezőbb megjelölése zölddel).
-2. **Összetett TripScore** (0–100 skálán).
-3. **Repülés & Menetrend** (közvetlen vs. átszállásos, légitársaság, hasznos nyaralási idő).
-4. **Szállás Kategória** (csillagok száma, Booking/Google pontszám 0–10 skálán, lokáció).
-5. **Gasztronómiai & Napi Költségek** (Numbeo determinisztikus napi kosárérték).
-6. **Determinisztikus „Why This Option?” Indoklás** (sablonos AI-szövegek nélkül).
+- $\Delta \text{Price}_{\text{nominal}} = \text{Price}_i - P_{\text{base}}$
+- $\Delta \text{Price}_{\%} = \frac{\text{Price}_i - P_{\text{base}}}{P_{\text{base}}} \cdot 100\%$
+- $\Delta \text{FlightDuration} = T_i^{\text{flight}} - T_{\text{base}}^{\text{flight}}$
+- Értelmezhető, adat-alapú trade-off mondatok előállítása generatív sablonok nélkül.
 
 ---
 
 ## 7. Feltétel-enyhítési Motor (`ConstraintRelaxationService`)
 
-Ha a felhasználói brief túl szigorú (pl. közvetlen járat + 5★ hotel + max. 150 000 Ft) és a keresés **0 találatot (Dead-End)** ad, a rendszer nem áll meg hibával, hanem strukturált diagnózist és **1-kattintásos feloldási javaslatokat** állít elő:
+0 találat (Dead-End) esetén a motor strukturált diagnózist és 1-kattintásos javaslatokat ad:
+- Keretbővítés (+15%, +30%)
+- Átszállás engedélyezése (+1 stop)
+- Szálláskategória mérséklése (5★ $\to$ 4★)
+- Dátumrugalmasság ($\pm 2$ nap)
 
-```text
-[0 Találat Diagnózis]
- ├─ 1. Költségkeret Enyhítés: +45 000 Ft (+15%) keretnövelés → 7 új prémium opció oldódik fel.
- ├─ 2. Átszállási Enyhítés: +1 kényelmes átszállás engedélyezése → 12 új járatos opció nyílik meg.
- ├─ 3. Szálláskategória Enyhítés: 5★ helyett 4★ engedélyezése → 9 új kiváló elhelyezkedésű szállás.
- └─ 4. Dátumablak Enyhítés: ±2 nap flexibilitás → 15 új opció kedvezőbb járatokkal.
-```
-
-Minden javaslathoz tartozik egy `patch` objektum, amellyel a tanácsadó 1 kattintással frissítheti a briefet és azonnal újraindíthatja a keresést.
+*Semmilyen megkötés nem lazul csendben vagy automatikusan!*
 
 ---
 
 ## 8. Kockázatelemző & Figyelmeztető Motor (`TripRiskService`)
 
-A rendszer valós idejű logisztikai és kényelmi kockázatokat detektál minden opcióra:
-
-| Kockázati Típus | Trigger Feltétel | Súlyosság | Javasolt Tanácsadói Figyelmeztetés |
-|---|---|---|---|
-| `TIGHT_TRANSFER` | Átszállási idő $< 90$ perc | ⚠️ Közepes | *„Rövid átszállási idő (pl. 55 perc) — késés esetén poggyászvesztés kockázata.”* |
-| `EARLY_DEPARTURE` | Járatindulás $< 06:00$ | ℹ️ Alacsony | *„Hajnali indulás (05:20) — reptéri transzfer éjszaka szükséges.”* |
-| `LATE_ARRIVAL` | Érkezés a szállásra $> 23:30$ | ℹ️ Alacsony | *„Késő éjszakai érkezés — 24 órás recepció megerősítése ajánlott.”* |
-| `LOW_RATING_RISK` | Hotel pontszám $< 7.2$ | ⚠️ Közepes | *„A szálloda értékelése elmarad a boutique sztenderdtől.”* |
-| `PRICE_VOLATILITY` | Provenance kor $> 60$ perc | ℹ️ Alacsony | *„Nem frissített ár — ellenőrzés szükséges véglegesítés előtt.”* |
+Valós idejű logisztikai kockázatok detektálása:
+- `TIGHT_TRANSFER`: Átszállási idő $< 90$ perc.
+- `EARLY_DEPARTURE`: Indulás $< 06:00$.
+- `LATE_ARRIVAL`: Érkezés a szállásra $> 23:30$.
+- `LOW_RATING_RISK`: Hotel pontszám $< 7.2$.
 
 ---
 
-## 9. Ügyfélajánlat (Proposal) Verziókezelés & Export (`ProposalService`)
+## 9. Ügyfélajánlat (Proposal) Verziókezelés (`[[advisor-proposal-versioning]]`)
 
-Az Advisor Workspace beépített ajánlatkészítő motorja:
-1. **Pillanatfelvétel (Immutable Snapshot):** Az opciók kiválasztásakor a járat-, hotel- és költségadatok zárolásra kerülnek a `ProposalVersion`-ben, így a későbbi élő árváltozások nem módosítják a már kiküldött ajánlatot.
-2. **Verziókövetés:** $v1 \rightarrow v2 \rightarrow v3$ módosítások audit naplóval.
-3. **Megosztható Ügyféllink:** Egyedi token alapú privát nézet (`/api/advisor/proposals/{token}/view`).
-4. **Nyomtatásbarát / PDF Export:** Kétnyelvű, tételes költségbontást és vizuális archetípus-összehasonlítást tartalmazó tiszta dokumentum.
+- **Immutábilis pillanatfelvétel (Snapshot)**: Az elküldött ajánlat adatai zárolódnak.
+- **Elágaztatott verziótörténet**: $v1 \to v2 \to v3$ indoklással.
+- **A4 Print/PDF Export**: Teljes körű nyomtatási stíluslap ([proposal_print.html](file:///e:/Data/other_projects/dreamtrip/templates/advisor/proposal_print.html)).
 
 ---
 
-## 10. REST API Végpont Szerződések (`app/routers/advisor_api.py`)
+## 10. Kriptográfiai Ajánlat-Megosztás & Biztonság (`[[advisor-security-and-multitenancy]]`)
 
-| Metódus | Útvonal | Leírás |
-|---|---|---|
-| `GET` | `/api/advisor/agency` | Ügynökségi profil és branding beállítások. |
-| `GET` | `/api/advisor/kpis` | Tanácsadói KPI-k (aktív ügyek, megtakarított órák, konverzió). |
-| `GET` | `/api/advisor/clients` | Ügyfél CRM lista és keresés. |
-| `POST` | `/api/advisor/clients` | Új ügyfél rögzítése CRM preferenciákkal. |
-| `GET` | `/api/advisor/cases` | Utazási ügyek listázása és szűrése állapot szerint. |
-| `POST` | `/api/advisor/cases` | Új utazási ügy indítása brief paraméterekkel. |
-| `GET` | `/api/advisor/cases/{case_id}` | Teljes ügy adatmodell lekérése opciókkal és audit idővonallal. |
-| `POST` | `/api/advisor/cases/{case_id}/research` | Kutatási stratégia futtatása és 3 archetípus generálása. |
-| `GET` | `/api/advisor/cases/{case_id}/compare` | Relatív összehasonlító mátrix és trade-off analízis. |
-| `POST` | `/api/advisor/cases/{case_id}/relax` | Feltétel-enyhítési diagnózis lekérése 0 találat esetén. |
-| `POST` | `/api/advisor/cases/{case_id}/proposals` | Új ajánlat verzió generálása zárolt pillanatfelvétellel. |
-| `GET` | `/api/advisor/cases/{case_id}/proposals/{prop_id}/export` | HTML/PDF nyomtatható ajánlat renderelése. |
+- **Token**: 256 bites véletlenszerű URL-safe token (`ProposalShare`).
+- **Időkorlát & Visszavonhatóság**: Opcionális lejárati dátum és 1-kattintásos azonnali tiltás (`/revoke-share`).
+- **Ügyfél-biztonságos nézet**: Belső tanácsadói jegyzetek (`advisor_notes`) és technikai pontszámok szigorú eltávolítása.
 
 ---
 
-## 11. Kliensoldali UI Architektúra (`static/js/advisor/`)
+## 11. REST API Végpontok (`[[advisor-api-contract]]`)
 
-A felhasználói felület desktop-first, gyors, reaktív JavaScript modulokból áll:
-* `advisor_app.js`: Fő alkalmazás-vezérlő és nézetváltó router (`dashboard`, `clients`, `cases`, `brief`, `research`, `options`, `compare`, `proposals`, `timeline`, `settings`).
-* `advisor_state.js`: Központi állapotkezelő (aktív ügy, kiválasztott opciók, kosár-szinkronizáció, helyi gyorsítótár).
-* `advisor_research.js`: Valós idejű kutatási előrehaladás-jelző (progress bar) és opciókártya-renderelő.
-* `advisor_option_compare.js`: Oszlopos döntési mátrix és interaktív szűrők.
-* `advisor_proposal.js`: Ajánlatszerkesztő, bevezető/záró szövegek és azonnali PDF export bridge.
+A teljes végpontkatalógus a [advisor-api-contract.md](file:///e:/Data/other_projects/dreamtrip/knowledge/systems/advisor-api-contract.md) dokumentumban található.
 
 ---
 
-## 12. Minőségbiztosítás & Governance Invariánsok
+## 12. Asztali Felület & UX Specifikáció (`[[advisor-workspace-ux-specification]]`)
 
-1. **Anti-AI-Slop Szabályzat (`[[ANTI_AI_SLOP_POLICY]]`):**
-   * Tilos a belső algoritmusnevek (PROMETHEE, AHP) megjelenítése a felületen.
-   * Valós adatok használata (nincsenek fiktív mock járatok vagy kamu értékelések).
-2. **Dizájnrendszer (`[[DESIGN_SYSTEM]]`):**
-   * Zöld fenyő paletta (`--primary: #003710`, `--secondary-container: #a7f540`).
-   * 3-szintű tipográfia: Plus Jakarta Sans (címek), Inter (szöveg), JetBrains Mono (számok/árak).
-3. **Minőségi Kapuk (`[[QUALITY_GATES]]` & `[[DEFINITION_OF_DONE]]`):**
-   * Minden új komponens 100%-os automatizált teszteléssel és érvényes tudásgráf-kapcsolatokkal (`python scripts/knowledge/validate.py`) kerül lezárásra.
+A részletes interakciós és asztali munkaállomás-szerződés a [advisor-workspace-ux-specification.md](file:///e:/Data/other_projects/dreamtrip/knowledge/systems/advisor-workspace-ux-specification.md) dokumentumban található.
+
+---
+
+## 13. Költségvetési Korlát Modell (`[[advisor-budget-and-constraints]]`)
+
+- Teljes utazási keret vs. komponens keretek (járat, hotel, programok, transzfer).
+- Per-fő és csoportos bázis automatikus skálázása.
+- Hard (szigorú) vs. Target (rugalmas) keménységi állapot.
+
+---
+
+## 14. Aszinkron Kutatási Életciklus (`[[advisor-research-run-lifecycle]]`)
+
+- Állapotgép: `QUEUED` $\to$ `RUNNING` $\to$ `PARTIAL` / `COMPLETED` / `FAILED` / `CANCELLED`.
+- Részleges forráskiesés esetén (pl. Kiwi timeout) a folyamat nem omlik össze, hanem `PARTIAL` státusszal zárul.
+
+---
+
+## 15. Adat-eredet & Mélylinkelés (`[[advisor-provenance-and-verification]]`)
+
+- `ProviderProvenance` modell: forrástípus (`api`, `aggregator`, `manual`), ellenőrzés ideje, TTL, mélylinkek és verifikációs státusz (`VERIFIED`, `ESTIMATED`, `STALE`, `NEEDS_REVIEW`, `UNAVAILABLE`).
+
+---
+
+## 16. Többügynökséges Izoláció (`[[advisor-security-and-multitenancy]]`)
+
+- Ügynökségi (`agency_id`) határok védelme szerveroldali hitelesítéssel és Supabase RLS házirendekkel.
+
+---
+
+## 17. Minőségbiztosítás & Governance Invariánsok
+
+1. **Anti-AI-Slop Szabályzat (`[[ANTI_AI_SLOP_POLICY]]`):** Belső algoritmusnevek (PROMETHEE, AHP) nem szerepelnek a felületen.
+2. **Dizájnrendszer (`[[DESIGN_SYSTEM]]`):** Zöld fenyő paletta, 3-szintű tipográfia.
+3. **Minőségi Kapuk (`[[QUALITY_GATES]]` & `[[DEFINITION_OF_DONE]]`):** 100%-os zöld tesztlefedettség és érvényes tudásgráf.

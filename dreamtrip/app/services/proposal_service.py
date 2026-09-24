@@ -2,21 +2,28 @@
 Optivoya Advisor Workspace — Multi-Option Proposal Service (Phase 8)
 =====================================================================
 Handles proposal generation, editing, versioning (v1, v2, v3),
+cryptographically secure token sharing, client-safe rendering,
 and print/export rendering for 1-3 shortlisted options.
 """
 
 from typing import List, Dict, Any, Optional
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+import secrets
+import hashlib
 from app.models.advisor_models import (
-    Proposal, ProposalVersion, TripCase, Client, TripOption,
+    Proposal, ProposalVersion, ProposalShare, TripCase, Client, TripOption,
     generate_uuid, utc_now
 )
 
 
 class ProposalService:
     """
-    Manages client proposal generation, versioning, and document snapshotting.
+    Manages client proposal generation, versioning, document snapshotting,
+    and secure revocable public sharing.
     """
+
+    # In-memory store for active Proposal Shares (token -> ProposalShare)
+    _SHARES_STORE: Dict[str, ProposalShare] = {}
 
     @classmethod
     def create_proposal(
@@ -126,3 +133,106 @@ class ProposalService:
 
         proposal["updated_at"] = utc_now()
         return proposal
+
+    @classmethod
+    def create_share_token(
+        cls,
+        proposal_id: str,
+        version_number: int = 1,
+        expires_in_days: int = 30
+    ) -> ProposalShare:
+        """
+        Generates a cryptographically random, revocable public access token for client sharing.
+        """
+        from app.repositories.advisor_repository import ProposalShareRepository
+
+        raw_token = secrets.token_urlsafe(32)
+        token_hash = hashlib.sha256(raw_token.encode("utf-8")).hexdigest()
+        expires_at = utc_now() + timedelta(days=expires_in_days) if expires_in_days > 0 else None
+
+        share = ProposalShare(
+            id=f"share_{generate_uuid()[:8]}",
+            proposal_id=proposal_id,
+            proposal_version_number=version_number,
+            token=raw_token,
+            token_hash=token_hash,
+            expires_at=expires_at
+        )
+
+        cls._SHARES_STORE[raw_token] = share
+        cls._SHARES_STORE[token_hash] = share
+        ProposalShareRepository.save_share(share)
+        return share
+
+    @classmethod
+    def get_share_by_token(cls, token: str) -> Optional[ProposalShare]:
+        """Validates and returns the share record if active and not expired."""
+        from app.repositories.advisor_repository import ProposalShareRepository
+
+        share = cls._SHARES_STORE.get(token)
+        if not share:
+            token_hash = hashlib.sha256(token.encode("utf-8")).hexdigest()
+            share = ProposalShareRepository.get_share_by_token(token_hash)
+            if not share:
+                share = ProposalShareRepository.get_share_by_token(token)
+
+        if not share or not share.is_valid():
+            return None
+
+        share.access_count += 1
+        share.last_accessed_at = utc_now()
+        cls._SHARES_STORE[token] = share
+        if share.token_hash:
+            cls._SHARES_STORE[share.token_hash] = share
+        ProposalShareRepository.save_share(share)
+        return share
+
+    @classmethod
+    def revoke_share_token(cls, token: str) -> bool:
+        """Revokes an active share token."""
+        from app.repositories.advisor_repository import ProposalShareRepository
+
+        share = cls.get_share_by_token(token)
+        if not share:
+            token_hash = hashlib.sha256(token.encode("utf-8")).hexdigest()
+            ProposalShareRepository.revoke_share(token_hash)
+            ProposalShareRepository.revoke_share(token)
+            return True
+
+        share.is_revoked = True
+        share.revoked_at = utc_now()
+        cls._SHARES_STORE[token] = share
+        if share.token_hash:
+            cls._SHARES_STORE[share.token_hash] = share
+        ProposalShareRepository.save_share(share)
+        return True
+
+    @classmethod
+    def get_client_safe_proposal(cls, proposal: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Strips private internal advisor notes, debug scores, and sensitive CRM references,
+        leaving only client-facing proposal data.
+        """
+        client_safe = dict(proposal)
+        client_safe.pop("advisor_notes", None)
+        client_safe.pop("internal_risk_details", None)
+        client_safe.pop("debug_telemetry", None)
+
+        # Clean versions
+        clean_versions = []
+        for v in client_safe.get("versions", []):
+            vd = dict(v) if isinstance(v, dict) else (v.model_dump() if hasattr(v, "model_dump") else dict(v))
+            vd.pop("advisor_notes", None)
+            clean_versions.append(vd)
+        if clean_versions:
+            client_safe["versions"] = clean_versions
+
+        # Clean options
+        clean_opts = []
+        for opt in client_safe.get("options_snapshot", []):
+            o = dict(opt)
+            o.pop("debug_weights", None)
+            clean_opts.append(o)
+        client_safe["options_snapshot"] = clean_opts
+
+        return client_safe

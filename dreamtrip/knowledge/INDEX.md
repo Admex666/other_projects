@@ -90,7 +90,15 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 ## ⚙️ Systems (Rendszerek)
 * [[shared-intelligence-layer]] — Az Optivoya közös, leválasztott döntési motor rétege (AHP, PROMETHEE, Kiwi, Cozycozy, TripScore, Proposal).
 * [[advisor-workspace-blueprint]] — Optivoya Advisor Workspace v1 Teljes Rendszer Blueprint és Műszaki Architektúra.
-
+* [[advisor-workspace-ux-specification]] — Advisor Workspace UX interakciós specifikáció, információsűrű felület és progresszív döntéstámogatás.
+* [[advisor-budget-and-constraints]] — Hard/Soft/Avoid korlátok, komponens-költségkeretek és tanácsadói felülbírálás (Override).
+* [[advisor-option-generation]] — MultiOptionEngine, 3 normalizált célprofil (Best Overall, Value, Experience) és diverzitási szabályok.
+* [[advisor-research-pipeline]] — 9 tanácsadói kutatási stratégia, kombinálható ResearchScope és hibatűrő aggregáció.
+* [[advisor-provenance-and-verification]] — Forrás-hitelesítés, ProviderProvenance, deep linkek és frissességi időbélyegek.
+* [[advisor-security-and-multitenancy]] — Multi-tenant biztonság, RLS izoláció, szerveroldali jogosultságkezelés és Proposal megosztási tokenek.
+* [[advisor-research-run-lifecycle]] — Aszinkron ResearchRun életciklus (Queued, Running, Partial, Completed) és feladattörlés.
+* [[advisor-api-contract]] — REST API szerződések, Pydantic sémák, idempotencia és lapozási szabványok.
+* [[advisor-proposal-versioning]] — Multi-Option ajánlatok verziózása, immutable snapshotok és kliens-biztonságos megosztás.
 * [[master-planner-blueprint]] — Master Planner Teljes Rendszer Blueprint és Műszaki/Üzleti Architektúra.
 * [[fastapi-backend]] — Python FastAPI aszinkron backend szerver és REST végpontok.
 * [[supabase-database]] — Supabase Cloud PostgreSQL & PostgREST telemetria és béta felhasználói adatbázis.

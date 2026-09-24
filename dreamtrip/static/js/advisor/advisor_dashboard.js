@@ -442,8 +442,10 @@
                     clientId = clients[0].id;
                 } else {
                     try {
-                        const newCl = await window.AdvisorAPI.createClient({ name: "Kovács Család (Ügyfél)", email: "kovacs@example.com" });
+                        const res = await window.AdvisorAPI.createClient({ name: "Kovács Család (Ügyfél)", email: "kovacs@example.com" });
+                        const newCl = res.client || res;
                         clientId = newCl.id;
+                        if (!window.AdvisorState.state.clients) window.AdvisorState.state.clients = [];
                         window.AdvisorState.state.clients.push(newCl);
                     } catch(err) {
                         console.error('Auto client creation error:', err);

@@ -194,7 +194,7 @@ class TestTimelineReoptimization:
             "client_sentiment": "POSITIVE"
         })
         assert fb_res.status_code == 201
-        assert test_case.status == TripCaseStatus.REVISION
+        assert CASES_STORE[case_id].status == TripCaseStatus.REVISION
 
         # 5. POST /cases/{id}/reoptimize (1-click reoptimization)
         reopt_res = client.post(f"/api/advisor/cases/{case_id}/reoptimize", json={

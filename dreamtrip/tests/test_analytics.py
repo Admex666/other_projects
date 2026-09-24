@@ -157,8 +157,9 @@ def test_admin_authentication_and_endpoints():
     assert kpi_json["kpis"]["total_users"] == 1
 
 def test_environment_tracking_and_filtering():
+    import uuid
     # Record test event
-    user_test = "test_advisor_env_unit"
+    user_test = f"test_advisor_env_{uuid.uuid4().hex[:8]}"
     evt_test = record_telemetry_event(
         user_id=user_test,
         session_id="sess_env_test_99",

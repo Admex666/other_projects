@@ -119,9 +119,12 @@ class PreferenceResolver:
                 nice.free_cancellation = cb_n.free_cancellation
                 nice.central_location = cb_n.central_location
 
-        # Apply Case direct budget if not set in hard constraints
-        if hard.max_total_budget_huf is None and trip_case.total_budget_huf:
-            hard.max_total_budget_huf = trip_case.total_budget_huf
+        # Apply Case direct budget only if strictly configured as HARD
+        if hasattr(trip_case, "budget_constraint") and trip_case.budget_constraint:
+            if hasattr(trip_case.budget_constraint, "total") and getattr(trip_case.budget_constraint.total, "hardness", "") == "hard":
+                hard.max_total_budget_huf = trip_case.budget_constraint.total.amount
+        elif trip_case.preferences and trip_case.preferences.hard and trip_case.preferences.hard.max_total_budget_huf is not None:
+            hard.max_total_budget_huf = trip_case.preferences.hard.max_total_budget_huf
 
         # 4. Apply Advisor Overrides (Layer 4)
         if overrides:

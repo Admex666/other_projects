@@ -55,7 +55,7 @@ class ConstraintRelaxationService:
                 continue
             if min_rating and stay.get("rating_normalized", 0) < min_rating:
                 continue
-            if price > (total_budget * 1.25):
+            if price > total_budget:
                 continue
             currently_valid.append(cand)
 
@@ -66,7 +66,7 @@ class ConstraintRelaxationService:
         budget_plus_15 = total_budget * 1.15
         unlocked_by_budget_15 = [
             c for c in raw_inventory_pool
-            if c not in currently_valid and c.get("total_price_huf", 0) <= (budget_plus_15 * 1.25)
+            if c not in currently_valid and c.get("total_price_huf", 0) <= budget_plus_15
         ]
         if unlocked_by_budget_15:
             delta_huf = int(budget_plus_15 - total_budget)
@@ -156,6 +156,8 @@ class ConstraintRelaxationService:
         for key, val in patch_data.items():
             if key == "total_budget_huf":
                 trip_case.total_budget_huf = float(val)
+                if hasattr(trip_case, "budget_constraint"):
+                    trip_case.budget_constraint.total.amount = float(val)
             elif key == "date_mode":
                 trip_case.date_mode = str(val)
             elif key == "preferences.hard.direct_flights_only":
@@ -166,5 +168,8 @@ class ConstraintRelaxationService:
                 trip_case.preferences.hard.min_hotel_stars = int(val)
             elif key == "preferences.hard.min_hotel_rating":
                 trip_case.preferences.hard.min_hotel_rating = float(val)
+
+        if hasattr(trip_case, "sync_budget_models"):
+            trip_case.sync_budget_models()
 
         return trip_case

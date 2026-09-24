@@ -113,6 +113,36 @@ async def advisor_workspace_view(request: Request):
     })
 
 
+@app.get("/share/proposal/{token}")
+async def public_shared_proposal_view(request: Request, token: str):
+    """Publicly viewable client proposal snapshot accessed via secure share token."""
+    from app.services.proposal_service import ProposalService
+    from app.repositories.advisor_repository import ProposalRepository
+    from fastapi import HTTPException
+
+    share = ProposalService.get_share_by_token(token)
+    if not share:
+        raise HTTPException(status_code=404, detail="Érvénytelen, lejárt vagy visszavont ajánlat link.")
+
+    proposal = ProposalRepository.get_proposal_doc(share.proposal_id)
+    if not proposal:
+        raise HTTPException(status_code=404, detail="Ajánlat nem található.")
+
+    client_safe = ProposalService.get_client_safe_proposal(proposal)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="advisor/proposal_print.html",
+        context={
+            "proposal": client_safe,
+            "is_public_share": True,
+            "share_info": {
+                "token": token,
+                "version": share.proposal_version_number
+            }
+        }
+    )
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
