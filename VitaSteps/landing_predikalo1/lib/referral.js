@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
-const campaigns = require('../../config/campaigns.json');
+const campaigns = require('../config/campaigns.json');
 
 async function handleReferralDiscountCheck(req, res) {
     try {

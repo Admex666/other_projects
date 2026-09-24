@@ -7,10 +7,10 @@ description: Central administrative Single Page Application for proof verificati
 code:
   - landing_predikalo1/admin.html
   - landing_predikalo1/api/admin-data.js
-  - landing_predikalo1/api/lib/admin/approve.js
-  - landing_predikalo1/api/lib/admin/foxpost.js
-  - landing_predikalo1/api/lib/admin/leads-email.js
-  - landing_predikalo1/api/lib/admin/finance.js
+  - landing_predikalo1/lib/admin/approve.js
+  - landing_predikalo1/lib/admin/foxpost.js
+  - landing_predikalo1/lib/admin/leads-email.js
+  - landing_predikalo1/lib/admin/finance.js
 related:
   - "[[proof-verification|Proof Verification]]"
   - "[[order-fulfillment|Order Fulfillment]]"

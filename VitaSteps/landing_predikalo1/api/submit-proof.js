@@ -16,7 +16,7 @@ for (const envPath of envCandidates) {
 require('dotenv').config();
 
 const { createClient } = require('@supabase/supabase-js');
-const { handleFeedbackSubmission } = require('./lib/feedback');
+const { handleFeedbackSubmission } = require('../lib/feedback');
 
 const PUSHBULLET_TOKEN = process.env.PUSHBULLET_ACCESS_TOKEN;
 

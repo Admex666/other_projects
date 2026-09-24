@@ -3,10 +3,10 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
-const { handleApproveActions } = require('./lib/admin/approve');
-const { handleFoxpostCreation } = require('./lib/admin/foxpost');
-const { handleGetLeadsData, handleSendLeadsEmail } = require('./lib/admin/leads-email');
-const { handleFinanceData, handleRevolutUpload, getCreativeCsvData } = require('./lib/admin/finance');
+const { handleApproveActions } = require('../lib/admin/approve');
+const { handleFoxpostCreation } = require('../lib/admin/foxpost');
+const { handleGetLeadsData, handleSendLeadsEmail } = require('../lib/admin/leads-email');
+const { handleFinanceData, handleRevolutUpload, getCreativeCsvData } = require('../lib/admin/finance');
 
 const supabase = createClient(
     process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co',

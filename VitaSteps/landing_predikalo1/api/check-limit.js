@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
-const { handleReferralDiscountCheck } = require('./lib/referral');
+const { handleReferralDiscountCheck } = require('../lib/referral');
 
 function formatDistanceLabel(distanceKm, campaign) {
     if (distanceKm == null || distanceKm === '') return '';
