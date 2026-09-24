@@ -56,7 +56,7 @@ function renderEmails() {
     if (previewHtml) {
         const testName = 'Kovács Péter (Minta)';
         const unsubUrl = `https://vitasteps.vercel.app/api/unsubscribe?email=pelda@domain.com`;
-        const checkoutUrl = 'https://vitasteps.vercel.app/nagykevely/index.html#arak';
+        const checkoutUrl = 'https://vitasteps.vercel.app/checkout.html?c=pilis';
         const deadlineStr = '2026. szeptember 27.';
         const daysLeft = emailData.daysRemaining || '3 napod';
 

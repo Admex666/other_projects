@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
 const nodemailer = require('nodemailer');
 
@@ -39,6 +41,23 @@ const TEMPLATES = [
     }
 ];
 
+function extractFirstName(fullName) {
+    if (!fullName || typeof fullName !== 'string') return 'Túrázó';
+    let clean = fullName.trim();
+    if (!clean || clean.includes('@')) return 'Túrázó';
+
+    // Remove titles like Dr., Ifj., Id.
+    clean = clean.replace(/^(dr\.|dr|ifj\.|ifj|id\.|id)\s+/i, '').trim();
+
+    const parts = clean.split(/\s+/);
+    if (parts.length === 1) {
+        return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+    }
+    // In Hungarian format: "Vezetéknév Keresztnév" -> the last word is the first name (e.g. "Szabó Viktória" -> "Viktória")
+    const firstName = parts[parts.length - 1];
+    return firstName.charAt(0).toUpperCase() + firstName.slice(1);
+}
+
 function getDaysRemaining() {
     const target = new Date('2026-09-27T23:59:59+02:00');
     const now = new Date();
@@ -46,6 +65,80 @@ function getDaysRemaining() {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     if (diffDays <= 0) return 'utolsó órák';
     return `${diffDays} napod`;
+}
+
+function aggregateUniqueLeads(allLeads, convertedEmailSet) {
+    const unsubscribedEmailSet = new Set();
+    const leadConvertedEmailSet = new Set();
+    const leadsByEmail = new Map();
+
+    (allLeads || []).forEach(l => {
+        const cleanEmail = (l.email || '').toLowerCase().trim();
+        if (!cleanEmail || !cleanEmail.includes('@')) return;
+
+        const isUnsub = l.unsubscribed === true || l.source === 'unsubscribed' || (l.campaign && l.campaign.toLowerCase() === 'unsubscribed');
+        const isConv = l.converted === true || convertedEmailSet.has(cleanEmail);
+
+        if (isUnsub) {
+            unsubscribedEmailSet.add(cleanEmail);
+        }
+        if (isConv) {
+            leadConvertedEmailSet.add(cleanEmail);
+        }
+
+        if (!leadsByEmail.has(cleanEmail)) {
+            leadsByEmail.set(cleanEmail, []);
+        }
+        leadsByEmail.get(cleanEmail).push(l);
+    });
+
+    const uniqueEmails = Array.from(leadsByEmail.keys());
+    let unsubscribedCount = 0;
+    let convertedCount = 0;
+    const targetLeads = [];
+
+    uniqueEmails.forEach(email => {
+        if (unsubscribedEmailSet.has(email)) {
+            unsubscribedCount++;
+            return;
+        }
+        if (leadConvertedEmailSet.has(email) || convertedEmailSet.has(email)) {
+            convertedCount++;
+            return;
+        }
+
+        const records = leadsByEmail.get(email);
+        let bestRawName = '';
+        for (const rec of records) {
+            const n = (rec.name || '').trim();
+            if (n && !n.includes('@')) {
+                bestRawName = n;
+                break;
+            }
+        }
+        if (!bestRawName && records.length > 0) {
+            bestRawName = (records[0].name || '').trim();
+        }
+
+        const firstName = extractFirstName(bestRawName);
+
+        targetLeads.push({
+            id: records[0].id,
+            email: email,
+            fullName: bestRawName || 'Túrázó',
+            name: firstName,
+            campaign: records[0].campaign || 'pilis',
+            created_at: records[0].created_at
+        });
+    });
+
+    return {
+        totalUnique: uniqueEmails.length,
+        totalRecords: (allLeads || []).length,
+        unsubscribedCount,
+        convertedCount,
+        targetLeads
+    };
 }
 
 async function handleGetLeadsData(req, res) {
@@ -74,36 +167,13 @@ async function handleGetLeadsData(req, res) {
             });
         }
 
-        const allLeads = leads || [];
-        let totalCount = allLeads.length;
-        let unsubscribedCount = 0;
-        let convertedCount = 0;
-        let targetLeads = [];
-        const uniqueTargetMap = new Map();
-
-        allLeads.forEach(l => {
-            const cleanEmail = (l.email || '').toLowerCase().trim();
-            const isUnsub = l.unsubscribed === true || l.source === 'unsubscribed' || (l.campaign && l.campaign.toLowerCase() === 'unsubscribed');
-            const isConv = l.converted === true || convertedEmailSet.has(cleanEmail);
-
-            if (isUnsub) {
-                unsubscribedCount++;
-            } else if (isConv) {
-                convertedCount++;
-            } else if (cleanEmail && cleanEmail.includes('@')) {
-                if (!uniqueTargetMap.has(cleanEmail)) {
-                    const item = {
-                        id: l.id,
-                        email: cleanEmail,
-                        name: (l.name && l.name.trim().length > 0) ? l.name.trim() : 'Túrázó',
-                        campaign: l.campaign || 'pilis',
-                        created_at: l.created_at
-                    };
-                    uniqueTargetMap.set(cleanEmail, item);
-                    targetLeads.push(item);
-                }
-            }
-        });
+        const {
+            totalUnique,
+            totalRecords,
+            unsubscribedCount,
+            convertedCount,
+            targetLeads
+        } = aggregateUniqueLeads(leads, convertedEmailSet);
 
         // Sablonok betöltése előnézethez
         const templatesWithContent = TEMPLATES.map(t => {
@@ -120,7 +190,8 @@ async function handleGetLeadsData(req, res) {
 
         return res.status(200).json({
             stats: {
-                total: totalCount,
+                total: totalUnique,
+                totalRecords: totalRecords,
                 targetActive: targetLeads.length,
                 converted: convertedCount,
                 unsubscribed: unsubscribedCount
@@ -154,7 +225,7 @@ async function handleSendLeadsEmail(req, res) {
 
     const rawTemplateHtml = fs.readFileSync(templatePath, 'utf8');
     const DEADLINE_STR = '2026. szeptember 27.';
-    const CHECKOUT_URL = 'https://vitasteps.vercel.app/nagykevely/index.html#arak';
+    const CHECKOUT_URL = 'https://vitasteps.vercel.app/checkout.html?c=pilis';
     const daysLeft = getDaysRemaining();
 
     const smtpPassword = process.env.SMTP_PASSWORD;
@@ -233,23 +304,7 @@ async function handleSendLeadsEmail(req, res) {
                 });
             }
 
-            const recipientsMap = new Map();
-            (leads || []).forEach(l => {
-                const cleanEmail = (l.email || '').toLowerCase().trim();
-                if (!cleanEmail || !cleanEmail.includes('@')) return;
-
-                if (l.unsubscribed === true || l.source === 'unsubscribed' || (l.campaign && l.campaign.toLowerCase() === 'unsubscribed')) return;
-                if (l.converted === true || convertedEmailSet.has(cleanEmail)) return;
-
-                if (!recipientsMap.has(cleanEmail)) {
-                    recipientsMap.set(cleanEmail, {
-                        email: cleanEmail,
-                        name: (l.name && l.name.trim().length > 0) ? l.name.trim() : 'Túrázó'
-                    });
-                }
-            });
-
-            const targetList = Array.from(recipientsMap.values());
+            const { targetLeads: targetList } = aggregateUniqueLeads(leads, convertedEmailSet);
 
             if (targetList.length === 0) {
                 return res.status(200).json({
@@ -263,26 +318,36 @@ async function handleSendLeadsEmail(req, res) {
             let sentCount = 0;
             let failedCount = 0;
             const errors = [];
+            const processedEmailSet = new Set();
 
             for (let i = 0; i < targetList.length; i++) {
                 const r = targetList[i];
-                const unsubUrl = `https://vitasteps.vercel.app/api/unsubscribe?email=${encodeURIComponent(r.email)}`;
+                const cleanEmail = (r.email || '').toLowerCase().trim();
+
+                // Double guard: skip if already processed in this batch
+                if (!cleanEmail || processedEmailSet.has(cleanEmail)) {
+                    continue;
+                }
+                processedEmailSet.add(cleanEmail);
+
+                const firstName = r.name || 'Túrázó';
+                const unsubUrl = `https://vitasteps.vercel.app/api/unsubscribe?email=${encodeURIComponent(cleanEmail)}`;
                 const personalizedHtml = rawTemplateHtml
-                    .replace(/\{\{NAME\}\}/g, r.name)
-                    .replace(/\{\{FIRST_NAME\}\}/g, r.name)
+                    .replace(/\{\{NAME\}\}/g, firstName)
+                    .replace(/\{\{FIRST_NAME\}\}/g, firstName)
                     .replace(/\{\{DAYS_LEFT\}\}/g, daysLeft)
                     .replace(/\{\{DEADLINE\}\}/g, DEADLINE_STR)
                     .replace(/\{\{CHECKOUT_URL\}\}/g, CHECKOUT_URL)
                     .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
 
                 const subject = custom_subject ?
-                    custom_subject.replace(/\{\{NAME\}\}/g, r.name) :
-                    templateConfig.defaultSubject.replace(/\{\{NAME\}\}/g, r.name);
+                    custom_subject.replace(/\{\{NAME\}\}/g, firstName) :
+                    templateConfig.defaultSubject.replace(/\{\{NAME\}\}/g, firstName);
 
                 try {
                     await transporter.sendMail({
                         from: '"VitaSteps" <vitasteps.team@gmail.com>',
-                        to: r.email,
+                        to: cleanEmail,
                         subject: subject,
                         html: personalizedHtml,
                     });
@@ -290,8 +355,8 @@ async function handleSendLeadsEmail(req, res) {
                     await new Promise(resolve => setTimeout(resolve, 800));
                 } catch (err) {
                     failedCount++;
-                    errors.push({ email: r.email, error: err.message });
-                    console.error(`Failed to send to ${r.email}:`, err.message);
+                    errors.push({ email: cleanEmail, error: err.message });
+                    console.error(`Failed to send to ${cleanEmail}:`, err.message);
                 }
             }
 

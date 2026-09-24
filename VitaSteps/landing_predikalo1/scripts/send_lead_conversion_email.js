@@ -27,7 +27,7 @@ const supabase = createClient(
 // Beállítások
 const DEADLINE_STR = '2026. szeptember 27.';
 const TARGET_DATE = new Date('2026-09-27T23:59:59+02:00');
-const CHECKOUT_URL = 'https://vitasteps.vercel.app/nagykevely/index.html#arak';
+const CHECKOUT_URL = 'https://vitasteps.vercel.app/checkout.html?c=pilis';
 
 // Sablon betöltése
 const templatePath = path.join(__dirname, '../email_templates/lead_conversion_reminder.html');
