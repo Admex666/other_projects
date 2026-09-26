@@ -59,6 +59,9 @@
                 this.resolvedPrefs = prefsRes.resolved_preferences;
 
                 this.renderBriefView(container);
+                if (window.AdvisorIntentV2) {
+                    window.AdvisorIntentV2.loadIntentPlan(caseId);
+                }
             } catch (err) {
                 container.innerHTML = `
                     <div style="padding: 30px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; color: #fca5a5;">
@@ -103,6 +106,9 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Phase 1: Intent Confirmation & Dynamic Research Plan Banner -->
+                <div id="intentConfirmationContainer" style="margin-bottom: 20px;"></div>
 
                 <!-- 2-Oszlopos Grid: Balra Brief Beállítások, Jobbra Élő Hierarchia Inspector -->
                 <div style="display: grid; grid-template-columns: 1fr 340px; gap: 20px;">

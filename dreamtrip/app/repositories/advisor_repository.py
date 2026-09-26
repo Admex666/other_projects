@@ -614,7 +614,7 @@ class ClientRepository:
         return None
 
     @classmethod
-    def save_client(cls, client: Client) -> Client:
+    def save_client(cls, client: Client, agency_id: Optional[str] = None) -> Client:
         prefs_dict = client.preferences.model_dump() if hasattr(client.preferences, "model_dump") else {}
         tags_list = list(client.tags) if client.tags else []
 
@@ -746,7 +746,7 @@ class TripCaseRepository:
         return None
 
     @classmethod
-    def save_case(cls, trip_case: TripCase) -> TripCase:
+    def save_case(cls, trip_case: TripCase, agency_id: Optional[str] = None) -> TripCase:
         prefs_dict = trip_case.preferences.model_dump() if hasattr(trip_case.preferences, "model_dump") else {}
         selected_ids = list(trip_case.selected_option_ids) if trip_case.selected_option_ids else []
         shortlist_ids = list(trip_case.shortlist_ids) if trip_case.shortlist_ids else []

@@ -83360,7 +83360,7 @@
     ]
   },
   "barcelona": {
-    "timestamp": 1789754523.9747834,
+    "timestamp": 1790415495.3466096,
     "pois": [
       {
         "id": "mock_barcelona_es_attraction_0",
@@ -85444,7 +85444,7 @@
     ]
   },
   "funchal": {
-    "timestamp": 1789754525.3744042,
+    "timestamp": 1790415498.1454322,
     "pois": [
       {
         "id": "mock_funchal_attraction_0",
@@ -86836,7 +86836,7 @@
         "id": "mock_funchal_cafe_0",
         "city_id": "funchal",
         "name": "The Daily Grind Specialty Cafe",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.8,
         "user_ratings_total": 463,
         "price_level": 1,
@@ -86846,82 +86846,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {
@@ -86935,7 +86935,7 @@
         "id": "mock_funchal_cafe_1",
         "city_id": "funchal",
         "name": "Vintage Coffee & Bookshop",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.5,
         "user_ratings_total": 697,
         "price_level": 1,
@@ -86945,82 +86945,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {
@@ -87034,7 +87034,7 @@
         "id": "mock_funchal_cafe_2",
         "city_id": "funchal",
         "name": "Central Park Espresso Bar",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.5,
         "user_ratings_total": 556,
         "price_level": 1,
@@ -87044,82 +87044,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {
@@ -87133,7 +87133,7 @@
         "id": "mock_funchal_cafe_3",
         "city_id": "funchal",
         "name": "Grand Patisserie és Kávéház",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.8,
         "user_ratings_total": 1557,
         "price_level": 2,
@@ -87143,82 +87143,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {
@@ -87528,7 +87528,7 @@
     ]
   },
   "rome": {
-    "timestamp": 1789754525.7638197,
+    "timestamp": 1790415501.9410026,
     "pois": [
       {
         "id": "mock_rome_attraction_0",
@@ -88920,7 +88920,7 @@
         "id": "mock_rome_cafe_0",
         "city_id": "rome",
         "name": "The Daily Grind Specialty Cafe",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.6,
         "user_ratings_total": 137,
         "price_level": 1,
@@ -88930,82 +88930,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {
@@ -89019,7 +89019,7 @@
         "id": "mock_rome_cafe_1",
         "city_id": "rome",
         "name": "Vintage Coffee & Bookshop",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.6,
         "user_ratings_total": 1033,
         "price_level": 1,
@@ -89029,82 +89029,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {
@@ -89118,7 +89118,7 @@
         "id": "mock_rome_cafe_2",
         "city_id": "rome",
         "name": "Central Park Espresso Bar",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.3,
         "user_ratings_total": 141,
         "price_level": 1,
@@ -89128,82 +89128,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {
@@ -89217,7 +89217,7 @@
         "id": "mock_rome_cafe_3",
         "city_id": "rome",
         "name": "Grand Patisserie és Kávéház",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.6,
         "user_ratings_total": 1212,
         "price_level": 2,
@@ -89227,82 +89227,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {
@@ -89612,7 +89612,7 @@
     ]
   },
   "dubaj": {
-    "timestamp": 1789754574.83517,
+    "timestamp": 1790415498.4393537,
     "pois": [
       {
         "id": "mock_dubai_ae_attraction_0",
@@ -91696,7 +91696,7 @@
     ]
   },
   "tokió": {
-    "timestamp": 1789754575.0232892,
+    "timestamp": 1790415498.7639966,
     "pois": [
       {
         "id": "mock_tokyo_jp_attraction_0",
@@ -93780,7 +93780,7 @@
     ]
   },
   "vienna": {
-    "timestamp": 1789754575.277755,
+    "timestamp": 1790415502.217842,
     "pois": [
       {
         "id": "mock_vienna_attraction_0",
@@ -95172,7 +95172,7 @@
         "id": "mock_vienna_cafe_0",
         "city_id": "vienna",
         "name": "The Daily Grind Specialty Cafe",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.7,
         "user_ratings_total": 490,
         "price_level": 1,
@@ -95182,82 +95182,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {
@@ -95271,7 +95271,7 @@
         "id": "mock_vienna_cafe_1",
         "city_id": "vienna",
         "name": "Vintage Coffee & Bookshop",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.5,
         "user_ratings_total": 1005,
         "price_level": 1,
@@ -95281,82 +95281,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {
@@ -95370,7 +95370,7 @@
         "id": "mock_vienna_cafe_2",
         "city_id": "vienna",
         "name": "Central Park Espresso Bar",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.3,
         "user_ratings_total": 398,
         "price_level": 1,
@@ -95380,82 +95380,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {
@@ -95469,7 +95469,7 @@
         "id": "mock_vienna_cafe_3",
         "city_id": "vienna",
         "name": "Grand Patisserie és Kávéház",
-        "type": "cafe",
+        "type": "restaurant",
         "rating": 4.7,
         "user_ratings_total": 1339,
         "price_level": 2,
@@ -95479,82 +95479,82 @@
             {
               "close": {
                 "day": 0,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 0,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 1,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 1,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 2,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 2,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 3,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 3,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 4,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 4,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 5,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 5,
-                "time": "0730"
+                "time": "1130"
               }
             },
             {
               "close": {
                 "day": 6,
-                "time": "2000"
+                "time": "2200"
               },
               "open": {
                 "day": 6,
-                "time": "0730"
+                "time": "1130"
               }
             }
           ],
           "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
           ]
         },
         "location": {

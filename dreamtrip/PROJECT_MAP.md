@@ -24,7 +24,7 @@ Ez a dokumentum a projekt gyors, magas szintű navigációs térképe emberek é
 ---
 
 ## 🚀 Aktív Fejlesztési Feladatok
-* `work/active/` — Folyamatban lévő fejlesztési munkák (`WORK-001`, `WORK-002`, `WORK-003`)
+* `work/active/` — Folyamatban lévő fejlesztési munkák (`WORK-001`, `WORK-003`, `WORK-004`)
 * `work/planned/` — Tervezett funkciók
 * `work/completed/` — Befejezett és archivált feladatok
 

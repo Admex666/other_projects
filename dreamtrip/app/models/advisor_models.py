@@ -365,7 +365,208 @@ class ResolvedTripPreferences(BaseModel):
 
 
 # ─────────────────────────────────────────────────────────────
-# 6. TRIP CASE & BRIEF AGGREGATE
+
+
+# ─────────────────────────────────────────────────────────────
+# 6. ADVISOR WORKSPACE V2 — RESEARCH STATE DOMAIN MODEL
+# ─────────────────────────────────────────────────────────────
+
+class ResearchStatePhase(str, Enum):
+    UNDERSTAND = "understand"    # 1. Értsük meg a kérést (input, ügyfél, meglévő elemek, intent)
+    DEFINE = "define"            # 2. Határozzuk meg, mi számít (hard constraints, releváns kritériumok, AHP/PROMETHEE)
+    RESEARCH = "research"        # 3. Keressük meg és ellenőrizzük a lehetőségeket (flight, stay, dest, exp, maps, weather, cost)
+    DECIDE = "decide"            # 4. Mutassuk meg a legjobb lehetőségeket és miért (3 options, comparison, map, itinerary)
+    DELIVER = "deliver"          # 5. Finomítsuk és készítsük el az ajánlatot (edits, shortlist, proposal, client, feedback)
+
+
+class ComponentIntentAction(str, Enum):
+    KEEP = "KEEP"                # Meglévő komponens megtartása / zárolása
+    REPLACE = "REPLACE"          # Meglévő komponens kötelező cseréje
+    IMPROVE = "IMPROVE"          # Meglévő komponens javítása / alternatívák keresése
+    UNKNOWN = "UNKNOWN"          # Még nem meghatározott állapot
+
+
+class ExistingComponent(BaseModel):
+    component_type: str          # "flight", "stay", "activity", "itinerary", "booking"
+    action: ComponentIntentAction = ComponentIntentAction.KEEP
+    title: Optional[str] = None
+    details: Dict[str, Any] = Field(default_factory=dict)
+    is_locked: bool = True
+
+
+class WhatWeKnow(BaseModel):
+    client_id: Optional[str] = None
+    client_name: Optional[str] = None
+    travelers_count: int = 2
+    adults: int = 2
+    children: int = 0
+    children_ages: List[int] = Field(default_factory=list)
+    origin: Optional[str] = "Budapest"
+    candidate_origins: List[str] = Field(default_factory=lambda: ["BUD"])
+    destination: Optional[str] = None
+    candidate_destinations: List[str] = Field(default_factory=list)
+    trip_type: Optional[str] = "city_break"
+    date_mode: str = "exact"     # "exact", "interval", "month"
+    exact_out_date: Optional[str] = None
+    exact_in_date: Optional[str] = None
+    date_range_start: Optional[str] = None
+    date_range_end: Optional[str] = None
+    month: Optional[str] = None
+    duration_days: Optional[int] = 7
+    total_budget: Optional[float] = None
+    budget_currency: str = "HUF"
+    budget_hardness: str = "hard"
+    budget_basis: str = "group"
+    existing_components: List[ExistingComponent] = Field(default_factory=list)
+
+
+class WhatWeDontKnow(BaseModel):
+    missing_fields: List[str] = Field(default_factory=list)
+    uncertainties: List[str] = Field(default_factory=list)
+    required_clarifications: List[str] = Field(default_factory=list)
+
+
+class WhatIsFixed(BaseModel):
+    locked_destination: Optional[str] = None
+    locked_flight_ids: List[str] = Field(default_factory=list)
+    locked_stay_ids: List[str] = Field(default_factory=list)
+    locked_activity_ids: List[str] = Field(default_factory=list)
+    locked_dates: bool = False
+    locked_budget: bool = False
+
+
+class WhatIsFlexible(BaseModel):
+    date_flexibility_days: int = 0
+    budget_relaxation_allowed: bool = False
+    max_budget_stretch_percent: float = 15.0
+    stops_allowed: int = 1
+    hotel_min_stars_flexible: bool = False
+
+
+class WhatMatters(BaseModel):
+    selected_dimensions: List[str] = Field(default_factory=lambda: ["price", "location", "hotel_quality", "experience"])
+    ahp_weights: Dict[str, float] = Field(default_factory=dict)
+    hard_constraints: Dict[str, Any] = Field(default_factory=dict)
+    soft_preferences: Dict[str, Any] = Field(default_factory=dict)
+    avoid_rules: List[str] = Field(default_factory=list)
+    nice_to_have: List[str] = Field(default_factory=list)
+
+
+class WhatWeAreSearching(BaseModel):
+    active_operations: List[str] = Field(default_factory=list)
+    pending_tasks: List[str] = Field(default_factory=list)
+    progress_percent: int = 0
+    current_status_text: str = "Készenlétben"
+
+
+class WhatWeFound(BaseModel):
+    destinations_count: int = 0
+    destination_candidates: List[Dict[str, Any]] = Field(default_factory=list)
+    flights_count: int = 0
+    flight_candidates: List[Dict[str, Any]] = Field(default_factory=list)
+    stays_count: int = 0
+    stay_candidates: List[Dict[str, Any]] = Field(default_factory=list)
+    experiences_count: int = 0
+    experience_candidates: List[Dict[str, Any]] = Field(default_factory=list)
+    total_concepts_formed: int = 0
+
+
+class WhatIsVerified(BaseModel):
+    verified_components_count: int = 0
+    stale_components_count: int = 0
+    estimated_components_count: int = 0
+    last_verified_at: Optional[datetime] = None
+
+
+class WhatAdvisorChanged(BaseModel):
+    manual_overrides_count: int = 0
+    pinned_option_ids: List[str] = Field(default_factory=list)
+    replaced_components: List[Dict[str, Any]] = Field(default_factory=list)
+    custom_notes: List[str] = Field(default_factory=list)
+
+
+class WhatStillNeedsDecision(BaseModel):
+    intent_confirmed: bool = False
+    criteria_approved: bool = False
+    options_shortlisted: bool = False
+    proposal_approved: bool = False
+    open_questions: List[str] = Field(default_factory=list)
+
+
+
+class ResearchPlanStepStatus(str, Enum):
+    PENDING = "pending"
+    ACTIVE = "active"
+    DONE = "done"
+    SKIPPED = "skipped"
+    ERROR = "error"
+
+
+class ResearchPlanStep(BaseModel):
+    step_id: str
+    label: str
+    provider: str
+    estimated_duration_sec: float = 2.0
+    status: ResearchPlanStepStatus = ResearchPlanStepStatus.PENDING
+    details: Optional[str] = None
+    is_required: bool = True
+
+
+class ResearchPlan(BaseModel):
+    intent: str
+    summary: str
+    steps: List[ResearchPlanStep] = Field(default_factory=list)
+    total_estimated_sec: float = 5.0
+    created_at: datetime = Field(default_factory=utc_now)
+
+
+class ResearchState(BaseModel):
+    """
+    Central continuous operating model of an Advisor Case in v2.
+    Tracks everything known, missing, fixed, searched, verified, and changed.
+    """
+    id: str = Field(default_factory=lambda: generate_uuid("rstate"))
+    case_id: str
+    agency_id: str = "default_agency"
+    advisor_id: str = "default_advisor"
+    phase: ResearchStatePhase = ResearchStatePhase.UNDERSTAND
+
+    # Resolved Research Intent
+    resolved_intent: Optional[str] = None
+    intent_summary: Optional[str] = None
+    intent_confirmed: bool = False
+    research_plan: Optional[ResearchPlan] = None
+
+    # The 10 Core Perspectives of Research State
+    what_we_know: WhatWeKnow = Field(default_factory=WhatWeKnow)
+    what_we_dont_know: WhatWeDontKnow = Field(default_factory=WhatWeDontKnow)
+    what_is_fixed: WhatIsFixed = Field(default_factory=WhatIsFixed)
+    what_is_flexible: WhatIsFlexible = Field(default_factory=WhatIsFlexible)
+    what_matters: WhatMatters = Field(default_factory=WhatMatters)
+    what_we_are_searching: WhatWeAreSearching = Field(default_factory=WhatWeAreSearching)
+    what_we_found: WhatWeFound = Field(default_factory=WhatWeFound)
+    what_is_verified: WhatIsVerified = Field(default_factory=WhatIsVerified)
+    what_advisor_changed: WhatAdvisorChanged = Field(default_factory=WhatAdvisorChanged)
+    what_still_needs_decision: WhatStillNeedsDecision = Field(default_factory=WhatStillNeedsDecision)
+
+    created_at: datetime = Field(default_factory=utc_now)
+    updated_at: datetime = Field(default_factory=utc_now)
+
+
+class MissingInfoMatrixItem(BaseModel):
+    """
+    Single row in the "Mi van / Mi nincs?" matrix.
+    """
+    field_key: str
+    label: str
+    has_value: bool
+    is_certain: bool
+    current_value_repr: str
+    system_action: str
+    urgency: str = "normal"  # "required", "recommended", "optional"
+
+
+# 7. TRIP CASE & BRIEF AGGREGATE
 # ─────────────────────────────────────────────────────────────
 
 class TripCase(BaseModel):
@@ -408,6 +609,11 @@ class TripCase(BaseModel):
 
     # Preferences & Constraints
     preferences: ResolvedTripPreferences = Field(default_factory=ResolvedTripPreferences)
+
+    # V2 Component Tracking & Research State Reference
+    existing_components: List[ExistingComponent] = Field(default_factory=list)
+    research_state_id: Optional[str] = None
+    research_state: Optional[ResearchState] = None
 
     # Generated Options
     selected_option_ids: List[str] = Field(default_factory=list)

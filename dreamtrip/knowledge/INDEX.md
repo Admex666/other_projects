@@ -48,6 +48,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 
 ## 🔨 Work Items (Munkaszervezés)
 * [[WORK-003-advisor-workspace-v1]] — Optivoya Advisor Workspace v1 fázisonkénti feladatlista és ellenőrző négyzetei.
+* [[WORK-004-advisor-workspace-v2]] — Optivoya Advisor Workspace v2 implementációs roadmap, ResearchState és 5-fázisú UX folyamat feladatlistája.
 
 ---
 
@@ -89,7 +90,8 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 
 ## ⚙️ Systems (Rendszerek)
 * [[shared-intelligence-layer]] — Az Optivoya közös, leválasztott döntési motor rétege (AHP, PROMETHEE, Kiwi, Cozycozy, TripScore, Proposal).
-* [[advisor-workspace-blueprint]] — Optivoya Advisor Workspace v1 Teljes Rendszer Blueprint és Műszaki Architektúra.
+* [[advisor-workspace-blueprint-v2]] — Optivoya Advisor Workspace v2 Teljes Logikai Modell és Rendszerspecifikáció (Alapértelmezett).
+* [[advisor-workspace-blueprint]] — Optivoya Advisor Workspace v1 Teljes Rendszer Blueprint és Műszaki Architektúra (Admin/Legacy).
 * [[advisor-workspace-ux-specification]] — Advisor Workspace UX interakciós specifikáció, információsűrű felület és progresszív döntéstámogatás.
 * [[advisor-budget-and-constraints]] — Hard/Soft/Avoid korlátok, komponens-költségkeretek és tanácsadói felülbírálás (Override).
 * [[advisor-option-generation]] — MultiOptionEngine, 3 normalizált célprofil (Best Overall, Value, Experience) és diverzitási szabályok.

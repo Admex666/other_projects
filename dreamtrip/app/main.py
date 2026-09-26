@@ -98,7 +98,7 @@ from app.core.auth import is_advisor_user, get_user_role
 
 @app.get("/advisor")
 async def advisor_workspace_view(request: Request):
-    """Desktop-first B2B Advisor Workspace Shell."""
+    """Desktop-first B2B Advisor Workspace v2 (Default)."""
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/", status_code=303)
@@ -109,8 +109,30 @@ async def advisor_workspace_view(request: Request):
         "request": request,
         "user": user,
         "role": role,
-        "is_advisor": True
+        "is_advisor": True,
+        "workspace_version": "v2",
+        "is_admin": role == "ADMIN"
     })
+
+
+@app.get("/advisor/v1")
+async def advisor_workspace_v1_legacy_view(request: Request):
+    """Legacy Advisor Workspace v1 Shell (Accessible for Admin / Compatibility)."""
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/", status_code=303)
+    if not is_advisor_user(user):
+        return RedirectResponse(url="/planner?error=advisor_access_required", status_code=303)
+    role = get_user_role(user)
+    return templates.TemplateResponse("advisor/advisor_workspace.html", {
+        "request": request,
+        "user": user,
+        "role": role,
+        "is_advisor": True,
+        "workspace_version": "v1",
+        "is_admin": role == "ADMIN"
+    })
+
 
 
 @app.get("/share/proposal/{token}")

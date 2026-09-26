@@ -1829,10 +1829,242 @@ async def execute_case_reoptimization(
     }
 
 
+# ─────────────────────────────────────────────────────────────
+# 10. ADVISOR WORKSPACE V2 — RESEARCH STATE & INTENT ENDPOINTS
+# ─────────────────────────────────────────────────────────────
+
+from app.services.research_state_service import ResearchStateService
 
 
+class ComponentIntentPayload(BaseModel):
+    component_type: str      # "flight", "stay", "activity"
+    action: str              # "KEEP", "REPLACE", "IMPROVE", "UNKNOWN"
+    component_id: Optional[str] = None
+    title: Optional[str] = None
+    details: Optional[Dict[str, Any]] = None
+
+class IntentConfirmationPayload(BaseModel):
+    confirmed: bool = True
+    override_intent: Optional[str] = None
 
 
+class ResearchStateUpdatePayload(BaseModel):
+    phase: Optional[str] = None
+    selected_dimensions: Optional[List[str]] = None
+    ahp_weights: Optional[Dict[str, float]] = None
+    hard_constraints: Optional[Dict[str, Any]] = None
+    soft_preferences: Optional[Dict[str, Any]] = None
+    avoid_rules: Optional[List[str]] = None
+    nice_to_have: Optional[List[str]] = None
+    date_flexibility_days: Optional[int] = None
+    budget_relaxation_allowed: Optional[bool] = None
 
 
+@router.get("/cases/{case_id}/research-state")
+async def api_get_case_research_state(
+    case_id: str,
+    force_rebuild: bool = False,
+    agency_id: str = Header("default_agency", alias="x-agency-id")
+):
+    """
+    Returns the continuous ResearchState for a given TripCase,
+    including the "Mi van / Mi nincs?" missing info matrix.
+    """
+    trip_case = TripCaseRepository.get_case(case_id, agency_id=agency_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Utazási ügy nem található.")
+
+    client = None
+    if trip_case.client_id:
+        client = ClientRepository.get_client(trip_case.client_id, agency_id=agency_id)
+
+    state = ResearchStateService.get_or_create_research_state(
+        trip_case=trip_case,
+        client=client,
+        force_rebuild=force_rebuild
+    )
+    matrix = ResearchStateService.generate_missing_info_matrix(state)
+
+    return {
+        "status": "success",
+        "success": True,
+        "case_id": case_id,
+        "research_state": state.model_dump(),
+        "missing_info_matrix": [m.model_dump() for m in matrix]
+    }
+
+
+@router.post("/cases/{case_id}/intent/confirm")
+async def api_confirm_case_intent(
+    case_id: str,
+    payload: IntentConfirmationPayload,
+    agency_id: str = Header("default_agency", alias="x-agency-id")
+):
+    """
+    Confirms or edits the resolved research intent for a Case,
+    advancing the workflow from UNDERSTAND to DEFINE phase.
+    """
+    trip_case = TripCaseRepository.get_case(case_id, agency_id=agency_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Utazási ügy nem található.")
+
+    state = ResearchStateService.confirm_intent(
+        case_id=case_id,
+        confirmed=payload.confirmed,
+        override_intent=payload.override_intent
+    )
+    if not state:
+        client = ClientRepository.get_client(trip_case.client_id, agency_id=agency_id) if trip_case.client_id else None
+        state = ResearchStateService.get_or_create_research_state(trip_case=trip_case, client=client)
+        state = ResearchStateService.confirm_intent(
+            case_id=case_id,
+            confirmed=payload.confirmed,
+            override_intent=payload.override_intent
+        )
+
+    TimelineRepository.log_event(
+        case_id=case_id,
+        event_type="INTENT_CONFIRMED" if payload.confirmed else "INTENT_MODIFIED",
+        description=f"Kutatási szándék visszaigazolva: {state.resolved_intent}",
+        metadata={"resolved_intent": state.resolved_intent, "intent_confirmed": state.intent_confirmed}
+    )
+
+    return {
+        "status": "success",
+        "success": True,
+        "case_id": case_id,
+        "research_state": state.model_dump(),
+        "intent_confirmed": state.intent_confirmed,
+        "resolved_intent": state.resolved_intent,
+        "intent_summary": state.intent_summary,
+        "phase": state.phase.value
+    }
+
+
+@router.post("/cases/{case_id}/research-state/update")
+async def api_update_case_research_state(
+    case_id: str,
+    payload: ResearchStateUpdatePayload,
+    agency_id: str = Header("default_agency", alias="x-agency-id")
+):
+    """
+    Updates active criteria, AHP weights, or flexibility parameters on the ResearchState.
+    """
+    trip_case = TripCaseRepository.get_case(case_id, agency_id=agency_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Utazási ügy nem található.")
+
+    client = ClientRepository.get_client(trip_case.client_id, agency_id=agency_id) if trip_case.client_id else None
+    state = ResearchStateService.get_or_create_research_state(trip_case=trip_case, client=client)
+
+    if payload.phase:
+        try:
+            from app.models.advisor_models import ResearchStatePhase
+            state.phase = ResearchStatePhase(payload.phase)
+        except Exception:
+            pass
+
+    if payload.selected_dimensions is not None:
+        state.what_matters.selected_dimensions = payload.selected_dimensions
+    if payload.ahp_weights is not None:
+        state.what_matters.ahp_weights = payload.ahp_weights
+    if payload.hard_constraints is not None:
+        state.what_matters.hard_constraints = payload.hard_constraints
+    if payload.soft_preferences is not None:
+        state.what_matters.soft_preferences = payload.soft_preferences
+    if payload.avoid_rules is not None:
+        state.what_matters.avoid_rules = payload.avoid_rules
+    if payload.nice_to_have is not None:
+        state.what_matters.nice_to_have = payload.nice_to_have
+    if payload.date_flexibility_days is not None:
+        state.what_is_flexible.date_flexibility_days = payload.date_flexibility_days
+    if payload.budget_relaxation_allowed is not None:
+        state.what_is_flexible.budget_relaxation_allowed = payload.budget_relaxation_allowed
+
+    state.updated_at = datetime.now(timezone.utc)
+
+    return {
+        "status": "success",
+        "success": True,
+        "case_id": case_id,
+        "research_state": state.model_dump()
+    }
+
+
+@router.get("/cases/{case_id}/intent/plan")
+async def api_get_case_research_plan(
+    case_id: str,
+    agency_id: str = Header("default_agency", alias="x-agency-id")
+):
+    """
+    Returns the reconstructed Research Intent and step-by-step Dynamic Research Plan.
+    """
+    trip_case = TripCaseRepository.get_case(case_id, agency_id=agency_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Utazási ügy nem található.")
+
+    client = ClientRepository.get_client(trip_case.client_id, agency_id=agency_id) if trip_case.client_id else None
+    state = ResearchStateService.get_or_create_research_state(trip_case=trip_case, client=client)
+
+    return {
+        "status": "success",
+        "success": True,
+        "case_id": case_id,
+        "resolved_intent": state.resolved_intent,
+        "intent_summary": state.intent_summary,
+        "intent_confirmed": state.intent_confirmed,
+        "research_plan": state.research_plan.model_dump() if state.research_plan else None,
+        "phase": state.phase.value
+    }
+
+
+@router.post("/cases/{case_id}/components/intent")
+async def api_update_case_component_intent(
+    case_id: str,
+    payload: ComponentIntentPayload,
+    agency_id: str = Header("default_agency", alias="x-agency-id")
+):
+    """
+    Updates an existing component's intent action (KEEP, REPLACE, IMPROVE)
+    and dynamically re-resolves the Research Intent and Plan.
+    """
+    from app.models.advisor_models import ComponentIntentAction
+
+    trip_case = TripCaseRepository.get_case(case_id, agency_id=agency_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Utazási ügy nem található.")
+
+    client = ClientRepository.get_client(trip_case.client_id, agency_id=agency_id) if trip_case.client_id else None
+    state = ResearchStateService.get_or_create_research_state(trip_case=trip_case, client=client)
+
+    try:
+        action_enum = ComponentIntentAction(payload.action.upper())
+    except ValueError:
+        action_enum = ComponentIntentAction.KEEP
+
+    updated_state = ResearchStateService.update_component_intent(
+        case_id=case_id,
+        component_type=payload.component_type,
+        action=action_enum,
+        component_id=payload.component_id,
+        title=payload.title,
+        details=payload.details
+    )
+
+    TimelineRepository.log_event(
+        case_id=case_id,
+        event_type="COMPONENT_INTENT_UPDATED",
+        description=f"Komponens szándék módosítva: {payload.component_type} -> {payload.action}",
+        metadata={"component_type": payload.component_type, "action": payload.action, "new_intent": updated_state.resolved_intent if updated_state else None}
+    )
+
+    return {
+        "status": "success",
+        "success": True,
+        "case_id": case_id,
+        "research_state": updated_state.model_dump() if updated_state else None,
+        "resolved_intent": updated_state.resolved_intent if updated_state else None,
+        "intent_summary": updated_state.intent_summary if updated_state else None,
+        "research_plan": updated_state.research_plan.model_dump() if (updated_state and updated_state.research_plan) else None
+    }
 
