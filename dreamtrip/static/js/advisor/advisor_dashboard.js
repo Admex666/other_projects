@@ -347,9 +347,12 @@
         }
 
         // --- 4. Intelligence Lab View ---
-        renderResearchLabView(container) {
+        renderResearchLabView(container, state) {
             if (window.AdvisorResearch) {
                 window.AdvisorResearch.render(container);
+                if (window.AdvisorCandidatePoolV2 && state.activeCaseId) {
+                    window.AdvisorCandidatePoolV2.loadCandidatePool(state.activeCaseId);
+                }
             } else {
                 container.innerHTML = `
                     <div style="margin-bottom: 20px;">

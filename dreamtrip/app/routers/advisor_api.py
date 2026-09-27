@@ -1860,6 +1860,26 @@ class ResearchStateUpdatePayload(BaseModel):
     budget_relaxation_allowed: Optional[bool] = None
 
 
+class CalculateAHPPairsPayload(BaseModel):
+    selected_dimensions: List[str]
+    comparisons: List[Dict[str, Any]] = Field(default_factory=list)
+
+
+class UpdateCriteriaPayload(BaseModel):
+    selected_dimensions: Optional[List[str]] = None
+    ahp_weights: Optional[Dict[str, float]] = None
+    hard_constraints: Optional[Dict[str, Any]] = None
+    soft_preferences: Optional[Dict[str, Any]] = None
+    avoid_rules: Optional[Dict[str, Any]] = None
+    nice_to_have: Optional[Dict[str, Any]] = None
+    date_flexibility_days: Optional[int] = None
+    budget_relaxation_allowed: Optional[bool] = None
+
+
+class ApproveCriteriaPayload(BaseModel):
+    notes: Optional[str] = None
+
+
 @router.get("/cases/{case_id}/research-state")
 async def api_get_case_research_state(
     case_id: str,
@@ -2067,4 +2087,212 @@ async def api_update_case_component_intent(
         "intent_summary": updated_state.intent_summary if updated_state else None,
         "research_plan": updated_state.research_plan.model_dump() if (updated_state and updated_state.research_plan) else None
     }
+
+
+# ─────────────────────────────────────────────────────────────
+# PHASE 2: DYNAMIC REQUIREMENT DISCOVERY & PREFERENCE MODEL ENDPOINTS
+# ─────────────────────────────────────────────────────────────
+
+@router.get("/cases/{case_id}/criteria")
+async def api_get_case_criteria(
+    case_id: str,
+    agency_id: str = Header("default_agency", alias="x-agency-id")
+):
+    """
+    Returns active dimensions, canonical dimension catalog, minimal AHP pairs,
+    calculated weights, and 4-tier criteria (HARD, SOFT, AVOID, NICE_TO_HAVE).
+    """
+    from app.services.preference_discovery_service import PreferenceDiscoveryService
+
+    trip_case = TripCaseRepository.get_case(case_id, agency_id=agency_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Utazási ügy nem található.")
+
+    criteria_data = PreferenceDiscoveryService.get_case_criteria(trip_case)
+    return {
+        "status": "success",
+        "success": True,
+        **criteria_data
+    }
+
+
+@router.post("/cases/{case_id}/criteria/calculate-ahp")
+async def api_calculate_ahp(
+    case_id: str,
+    payload: CalculateAHPPairsPayload,
+    agency_id: str = Header("default_agency", alias="x-agency-id")
+):
+    """
+    Computes normalized AHP weights and Consistency Ratio (CR) for active comparisons.
+    """
+    from app.services.preference_discovery_service import PreferenceDiscoveryService
+
+    trip_case = TripCaseRepository.get_case(case_id, agency_id=agency_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Utazási ügy nem található.")
+
+    result = PreferenceDiscoveryService.calculate_ahp_weights(
+        selected_dimensions=payload.selected_dimensions,
+        comparisons=payload.comparisons
+    )
+
+    return {
+        "status": "success",
+        "success": True,
+        **result
+    }
+
+
+@router.post("/cases/{case_id}/criteria/update")
+async def api_update_case_criteria(
+    case_id: str,
+    payload: UpdateCriteriaPayload,
+    agency_id: str = Header("default_agency", alias="x-agency-id")
+):
+    """
+    Updates the 4-level criteria structure and synchronizes both TripCase and ResearchState.
+    """
+    from app.services.preference_discovery_service import PreferenceDiscoveryService
+
+    trip_case = TripCaseRepository.get_case(case_id, agency_id=agency_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Utazási ügy nem található.")
+
+    updated_criteria = PreferenceDiscoveryService.update_case_criteria(
+        trip_case=trip_case,
+        selected_dimensions=payload.selected_dimensions,
+        ahp_weights=payload.ahp_weights,
+        hard_updates=payload.hard_constraints,
+        soft_updates=payload.soft_preferences,
+        avoid_updates=payload.avoid_rules,
+        nice_to_have_updates=payload.nice_to_have,
+        date_flexibility_days=payload.date_flexibility_days,
+        budget_relaxation_allowed=payload.budget_relaxation_allowed
+    )
+    TripCaseRepository.save_case(trip_case, agency_id=agency_id)
+
+    TimelineRepository.log_event(
+        case_id=case_id,
+        event_type="CRITERIA_UPDATED",
+        description=f"Döntési kritériumok és AHP preferenciák frissítve ({len(payload.selected_dimensions or [])} aktív dimenzió)",
+        metadata={"selected_dimensions": payload.selected_dimensions, "ahp_weights": payload.ahp_weights}
+    )
+
+    return {
+        "status": "success",
+        "success": True,
+        **updated_criteria
+    }
+
+
+@router.post("/cases/{case_id}/criteria/approve")
+async def api_approve_case_criteria(
+    case_id: str,
+    payload: ApproveCriteriaPayload = ApproveCriteriaPayload(),
+    agency_id: str = Header("default_agency", alias="x-agency-id")
+):
+    """
+    Explicitly approves the defined criteria & preference model,
+    advancing the workflow from DEFINE to RESEARCH phase.
+    """
+    from app.services.preference_discovery_service import PreferenceDiscoveryService
+
+    trip_case = TripCaseRepository.get_case(case_id, agency_id=agency_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Utazási ügy nem található.")
+
+    approved_criteria = PreferenceDiscoveryService.approve_case_criteria(
+        trip_case=trip_case,
+        notes=payload.notes
+    )
+    TripCaseRepository.save_case(trip_case, agency_id=agency_id)
+
+    TimelineRepository.log_event(
+        case_id=case_id,
+        event_type="CRITERIA_APPROVED",
+        description="Döntési kritériumok és AHP súlyok jóváhagyva. Átlépés a RESEARCH fázisba.",
+        metadata={"phase": "research", "criteria_approved": True}
+    )
+
+    return {
+        "status": "success",
+        "success": True,
+        **approved_criteria
+    }
+
+
+# ─────────────────────────────────────────────────────────────
+# PHASE 3: CANDIDATE POOL & PROVENANCE EXPLORER ENDPOINTS
+# ─────────────────────────────────────────────────────────────
+
+class GenerateCandidatePoolPayload(BaseModel):
+    custom_params: Optional[Dict[str, Any]] = None
+
+GenerateCandidatePoolPayload.model_rebuild()
+
+
+@router.post("/cases/{case_id}/candidate-pool/generate")
+async def api_generate_candidate_pool(
+    case_id: str,
+    payload: Optional[GenerateCandidatePoolPayload] = None,
+    agency_id: str = Header("default_agency", alias="x-agency-id")
+):
+    """
+    Triggers candidate pool generation across destinations, flights, stays, and experiences,
+    enriches all inventory with LocationScores and Verification Provenance,
+    updates ResearchState.what_we_found, and logs a timeline audit event.
+    """
+    from app.services.candidate_pool_service import CandidatePoolService
+
+    trip_case = TripCaseRepository.get_case(case_id, agency_id=agency_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Utazási ügy nem található.")
+
+    client = ClientRepository.get_client(trip_case.client_id, agency_id=agency_id) if trip_case.client_id else None
+    custom_params = payload.custom_params if payload else {}
+
+    result = CandidatePoolService.generate_candidate_pool(
+        trip_case=trip_case,
+        client=client,
+        custom_params=custom_params
+    )
+
+    counts = result.get("counts", {})
+    TimelineRepository.log_event(
+        case_id=case_id,
+        event_type="CANDIDATE_POOL_GENERATED",
+        description=f"Kandidátus pool legenerálva: {counts.get('destinations', 0)} célpont, {counts.get('flights', 0)} járat, {counts.get('stays', 0)} szállás, {counts.get('experiences', 0)} élmény.",
+        metadata={"counts": counts, "verified_count": result.get("verification_summary", {}).get("verified_count", 0)}
+    )
+
+    return result
+
+
+@router.get("/cases/{case_id}/candidate-pool")
+async def api_get_candidate_pool(
+    case_id: str,
+    auto_generate: bool = True,
+    agency_id: str = Header("default_agency", alias="x-agency-id")
+):
+    """
+    Returns the current candidate pool (destinations, flights, stays, experiences, packages)
+    along with LocationScores and verification provenance metadata.
+    """
+    from app.services.candidate_pool_service import CandidatePoolService
+
+    trip_case = TripCaseRepository.get_case(case_id, agency_id=agency_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Utazási ügy nem található.")
+
+    client = ClientRepository.get_client(trip_case.client_id, agency_id=agency_id) if trip_case.client_id else None
+
+    result = CandidatePoolService.get_candidate_pool(
+        trip_case=trip_case,
+        client=client,
+        auto_generate_if_empty=auto_generate
+    )
+
+    return result
+
+
 

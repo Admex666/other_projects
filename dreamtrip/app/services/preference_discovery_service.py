@@ -7,20 +7,22 @@ Implements:
    - Stage 2: Pairwise AHP Weighting exclusively on the selected active dimensions.
 2. 4-Level Structured Criteria Management:
    - HARD (Pass/Fail constraints)
-   - SOFT (Normalized AHP weights on active dimensions)
+   - SOFT (Normalized AHP weights on active dimensions & soft targets)
    - AVOID (Negative filters)
    - NICE_TO_HAVE (Score bonuses)
 3. Mathematical AHP solver with Consistency Ratio (CR) calculation & auto-harmonization.
 4. Real-time synchronization with ResolvedTripPreferences & ResearchState.what_matters.
+5. Criteria Approval & Transition from Phase ② DEFINE to Phase ③ RESEARCH.
 """
 
 import math
 import logging
 from typing import List, Dict, Any, Optional, Tuple
+from datetime import datetime, timezone
 
 from app.models.advisor_models import (
     TripCase, ResolvedTripPreferences, HardConstraints, SoftPreferences,
-    AvoidRules, NiceToHave, ResearchState
+    AvoidRules, NiceToHave, ResearchState, ResearchStatePhase
 )
 from app.services.research_state_service import ResearchStateService
 
@@ -119,7 +121,8 @@ CANONICAL_DIMENSIONS = [
 
 class PreferenceDiscoveryService:
     """
-    Service managing 2-stage dynamic requirement discovery and AHP calculations.
+    Service managing 2-stage dynamic requirement discovery, AHP calculations,
+    and 4-level criteria synchronization.
     """
 
     @classmethod
@@ -212,7 +215,6 @@ class PreferenceDiscoveryService:
         weights = {valid_dims[i]: round(geom_means[i] / sum_geom, 4) for i in range(n)}
 
         # 3. Calculate lambda_max and Consistency Ratio
-        # A * w vector
         aw = [0.0] * n
         for i in range(n):
             for j in range(n):
@@ -239,7 +241,7 @@ class PreferenceDiscoveryService:
     @classmethod
     def get_case_criteria(cls, trip_case: TripCase) -> Dict[str, Any]:
         """
-        Returns the current resolved 4-level criteria and active dimensions for a Case.
+        Returns the current resolved 4-level criteria, active dimensions, and phase for a Case.
         """
         prefs = trip_case.preferences or ResolvedTripPreferences()
         research_state = ResearchStateService.get_or_create_research_state(trip_case=trip_case)
@@ -250,6 +252,9 @@ class PreferenceDiscoveryService:
 
         return {
             "case_id": trip_case.id,
+            "phase": research_state.phase.value if hasattr(research_state.phase, "value") else str(research_state.phase),
+            "intent_confirmed": research_state.intent_confirmed,
+            "criteria_approved": research_state.what_still_needs_decision.criteria_approved,
             "selected_dimensions": selected_dims,
             "dimension_catalog": CANONICAL_DIMENSIONS,
             "ahp_weights": matters.ahp_weights or prefs.soft.vibe_weights,
@@ -257,7 +262,9 @@ class PreferenceDiscoveryService:
             "hard_constraints": prefs.hard.model_dump(),
             "soft_preferences": prefs.soft.model_dump(),
             "avoid_rules": prefs.avoid.model_dump(),
-            "nice_to_have": prefs.nice_to_have.model_dump()
+            "nice_to_have": prefs.nice_to_have.model_dump(),
+            "date_flexibility_days": research_state.what_is_flexible.date_flexibility_days,
+            "budget_relaxation_allowed": research_state.what_is_flexible.budget_relaxation_allowed
         }
 
     @classmethod
@@ -267,8 +274,11 @@ class PreferenceDiscoveryService:
         selected_dimensions: Optional[List[str]] = None,
         ahp_weights: Optional[Dict[str, float]] = None,
         hard_updates: Optional[Dict[str, Any]] = None,
+        soft_updates: Optional[Dict[str, Any]] = None,
         avoid_updates: Optional[Dict[str, Any]] = None,
-        nice_to_have_updates: Optional[Dict[str, Any]] = None
+        nice_to_have_updates: Optional[Dict[str, Any]] = None,
+        date_flexibility_days: Optional[int] = None,
+        budget_relaxation_allowed: Optional[bool] = None
     ) -> Dict[str, Any]:
         """
         Updates the 4-level criteria structure and synchronizes both TripCase and ResearchState.
@@ -283,16 +293,22 @@ class PreferenceDiscoveryService:
             filtered_dims = [d for d in selected_dimensions if d in valid_set]
             matters.selected_dimensions = filtered_dims
 
-            # If no weights provided, distribute equally or recalculate
+            # If no weights provided or dimensions changed, calculate equal baseline
             if not ahp_weights:
                 equal_w = round(1.0 / len(filtered_dims), 4) if filtered_dims else 0.0
                 matters.ahp_weights = {d: equal_w for d in filtered_dims}
 
         # 2. Update AHP weights if provided
         if ahp_weights:
-            matters.ahp_weights = ahp_weights
-            # Mirror to soft preferences
-            prefs.soft.vibe_weights.update(ahp_weights)
+            # Filter weights to only active dimensions
+            active_dims = set(matters.selected_dimensions)
+            cleaned_weights = {k: v for k, v in ahp_weights.items() if k in active_dims}
+            # Normalize sum to 1.0 if not empty
+            total_w = sum(cleaned_weights.values())
+            if total_w > 0:
+                cleaned_weights = {k: round(v / total_w, 4) for k, v in cleaned_weights.items()}
+            matters.ahp_weights = cleaned_weights
+            prefs.soft.vibe_weights.update(cleaned_weights)
 
         # 3. Update Hard constraints
         if hard_updates:
@@ -301,19 +317,58 @@ class PreferenceDiscoveryService:
                     setattr(prefs.hard, k, v)
             matters.hard_constraints.update(hard_updates)
 
-        # 4. Update Avoid rules
+        # 4. Update Soft preferences
+        if soft_updates:
+            for k, v in soft_updates.items():
+                if hasattr(prefs.soft, k):
+                    setattr(prefs.soft, k, v)
+            matters.soft_preferences.update(soft_updates)
+
+        # 5. Update Avoid rules
         if avoid_updates:
             for k, v in avoid_updates.items():
                 if hasattr(prefs.avoid, k):
                     setattr(prefs.avoid, k, v)
+            if isinstance(avoid_updates, dict):
+                matters.avoid_rules = [f"{k}: {v}" for k, v in avoid_updates.items() if v]
 
-        # 5. Update Nice-to-have rules
+        # 6. Update Nice-to-have rules
         if nice_to_have_updates:
             for k, v in nice_to_have_updates.items():
                 if hasattr(prefs.nice_to_have, k):
                     setattr(prefs.nice_to_have, k, v)
+            if isinstance(nice_to_have_updates, dict):
+                matters.nice_to_have = [k for k, v in nice_to_have_updates.items() if v]
+
+        # 7. Update flexibility
+        if date_flexibility_days is not None:
+            research_state.what_is_flexible.date_flexibility_days = date_flexibility_days
+        if budget_relaxation_allowed is not None:
+            research_state.what_is_flexible.budget_relaxation_allowed = budget_relaxation_allowed
 
         trip_case.preferences = prefs
+        research_state.updated_at = datetime.now(timezone.utc)
+
+        return cls.get_case_criteria(trip_case)
+
+    @classmethod
+    def approve_case_criteria(
+        cls,
+        trip_case: TripCase,
+        notes: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Explicitly approves the defined criteria & preference model,
+        and transitions the ResearchState from DEFINE to RESEARCH phase.
+        """
+        research_state = ResearchStateService.get_or_create_research_state(trip_case=trip_case)
         research_state.what_still_needs_decision.criteria_approved = True
+
+        # Phase transition: DEFINE -> RESEARCH
+        if research_state.phase in (ResearchStatePhase.UNDERSTAND, ResearchStatePhase.DEFINE):
+            research_state.phase = ResearchStatePhase.RESEARCH
+
+        research_state.what_we_are_searching.current_status_text = "Feltételek jóváhagyva (Kutatási futtatásra kész)"
+        research_state.updated_at = datetime.now(timezone.utc)
 
         return cls.get_case_criteria(trip_case)

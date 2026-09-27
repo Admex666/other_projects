@@ -431,3 +431,35 @@ def get_city_pois(city_name: str, city_id: str, lat: float, lng: float, bypass_c
     save_poi_cache(cache)
     
     return pois
+
+
+def calculate_location_score(
+    hotel_lat: float,
+    hotel_lon: float,
+    city_lat: float,
+    city_lon: float,
+    city_name: str = "",
+    city_id: str = "",
+    pois: Optional[List[POI]] = None,
+    airport_lat: Optional[float] = None,
+    airport_lon: Optional[float] = None
+) -> Dict:
+    """
+    Kiszámítja egy szállás vagy lokáció összetett, normalizált LocationScore értékét (0.0 - 10.0).
+    """
+    from app.services.geo_experience_layer import calculate_normalized_location_score
+    if pois is None:
+        c_name = city_name or "Város"
+        c_id = city_id or c_name.lower().replace(" ", "_")
+        pois = get_city_pois(c_name, c_id, city_lat, city_lon)
+
+    return calculate_normalized_location_score(
+        hotel_lat=hotel_lat,
+        hotel_lon=hotel_lon,
+        city_lat=city_lat,
+        city_lon=city_lon,
+        pois=pois,
+        airport_lat=airport_lat,
+        airport_lon=airport_lon
+    )
+

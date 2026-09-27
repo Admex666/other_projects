@@ -62,6 +62,9 @@
                 if (window.AdvisorIntentV2) {
                     window.AdvisorIntentV2.loadIntentPlan(caseId);
                 }
+                if (window.AdvisorCriteriaV2) {
+                    window.AdvisorCriteriaV2.loadCriteria(caseId);
+                }
             } catch (err) {
                 container.innerHTML = `
                     <div style="padding: 30px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; color: #fca5a5;">
@@ -109,6 +112,9 @@
 
                 <!-- Phase 1: Intent Confirmation & Dynamic Research Plan Banner -->
                 <div id="intentConfirmationContainer" style="margin-bottom: 20px;"></div>
+
+                <!-- Phase 2: Dynamic Requirement Discovery & 4-Level Criteria Model (DEFINE) -->
+                <div id="criteriaDiscoveryContainer" style="margin-bottom: 20px;"></div>
 
                 <!-- 2-Oszlopos Grid: Balra Brief Beállítások, Jobbra Élő Hierarchia Inspector -->
                 <div style="display: grid; grid-template-columns: 1fr 340px; gap: 20px;">
@@ -389,11 +395,7 @@
                     } else {
                         window.AdvisorAPI.showToast('Brief sikeresen elmentve!', 'success');
                     }
-                }
             } catch (err) {
-                window.AdvisorAPI.showToast(`Hiba a brief mentésekor: ${err.message}`, 'error');
-            }
-        }
                 window.AdvisorAPI.showToast(`Hiba a brief mentésekor: ${err.message}`, 'error');
             }
         }
@@ -401,3 +403,4 @@
 
     window.AdvisorBrief = new AdvisorBriefManager();
 })();
+

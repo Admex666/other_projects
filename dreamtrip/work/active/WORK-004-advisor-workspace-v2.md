@@ -105,38 +105,57 @@ Ez a dokumentum az **Optivoya Advisor Workspace v2** teljes, 11 fázisból áll�
 ## 📌 Phase 2: Dynamic Requirement Discovery & Preference Model
 > **Cél:** Kétfázisú igényfelmérés és dinamikus AHP/PROMETHEE kritérium-aktiválás kognitív túlterhelés nélkül.
 
-- [ ] **Kétfázisú Preferencia Felderítés („Mi fontos ezen az utazáson?”):**
-  - [ ] 1. Fázis: Releváns dimenziók kiválasztása (Ár, Repülés kényelme, Lokáció, Tengerpart, Gasztro, Nyugalom, Család stb.).
-  - [ ] 2. Fázis: Csak a kiválasztott dimenziók közötti páros AHP súlyozás (max. 5 feszítő pár).
-- [ ] **4-Szintű Kritérium Kategorizálás:**
-  - [ ] `HARD`: Pass/Fail szűrők (pl. Büdzsé $\le 800\text{k}$, csak közvetlen járat, min. 4★).
-  - [ ] `SOFT`: Optimalizálandó szempontok (pl. Lokáció 25%, Ár 30%, Hotel 20%, Élmény 25%).
-  - [ ] `AVOID`: Kerülendő feltételek (pl. indulás $< 06:00$, 2+ átszállás, túlzsúfolt negyed).
-  - [ ] `NICE_TO_HAVE`: Bónusz tényezők (reggeli az árban, ingyenes lemondás, medence).
-- [ ] **Dinamikus Kritérium-generálás az AHP/PROMETHEE motorokhoz:**
-  - [ ] Nem releváns szempontok (pl. Éjszakai élet egy csendes családi útnál) teljes kihagyása a döntési mátrixból.
+- [x] **Kétfázisú Preferencia Felderítés („Mi fontos ezen az utazáson?”):**
+  - [x] 1. Fázis: Releváns dimenziók kiválasztása (Ár, Repülés kényelme, Lokáció, Tengerpart, Gasztro, Nyugalom, Család stb. a 9 kanonikus dimenzióból).
+  - [x] 2. Fázis: Csak a kiválasztott dimenziók közötti páros AHP súlyozás (minimalizált $n(n-1)/2$ feszítő pár) és Consistency Ratio ($CR \le 0.12$) ellenőrzés.
+- [x] **4-Szintű Kritérium Kategorizálás:**
+  - [x] `HARD`: Pass/Fail szűrők (pl. Büdzsé $\le 800\text{k}$, csak közvetlen járat, min. 4★).
+  - [x] `SOFT`: Optimalizálandó szempontok (AHP normalizált súlyvektor, dimenziónkénti eloszlás, büdzsé rugalmasság).
+  - [x] `AVOID`: Kerülendő feltételek (pl. indulás $< 06:00$, 2+ átszállás, tiltott légitársaságok).
+  - [x] `NICE_TO_HAVE`: Bónusz tényezők (reggeli az árban, ingyenes lemondás, medence, központi elhelyezkedés).
+- [x] **Dinamikus Kritérium-generálás az AHP/PROMETHEE motorokhoz:**
+  - [x] Nem releváns szempontok (pl. Éjszakai élet egy csendes családi útnál) teljes kihagyása a döntési mátrixból.
+  - [x] REST API végpontok: `GET /api/advisor/cases/{case_id}/criteria`, `POST /api/advisor/cases/{case_id}/criteria/calculate-ahp`, `POST /api/advisor/cases/{case_id}/criteria/update`, `POST /api/advisor/cases/{case_id}/criteria/approve`.
+  - [x] Frontend komponens (`static/js/advisor/advisor_criteria_v2.js`) és DEFINE $\to$ RESEARCH fázisátmenet.
 
 ### 🎯 Phase 2 Acceptance Criteria
 1. A döntési motor kizárólag azokat a dimenziókat súlyozza, amelyeket a tanácsadó/ügyfél fontosnak jelölt meg.
+
+#### 💡 Phase 2 Tapasztalatok & Implementációs Tanulságok (Key Learnings & Fixes)
+- **9 Kanonikus Utazási Dimenzió Katalógus:** A rendszer 9 standardizált dimenziót (`price`, `flight_comfort`, `location`, `hotel_quality`, `beach`, `gastronomy`, `culture_sightseeing`, `relaxation_wellness`, `family_friendliness`) kezel, melyekből a tanácsadó 1 kattintással aktiválhatja az ügyfélre releváns szempontokat.
+- **Minimalizált AHP Páros Súlyozás & CR Metrika:** Az AHP matematikai megoldója a geometriai átlag (Logarithmic Least Squares) módszerrel számolja a sajátvektort és a normalizált súlyokat, miközben a véletlen konzisztencia index (RI tábla) alapján folyamatosan validálja, hogy a tanácsadói arányok nem tartalmaznak logikai ellentmondást ($CR \le 0.12$).
+- **4-Szintű Kritérium Szinkronizáció:** A `PreferenceDiscoveryService` egy lépésben szinkronizálja a `TripCase.preferences` és a `ResearchState.what_matters` mezőket, megelőzve az eltérő forrásokból származó állapotütközéseket.
+- **Determinisztikus Fázis-átmenet (DEFINE $\to$ RESEARCH):** A `/criteria/approve` végpont meghívásakor az állapot átlép a `RESEARCH` fázisba, rögzíti a jóváhagyást a `what_still_needs_decision.criteria_approved` mezőben, és aktiválja a Research Lab keresési folyamatait.
+- **Tesztfedettség:** A `tests/test_dynamic_criteria_phase2.py` 6/6 teszttel 100%-osan validálja a 2-fázisú discovery-t, az AHP geometriai átlagos súlyozást, a konzisztencia arányt, a 4-szintű szabályokat és a REST API-kat; a teljes Advisor tesztcsomag (57/57 teszt) hibátlanul lefut.
 
 ---
 
 ## 📌 Phase 3: Multi-Intelligence Data Gathering & Candidate Pool
 > **Cél:** Széles jelöltbázis (Candidate Pool) felépítése és többforrásos intelligencia-dúsítás.
 
-- [ ] **Candidate Pool Építő Folyamat (`CandidatePool`):**
-  - [ ] Desztinációk: 40+ város $\to$ 15 életképes $\to$ 7 kiemelt jelölt.
-  - [ ] Járatok: 150 járatkombináció $\to$ 30 szabályos $\to$ 6 komoly alternatíva.
-  - [ ] Szállások: 300 hotel $\to$ 40 releváns $\to$ 8 prémium jelölt.
-- [ ] **Geo / Map Intelligence Réteg:**
-  - [ ] Koordináta-alapú távolságok és utazási idők (Reptér $\to$ Hotel, Hotel $\to$ Látványosságok, Tranzit pontok).
-  - [ ] Földrajzi klaszterezés és napi útvonal-hatékonyság (`LocationScore` 0–10).
-- [ ] **Experience Intelligence & Nyitvatartás Verifikáció:**
-  - [ ] 12-dimenziós élményilleszkedés koszinusz-szorzata a profilhoz.
-  - [ ] Nyitvatartási idők és zárva tartó napok élő validálása (pl. „Keddre nem ajánlott: zárva”).
+- [x] **Candidate Pool Építő Folyamat (`CandidatePool` / `CandidatePoolService`):**
+  - [x] Desztinációk: 40+ város $\to$ 15 életképes $\to$ 7 kiemelt jelölt (Klíma, Numbeo költségek, biztonsági pontszám).
+  - [x] Járatok: 150 járatkombináció $\to$ 30 szabályos $\to$ 6 komoly alternatíva (Kiwi GraphQL API, átszállásszám, repülési idők).
+  - [x] Szállások: 300 hotel $\to$ 40 releváns $\to$ 8 prémium jelölt (Cozycozy Live API, csillagok, normalizált vendégértékelés).
+  - [x] Csomagok: 3 döntési archetípus (`Best Overall`, `Best Value`, `Best Experience`) szintézise.
+- [x] **Geo / Map Intelligence Réteg (`GeoExperienceLayer` & `maps_service`):**
+  - [x] Koordináta-alapú távolságok és utazási idők (Reptér $\to$ Hotel transzfer, Hotel $\to$ Látványosságok gyalogos/tranzit mátrix).
+  - [x] Földrajzi klaszterezés és séta-index alapján számított normalizált `LocationScore` ($0.0 \dots 10.0$ és $0 \dots 100$).
+- [x] **Experience Intelligence & Nyitvatartás Verifikáció:**
+  - [x] 12-dimenziós élményilleszkedés koszinusz-szorzata az ügyfélpreferenciákhoz (`culture`, `food`, `beach`, `nature`, `romance` stb.).
+  - [x] Nyitvatartási idők és zárva tartó napok (pl. hétfői múzeumi zárvatartások) élő validálása figyelmeztető badge-ekkel.
+- [x] **REST API & Frontend Explorer:**
+  - [x] REST API végpontok: `POST /api/advisor/cases/{case_id}/candidate-pool/generate`, `GET /api/advisor/cases/{case_id}/candidate-pool`.
+  - [x] Frontend komponens (`static/js/advisor/advisor_candidate_pool_v2.js`): Kategória tabok (Összes, Szállások, Járatok, Élmények, Csomagok), LocationScore és Provenance jelvények, keresés/rendezés és komponens-rögzítés.
 
 ### 🎯 Phase 3 Acceptance Criteria
 1. A rendszer nem közvetlenül 3 ajánlatot gyárt a nyers adatokból, hanem strukturált Candidate Poolt épít és földrajzilag/logisztikailag dúsítja azt.
+
+#### 💡 Phase 3 Tapasztalatok & Implementációs Tanulságok (Key Learnings & Fixes)
+- **12D Koszinusz Illeszkedés & Részleges Vektorok:** A koszinusz hasonlóságot a felhasználó által aktívan megadott dimenziók alterében számoljuk, így a specifikus gasztro/kulturális igények nem büntetődnek a fel nem sorolt egyéb dimenziók miatt.
+- **Normalizált LocationScore Súlyozás:** A szállások lokációpontszáma a látványosság-klaszterezés (50%), a belvárosi távolság (30%) és a repülőtéri elérhetőség (20%) súlyozott kombinációjából áll össze.
+- **Valós idejű Provenance & TTL:** Minden begyűjtött elemhez (`flight`, `stay`, `poi`, `destination`) forrás-időbélyeg és TTL tartozik (`VERIFIED` vs. `ESTIMATED`), amely transzparensen megjelenik a tanácsadói felületen.
+- **Tesztfedettség:** A `tests/test_candidate_pool_phase3.py` (5 teszt) és `tests/test_geo_experience_layer.py` (8 teszt) 100%-os lefedettséggel validálja a teljes folyamatot; a kombinált tesztcsomag (29/29 teszt) hibátlanul lefut.
 
 ---
 

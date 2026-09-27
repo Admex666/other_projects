@@ -42,6 +42,9 @@
             const container = document.getElementById('advisorMainContent');
             if (container) {
                 this.render(container);
+                if (window.AdvisorCandidatePoolV2) {
+                    await window.AdvisorCandidatePoolV2.loadCandidatePool(caseId);
+                }
                 // Automatically fetch or trigger research if candidates are empty
                 await this.loadResearchData();
             }
@@ -197,6 +200,9 @@
                                     </div>
                                 ` : ''}
                             </div>
+
+                            <!-- Phase 3: Candidate Pool & Hitelesítési Explorer -->
+                            <div id="candidatePoolExplorerContainer"></div>
 
                             <!-- Candidate Cards Grid -->
                             <div id="candidateFeedContainer">
