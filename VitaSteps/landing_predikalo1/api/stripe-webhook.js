@@ -182,6 +182,39 @@ module.exports = async (req, res) => {
                 throw orderErr;
             }
 
+            // 1b-2. Log Purchase to Analytics Engine
+            try {
+                const metaAdId = metadata.Meta_Ad_Id || metadata.meta_ad_id || null;
+                const metaAdsetId = metadata.Meta_Adset_Id || metadata.meta_adset_id || null;
+                const metaCampaignId = metadata.Meta_Campaign_Id || metadata.meta_campaign_id || null;
+                const visitorId = metadata.Visitor_Id || metadata.visitor_id || null;
+                const analyticsSessionId = metadata.Analytics_Session_Id || metadata.session_id || null;
+
+                if (visitorId && analyticsSessionId) {
+                    const { processAnalyticsEvent } = require('../lib/analytics');
+                    await processAnalyticsEvent({
+                        visitor_id: visitorId,
+                        session_id: analyticsSessionId,
+                        event_name: 'purchase',
+                        event_data: {
+                            order_id: sessionId,
+                            amount: totalPaid,
+                            medals_count: medals.length,
+                            campaign: campaignKey
+                        },
+                        url_params: {
+                            meta_ad_id: metaAdId,
+                            meta_adset_id: metaAdsetId,
+                            meta_campaign_id: metaCampaignId,
+                            utm_content: utmContent,
+                            utm_campaign: utmCampaign
+                        }
+                    });
+                }
+            } catch (anErr) {
+                console.warn('Analytics purchase webhook logging warning:', anErr.message);
+            }
+
             // 1c. Create runs and shipments for each medal
             const suffix = config.prefix + (isTestTx ? '-TEST' : '');
             const limit = config.limit;

@@ -89,10 +89,32 @@ module.exports = async (req, res) => {
             const mergedMetrics = creativeRows.length > 0 ? creativeRows : (dbMetrics || []);
             const lastUpdated = mergedMetrics.length > 0 ? mergedMetrics[0].date : null;
 
+            let analyticsSessions = [];
+            let analyticsVisitors = [];
+            try {
+                const { data: sData, error: sErr } = await supabase
+                    .from('analytics_sessions')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(1000);
+                if (sData && !sErr) analyticsSessions = sData;
+
+                const { data: vData, error: vErr } = await supabase
+                    .from('analytics_visitors')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(500);
+                if (vData && !vErr) analyticsVisitors = vData;
+            } catch (e) {
+                // Table might not exist yet before SQL migration
+            }
+
             return res.status(200).json({
                 success: true,
                 metrics: mergedMetrics,
                 orders: orders || [],
+                sessions: analyticsSessions,
+                visitors: analyticsVisitors,
                 lastUpdated
             });
         }

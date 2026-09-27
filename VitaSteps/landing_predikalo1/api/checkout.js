@@ -24,6 +24,11 @@ module.exports = async (req, res) => {
             utmCampaign,
             utmTerm,
             utmContent,
+            metaAdId,
+            metaAdsetId,
+            metaCampaignId,
+            visitorId,
+            sessionId,
             isTest,
             campaign
         } = req.body;
@@ -37,7 +42,7 @@ module.exports = async (req, res) => {
         const campaignKey = (campaign === 'predikaloszek' || campaign === 'predikalo') ? 'predikaloszek' : 'pilis';
         const config = campaigns[campaignKey];
 
-        const origin = req.headers.origin || 'https://vitasteps.vercel.app';
+        const origin = req.headers.origin || 'https://vitastepsss.vercel.app';
         const useTestKey = isTest || (req.headers.host && req.headers.host.includes('localhost'));
         
         if (useTestKey && !process.env.STRIPE_TEST_KEY) {
@@ -127,6 +132,11 @@ module.exports = async (req, res) => {
             Utm_Campaign: utmCampaign || '',
             Utm_Term: utmTerm || '',
             Utm_Content: utmContent || '',
+            Meta_Ad_Id: metaAdId || '',
+            Meta_Adset_Id: metaAdsetId || '',
+            Meta_Campaign_Id: metaCampaignId || '',
+            Visitor_Id: visitorId || '',
+            Analytics_Session_Id: sessionId || '',
             Kampany: campaignKey,
             IsTest: useTestKey ? 'true' : 'false',
             Medaliok: JSON.stringify(medals).substring(0, 490),

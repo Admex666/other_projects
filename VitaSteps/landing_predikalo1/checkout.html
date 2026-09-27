@@ -808,6 +808,8 @@
             btn.textContent = '⏳ Átirányítás a fizetéshez...';
             btn.disabled = true;
 
+            const attribution = window.VitaTracker ? window.VitaTracker.getAttribution() : {};
+
             const payload = {
                 medals,
                 email,
@@ -820,9 +822,14 @@
                 parcelId: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.id || '') : '',
                 homeAddress: deliveryMethod === 'home' ? resolvedHomeAddress : '',
                 referredBy,
-                utmCampaign,
-                utmTerm,
-                utmContent,
+                utmCampaign: utmCampaign || attribution.utm_campaign,
+                utmTerm: utmTerm || attribution.utm_term,
+                utmContent: utmContent || attribution.utm_content,
+                metaAdId: attribution.meta_ad_id,
+                metaAdsetId: attribution.meta_adset_id,
+                metaCampaignId: attribution.meta_campaign_id,
+                visitorId: attribution.visitor_id,
+                sessionId: attribution.session_id,
                 isTest,
                 campaign: campaignKey
             };
@@ -854,6 +861,8 @@
         // ── INIT ─────────────────────────────────────────────
         loadConfig();
     </script>
+    <!-- VitaSteps Analytics & Attribution Tracker -->
+    <script src="js/tracker.js"></script>
 </body>
 
 </html>
