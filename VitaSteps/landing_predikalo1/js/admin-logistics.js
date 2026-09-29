@@ -128,12 +128,16 @@ function renderLogistics(container) {
         const groupRunIds = getGroupedRunIds(run);
         const groupRuns = groupRunIds.map(id => allRuns.find(r => r.id === id)).filter(Boolean).filter(r => r.completed && !isRunShipped(r));
         groupRunIds.forEach(id => processedRunIds.add(id));
-        if (groupRuns.length > 0) packingGroups.push(groupRuns);
+        if (groupRuns.length > 0) {
+            groupRuns.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            packingGroups.push(groupRuns);
+        }
     });
 
     let packingRowsHtml = packingGroups.map(group => {
         const primary = group[0];
-        const primaryName = primary.name || primary.runners?.name || 'Ismeretlen';
+        const primaryRunner = primary.runners || {};
+        const primaryName = primary.name || primaryRunner.billing_name || primaryRunner.name || 'Ismeretlen';
         const others = group.slice(1).map(r => r.name || r.runners?.name || '').filter(Boolean);
         const othersText = others.length > 0 ? ` (+ ${others.join(', ')})` : '';
         const shipment = getShipment(primary);
@@ -435,27 +439,220 @@ async function promptEditShipment(runId, curPhone, curParcelId, curParcelName) {
     }
 }
 
-async function triggerSubmitFoxpost(btn) {
-    const selected = getSelectedRuns();
-    if (selected.length === 0) return;
+let activeFoxpostEligibleRunIds = [];
+let activeFoxpostDispatchBtn = null;
 
-    const eligible = selected.filter(r => {
-        const shipment = getShipment(r);
-        return (shipment.method || 'foxpost') === 'foxpost' && !isRunShipped(r);
+function parseHungarianAddressClient(rawAddress) {
+    if (!rawAddress || typeof rawAddress !== 'string') return null;
+    const str = rawAddress.trim();
+    if (!str) return null;
+
+    // 1. Extract 4-digit Hungarian postal code
+    const zipMatch = str.match(/\b(\d{4})\b/);
+    if (!zipMatch) return null;
+    const zip = zipMatch[1];
+
+    // Remove zip from address string
+    let rest = str.replace(zip, '').replace(/^[, -]+|[, -]+$/g, '').trim();
+
+    // 2. Extract city and street address
+    let city = '';
+    let address = '';
+
+    if (rest.includes(',')) {
+        const parts = rest.split(',').map(p => p.trim()).filter(Boolean);
+        const streetKeywords = /\b(utca|út|tér|körút|krt|fasor|köz|sor|sétány|dűlő|major|tanya|ltp|lakótelep|telep|u\.|krt\.|rkp|rakpart|sgt|sugárút)\b/i;
+        if (parts.length >= 2) {
+            if (!streetKeywords.test(parts[0])) {
+                city = parts[0];
+                address = parts.slice(1).join(', ');
+            } else if (!streetKeywords.test(parts[parts.length - 1])) {
+                city = parts[parts.length - 1];
+                address = parts.slice(0, -1).join(', ');
+            } else {
+                city = parts[0];
+                address = parts.slice(1).join(', ');
+            }
+        } else {
+            address = parts[0] || '';
+        }
+    } else {
+        const tokens = rest.split(/\s+/).filter(Boolean);
+        if (tokens.length >= 2) {
+            city = tokens[0];
+            address = tokens.slice(1).join(' ');
+        } else {
+            address = rest;
+        }
+    }
+
+    city = city.replace(/^[, -]+|[, -]+$/g, '').trim();
+    address = address.replace(/^[, -]+|[, -]+$/g, '').trim();
+
+    if (!city || !address) return null;
+
+    if (city.length > 25) city = city.substring(0, 25);
+    if (address.length > 150) address = address.substring(0, 150);
+
+    return { zip, city, address };
+}
+
+function escapeHtmlText(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function openFoxpostHdModal(allEligible, homeGroups, lockerCount, btn) {
+    activeFoxpostEligibleRunIds = allEligible.map(r => r.id);
+    activeFoxpostDispatchBtn = btn;
+
+    const modal = document.getElementById('foxpost-hd-modal');
+    const listEl = document.getElementById('foxpost-hd-modal-list');
+    const infoEl = document.getElementById('foxpost-hd-modal-info');
+    if (!modal || !listEl) return;
+
+    listEl.innerHTML = homeGroups.map(group => {
+        const primary = group[0];
+        const primaryRunner = primary.runners || {};
+        const primaryShipment = getShipment(primary);
+        const recipientName = primary.name || primaryRunner.name || 'Ismeretlen';
+        const serials = group.map(r => r.serial_number).filter(Boolean);
+        const email = primaryRunner.email || '';
+        const phone = primaryShipment.phone || primary.phone || primaryRunner.phone || '';
+
+        // Find raw address
+        let rawAddress = primaryShipment.home_address || primaryShipment.target_address || primaryRunner.billing_address || primary.home_address || '';
+        if (!rawAddress) {
+            for (const r of group) {
+                const rRunner = r.runners || {};
+                const rShip = getShipment(r);
+                rawAddress = rShip.home_address || rShip.target_address || rRunner.billing_address || r.home_address || '';
+                if (rawAddress) break;
+            }
+        }
+
+        const parsed = parseHungarianAddressClient(rawAddress) || { zip: '', city: '', address: '' };
+        const isComplete = parsed.zip && parsed.city && parsed.address;
+        const groupRunIds = group.map(r => r.id).join(',');
+
+        return `
+            <div class="hd-card" data-run-ids="${groupRunIds}" style="background: rgba(255,255,255,0.03); border: 1px solid ${isComplete ? 'rgba(255,255,255,0.12)' : '#ef4444'}; border-radius: 12px; padding: 1.1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.25);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.65rem; gap: 0.5rem; flex-wrap: wrap;">
+                    <div>
+                        <strong style="color: #fff; font-size: 0.95rem;">${escapeHtmlText(recipientName)}</strong>
+                        <span style="color: #c084fc; font-family: monospace; font-size: 0.82rem; margin-left: 0.45rem; font-weight: bold;">(${serials.join(', ')})</span>
+                    </div>
+                    <div style="font-size: 0.78rem; color: #94a3b8;">
+                        <span>📞 ${escapeHtmlText(phone || 'Nincs tel.')}</span> • <span>✉️ ${escapeHtmlText(email || 'Nincs email')}</span>
+                    </div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.4); border: 1px dashed ${rawAddress ? 'rgba(255,255,255,0.15)' : '#ef4444'}; border-radius: 6px; padding: 0.5rem 0.75rem; font-size: 0.82rem; color: #e2e8f0; margin-bottom: 0.85rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                        <span style="color: #94a3b8; font-size: 0.7rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Eredeti (nyers) cím a megrendelésből:</span>
+                        ${!isComplete ? '<span style="color: #ef4444; font-size: 0.72rem; font-weight: bold;">⚠️ Kérjük töltsd ki a hiányzó mezőket!</span>' : '<span style="color: #4ade80; font-size: 0.72rem; font-weight: bold;">✓ Felbontva</span>'}
+                    </div>
+                    <div style="font-family: monospace; word-break: break-word;">${escapeHtmlText(rawAddress || '⚠️ Nem található cím!')}</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 110px 160px 1fr; gap: 0.65rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.72rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600;">Irányítószám *</label>
+                        <input type="text" class="form-input hd-field-zip" maxlength="4" value="${escapeHtmlText(parsed.zip)}" placeholder="pl. 1139" style="width: 100%; padding: 0.45rem 0.6rem; font-size: 0.85rem; background: #1e293b; border: 1px solid ${parsed.zip ? 'rgba(255,255,255,0.2)' : '#ef4444'}; color: #fff; border-radius: 6px; font-weight: 600;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.72rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600;">Település *</label>
+                        <input type="text" class="form-input hd-field-city" maxlength="25" value="${escapeHtmlText(parsed.city)}" placeholder="pl. Budapest" style="width: 100%; padding: 0.45rem 0.6rem; font-size: 0.85rem; background: #1e293b; border: 1px solid ${parsed.city ? 'rgba(255,255,255,0.2)' : '#ef4444'}; color: #fff; border-radius: 6px; font-weight: 600;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.72rem; color: #94a3b8; margin-bottom: 0.25rem; font-weight: 600;">Utca, házszám, em/ajtó *</label>
+                        <input type="text" class="form-input hd-field-address" maxlength="150" value="${escapeHtmlText(parsed.address)}" placeholder="pl. Csizma utca 3." style="width: 100%; padding: 0.45rem 0.6rem; font-size: 0.85rem; background: #1e293b; border: 1px solid ${parsed.address ? 'rgba(255,255,255,0.2)' : '#ef4444'}; color: #fff; border-radius: 6px;">
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    if (lockerCount > 0) {
+        infoEl.style.display = 'block';
+        infoEl.innerHTML = `ℹ️ A fentieken kívül <strong>${lockerCount} db Foxpost csomagautomatás</strong> érem is egyidejűleg feladásra kerül.`;
+    } else {
+        infoEl.style.display = 'none';
+    }
+
+    modal.style.display = 'flex';
+}
+
+function closeFoxpostHdModal() {
+    const modal = document.getElementById('foxpost-hd-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function submitFoxpostHdWithOverrides() {
+    const cards = document.querySelectorAll('#foxpost-hd-modal-list .hd-card');
+    const addressOverrides = {};
+    let hasValidationError = false;
+
+    cards.forEach(card => {
+        const runIdsStr = card.getAttribute('data-run-ids') || '';
+        const runIds = runIdsStr.split(',').map(s => s.trim()).filter(Boolean);
+
+        const zipInput = card.querySelector('.hd-field-zip');
+        const cityInput = card.querySelector('.hd-field-city');
+        const addressInput = card.querySelector('.hd-field-address');
+
+        const zip = (zipInput ? zipInput.value : '').trim();
+        const city = (cityInput ? cityInput.value : '').trim();
+        const address = (addressInput ? addressInput.value : '').trim();
+
+        // Validation
+        let cardError = false;
+        if (!/^\d{4}$/.test(zip)) {
+            if (zipInput) zipInput.style.borderColor = '#ef4444';
+            cardError = true;
+        } else if (zipInput) {
+            zipInput.style.borderColor = 'rgba(255,255,255,0.2)';
+        }
+
+        if (!city || city.length < 2) {
+            if (cityInput) cityInput.style.borderColor = '#ef4444';
+            cardError = true;
+        } else if (cityInput) {
+            cityInput.style.borderColor = 'rgba(255,255,255,0.2)';
+        }
+
+        if (!address || address.length < 3) {
+            if (addressInput) addressInput.style.borderColor = '#ef4444';
+            cardError = true;
+        } else if (addressInput) {
+            addressInput.style.borderColor = 'rgba(255,255,255,0.2)';
+        }
+
+        if (cardError) {
+            hasValidationError = true;
+            card.style.borderColor = '#ef4444';
+        } else {
+            card.style.borderColor = 'rgba(255,255,255,0.12)';
+            runIds.forEach(id => {
+                addressOverrides[id] = { zip, city, address };
+            });
+        }
     });
 
-    if (eligible.length === 0) {
-        alert('A kiválasztott tételek között nincs feladásra váró Foxpost automatás érem.');
+    if (hasValidationError) {
+        alert('Kérjük javítsd a pirossal jelölt hiányzó vagy érvénytelen címadatokat a jóváhagyás előtt! (4 jegyű irányítószám, település és pontos utca házszám kötelező)');
         return;
     }
 
-    if (!confirm(`Biztosan feladod a kijelölt ${eligible.length} db érmet a Foxpost WebAPI-n keresztül?`)) {
-        return;
-    }
+    closeFoxpostHdModal();
+    await sendFoxpostApiRequest(activeFoxpostEligibleRunIds, addressOverrides, activeFoxpostDispatchBtn);
+}
 
-    const originalText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loading-spinner"></span> Foxpost API feladás...';
+async function sendFoxpostApiRequest(runIds, addressOverrides, btn) {
+    const originalText = btn ? btn.innerHTML : 'Foxpost API feladás...';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span> Foxpost API feladás...';
+    }
 
     try {
         const res = await fetch('/api/admin-data', {
@@ -463,7 +660,8 @@ async function triggerSubmitFoxpost(btn) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 action: 'foxpost_create',
-                run_ids: eligible.map(r => r.id),
+                run_ids: runIds,
+                address_overrides: addressOverrides,
                 admin_secret: adminSecret
             })
         });
@@ -488,9 +686,52 @@ async function triggerSubmitFoxpost(btn) {
     } catch (err) {
         alert('Hálózati hiba történt a Foxpost feladáskor: ' + err.message);
     } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalText;
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
         updateLogisticsButtonsState();
+    }
+}
+
+async function triggerSubmitFoxpost(btn) {
+    const selected = getSelectedRuns();
+    if (selected.length === 0) return;
+
+    const eligible = selected.filter(r => !isRunShipped(r));
+
+    if (eligible.length === 0) {
+        alert('A kiválasztott tételek között nincs feladásra váró érem.');
+        return;
+    }
+
+    // Group eligible runs into packages
+    const groups = [];
+    const processedRunIds = new Set();
+
+    eligible.forEach(run => {
+        if (processedRunIds.has(run.id)) return;
+        const groupRunIds = getGroupedRunIds(run);
+        const groupRuns = groupRunIds.map(id => eligible.find(r => r.id === id)).filter(Boolean);
+        groupRunIds.forEach(id => processedRunIds.add(id));
+        if (groupRuns.length > 0) {
+            groupRuns.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            groups.push(groupRuns);
+        }
+    });
+
+    const homeGroups = groups.filter(g => getShipment(g[0]).method === 'home');
+    const lockerRuns = eligible.filter(r => (getShipment(r).method || 'foxpost') === 'foxpost');
+
+    if (homeGroups.length > 0) {
+        // Open the Safety Verification Modal for Home Deliveries
+        openFoxpostHdModal(eligible, homeGroups, lockerRuns.length, btn);
+    } else {
+        // Direct confirmation for Locker-only batches
+        if (!confirm(`Biztosan feladod a kijelölt ${eligible.length} db Foxpost csomagautomatás érmet a WebAPI-n keresztül?`)) {
+            return;
+        }
+        await sendFoxpostApiRequest(eligible.map(r => r.id), {}, btn);
     }
 }
 

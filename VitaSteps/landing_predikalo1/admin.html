@@ -357,11 +357,34 @@
     </div>
 </div>
 
-<!-- Image Zoom Lightbox Modal -->
-<div id="image-modal" class="modal-backdrop" onclick="closeImageModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="closeImageModal()">✕</button>
-        <img id="modal-img" src="" alt="Igazolás teljes méretben">
+<!-- Foxpost Home Delivery Address Verification Safety Modal -->
+<div id="foxpost-hd-modal" class="modal-backdrop" style="display: none;" onclick="closeFoxpostHdModal()">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 720px; width: 94%; max-height: 90vh; overflow-y: auto; background: #0f172a; border: 1px solid rgba(168, 85, 247, 0.45); border-radius: 16px; padding: 1.75rem; text-align: left; box-shadow: 0 25px 60px rgba(0,0,0,0.85);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem;">
+            <div>
+                <div style="font-size: 1.15rem; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>🏠</span> <span>Házhozszállításos címek ellenőrzése (Foxpost API)</span>
+                </div>
+                <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.35rem; line-height: 1.4;">
+                    A Foxpost API külön irányítószámra, településre és utcanévre bontva kéri a címet. Kérjük ellenőrizd az automatikusan felbontott adatokat, és ha szükséges, javítsd őket a feladás előtt!
+                </div>
+            </div>
+            <button class="modal-close" onclick="closeFoxpostHdModal()" style="position: static; font-size: 1.2rem; color: var(--text-mid); background: none; border: none; cursor: pointer;">✕</button>
+        </div>
+
+        <div id="foxpost-hd-modal-list" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
+            <!-- Rendered parcel cards dynamically -->
+        </div>
+
+        <div id="foxpost-hd-modal-info" style="font-size: 0.82rem; color: #38bdf8; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); padding: 0.6rem 0.85rem; border-radius: 8px; margin-bottom: 1.25rem; display: none;">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <button class="btn btn-grey" onclick="closeFoxpostHdModal()" style="width: auto; padding: 0.55rem 1.1rem; font-size: 0.85rem;">Mégse</button>
+            <button class="btn btn-purple" id="btn-confirm-foxpost-hd" onclick="submitFoxpostHdWithOverrides()" style="width: auto; padding: 0.55rem 1.35rem; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.4rem;">
+                <span>🦊</span> <span>Jóváhagyás & Feladás a Foxpostba</span>
+            </button>
+        </div>
     </div>
 </div>
 
