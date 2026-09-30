@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS public.analytics_visitors (
     total_sessions INT DEFAULT 1,
     total_orders INT DEFAULT 0,
     total_revenue NUMERIC DEFAULT 0,
+    is_test BOOLEAN DEFAULT FALSE,
     
     -- First Touch Attribution (Honnan jött legelőször?)
     first_touch_source TEXT,
@@ -50,6 +51,7 @@ CREATE TABLE IF NOT EXISTS public.analytics_sessions (
     visitor_id TEXT NOT NULL REFERENCES public.analytics_visitors(visitor_id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    is_test BOOLEAN DEFAULT FALSE,
     
     -- Meta IDs (Primary) & Names (Metadata)
     meta_campaign_id TEXT,
@@ -96,6 +98,7 @@ CREATE TABLE IF NOT EXISTS public.analytics_events (
     meta_campaign_id TEXT,
     meta_adset_id TEXT,
     meta_ad_id TEXT,
+    is_test BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -104,7 +107,9 @@ CREATE INDEX IF NOT EXISTS idx_sessions_ad_id ON public.analytics_sessions(meta_
 CREATE INDEX IF NOT EXISTS idx_sessions_campaign_id ON public.analytics_sessions(meta_campaign_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_visitor_id ON public.analytics_sessions(visitor_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_created_at ON public.analytics_sessions(created_at);
+CREATE INDEX IF NOT EXISTS idx_sessions_is_test ON public.analytics_sessions(is_test);
 CREATE INDEX IF NOT EXISTS idx_events_session_id ON public.analytics_events(session_id);
 CREATE INDEX IF NOT EXISTS idx_events_name ON public.analytics_events(event_name);
 CREATE INDEX IF NOT EXISTS idx_events_ad_id ON public.analytics_events(meta_ad_id);
 CREATE INDEX IF NOT EXISTS idx_events_created_at ON public.analytics_events(created_at);
+CREATE INDEX IF NOT EXISTS idx_events_is_test ON public.analytics_events(is_test);

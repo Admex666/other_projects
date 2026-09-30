@@ -8,17 +8,22 @@ code:
   - landing_predikalo1/portal.html
   - landing_predikalo1/admin.html
 related:
+  - "[[strategic-positioning|Strategic Positioning]]"
+  - "[[virtual-challenge|Virtual Challenge]]"
+  - "[[hosszu-lepesek|Hosszú Lépések]]"
   - "[[proof-verification|Proof Verification]]"
   - "[[customer]]"
   - "[[medal]]"
 ---
 
-# Concept: Verified Challenge (Hitelesített Kihívás)
+# Concept: Verified Challenge (Hitelesített Túrakihívás)
 
-Unlike conventional mass-produced finisher medals, VitaSteps awards medals **strictly upon verified physical completion of designated geographic routes**.
+A hitelesített fizikai túrakihívások képezik a VitaSteps 5-pilléres élményrendszerének ([[strategic-positioning|Strategic Positioning]]) elsődleges zászlóshajó pillérét.
+A tömeggyártott finisher érmekkel szemben a VitaSteps prémium 3D fémérmeit a résztvevők **kizárólag a kijelölt földrajzi útvonalak és fizikai csúcsok igazolt teljesítése után kapják meg**.
 
 ## Principles
-1. **Self-Paced & Perpetual Exploration:** Participants choose their own date, time, and pace. While registration closes on a strict campaign deadline (e.g. September 27 for Nagy-Kevély), **completion is perpetual and has no expiration date** (a túra bármikor, időkorlát nélkül, akár visszamenőleg is teljesíthető).
-2. **Dual Proof Submission:** Runners submit GPX tracks (Strava, Garmin, Apple Watch) or summit photo checkpoints on their dedicated portal.
-3. **Admin Verification:** Every submission is reviewed in the [[admin-panel|Admin Panel]] prior to medal dispatch.
-4. **Limited Batch Exclusivity:** Medals are produced in strictly limited runs (e.g. 100 pcs per campaign). Physical medals are **not numbered** (nem számozottak); verified runners receive their sequential rank number on their digital certificate (oklevél) and online profile.
+1. **Self-Paced & Perpetual Exploration:** A résztvevők saját tempójukban, szabadon választott időpontban túráznak. Bár a nevezés határidőhöz kötött, **a teljesítésnek nincs lejárati ideje** (bármikor, időkorlát nélkül, akár visszamenőleg is teljesíthető).
+2. **Dual Proof Submission:** A túrázók GPX nyomvonalat (Strava, Garmin, Apple Watch) vagy csúcsfotókat töltenek fel a személyes portáljukon (`portal.html`).
+3. **Admin Verification:** Minden beküldést az adminisztrátor ellenőriz az [[admin-panel|Admin Panel]] felületén a csomagfeladás előtt.
+4. **Limited Batch Exclusivity:** Az érmek szigorúan limitált szériákban (100 db/kihívás) készülnek. A fizikai érmek nem gravírozottak; a sorszám a digitális oklevélen (`oklevel.html`) és az online adatlapon jelenik meg.
+5. **Ecosystem Synergies:** A fizikai kihívások mellett a platformot a helyszínfüggetlen [[virtual-challenge|Virtuális Kihívások]] és a kulturális [[hosszu-lepesek|Hosszú Lépések]] audioséták egészítik ki.

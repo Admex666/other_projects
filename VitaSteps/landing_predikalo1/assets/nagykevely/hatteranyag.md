@@ -1,5 +1,5 @@
 # A NAGY-KEVÉLY CSILLAGAI
-### Háttéranyag a VitaSteps túranaplóhoz és kalandkönyvhöz – történelem, geológia, legendák, érdekességek
+### Háttéranyag a VitaSteps túranaplóhoz és kalandfüzethez – történelem, geológia, legendák, érdekességek
 
 ---
 
@@ -238,4 +238,4 @@ Fontos tudni, hogy Sicambria létezését ókori forrás vagy felirat nem támas
 
 ---
 
-*Az anyag a VitaSteps – A Nagy-Kevély Csillagai túranapló és kalandkönyv szöveges betétjeihez készült, nyilvánosan elérhető helyismereti, néprajzi és turisztikai forrásokra támaszkodva.*
+*Az anyag a VitaSteps – A Nagy-Kevély Csillagai túranapló és kalandfüzet szöveges betétjeihez készült, nyilvánosan elérhető helyismereti, néprajzi és turisztikai forrásokra támaszkodva.*

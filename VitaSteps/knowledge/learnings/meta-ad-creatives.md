@@ -36,4 +36,4 @@ Across $> 140$ ad-days of daily creative-level reporting in [`meta_kreativ_napi_
 
 ## 3. Kulcs Megállapítások
 * **Exkluzivitás és Limitált Széria:** A `100 db limitált szériás érem` szűkösségi üzenet megduplázta az átkattintási hajlandóságot.
-* **Ajándék Értéknövelők:** Az `"Ingyenes Kalandkönyv + Ingyenes Szállítás"` jelvény a hirdetési szövegben és a landing oldalon +18%-kal javította a vásárlási konverziót.
+* **Ajándék Értéknövelők:** Az `"Ingyenes Kalandfüzet + Ingyenes Szállítás"` jelvény a hirdetési szövegben és a landing oldalon +18%-kal javította a vásárlási konverziót.

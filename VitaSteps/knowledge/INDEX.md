@@ -8,12 +8,12 @@ description: Master navigation map for the VitaSteps Project Knowledge Graph.
 
 # 🗺️ VitaSteps Knowledge Index
 
-Welcome to the **VitaSteps Project Knowledge Graph**. This index provides direct, progressive navigation into all domain concepts, systems, processes, metrics, decisions, and operations.
+Welcome to the **VitaSteps Project Knowledge Graph**. This index provides direct, progressive navigation into all strategic concepts, domain entities, systems, processes, metrics, decisions, and operations.
 
 ---
 
 ## 🏛️ Domain Entities (`knowledge/entities/`)
-Concrete physical and business objects of the VitaSteps platform.
+Concrete physical, digital, and business objects of the VitaSteps platform.
 
 * [[customer|Customer]]: Participant & runner model (Supabase: `runners`).
 * [[run|Run]]: Individual challenge entry, serial rank, verification & delivery state (Supabase: `runs`).
@@ -21,43 +21,52 @@ Concrete physical and business objects of the VitaSteps platform.
 * [[medal|Medal]]: Physical collectible medals, specs, and Chinese supplier relations.
 * [[campaign-predikaloszek|Campaign Predikaloszek]]: Prédikálószék Vertical 100-medal challenge.
 * [[campaign-nagykevely|Campaign Nagy-Kevely]]: Nagy-Kevély csillagai 100-medal astronomical night challenge.
+* [[virtual-challenge|Virtual Challenge]]: Helyszínfüggetlen távolsági és kilométer-kihívások (MVP modell).
+* [[hosszu-lepesek|Hosszú Lépések]]: Önvezetett tematikus városi audioséták és történetmesélés.
 
 ---
 
-## 💡 Concepts (`knowledge/concepts/`)
-Foundational business and architectural principles.
+## 💡 Concepts & Strategy (`knowledge/concepts/`)
+Foundational strategic positioning, marketing loops, and architectural principles.
 
-* [[verified-challenge|Verified Challenge]]: GPS & photo-based validation mechanics for collectible awards.
-* [[unified-campaign-config|Unified Campaign Config]]: Dynamic, config-driven multi-campaign frontend architecture.
-* [[dynamic-pricing|Dynamic Pricing]]: Entry pricing, quantity tiers, home delivery surcharges.
-* [[referral-program|Referral Program]]: 10% coupon discount and progressive tier reward system.
+* [[strategic-positioning|Strategic Positioning]]: A VitaSteps mozgás-, felfedezés- és teljesítésközpontú élményrendszere (*„MOZOGJ. FEDEZZ FEL. TELJESÍTS.”*).
+* [[growth-loop|Growth Loop]]: Integrált növekedési hurok (Organic + Community + Lead + Email + Meta + UGC + Referral).
+* [[organic-content-pillars|Organic Content Pillars]]: A 4 organikus tartalom pillér (Hasznos, Felfedezés, Teljesítés, VitaSteps).
+* [[verified-challenge|Verified Challenge]]: GPS és fotó alapú fizikai túrakihívás hitelesítési mechanizmus.
+* [[unified-campaign-config|Unified Campaign Config]]: Dinamikus, konfiguráció-vezérelt többkampányos frontend architektúra.
+* [[dynamic-pricing|Dynamic Pricing]]: Nevezési árazás, sávos kedvezmények, szállítási díjak.
+* [[referral-program|Referral Program]]: 10%-os baráti kupon és progresszív szintlépő ajánlói rendszer.
 
 ---
 
 ## 🔄 Processes (`knowledge/processes/`)
-Core end-to-end operational workflows.
+Core end-to-end operational and lifecycle workflows.
 
-* [[customer-funnel|Customer Funnel]]: End-to-end vásárlói életciklus (Meta Ads $\rightarrow$ Landing $\rightarrow$ Checkout $\rightarrow$ Igazolás $\rightarrow$ Kiszállítás $\rightarrow$ Retenció).
-* [[checkout-pipeline|Checkout Pipeline]]: Stripe Checkout $\rightarrow$ `process-payment.js` $\rightarrow$ DB sync + E-Invoice + Welcome Email.
-* [[proof-verification|Proof Verification]]: User GPX/photo upload on `portal.html` $\rightarrow$ Admin approval $\rightarrow$ Diploma + Congratulation Email.
-* [[order-fulfillment|Order Fulfillment]]: Multi-medal & cross-campaign grouping $\rightarrow$ Packing guide $\rightarrow$ Foxpost locker dispatch.
-* [[meta-sync-pipeline|Meta Sync Pipeline]]: Daily GitHub Action automated sync for Meta Ads performance metrics.
+* [[customer-funnel|Customer Funnel]]: End-to-end vásárlói életciklus (Akvizíció $\rightarrow$ Landing $\rightarrow$ Lead Kapu $\rightarrow$ Checkout $\rightarrow$ Igazolás $\rightarrow$ Kiszállítás $\rightarrow$ Retenció).
+* [[organic-content-workflow|Organic Content Workflow]]: Kétheti ~60 perces batch tartalomgyártási folyamat (Nyersanyag $\rightarrow$ AI $\rightarrow$ Szerkesztés $\rightarrow$ Ütemezés).
+* [[community-engagement-protocol|Community Engagement Protocol]]: Facebook közösségi részvételi szabályzat (*„Help first, brand second”*).
+* [[lead-nurturing-sequence|Lead Nurturing Sequence]]: 0–10 napos automatizált e-mail szekvencia és downstream konverziókövetés.
+* [[ugc-referral-engine|UGC & Referral Engine]]: Teljesítés utáni visszacsatolás, élményszelfik, történetek és ajánlói megosztások.
+* [[checkout-pipeline|Checkout Pipeline]]: Stripe Checkout $\rightarrow$ `process-payment.js` $\rightarrow$ DB sync + E-Számla + Welcome Email.
+* [[proof-verification|Proof Verification]]: Felhasználói GPX/fotó feltöltés $\rightarrow$ Admin jóváhagyás $\rightarrow$ Diploma + Gratuláló Email.
+* [[order-fulfillment|Order Fulfillment]]: Többérmes és kampányközi csomagösszevonás $\rightarrow$ Csomagolási segédlet $\rightarrow$ Foxpost feladás.
+* [[meta-sync-pipeline|Meta Sync Pipeline]]: Automatikus napi GitHub Action szinkronizáció a Meta Ads Marketing API-ból.
 
 ---
 
 ## ⚙️ Systems & Architecture (`knowledge/systems/`)
 Integrated technical components and infrastructure.
 
-* [[admin-panel|Admin Panel]]: Web dashboard (`admin.html`) for proofs, shipments, and live analytics.
-* [[email-templates|Email Templates]]: Centralized HTML templates (`landing_predikalo1/email_templates/`) for transactional, auth, and nurturing emails.
-* [[supabase|Supabase]]: PostgreSQL schema, Row-Level Security (RLS) policies, database triggers.
-* [[stripe|Stripe]]: Payment processing, session metadata, webhook-free fulfillment.
-* [[revolut|Revolut Pro]]: Business bank account, expense classification, and cashflow ledger.
-* [[foxpost|Foxpost]]: Parcel locker automated API, shipment status lifecycle & tracking.
-* [[szamlazz-hu|Számlázz.hu]]: Automated NAV-compliant electronic invoice generation.
-* [[meta-ads|Meta Ads]]: Marketing API, Ad Sets, UTM tracking, creative performance analytics.
-* [[vercel|Vercel]]: Serverless Node.js backend endpoints and global edge deployment.
-* [[microsoft-clarity|Microsoft Clarity]]: User heatmaps, session recordings, and conversion UX analysis.
+* [[admin-panel|Admin Panel]]: Webes adminisztrációs felület (`admin.html`) igazolásokhoz, logisztikához és marketing analitikához.
+* [[email-templates|Email Templates]]: Szabványosított HTML sablonok (`email_templates/`) tranzakciós, biztonsági és nurturing levelekhez.
+* [[supabase|Supabase]]: PostgreSQL adatbázis séma, RLS biztonsági házirendek és triggerek.
+* [[stripe|Stripe]]: Fizetésfeldolgozás, munkamenet metaadatok, webhook-mentes architektúra.
+* [[revolut|Revolut Pro]]: Üzleti bankszámla, kiadás-kategorizálás és cashflow nyilvántartás.
+* [[foxpost|Foxpost]]: Csomagautomata API, feladás, állapot-életciklus és automatikus nyomkövetés.
+* [[szamlazz-hu|Számlázz.hu]]: Automatikus NAV-kompatibilis elektronikus számlázás.
+* [[meta-ads|Meta Ads]]: Marketing API, hirdetéscsoportok, UTM struktúra és kreatív-szintű analitika.
+* [[vercel|Vercel]]: Serverless Node.js backend végpontok és globális edge hosting.
+* [[microsoft-clarity|Microsoft Clarity]]: Felhasználói hőtérképek, session videók és konverziós viselkedéselemzés.
 
 ---
 
@@ -74,32 +83,34 @@ Key performance indicators with single-source-of-truth formulas.
 ---
 
 ## ⚖️ Decisions (ADRs) (`knowledge/decisions/`)
-Durable architectural and strategic decisions.
+Durable architectural, product, and strategic decisions.
 
-* [[ADR-001-supabase-migration|ADR-001 Supabase Migration]]: Moving from Google Sheets to normalized PostgreSQL.
-* [[ADR-002-webhook-free-payment|ADR-002 Webhook-Free Payment]]: Siker.html client-triggered post-payment processing.
-* [[ADR-003-unified-campaign-config|ADR-003 Unified Campaign Config]]: Centralizing campaign settings in `config/campaigns.json`.
-* [[ADR-004-consolidated-shipping|ADR-004 Consolidated Shipping]]: Multi-medal & cross-campaign package merging.
-* [[ADR-005-strict-rls-security|ADR-005 Strict RLS Security]]: Supabase database hardening and admin endpoints.
-* [[ADR-006-multicampaign-unit-economics|ADR-006 Multi-Campaign Unit Economics]]: Challenge batch capex isolation & ad-level creative sync pipeline.
-* [[ADR-007-revolut-stripe-cashflow-integration|ADR-007 Revolut & Stripe Cashflow]]: Unifying live Stripe balance and historical Revolut Pro ledger.
-* [[ADR-008-foxpost-batch-resilience|ADR-008 Foxpost Batch Resilience]]: Pre-validation, phone number sanitization, and batch error isolation.
+* [[ADR-001-supabase-migration|ADR-001 Supabase Migration]]: Átállás Google Sheets-ről normalizált PostgreSQL-re.
+* [[ADR-002-webhook-free-payment|ADR-002 Webhook-Free Payment]]: Kliens által indított, golyóálló fizetés-feldolgozás.
+* [[ADR-003-unified-campaign-config|ADR-003 Unified Campaign Config]]: Kampánybeállítások központosítása a `campaigns.json`-ban.
+* [[ADR-004-consolidated-shipping|ADR-004 Consolidated Shipping]]: Többérmes és kereszt-kampányos rendelések egybecsomagolása.
+* [[ADR-005-strict-rls-security|ADR-005 Strict RLS Security]]: Supabase adatbázis védelem és adminisztrátori végpontok.
+* [[ADR-006-multicampaign-unit-economics|ADR-006 Multi-Campaign Unit Economics]]: Kampány capex izoláció és kreatív-szintű megtérülés.
+* [[ADR-007-revolut-stripe-cashflow-integration|ADR-007 Revolut & Stripe Cashflow]]: Stripe egyenleg és Revolut Pro cashflow egységesítése.
+* [[ADR-008-foxpost-batch-resilience|ADR-008 Foxpost Batch Resilience]]: Előzetes validáció és csoportos hibatűrés a Foxpost API hívásoknál.
+* [[ADR-009-strategic-ecosystem-pivot|ADR-009 Strategic Ecosystem Pivot]]: Átállás az egytermékes modellről a mozgás- és felfedezésközpontú 5-pilléres ökoszisztémára.
 
 ---
 
 ## 🧠 Learnings (`knowledge/learnings/`)
 Validated empirical insights and troubleshooting findings.
 
-* [[meta-ad-creatives|Meta Ad Creatives]]: Converting visual & copy angles (V4/V5 hiker vs medal focus).
-* [[leaflet-print-rendering|Leaflet Print Rendering]]: Geographic padding & container height sync in PDF/print view.
-* [[returning-customer-rate|Returning Customer Rate]]: 80%+ repeat purchase rate between sequential challenges.
+* [[lead-magnet-intent|Lead Magnet Intent]]: Az ingyenes anyagok a magas vásárlási szándékú érdeklődőket szűrik ki, downstream követés szükséges.
+* [[meta-ad-creatives|Meta Ad Creatives]]: Konvertáló vizuális és szöveges horgok (hiker vs érem fókusz).
+* [[leaflet-print-rendering|Leaflet Print Rendering]]: Földrajzi kitöltés és konténer-magasság szinkron a nyomtatási nézetben.
+* [[returning-customer-rate|Returning Customer Rate]]: 80%+ visszatérési arány az egymást követő kihívások között.
 
 ---
 
 ## 🛠️ Operations (`knowledge/operations/`)
 Practical human & agent operating runbooks.
 
-* [[how-to-pack-and-ship|How to Pack and Ship]]: Using `admin.html` packing guide and generating Foxpost labels.
-* [[how-to-launch-campaign|How to Launch Campaign]]: Adding a new challenge into `campaigns.json` and deploying landing pages.
-* [[how-to-run-daily-sync|How to Run Daily Sync]]: Triggering and inspecting daily Meta & Foxpost sync jobs.
-* [[how-to-manual-approve|How to Manual Approve]]: Approving proof received outside the runner portal.
+* [[how-to-pack-and-ship|How to Pack and Ship]]: Csomagolási segédlet és Foxpost címkenyomtatás.
+* [[how-to-launch-campaign|How to Launch Campaign]]: Új kihívás felvétele a `campaigns.json`-ba és élesítés.
+* [[how-to-run-daily-sync|How to Run Daily Sync]]: Napi Meta és Foxpost szinkronizációs folyamatok futtatása.
+* [[how-to-manual-approve|How to Manual Approve]]: Portálon kívül érkezett igazolások jóváhagyása.

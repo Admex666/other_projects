@@ -102,7 +102,7 @@ gantt
 2.  **Google Sheets (`stripe_raw2`):** Minden megvásárolt éremhez külön sort ad hozzá a táblában a szállítási és teljesítési adatokkal.
 3.  **Supabase (`runners` tábla):** Minden nevezőhöz egyedi rekordot hoz létre campaign-specifikus sorszámmal (pl. `#001/100-PK`). Több érem vásárlása esetén a rendszer automatikusan a `vevo+medalX` email-aliast használja a kulcsok szétválasztásához.
 4.  **Számlázz.hu:** Automatikus e-számla generálás alanyi adómentes (AAM) formátumban, a tételek felsorolásával és szállítási díjjal.
-5.  **Welcome Email:** Automatikus üdvözlőlevél küldése a portálos belépő linkkel és a letölthető virtuális **Kalandkönyv** (PDF) elérésével.
+5.  **Welcome Email:** Automatikus üdvözlőlevél küldése a portálos belépő linkkel és a letölthető virtuális **Kalandfüzet** (PDF) elérésével.
 
 ---
 
@@ -147,8 +147,8 @@ Hogy elkerüljük a felesleges hirdetési költéseket:
 
 ## 🧭 Útvonalak és Élményelemek
 
-### 1. Letölthető Virtuális Kalandkönyv (Túrafüzet)
-A nevezők a sikeres fizetés után azonnal (illetve a személyes portáljukon keresztül túrázás közben is) letölthetik a **Nagy-Kevély Kalandkönyvet** (PDF):
+### 1. Letölthető Virtuális Kalandfüzet (Túrafüzet)
+A nevezők a sikeres fizetés után azonnal (illetve a személyes portáljukon keresztül túrázás közben is) letölthetik a **Nagy-Kevély Kalandfüzetet** (PDF):
 *   **Történelmi háttér:** Érdekességek és kulisszatitkok az Egri Vár másolatának építéséről (az *Egri Csillagok* film forgatása az 1960-as években).
 *   **Geológia játékosan:** A Teve-szikla dolomit tornyainak keletkezése.
 *   **Túra-tippek:** Parkolás Pilisborosjenőn, vízvételi és pihenőhelyek.

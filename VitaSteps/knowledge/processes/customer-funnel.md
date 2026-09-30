@@ -16,6 +16,10 @@ code:
   - landing_predikalo1/admin.html
   - landing_predikalo1/api/admin-data.js
 related:
+  - "[[strategic-positioning|Strategic Positioning]]"
+  - "[[growth-loop|Growth Loop]]"
+  - "[[lead-nurturing-sequence|Lead Nurturing Sequence]]"
+  - "[[ugc-referral-engine|UGC & Referral Engine]]"
   - "[[meta-ads|Meta Ads]]"
   - "[[checkout-pipeline|Checkout Pipeline]]"
   - "[[proof-verification|Proof Verification]]"
@@ -39,7 +43,7 @@ flowchart TD
     B -->|Nevezés CTA| C["3. Kosár & Csomagpont<br>checkout.html"]
     C -->|Fizetés indítása| D["4. Fizetés<br>Stripe Checkout"]
     D -->|Sikeres tranzakció| E["5. Onboarding Pipeline<br>process-payment.js"]
-    E -->|Üdvözlő email & Portál link| F["6. Felkészülés & Kalandkönyv<br>portal.html + kalandkonyv.html"]
+    E -->|Üdvözlő email & Portál link| F["6. Felkészülés & Kalandfüzet<br>portal.html + kalandkonyv.html"]
     F -->|Túra teljesítése & Igazolás| G["7. Igazolás & Jóváhagyás<br>submit-proof.js + admin.html"]
     G -->|Admin jóváhagyva & Oklevél| H["8. Csomagolás & Kiszállítás<br>Foxpost API + Napi tracking"]
     H -->|Érem átvéve az automatából| I["9. Értékelés & Retenció<br>NPS kérdőív + Ajánlói program + Új túra"]
@@ -65,12 +69,12 @@ flowchart TD
   * Nagy felbontású 3D / fotózott érembemutató, limitált széria (100 db).
   * Dinamikus készletszámláló és visszaszámláló az éremfoglaláshoz.
 * **Lead Magnet kapu (Gated Content):**
-  * A **Kalandkönyv** és a **Túraútvonalak (GPX letöltések)** alapértelmezetten zárolva (lelakatolva) jelennek meg.
-  * A látogató a nevét és e-mail címét megadva kattinthat a *„Kérem a túraútvonalakat és a kalandkönyvet 🔓”* gombra.
+  * A **Kalandfüzet** és a **Túraútvonalak (GPX letöltések)** alapértelmezetten zárolva (lelakatolva) jelennek meg.
+  * A látogató a nevét és e-mail címét megadva kattinthat a *„Kérem a túraútvonalakat és a kalandfüzetet 🔓”* gombra.
   * **Backend feldolgozás (`/api/capture-lead.js`):**
     1. Felhasználó azonnali mentése / upsertje a Supabase `runners` táblába (és ha létezik, a `leads` táblába).
     2. Automatikus üdvözlő e-mail kiküldése Gmail SMTP-n keresztül a túraútvonalakkal és a közvetlen feloldó linkkel (`?lead=true#kalandkonyv`).
-    3. A látogató böngészőjében azonnal feloldódnak a szekciók (`localStorage.vitasteps_lead_unlocked = 'true'`), szabaddá válik a GPX letöltés és közvetlenül megnyitható a nyomtatható Kalandkönyv (`nagykevely/kalandkonyv.html?lead=true`).
+    3. A látogató böngészőjében azonnal feloldódnak a szekciók (`localStorage.vitasteps_lead_unlocked = 'true'`), szabaddá válik a GPX letöltés és közvetlenül megnyitható a nyomtatható Kalandfüzet (`nagykevely/kalandkonyv.html?lead=true`).
 
 ### 3. Kosár és Szállítási Cím megadása ([[checkout-pipeline|Checkout]])
 * **Felület:** `checkout.html` (dinamikus kampánykonfiguráció a `config/campaigns.json` alapján).
@@ -94,7 +98,7 @@ flowchart TD
   4. Üdvözlő levél kiküldése a túracsomaggal (letölthető GPX-ek) és a személyes portál közvetlen belépési linkjével.
 
 ### 6. Felkészülés és Teljesítés (`portal.html` $\rightarrow$ `kalandkonyv.html`)
-* **Kalandkönyv:** A portálon a túrázó legenerálhatja személyre szabott, nyomtatható Kalandkönyvét (térkép, ellenőrzőpontok, tanösvény állomások, élménynapló).
+* **Kalandfüzet:** A portálon a túrázó legenerálhatja személyre szabott, nyomtatható Kalandfüzetét (térkép, ellenőrzőpontok, tanösvény állomások, élménynapló).
 * **Túra leküzdése:** A résztvevő tetszőleges időpontban teljesíti a kijelölt távot, és GPS nyomvonalat rögzít (Strava, Garmin, GPX) vagy csúcsfotókat készít.
 
 ### 7. Teljesítés Igazolása és Jóváhagyás ([[proof-verification|Proof Verification]])

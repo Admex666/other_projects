@@ -90,7 +90,7 @@ module.exports = async (req, res) => {
             console.warn('Leads table insert warning:', leadTableErr.message);
         }
 
-        // 4. Feloldó URL és Kalandkönyv URL generálása
+        // 4. Feloldó URL és Kalandfüzet URL generálása
         const host = req.headers['x-forwarded-host'] || req.headers.host || 'vitastepsss.vercel.app';
         const proto = (req.headers['x-forwarded-proto'] || 'https');
         const baseUrl = `${proto}://${host}`;
@@ -124,13 +124,13 @@ module.exports = async (req, res) => {
                     .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
             } else {
                 console.warn('Template file not found at:', templatePath);
-                emailHtml = `<p>Kedves ${cleanName}!<br>Itt éred el a Kalandkönyvet és a túraútvonalakat: <a href="${unlockUrl}">Megnyitás</a></p>`;
+                emailHtml = `<p>Kedves ${cleanName}!<br>Itt éred el a Kalandfüzetet és a túraútvonalakat: <a href="${unlockUrl}">Megnyitás</a></p>`;
             }
 
             await transporter.sendMail({
                 from: '"VitaSteps" <vitasteps.team@gmail.com>',
                 to: cleanEmail,
-                subject: `🗺️ Nagy-Kevély Túraútvonalak és Kalandkönyv – VitaSteps`,
+                subject: `🗺️ Nagy-Kevély Túraútvonalak és Kalandfüzet – VitaSteps`,
                 html: emailHtml
             });
 

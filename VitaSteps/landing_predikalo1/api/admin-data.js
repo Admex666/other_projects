@@ -68,8 +68,8 @@ module.exports = async (req, res) => {
             });
         }
 
-        // ── 5. MARKETING DATA ────────────────────────────────────────────────
-        if (type === 'marketing') {
+        // ── 5. MARKETING & ANALYTICS DATA ────────────────────────────────────
+        if (type === 'marketing' || type === 'analytics') {
             const creativeRows = getCreativeCsvData();
             const { data: dbMetrics, error: mErr } = await supabase
                 .from('meta_daily_metrics')
@@ -91,6 +91,7 @@ module.exports = async (req, res) => {
 
             let analyticsSessions = [];
             let analyticsVisitors = [];
+            let analyticsEvents = [];
             try {
                 const { data: sData, error: sErr } = await supabase
                     .from('analytics_sessions')
@@ -105,6 +106,13 @@ module.exports = async (req, res) => {
                     .order('created_at', { ascending: false })
                     .limit(500);
                 if (vData && !vErr) analyticsVisitors = vData;
+
+                const { data: eData, error: eErr } = await supabase
+                    .from('analytics_events')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(1500);
+                if (eData && !eErr) analyticsEvents = eData;
             } catch (e) {
                 // Table might not exist yet before SQL migration
             }
@@ -115,6 +123,7 @@ module.exports = async (req, res) => {
                 orders: orders || [],
                 sessions: analyticsSessions,
                 visitors: analyticsVisitors,
+                events: analyticsEvents,
                 lastUpdated
             });
         }

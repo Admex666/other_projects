@@ -103,7 +103,7 @@ function renderEmails() {
                     ${stats.total} <span style="font-size: 0.85rem; color: var(--text-mid);">fő</span>
                 </div>
                 <div style="font-size: 0.75rem; color: var(--text-mid); margin-top: 0.25rem;">
-                    ${stats.totalRecords ? `(${stats.totalRecords} letöltésből összevonva)` : 'Útvonalat & Kalandkönyvet letöltők'}
+                    ${stats.totalRecords ? `(${stats.totalRecords} letöltésből összevonva)` : 'Útvonalat & Kalandfüzetet letöltők'}
                 </div>
             </div>
 

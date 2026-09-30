@@ -159,8 +159,14 @@ function aggregateCreativeMetricsAndFunnel(rows, sessions) {
 
     // 2. Ingest Supabase Analytics Sessions
     for (const s of (sessions || [])) {
+        if (typeof isTestSession === 'function' && isTestSession(s)) continue;
         const sAdId = (s.meta_ad_id || '').trim();
-        const sAdName = (s.meta_ad_name || s.utm_content || '').trim().toLowerCase();
+        let sAdName = (s.meta_ad_name || s.utm_content || '').trim().toLowerCase();
+        try {
+            sAdName = decodeURIComponent(sAdName.replace(/\+/g, ' ')).toLowerCase();
+        } catch (e) {
+            sAdName = sAdName.replace(/\+/g, ' ');
+        }
 
         let matchedAd = null;
         if (sAdId && byAd[`id_${sAdId}`]) {
@@ -295,7 +301,7 @@ function renderMktCards() {
 
     const timeFilteredOrders = from ? allMktOrders.filter(o => new Date(o.created_at) >= from) : allMktOrders;
     const timeFilteredMetrics = from ? mktMetrics.filter(r => new Date(r.date) >= from) : mktMetrics;
-    const timeFilteredSessions = from ? allMktSessions.filter(s => new Date(s.created_at) >= from) : allMktSessions;
+    const timeFilteredSessions = (from ? allMktSessions.filter(s => new Date(s.created_at) >= from) : allMktSessions).filter(s => typeof isTestSession !== 'function' || !isTestSession(s));
 
     let activeOrders = timeFilteredOrders;
     let activeMetrics = timeFilteredMetrics;

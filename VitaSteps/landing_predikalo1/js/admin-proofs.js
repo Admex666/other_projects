@@ -131,17 +131,20 @@ function setFilter(filter) {
     if (tabBtn) tabBtn.classList.add('active');
 
     const isMkt = filter === 'marketing';
+    const isAn = filter === 'analytics';
     const isFin = filter === 'finance';
     const isFb = filter === 'feedbacks';
     const isEmails = filter === 'emails';
     const proofListEl = document.getElementById('proof-list');
     const mktEl = document.getElementById('section-marketing');
+    const anEl = document.getElementById('section-analytics');
     const finEl = document.getElementById('section-finance');
     const fbEl = document.getElementById('section-feedbacks');
     const emailsEl = document.getElementById('section-emails');
 
-    if (proofListEl) proofListEl.style.display = (isMkt || isFin || isFb || isEmails) ? 'none' : '';
+    if (proofListEl) proofListEl.style.display = (isMkt || isAn || isFin || isFb || isEmails) ? 'none' : '';
     if (mktEl) mktEl.style.display = isMkt ? 'block' : 'none';
+    if (anEl) anEl.style.display = isAn ? 'block' : 'none';
     if (finEl) finEl.style.display = isFin ? 'block' : 'none';
     if (fbEl) fbEl.style.display = isFb ? 'block' : 'none';
     if (emailsEl) emailsEl.style.display = isEmails ? 'block' : 'none';
@@ -150,6 +153,8 @@ function setFilter(filter) {
         loadFinance();
     } else if (isMkt) {
         loadMarketing();
+    } else if (isAn) {
+        loadAnalytics();
     } else if (isFb) {
         loadFeedbacks();
     } else if (isEmails) {

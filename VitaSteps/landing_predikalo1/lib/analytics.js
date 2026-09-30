@@ -48,6 +48,8 @@ async function processAnalyticsEvent(payload) {
     const utm_term           = url_params.utm_term || null;
     const fbclid             = url_params.fbclid || null;
 
+    const is_test = payload.is_test === true || url_params.is_test === 'true' || url_params.is_test === '1' || url_params.test === 'true' || url_params.test === '1' || (landing_page && (landing_page.includes('localhost') || landing_page.includes('127.0.0.1') || landing_page.includes('vercel.app')));
+
     // 1. VISITOR UPSERT (First-Touch & Last-Touch)
     try {
         const { data: existingVisitor } = await supabase
@@ -86,7 +88,8 @@ async function processAnalyticsEvent(payload) {
                 last_touch_ad_name: meta_ad_name || utm_content,
                 last_touch_content: utm_content,
                 last_touch_fbclid: fbclid,
-                last_touch_landing_page: landing_page
+                last_touch_landing_page: landing_page,
+                is_test: is_test || false
             });
         } else {
             // Existing visitor -> Update last touch and session counter if landing
@@ -136,6 +139,7 @@ async function processAnalyticsEvent(payload) {
                 visitor_id,
                 created_at: eventTime,
                 updated_at: now,
+                is_test: is_test || false,
                 meta_campaign_id,
                 meta_campaign_name,
                 meta_adset_id,
@@ -146,7 +150,7 @@ async function processAnalyticsEvent(payload) {
                 utm_medium,
                 utm_campaign,
                 utm_content,
-                utm_term,
+                utm_term: utm_term || (is_test ? 'test_env' : null),
                 fbclid,
                 landing_page,
                 referrer,
@@ -194,6 +198,7 @@ async function processAnalyticsEvent(payload) {
             meta_campaign_id,
             meta_adset_id,
             meta_ad_id,
+            is_test: is_test || false,
             created_at: eventTime
         });
     } catch (eErr) {

@@ -232,6 +232,7 @@
             <button class="filter-tab" onclick="setFilter('feedbacks')" id="tab-feedbacks" style="border: 1px solid rgba(236, 72, 153, 0.4); color: #ec4899;">💬 Visszajelzések</button>
             <button class="filter-tab" onclick="setFilter('logistics')" id="tab-logistics" style="margin-left: auto; border: 1px solid rgba(249, 115, 22, 0.4); color: #f97316;">🦊 Logisztika & Csomagolás</button>
             <button class="filter-tab" onclick="setFilter('marketing')" id="tab-marketing" style="border: 1px solid rgba(196, 255, 0, 0.4); color: #c4ff00;">📊 Marketing</button>
+            <button class="filter-tab" onclick="setFilter('analytics')" id="tab-analytics" style="border: 1px solid rgba(14, 165, 233, 0.4); color: #0ea5e9;">🎯 Analytics</button>
             <button class="filter-tab" onclick="setFilter('finance')" id="tab-finance" style="border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8;">💳 Pénzügy & Cashflow</button>
             <button class="filter-tab" onclick="setFilter('emails')" id="tab-emails" style="border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc;">📧 Hírlevelek & Leadek</button>
         </div>
@@ -315,6 +316,55 @@
             </div>
         </div>
 
+        <!-- ANALYTICS & FUNNEL MODUL SCREEN -->
+        <div id="section-analytics" style="display: none;">
+            <!-- Fejléc & Vezérlők -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🎯</span> <span>Marketing & Döntési Analitika (Funnel Decision Engine)</span>
+                    </h2>
+                    <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.2rem;">Látogatói minőség, tölcsér konverziók, kreatív mátrix, korai jelek és session debugger.</div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button class="btn btn-grey" style="width: auto; padding: 0.45rem 0.85rem; font-size: 0.82rem;" onclick="loadAnalytics()">
+                        🔄 Frissítés
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kampány & Időablak Szűrősáv -->
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem; display: flex; gap: 1.25rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                <div>
+                    <div style="font-size: 0.72rem; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; font-weight: 700;">
+                        🏔️ Kampány / Forrás:
+                    </div>
+                    <div class="filter-tabs" id="an-campaign-tabs" style="border: none; margin-bottom: 0;">
+                        <button class="mkt-tab active" onclick="setAnalyticsCampaign('all')" id="an-camp-all">♾️ Összesített (Mindkét kihívás)</button>
+                        <button class="mkt-tab" onclick="setAnalyticsCampaign('pilis')" id="an-camp-pilis">⭐ Nagy-Kevély</button>
+                        <button class="mkt-tab" onclick="setAnalyticsCampaign('predikalo')" id="an-camp-predikalo">🏔️ Prédikálószék</button>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="font-size: 0.72rem; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; font-weight: 700;">
+                        📅 Időablak:
+                    </div>
+                    <div class="filter-tabs" id="an-time-tabs" style="border: none; margin-bottom: 0;">
+                        <button class="mkt-tab" onclick="setAnalyticsRange('1d')" id="an-tab-1d">Ma / Tegnap</button>
+                        <button class="mkt-tab" onclick="setAnalyticsRange('3d')" id="an-tab-3d">3 nap</button>
+                        <button class="mkt-tab" onclick="setAnalyticsRange('7d')" id="an-tab-7d">7 nap</button>
+                        <button class="mkt-tab active" onclick="setAnalyticsRange('all')" id="an-tab-all">Kezdetektől</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="an-last-updated" style="font-size: 0.75rem; color: var(--text-mid); margin-bottom: 1rem;"></div>
+            <div id="an-content-container">
+                <div class="empty-state"><span class="loading-spinner"></span><div style="margin-top:0.5rem">Analitikai adatok betöltése...</div></div>
+            </div>
+        </div>
+
         <!-- PÉNZÜGY & CASHFLOW MODUL SCREEN -->
         <div id="section-finance" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
@@ -388,12 +438,12 @@
     </div>
 </div>
 
-<!-- Modular Scripts -->
 <script src="js/admin-core.js"></script>
 <script src="js/admin-proofs.js"></script>
 <script src="js/admin-feedbacks.js"></script>
 <script src="js/admin-logistics.js"></script>
 <script src="js/admin-marketing.js"></script>
+<script src="js/admin-analytics.js"></script>
 <script src="js/admin-finance.js"></script>
 <script src="js/admin-emails.js"></script>
 

@@ -1,7 +1,7 @@
 /**
  * send_lead_conversion_email.js
  *
- * Küldi a konverziós emlékeztető e-mailt a Kalandkönyvet letöltött,
+ * Küldi a konverziós emlékeztető e-mailt a Kalandfüzetet letöltött,
  * de még nem vásárolt (warm lead) érdeklődőknek.
  *
  * Használat:

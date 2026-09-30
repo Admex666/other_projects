@@ -45,7 +45,7 @@ const TEMPLATES = [
         title: '🌲 4. Általános Lead Konverziós Sablon',
         path: 'lead_conversion_reminder.html',
         defaultSubject: '🏅 {{NAME}}, az érmed megszerzésére már csak kevés időd van! – VitaSteps',
-        description: 'Általános motivációs levél a Kalandkönyvet letöltött meleg leadeknek.'
+        description: 'Általános motivációs levél a Kalandfüzetet letöltött meleg leadeknek.'
     }
 ];
 

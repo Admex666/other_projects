@@ -19,7 +19,7 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ## [2.1.0] - 2026-08-25
 ### Fixed & Improved
-*   **Kalandkönyv Nyomtatási és Térképnézet Tökéletesítés (`kalandkonyv.html`):**
+*   **Kalandfüzet Nyomtatási és Térképnézet Tökéletesítés (`kalandkonyv.html`):**
     *   Kijavítottuk a nyomvonal és a POI-k levágódását: geográfiai kiterjesztést (`currentBounds.pad(0.18)`), egységes 280px-es konténermagasságot és `zoomSnap: 0.1` tört zoomot vezettünk be.
     *   Megszüntettük a nyomtatási nézet végén megjelenő üres plusz oldalt (`page-break-after: avoid` az utolsó lapon).
     *   A 6. oldalon elhelyeztünk egy közvetlen, kattintható hivatkozást a `/portal.html` oldalra.
@@ -104,7 +104,7 @@ All notable changes to the VitaSteps challenge platform project are documented h
 *   **Adatbázis Normalizáció & Több Kihívás Támogatása:**
     *   Felbontottuk a sémát `runners` (név, egyedi email) és `runs` (kihívás regisztrációk, egyedi sorszám, a teljesítő nevével) táblákra.
     *   Módosítottuk a `process-payment.js`, `stripe-webhook.js`, `submit-feedback.js` és `daily_tracking.py` állományokat a két-táblás logikának megfelelően.
-    *   A portálon (`portal.html`) bevezettünk egy legördülő választómenüt, amellyel a több kihívásra regisztrált felhasználók azonnal válthatnak a túráik között. A teljes felület (státusz, oklevél link, Kalandkönyv és Ajánlói fülek) dinamikusan frissül.
+    *   A portálon (`portal.html`) bevezettünk egy legördülő választómenüt, amellyel a több kihívásra regisztrált felhasználók azonnal válthatnak a túráik között. A teljes felület (státusz, oklevél link, Kalandfüzet és Ajánlói fülek) dinamikusan frissül.
     *   Javítottuk a portál oklevél gombjának útvonalát `/predikalo/oklevel.html` értékre.
 
 ## [1.4.3] - 2026-07-16
@@ -112,7 +112,7 @@ All notable changes to the VitaSteps challenge platform project are documented h
 *   **Dynamic Portal Tabs & Pending Challenge Card (`portal.html`):**
     *   Refactored the dashboard tab logic to dynamically show/hide tabs based on the runner's campaign and completion status.
     *   *Visszajelzés* and *Ajánlói Program* tabs are hidden for runners who have not completed their challenge.
-    *   *Kalandkönyv* tab is only shown for Nagy-Kevély (Pilis) challengers.
+    *   *Kalandfüzet* tab is only shown for Nagy-Kevély (Pilis) challengers.
     *   If only one tab is visible, the tab bar is hidden and that tab is activated automatically (e.g. non-completed Nagy-Kevély runners see the Guidebook card directly).
     *   If zero tabs are visible (non-completed Prédikálószék runners), the tab bar is hidden and a new `#pending-challenge-card` is displayed with instructions and a pre-filled Tally submission button (`https://tally.so/r/NpRz5W?email=...&name=...`).
 *   **Payment Pipeline Hardening & Invoice Name Simplification:**
@@ -151,19 +151,19 @@ All notable changes to the VitaSteps challenge platform project are documented h
 *   **Nagy-Kevély Landing Page CTA Optimization:**
     *   **Price Positioning:** Positioned the discounted price (7.990 Ft) highlighted above all call-to-action buttons.
     *   **CTA Button Copy:** Updated all main action buttons with the chosen high-converting text: *"Megszerzem az érmemet! 🏅"* (nav bar layout uses *"Kérem az érmet 🏅"* for space).
-    *   **Benefit Tags:** Positioned clear checklist tags (*"✓ Ingyenes szállítás • ✓ Ajándék kalandkönyv"*) directly below all CTA buttons.
+    *   **Benefit Tags:** Positioned clear checklist tags (*"✓ Ingyenes szállítás • ✓ Ajándék kalandfüzet"*) directly below all CTA buttons.
     *   **Hero Image Replacement:** Replaced the broken or missing medal image with the official product creative banner (`nagy_kevely_creative_v4.png`), adjusting styles with 12px border radius.
     *   **Mobile Sticky CTA Fix:** Implemented width, padding, flexbox, and box-sizing overrides to prevent the mobile sticky button container from overflowing horizontally.
     *   **Branding Uniformity:** Replaced all leftover 'Pilis' text references with 'Nagy-Kevély' or 'Kevély' (e.g., stats bar, serial badges, mockups).
     *   **Direct Checkout Links:** Changed all navigation, hero, and mobile sticky buttons to link directly to `/checkout.html?c=pilis` instead of scrolling down to the local anchor.
-*   **Personalized Adventure Guidebook (Kalandkönyv):**
+*   **Personalized Adventure Guidebook (Kalandfüzet):**
     *   **Dynamic Generator Page:** Created `nagykevely/kalandkonyv.html` providing dynamically built, customizable, printable A5/A4 adventure guidebooks and hiking logs.
     *   **8-Page Premium Booklet Layout:** Upgraded the guidebook to a complete 8-page format (ideal for double-sided A4 printing folded in half). Added a dynamic POI reader on Page 4 and a dedicated Trivia & Quiz on Page 5.
     *   **Dynamic Route Mapping:** Integrated Leaflet.js inside Page 3, fetching and parsing GPX files client-side to render tracks, zoom bounds, and place custom numbered markers for each POI (1, 2, 3) in geographic order. Applied smart grayscale CSS filters for ink-saving printer-friendly BW theme.
     *   **Dynamic Canvas Elevation Profile:** Programmed a custom HTML5 Canvas drawing system that computes cumulative distance and elevations from the loaded GPX to render elevation profiles, complete with gridlines, axis labels, and vertical dashed pointer markers showing the exact location and altitude of each POI.
     *   **POI & Heritage Integration:** Integrated rich geological, historical, and cultural stories sorted in strict geographic sequence along each track with explicit distance markings (Teve-szikla, Egri vár, Levendulamező, Nagy-Kevély, Kevély-nyereg, Ezüst-hegy, Mackó-barlang, Oszoly, Sicambria/Monalovac, Kő-hegy).
     *   **Interactive Controls & Selector:** Added a live route selector dropdown to the top customization card, allowing runners to dynamically switch tracks and instantly preview guidebooks.
-    *   **Prefilled Portal Tab:** Added a dedicated "Kalandkönyv" tab in `portal.html` visible exclusively to Nagy-Kevély challengers (`PK` serial code prefix). Prefills the runner's name, offers route selections, B&W or color themes, and launches print setups.
+    *   **Prefilled Portal Tab:** Added a dedicated "Kalandfüzet" tab in `portal.html` visible exclusively to Nagy-Kevély challengers (`PK` serial code prefix). Prefills the runner's name, offers route selections, B&W or color themes, and launches print setups.
     *   **Dynamic GPX QR-Codes:** Generates real-time QR codes linked to official GPX track files (`01csaladi.gpx`, `02klasszik.gpx`, `04felmaraton.gpx`, `03extra.gpx`) using a lightweight public redirect API.
     *   **Interactive Activities:** Included custom trail timelines, weather logs, journal sections, and a nature scavenger Hunt bingo grid, and a history/trivia section.
 *   **Tiered Referral Discount System:**

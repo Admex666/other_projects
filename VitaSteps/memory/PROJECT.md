@@ -15,7 +15,7 @@ VitaSteps is a premium virtual hiking and running challenge platform. Participan
     *   *Price:* 7 990 Ft (AAM invoice, free Foxpost delivery).
     *   *Finishers Limit:* 100 participants.
     *   *Medal:* 70mm custom 3D Antique Silver medal with green soft enamel coloring and custom printed ribbon.
-    *   *Unique Elements:* Egri Vár movie copy ruins & Teve-szikla rock formations, virtual downloadable PDF Guidebook (Kalandkönyv), 4 optional route lengths (from family-friendly 6km to 25km ultra).
+    *   *Unique Elements:* Egri Vár movie copy ruins & Teve-szikla rock formations, virtual downloadable PDF Guidebook (Kalandfüzet), 4 optional route lengths (from family-friendly 6km to 25km ultra).
 
 ---
 

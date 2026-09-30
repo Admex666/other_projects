@@ -7,7 +7,7 @@
 *   **[x]** Setup Retargeting ad sets targeting page visitors from the last 30 days (excluding buyers).
 
 ### 🌐 Frontend Page Enhancements (AI)
-*   **[x]** Promote free Kalandkönyv (PDF Guidebook) on `nagykevely/index.html` (add mockups and descriptions).
+*   **[x]** Promote free Kalandfüzet (PDF Guidebook) on `nagykevely/index.html` (add mockups and descriptions).
 *   **[x]** Add community total distance stat (1,230 km completed) to `nagykevely/index.html`.
 *   **[x]** Add countdown timer (ticking to Sept 6/13) and limited stock counter (100 medals max) JS logic to `nagykevely/index.html`.
 *   **[x]** Update map filters to show the 4 new route options (Family 6km, Classic 10km, Half Marathon 15km, Ultra 25km).
@@ -52,7 +52,7 @@
 *   **[x]**  Portálon kezelni, ha több jelentkező van egy e-mail címről, teljesítés igazolása felületen szintén, lehetőleg egy képpel lehessen több embert is igazolni.
 *   **[x]** "Sikeres nevezés" Welcome emailben legyen tájékoztató mindenről (GPX/szelfi feltöltés), portál elérhetősége és szerepe.
 *   **[x]** Referral kedvezmények beépítése, tesztelése (progresszív sávos árazás a Line Items szétbontásával)
-*   **[x]** Normális kalandkönyv
+*   **[x]** Normális kalandfüzet
 *   **[x]** End-to-end teszt: `checkout.html?campaign=pilis&test=true` → Stripe sandbox → `siker.html` → `process-payment` → Sheets + Supabase + számla + email.
 *   **[x]** Supabase: lefuttatni `ALTER TABLE runners ADD COLUMN IF NOT EXISTS stripe_session_id text;`
 *   **[x]** Deploy Vercel-re (`vercel --prod`) az összes mai változással.

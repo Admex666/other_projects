@@ -41,7 +41,7 @@ All transactional, nurturing, referral, and authentication email communications 
 | :--- | :--- | :--- | :--- |
 | `welcome.html` | Post-checkout confirmation & onboarding | `api/process-payment.js`, `api/stripe-webhook.js` | `{{GREETING_NAMES}}`, `{{MEDALS_HTML}}`, `{{PORTAL_LINK}}` |
 | `proof_approved.html` | Verification approval & diploma delivery | `api/admin-approve.js` | `{{RUNNER_NAME}}`, `{{CAMPAIGN_NAME}}`, `{{OKLEVEL_LINK}}` |
-| `lead_routes_kalandkonyv.html` | Free route pack & Kalandkönyv lead magnet | `api/capture-lead.js` | `{{NAME}}`, `{{UNLOCK_URL}}`, `{{KALANDKONYV_URL}}` |
+| `lead_routes_kalandkonyv.html` | Free route pack & Kalandfüzet lead magnet | `api/capture-lead.js` | `{{NAME}}`, `{{UNLOCK_URL}}`, `{{KALANDKONYV_URL}}` |
 | `lead_conversion_reminder.html` | Lead nurturing & discount incentive | `scripts/send_lead_conversion_email.js` | `{{NAME}}`, `{{CHECKOUT_URL}}` |
 | `feedback_request.html` | Delivered medal follow-up & NPS review | `scripts/daily_tracking.py` | `{{FIRST_NAME}}`, `{{CAMPAIGN_NAME}}`, `{{TALLY_FEEDBACK_LINK}}` |
 | `referral_promoter.html` | NPS 9-10 promoter reward & friend referral link | `api/submit-feedback.js`, `scripts/send_referral_emails.py` | `{{FIRST_NAME}}`, `{{REFERRAL_LINK}}`, `{{PORTAL_LINK}}` |

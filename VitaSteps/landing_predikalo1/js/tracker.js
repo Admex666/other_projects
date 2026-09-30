@@ -115,6 +115,13 @@
     const sessionId = getSessionId();
     const attributionParams = extractUrlParams();
 
+    // --- Environment / Test Detection ---
+    const hostname = (window.location.hostname || '').toLowerCase();
+    const urlParamsObj = new URLSearchParams(window.location.search);
+    const isLocalHost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.endsWith('.local') || hostname.includes('vercel.app');
+    const isTestFlag = /^(1|true|yes)$/i.test(urlParamsObj.get('test') || urlParamsObj.get('is_test') || '');
+    const isTestEnv = isLocalHost || isTestFlag;
+
     // --- State Variables ---
     let timeOnPageSeconds = 0;
     let maxScrollDepth = 0;
@@ -135,6 +142,7 @@
             session_id: sessionId,
             event_name: eventName,
             event_data: eventData,
+            is_test: isTestEnv,
             url_params: attributionParams,
             metrics: {
                 time_on_page: timeOnPageSeconds,

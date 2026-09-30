@@ -20,7 +20,7 @@ Ez a dokumentum a Nagy-Kevély csillagai Meta Ads kampány indításához szüks
 ---
 
 ## 🌐 3. Landing Page & Web-oldali FOMO (Frontend fejlesztések)
-*   **[AI]** **Kalandkönyv promóció beépítése:** Kiemelt vizuális szekció készítése az ingyenes letölthető túrafüzetről a `nagykevely/index.html` oldalon.
+*   **[AI]** **Kalandfüzet promóció beépítése:** Kiemelt vizuális szekció készítése az ingyenes letölthető túrafüzetről a `nagykevely/index.html` oldalon.
 *   **[AI]** **Közösségi statisztika (Social Proof) elhelyezése:** A *1 230 teljesített kilométer* statisztika beépítése a landing oldalra.
 *   **[AI]** **Dinamikus Készlet- és Időjelző:** A számlálók (szeptember 6. nevezési zárás és 100 darabos készlet) JS kódjának és HTML elemeinek megírása.
 *   **[AI]** **Térkép & GPX frissítése:** A Leaflet térkép felkészítése az új 4 útvonal GPX nyomvonalainak dinamikus megjelenítésére.

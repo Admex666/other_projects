@@ -70,6 +70,15 @@ function isTestRun(r) {
     return s.includes('TEST') || s.includes('999') || e.includes('test') || e.includes('admex') || n.includes('próba') || n.includes('teszt') || n.includes('minta');
 }
 
+function isTestSession(s) {
+    if (!s) return false;
+    if (s.is_test === true || s.is_test === 'true' || s.is_test === 1) return true;
+    const lp = (s.landing_page || '').toLowerCase();
+    const ref = (s.referrer || '').toLowerCase();
+    const utm = ((s.utm_campaign || '') + ' ' + (s.utm_source || '') + ' ' + (s.utm_term || '') + ' ' + (s.utm_content || '')).toLowerCase();
+    return lp.includes('localhost') || lp.includes('127.0.0.1') || lp.includes('vercel.app') || lp.includes('test=1') || lp.includes('is_test=1') || utm.includes('test_env') || utm.includes('test=1') || ref.includes('localhost') || ref.includes('127.0.0.1');
+}
+
 function formatHUF(val) {
     return Math.round(val).toLocaleString('hu-HU') + ' Ft';
 }
