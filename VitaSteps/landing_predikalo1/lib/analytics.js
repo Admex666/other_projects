@@ -48,7 +48,7 @@ async function processAnalyticsEvent(payload) {
     const utm_term           = url_params.utm_term || null;
     const fbclid             = url_params.fbclid || null;
 
-    const is_test = payload.is_test === true || url_params.is_test === 'true' || url_params.is_test === '1' || url_params.test === 'true' || url_params.test === '1' || (landing_page && (landing_page.includes('localhost') || landing_page.includes('127.0.0.1') || landing_page.includes('vercel.app')));
+    const is_test = payload.is_test === true || url_params.is_test === 'true' || url_params.is_test === '1' || url_params.test === 'true' || url_params.test === '1' || (landing_page && (landing_page.includes('localhost') || landing_page.includes('127.0.0.1')));
 
     // 1. VISITOR UPSERT (First-Touch & Last-Touch)
     try {

@@ -76,7 +76,7 @@ function isTestSession(s) {
     const lp = (s.landing_page || '').toLowerCase();
     const ref = (s.referrer || '').toLowerCase();
     const utm = ((s.utm_campaign || '') + ' ' + (s.utm_source || '') + ' ' + (s.utm_term || '') + ' ' + (s.utm_content || '')).toLowerCase();
-    return lp.includes('localhost') || lp.includes('127.0.0.1') || lp.includes('vercel.app') || lp.includes('test=1') || lp.includes('is_test=1') || utm.includes('test_env') || utm.includes('test=1') || ref.includes('localhost') || ref.includes('127.0.0.1');
+    return lp.includes('localhost') || lp.includes('127.0.0.1') || lp.includes('test=1') || lp.includes('test=true') || lp.includes('is_test=1') || lp.includes('is_test=true') || ref.includes('localhost') || ref.includes('127.0.0.1');
 }
 
 function formatHUF(val) {

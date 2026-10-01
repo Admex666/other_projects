@@ -23,6 +23,14 @@ function fmtPct(num, denom) {
     return (num / denom * 100).toFixed(1) + '%';
 }
 
+function fmtTime(sec) {
+    if (!sec || sec <= 0) return '0 mp';
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    if (m === 0) return `${s} mp`;
+    return `${m}p ${s}mp`;
+}
+
 function setAnalyticsRange(range) {
     analyticsSelectedRange = range;
     document.querySelectorAll('#an-time-tabs .mkt-tab').forEach(b => b.classList.remove('active'));
@@ -145,6 +153,8 @@ function prepareAnalyticsDataset() {
     const totCta = sessions.filter(s => s.cta_clicked === true).length;
     const totCheckout = sessions.filter(s => s.checkout_started === true).length;
     const totSessionPurchases = sessions.filter(s => s.purchase_completed === true).length;
+    const totalTimeOnPage = sessions.reduce((sum, s) => sum + Number(s.time_on_page || 0), 0);
+    const avgTimeOnPageSec = totSessions > 0 ? Math.round(totalTimeOnPage / totSessions) : 0;
 
     const roas = totSpend > 0 ? (totRevenue / totSpend).toFixed(2) : '0.00';
     const cpa = ownPurchases > 0 ? Math.round(totSpendVat / ownPurchases) : 0;
@@ -446,6 +456,7 @@ function prepareAnalyticsDataset() {
         totCta,
         totCheckout,
         totSessionPurchases,
+        avgTimeOnPageSec,
         roas,
         cpa,
         checkoutToPurchasePct,
@@ -495,13 +506,19 @@ function renderAnalytics() {
                 </div>
 
                 <div class="fin-card">
+                    <div class="fin-card-label" style="color:var(--text-mid); font-size:0.75rem; font-weight:700;">⏱️ ÁTL. IDŐ AZ OLDALON</div>
+                    <div class="fin-card-val" style="font-size:1.4rem; font-weight:900; color:#38bdf8; font-family:'Outfit',sans-serif;">${fmtTime(data.avgTimeOnPageSec)}</div>
+                    <div style="font-size:0.72rem; color:var(--text-mid);">Session-ök átlaga</div>
+                </div>
+
+                <div class="fin-card">
                     <div class="fin-card-label" style="color:var(--text-mid); font-size:0.75rem; font-weight:700;">🔥 ENGAGED SESSION</div>
                     <div class="fin-card-val" style="font-size:1.4rem; font-weight:900; color:#f59e0b; font-family:'Outfit',sans-serif;">${data.totEngaged}</div>
                     <div style="font-size:0.72rem; color:#f59e0b;">${fmtPct(data.totEngaged, data.totSessions)} arány</div>
                 </div>
 
                 <div class="fin-card">
-                    <div class="fin-card-label" style="color:var(--text-mid); font-size:0.75rem; font-weight:700;">🛒 CHECKOUT NYITÁS</div>
+                    <div class="fin-card-label" style="color:var(--text-mid); font-size:0.75rem; font-weight:700;">🛒 CHECKOUT NYITÁS (CTA)</div>
                     <div class="fin-card-val" style="font-size:1.4rem; font-weight:900; color:#ec4899; font-family:'Outfit',sans-serif;">${data.totCheckout}</div>
                     <div style="font-size:0.72rem; color:#ec4899;">${fmtPct(data.totCheckout, data.totSessions)} sessionből</div>
                 </div>
@@ -558,38 +575,31 @@ function renderAnalytics() {
                 <div style="font-size: 0.75rem; color: var(--text-mid); font-weight: normal;">Abszolút darabszám és lépésenkénti megtartási arány</div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; position: relative;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; position: relative;">
                 
                 <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 1rem; text-align: center;">
-                    <div style="font-size: 0.72rem; color: var(--text-mid); font-weight: 700; text-transform: uppercase;">1. LANDING</div>
+                    <div style="font-size: 0.72rem; color: var(--text-mid); font-weight: 700; text-transform: uppercase;">1. LANDING SESSION</div>
                     <div style="font-size: 1.6rem; font-weight: 900; color: #fff; font-family: 'Outfit', sans-serif; margin: 0.3rem 0;">${data.totSessions}</div>
                     <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 600;">100% bázis</div>
                 </div>
 
                 <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 1rem; text-align: center; position: relative;">
                     <div style="position: absolute; left: -14px; top: 40%; font-size: 0.8rem; color: #38bdf8;">→</div>
-                    <div style="font-size: 0.72rem; color: var(--text-mid); font-weight: 700; text-transform: uppercase;">2. ENGAGED</div>
+                    <div style="font-size: 0.72rem; color: var(--text-mid); font-weight: 700; text-transform: uppercase;">2. ENGAGED SESSION</div>
                     <div style="font-size: 1.6rem; font-weight: 900; color: #f59e0b; font-family: 'Outfit', sans-serif; margin: 0.3rem 0;">${data.totEngaged}</div>
                     <div style="font-size: 0.75rem; color: #4ade80; font-weight: 700;">↓ ${fmtPct(data.totEngaged, data.totSessions)}</div>
                 </div>
 
                 <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 1rem; text-align: center; position: relative;">
                     <div style="position: absolute; left: -14px; top: 40%; font-size: 0.8rem; color: #38bdf8;">→</div>
-                    <div style="font-size: 0.72rem; color: var(--text-mid); font-weight: 700; text-transform: uppercase;">3. CTA KLIKK</div>
-                    <div style="font-size: 1.6rem; font-weight: 900; color: #38bdf8; font-family: 'Outfit', sans-serif; margin: 0.3rem 0;">${data.totCta}</div>
-                    <div style="font-size: 0.75rem; color: #38bdf8; font-weight: 700;">↓ ${fmtPct(data.totCta, data.totEngaged)}</div>
-                </div>
-
-                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 1rem; text-align: center; position: relative;">
-                    <div style="position: absolute; left: -14px; top: 40%; font-size: 0.8rem; color: #38bdf8;">→</div>
-                    <div style="font-size: 0.72rem; color: var(--text-mid); font-weight: 700; text-transform: uppercase;">4. CHECKOUT</div>
+                    <div style="font-size: 0.72rem; color: var(--text-mid); font-weight: 700; text-transform: uppercase;">3. CHECKOUT INDÍTÁS (CTA)</div>
                     <div style="font-size: 1.6rem; font-weight: 900; color: #ec4899; font-family: 'Outfit', sans-serif; margin: 0.3rem 0;">${data.totCheckout}</div>
-                    <div style="font-size: 0.75rem; color: #ec4899; font-weight: 700;">↓ ${fmtPct(data.totCheckout, data.totCta)}</div>
+                    <div style="font-size: 0.75rem; color: #ec4899; font-weight: 700;">↓ ${fmtPct(data.totCheckout, data.totEngaged)}</div>
                 </div>
 
                 <div style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 1rem; text-align: center; position: relative;">
                     <div style="position: absolute; left: -14px; top: 40%; font-size: 0.8rem; color: #4ade80;">→</div>
-                    <div style="font-size: 0.72rem; color: #4ade80; font-weight: 700; text-transform: uppercase;">5. VÁSÁRLÁS</div>
+                    <div style="font-size: 0.72rem; color: #4ade80; font-weight: 700; text-transform: uppercase;">4. SIKERES VÁSÁRLÁS</div>
                     <div style="font-size: 1.6rem; font-weight: 900; color: #4ade80; font-family: 'Outfit', sans-serif; margin: 0.3rem 0;">${data.ownPurchases}</div>
                     <div style="font-size: 0.75rem; color: #4ade80; font-weight: 700;">↓ ${data.checkoutToPurchasePct}</div>
                 </div>
