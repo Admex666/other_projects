@@ -255,19 +255,213 @@
         #home-delivery-container { margin-bottom: 1.5rem; }
 
         .selected-point-box {
-            background: rgba(196,255,0,0.05);
-            border: 1px solid rgba(196,255,0,0.2);
-            border-radius: 8px;
-            padding: 1rem;
+            background: rgba(196,255,0,0.08);
+            border: 1.5px solid var(--accent);
+            border-radius: 10px;
+            padding: 1.1rem 1.3rem;
             margin-bottom: 1.2rem;
             display: none;
+            animation: fadeIn 0.2s ease;
         }
-        .foxpost-iframe-wrap {
-            width: 100%;
-            height: 500px;
-            border-radius: 8px;
-            overflow: hidden;
+        .badge-selected {
+            background: var(--accent);
+            color: #000;
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 0.18rem 0.45rem;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+        .btn-change-point {
+            background: rgba(255,255,255,0.08);
             border: 1px solid var(--border);
+            color: #fff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-change-point:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
+
+        /* FOXPOST NATIVE AUTOCOMPLETE */
+        .foxpost-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .foxpost-input-wrap input {
+            width: 100%;
+            padding: 0.95rem 2.6rem 0.95rem 1rem;
+            background: rgba(0,0,0,0.35);
+            border: 1.5px solid rgba(196,255,0,0.3);
+            border-radius: 10px;
+            color: var(--text-high);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .foxpost-input-wrap input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(196,255,0,0.15);
+        }
+        .foxpost-clear-btn {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-mid);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 4px;
+            display: none;
+        }
+        .foxpost-clear-btn:hover { color: #fff; }
+
+        .foxpost-results-dropdown {
+            margin-top: 0.5rem;
+            max-height: 280px;
+            overflow-y: auto;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 50;
+        }
+        .foxpost-item {
+            padding: 0.85rem 1.1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: background 0.15s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .foxpost-item:last-child { border-bottom: none; }
+        .foxpost-item:hover, .foxpost-item:active {
+            background: rgba(196,255,0,0.08);
+        }
+        .foxpost-item-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        .foxpost-item-addr {
+            font-size: 0.8rem;
+            color: var(--text-mid);
+            margin-top: 0.15rem;
+        }
+        .foxpost-item-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.45rem;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-mid);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .foxpost-item-badge.outdoor {
+            background: rgba(74, 222, 128, 0.15);
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        /* SMART CHIPS */
+        .foxpost-chips-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .foxpost-chip {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(196,255,0,0.25);
+            border-radius: 20px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.78rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.18s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .foxpost-chip:hover, .foxpost-chip:active {
+            background: rgba(196,255,0,0.15);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* MODAL MAP */
+        .btn-map-toggle {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-mid);
+            padding: 0.35rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-map-toggle:hover {
+            color: #fff;
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.05);
+        }
+        .map-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .map-modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 800px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+        .map-modal-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface2);
+        }
+        .btn-close-modal {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .btn-close-modal:hover { background: rgba(255,255,255,0.2); }
+        .map-modal-body {
+            flex: 1;
+            width: 100%;
+            height: 100%;
         }
 
         /* SUBMIT */
@@ -310,6 +504,80 @@
             color: var(--text-low);
             margin-left: 0.4rem;
             font-weight: 400;
+        }
+
+        /* ── MOBILE STICKY CHECKOUT BAR ────────────────────── */
+        .mobile-sticky-bar {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding-bottom: 7rem !important;
+            }
+            .mobile-sticky-bar {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: rgba(18, 24, 36, 0.95);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-top: 1.5px solid rgba(196, 255, 0, 0.35);
+                padding: 0.85rem 1.25rem;
+                z-index: 999;
+                box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.7);
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                animation: slideUp 0.3s ease;
+            }
+            .mobile-sticky-info {
+                display: flex;
+                flex-direction: column;
+            }
+            .mobile-sticky-label {
+                font-size: 0.7rem;
+                color: var(--text-mid);
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+            }
+            .mobile-sticky-total {
+                font-size: 1.3rem;
+                font-weight: 900;
+                color: var(--accent);
+                font-family: 'Inter', system-ui, sans-serif;
+            }
+            .mobile-sticky-btn {
+                flex: 1;
+                max-width: 230px;
+                padding: 0.9rem 1rem;
+                background: var(--accent);
+                color: #000;
+                font-weight: 800;
+                font-size: 0.95rem;
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.35rem;
+                box-shadow: 0 4px 15px rgba(196, 255, 0, 0.25);
+                transition: transform 0.15s, opacity 0.15s;
+            }
+            .mobile-sticky-btn:active {
+                transform: scale(0.98);
+            }
+            .mobile-sticky-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
     </style>
     <!-- Microsoft Clarity -->
@@ -396,21 +664,59 @@
             </div>
         </div>
 
-        <!-- ── FOXPOST MAP ───────────────────────────────────── -->
+        <!-- ── FOXPOST AUTOCOMPLETE & MAP ─────────────────── -->
         <div id="foxpost-container" class="section" style="padding: 1.5rem;">
-            <div class="section-title" style="margin-bottom:1rem;">🗺️ Foxpost Automata választás</div>
+            <div class="section-title" style="margin-bottom: 0.8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                <span>🦊 Foxpost Csomagautomata</span>
+                <button type="button" class="btn-map-toggle" onclick="openFoxpostModal()">🗺️ Térkép megnyitása</button>
+            </div>
+
+            <!-- Smart Suggestions (populated automatically from billing address) -->
+            <div id="foxpost-smart-suggestions" style="display: none; margin-bottom: 1rem;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: var(--accent); margin-bottom: 0.45rem;">💡 Címedhez közeli automaták (1 koppintásos választás):</div>
+                <div class="foxpost-chips-container" id="foxpost-chips-list"></div>
+            </div>
+
+            <!-- Selected Point Box -->
             <div class="selected-point-box" id="selected-point-box">
-                <div style="font-weight:700;color:var(--accent);margin-bottom:0.3rem;">Kiválasztott automata:</div>
-                <div style="display:flex;align-items:center;gap:0.8rem;">
-                    <span id="selected-icon" style="font-size:1.5rem;"></span>
-                    <div>
-                        <div id="selected-name" style="font-weight:700;"></div>
-                        <div id="selected-address" style="font-size:0.85rem;color:var(--text-mid);margin-top:0.15rem;"></div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem;">
+                    <div style="display: flex; align-items: flex-start; gap: 0.8rem;">
+                        <span style="font-size: 1.8rem; line-height: 1;">🦊</span>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <span id="selected-name" style="font-weight: 800; font-size: 0.95rem; color: #fff;"></span>
+                                <span class="badge-selected">✓ KIVÁLASZTVA</span>
+                            </div>
+                            <div id="selected-address" style="font-size: 0.85rem; color: var(--text-mid); margin-top: 0.2rem;"></div>
+                            <div id="selected-findme" style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;"></div>
+                        </div>
                     </div>
+                    <button type="button" class="btn-change-point" onclick="resetSelectedPoint()">Módosítás ✕</button>
                 </div>
             </div>
-            <div class="foxpost-iframe-wrap">
-                <iframe id="foxpost-iframe" src="https://cdn.foxpost.hu/apt-finder/v1/app/" width="100%" height="500px" frameborder="0"></iframe>
+
+            <!-- Search Input & Autocomplete Dropdown -->
+            <div id="foxpost-search-wrapper">
+                <label for="foxpost-search-input" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-mid); margin-bottom: 0.4rem; text-transform: uppercase;">Keresés település, utca, irányítószám vagy üzlet alapján:</label>
+                <div class="foxpost-input-wrap">
+                    <input type="text" id="foxpost-search-input" placeholder="pl. Vác, 1139, Westend, Debrecen Pláza, Spar..." autocomplete="off" oninput="handleFoxpostSearch(this.value)">
+                    <button type="button" id="foxpost-clear-btn" class="foxpost-clear-btn" onclick="clearFoxpostSearch()">✕</button>
+                </div>
+                <div id="foxpost-search-results" class="foxpost-results-dropdown"></div>
+                <div id="foxpost-loading-status" style="font-size: 0.75rem; color: var(--text-low); margin-top: 0.4rem;">⏳ Foxpost automaták betöltése...</div>
+            </div>
+        </div>
+
+        <!-- Térkép Modal (Csak gombnyomásra nyílik meg, sosem akasztja meg a lap görgetését) -->
+        <div id="foxpost-map-modal" class="map-modal-overlay" style="display: none;">
+            <div class="map-modal-content">
+                <div class="map-modal-header">
+                    <span style="font-weight: 800; font-size: 1rem; color: #fff;">🗺️ Foxpost Automata Térkép</span>
+                    <button type="button" class="btn-close-modal" onclick="closeFoxpostModal()">✕ Bezárás</button>
+                </div>
+                <div class="map-modal-body">
+                    <iframe id="foxpost-iframe" src="" width="100%" height="100%" frameborder="0"></iframe>
+                </div>
             </div>
         </div>
 
@@ -449,6 +755,17 @@
             A fizetés gombra kattintva elfogadod a <a href="/aszf.html" target="_blank">Nevezési feltételeket (ÁSZF)</a> és az <a href="/adatvedelem.html" target="_blank">Adatvédelmi nyilatkozatot</a>.
         </p>
 
+    </div>
+
+    <!-- ── MOBILE STICKY CHECKOUT BAR ────────────────────── -->
+    <div class="mobile-sticky-bar" id="mobile-sticky-bar">
+        <div class="mobile-sticky-info">
+            <span class="mobile-sticky-label">Végösszeg:</span>
+            <span class="mobile-sticky-total" id="mobile-sticky-total">-- Ft</span>
+        </div>
+        <button type="button" class="mobile-sticky-btn" id="mobile-sticky-btn" onclick="handleSubmit()">
+            <span>🔒 Tovább a fizetéshez</span>
+        </button>
     </div>
 
     <script>
@@ -498,23 +815,276 @@
             }
         }
 
+        // ── FOXPOST NATIVE STATE & LOGIC ────────────────────
+        let foxpostApts = [];
+        let isFoxpostLoading = false;
+        let foxpostSearchDebounce = null;
+
+        function normalizeText(str) {
+            if (!str) return '';
+            return String(str)
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]/g, ' ')
+                .trim();
+        }
+
+        async function loadFoxpostData() {
+            if (isFoxpostLoading || foxpostApts.length > 0) return;
+            isFoxpostLoading = true;
+            const statusEl = document.getElementById('foxpost-loading-status');
+
+            // 1. Try LocalStorage cache (<24 hours)
+            try {
+                const cached = localStorage.getItem('foxpost_cache_v1');
+                const cacheTime = localStorage.getItem('foxpost_cache_time');
+                if (cached && cacheTime && (Date.now() - Number(cacheTime) < 24 * 60 * 60 * 1000)) {
+                    foxpostApts = JSON.parse(cached);
+                    if (statusEl) statusEl.textContent = `🟢 ${foxpostApts.length.toLocaleString('hu-HU')} automata azonnal kereshető`;
+                    isFoxpostLoading = false;
+                    checkSmartSuggestions();
+                    return;
+                }
+            } catch (e) {}
+
+            // 2. Fetch from Foxpost official CDN
+            try {
+                const res = await fetch('https://cdn.foxpost.hu/foxplus.json');
+                if (res.ok) {
+                    const data = await res.json();
+                    foxpostApts = data.map(item => ({
+                        id: String(item.place_id || item.operator_id || ''),
+                        operator_id: item.operator_id || '',
+                        name: item.name || '',
+                        address: item.address || '',
+                        city: item.city || '',
+                        zip: item.zip || '',
+                        street: item.street || '',
+                        findme: (item.findme || '').replace(/<[^>]*>?/gm, ' ').slice(0, 140),
+                        isOutdoor: item.isOutdoor === true || (item.name || '').toLowerCase().includes('kültéri'),
+                        norm: normalizeText(`${item.zip} ${item.city} ${item.name} ${item.address} ${item.street}`)
+                    }));
+
+                    try {
+                        localStorage.setItem('foxpost_cache_v1', JSON.stringify(foxpostApts));
+                        localStorage.setItem('foxpost_cache_time', String(Date.now()));
+                    } catch (e) {}
+
+                    if (statusEl) statusEl.textContent = `🟢 ${foxpostApts.length.toLocaleString('hu-HU')} automata betöltve`;
+                    checkSmartSuggestions();
+                } else {
+                    throw new Error('Foxpost CDN hiba');
+                }
+            } catch (err) {
+                console.warn('Foxpost fetch warning, fallback to modal:', err);
+                if (statusEl) statusEl.innerHTML = `⚠️ Nem sikerült a gyorslista betöltése. <a href="javascript:void(0)" onclick="openFoxpostModal()" style="color:var(--accent);font-weight:700;">Nyisd meg a térképes keresőt!</a>`;
+            } finally {
+                isFoxpostLoading = false;
+            }
+        }
+
+        function handleFoxpostSearch(val) {
+            clearTimeout(foxpostSearchDebounce);
+            const clearBtn = document.getElementById('foxpost-clear-btn');
+            const resultsEl = document.getElementById('foxpost-search-results');
+            
+            if (clearBtn) clearBtn.style.display = val ? 'block' : 'none';
+
+            if (!val || val.trim().length < 2) {
+                if (resultsEl) resultsEl.style.display = 'none';
+                return;
+            }
+
+            foxpostSearchDebounce = setTimeout(() => {
+                performFoxpostSearch(val.trim());
+            }, 120);
+        }
+
+        function clearFoxpostSearch() {
+            const input = document.getElementById('foxpost-search-input');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+            handleFoxpostSearch('');
+        }
+
+        function performFoxpostSearch(query) {
+            const resultsEl = document.getElementById('foxpost-search-results');
+            if (!resultsEl) return;
+
+            const qNorm = normalizeText(query);
+            const tokens = qNorm.split(' ').filter(t => t.length > 0);
+
+            if (!tokens.length) {
+                resultsEl.style.display = 'none';
+                return;
+            }
+
+            // Filter matching lockers
+            const matches = [];
+            for (const apt of foxpostApts) {
+                const matchAll = tokens.every(t => apt.norm.includes(t));
+                if (matchAll) {
+                    matches.push(apt);
+                    if (matches.length >= 15) break; // Limit to top 15 for fast DOM render
+                }
+            }
+
+            if (!matches.length) {
+                resultsEl.innerHTML = `<div style="padding: 1rem; text-align: center; color: var(--text-mid); font-size: 0.85rem;">Nincs találat a(z) "<strong>${escapeHtml(query)}</strong>" keresésre.<br><button type="button" class="btn-map-toggle" style="margin-top:0.5rem;" onclick="openFoxpostModal()">🗺️ Keresés a térképen</button></div>`;
+                resultsEl.style.display = 'block';
+                return;
+            }
+
+            resultsEl.innerHTML = matches.map(apt => `
+                <div class="foxpost-item" onclick="selectFoxpostLocker('${escapeHtml(apt.id)}')">
+                    <div style="flex: 1; min-width: 0;">
+                        <div class="foxpost-item-name">${escapeHtml(apt.name)}</div>
+                        <div class="foxpost-item-addr">${escapeHtml(apt.address)}</div>
+                    </div>
+                    <span class="foxpost-item-badge ${apt.isOutdoor ? 'outdoor' : ''}">${apt.isOutdoor ? '🌿 0-24h Kültéri' : '🏪 Beltéri'}</span>
+                </div>
+            `).join('');
+
+            resultsEl.style.display = 'block';
+        }
+
+        function selectFoxpostLocker(aptId) {
+            const apt = foxpostApts.find(a => a.id === aptId);
+            if (!apt) return;
+
+            setSelectedPoint('foxpost', apt.name, apt.address, apt.id || apt.operator_id, apt.findme);
+            
+            // Hide dropdown and search input
+            const resultsEl = document.getElementById('foxpost-search-results');
+            if (resultsEl) resultsEl.style.display = 'none';
+
+            // Send analytics
+            if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                window.VitaTracker.track('foxpost_point_selected', {
+                    name: apt.name,
+                    address: apt.address,
+                    city: apt.city,
+                    id: apt.id,
+                    method: 'autocomplete'
+                });
+            }
+        }
+
+        function setSelectedPoint(carrier, name, address, id, findme = '') {
+            selectedParcelPoint = { carrier, name, address, id };
+            document.getElementById('selected-name').textContent = name || '–';
+            document.getElementById('selected-address').textContent = address || '–';
+            const findmeEl = document.getElementById('selected-findme');
+            if (findmeEl) findmeEl.textContent = findme ? `📍 ${findme}` : '';
+            
+            document.getElementById('selected-point-box').style.display = 'block';
+            document.getElementById('foxpost-search-wrapper').style.display = 'none';
+            document.getElementById('foxpost-smart-suggestions').style.display = 'none';
+            clearError();
+        }
+
+        function resetSelectedPoint() {
+            selectedParcelPoint = null;
+            document.getElementById('selected-point-box').style.display = 'none';
+            document.getElementById('foxpost-search-wrapper').style.display = 'block';
+            checkSmartSuggestions();
+            const input = document.getElementById('foxpost-search-input');
+            if (input) {
+                input.focus();
+                if (input.value) handleFoxpostSearch(input.value);
+            }
+        }
+
+        // ── SMART SUGGESTIONS (Based on Billing Address / City) ──
+        function checkSmartSuggestions() {
+            if (selectedParcelPoint || !foxpostApts.length) return;
+            const billingEl = document.getElementById('cust-billing-address');
+            const billingVal = billingEl ? billingEl.value.trim() : '';
+            const suggestionsWrap = document.getElementById('foxpost-smart-suggestions');
+            const chipsList = document.getElementById('foxpost-chips-list');
+
+            if (!billingVal || billingVal.length < 3) {
+                if (suggestionsWrap) suggestionsWrap.style.display = 'none';
+                return;
+            }
+
+            const normBilling = normalizeText(billingVal);
+            const tokens = normBilling.split(' ').filter(t => t.length >= 3);
+
+            let smartMatches = [];
+            for (const apt of foxpostApts) {
+                const matchToken = tokens.some(t => apt.norm.includes(t));
+                if (matchToken) {
+                    smartMatches.push(apt);
+                    if (smartMatches.length >= 4) break;
+                }
+            }
+
+            if (smartMatches.length > 0 && suggestionsWrap && chipsList) {
+                chipsList.innerHTML = smartMatches.map(apt => `
+                    <button type="button" class="foxpost-chip" onclick="selectFoxpostLocker('${escapeHtml(apt.id)}')">
+                        <span>🦊</span> <span>${escapeHtml(apt.name.replace(/^FOXPOST\s*/i, ''))}</span>
+                    </button>
+                `).join('');
+                suggestionsWrap.style.display = 'block';
+            } else if (suggestionsWrap) {
+                suggestionsWrap.style.display = 'none';
+            }
+        }
+
+        // ── MAP MODAL CONTROLLERS ────────────────────────────
+        function openFoxpostModal() {
+            const modal = document.getElementById('foxpost-map-modal');
+            const iframe = document.getElementById('foxpost-iframe');
+            if (modal && iframe) {
+                if (!iframe.src || iframe.src === 'about:blank' || iframe.src === window.location.href) {
+                    iframe.src = 'https://cdn.foxpost.hu/apt-finder/v1/app/';
+                }
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeFoxpostModal() {
+            const modal = document.getElementById('foxpost-map-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
         // ── FOXPOST MESSAGE LISTENER ─────────────────────────
         window.addEventListener('message', function (event) {
             try {
                 if (event.origin.includes('foxpost.hu')) {
-                    const apt = JSON.parse(event.data);
-                    setSelectedPoint('foxpost', apt.name, apt.address, apt.operator_id || apt.place_id || '');
+                    const apt = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+                    if (apt && (apt.name || apt.place_id || apt.operator_id)) {
+                        setSelectedPoint('foxpost', apt.name, apt.address, apt.operator_id || apt.place_id || '', apt.findme || '');
+                        closeFoxpostModal();
+                        if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                            window.VitaTracker.track('foxpost_point_selected', {
+                                name: apt.name,
+                                address: apt.address,
+                                id: apt.operator_id || apt.place_id,
+                                method: 'map_modal'
+                            });
+                        }
+                    }
                 }
             } catch (e) {}
         }, false);
 
-        function setSelectedPoint(carrier, name, address, id) {
-            selectedParcelPoint = { carrier, name, address, id };
-            document.getElementById('selected-name').textContent = name || '–';
-            document.getElementById('selected-address').textContent = address || '–';
-            document.getElementById('selected-icon').textContent = '🦊';
-            document.getElementById('selected-point-box').style.display = 'block';
-            clearError();
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
 
         // ── QUANTITY ─────────────────────────────────────────
@@ -593,6 +1163,7 @@
                 labelFox.classList.add('selected');
                 labelHome.classList.remove('selected');
                 shippingRow.style.display = 'none';
+                loadFoxpostData();
             } else {
                 foxpostEl.style.display = 'none';
                 homeEl.style.display = 'block';
@@ -653,7 +1224,10 @@
             }
 
             const total = medalTotal + shippingFee;
-            document.getElementById('summary-total').textContent = formatHuf(total);
+            const formattedTotal = formatHuf(total);
+            document.getElementById('summary-total').textContent = formattedTotal;
+            const mobileTotalEl = document.getElementById('mobile-sticky-total');
+            if (mobileTotalEl) mobileTotalEl.textContent = formattedTotal;
         }
 
         function handleEmailInput() {
@@ -672,7 +1246,6 @@
 
         function isValidPhone(phone) {
             const cleaned = phone.replace(/\D/g, '');
-            // Hungarian phones: starting with 06 or 36, total 9-11 digits
             return (cleaned.startsWith('06') || cleaned.startsWith('36')) && cleaned.length >= 9 && cleaned.length <= 11;
         }
 
@@ -680,15 +1253,13 @@
             if (!name) return false;
             const trimmed = name.trim();
             if (trimmed.length < 3) return false;
-            if (/\d/.test(trimmed)) return false; // No numbers allowed in names
+            if (/\d/.test(trimmed)) return false;
             const parts = trimmed.split(/\s+/);
-            // Must have at least 2 words (e.g. Vezetéknév + Keresztnév, or 3+ words like Kovács János Péter)
             return parts.length >= 2 && parts.every(p => p.length >= 1);
         }
 
         function isValidAddress(address) {
             const trimmed = address.trim();
-            // Must contain a 4-digit zip code and street name/number
             const hasZip = /\b\d{4}\b/.test(trimmed);
             return hasZip && trimmed.length >= 8 && trimmed.includes(' ');
         }
@@ -707,15 +1278,32 @@
         function clearAllFieldErrors() {
             document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
             document.querySelectorAll('.field-error').forEach(el => { el.textContent = ''; el.classList.remove('visible'); });
-            // also clear panel name errors
             document.querySelectorAll('.medal-name-error').forEach(el => { el.textContent = ''; el.classList.remove('visible'); });
-            document.getElementById('error-msg').classList.remove('visible');
+            const errBox = document.getElementById('error-msg');
+            if (errBox) errBox.classList.remove('visible');
+        }
+
+        function showError(msg) {
+            const errEl = document.getElementById('error-msg');
+            if (errEl) {
+                errEl.textContent = msg;
+                errEl.classList.add('visible');
+                errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+        function clearError() {
+            const errEl = document.getElementById('error-msg');
+            if (errEl) {
+                errEl.textContent = '';
+                errEl.classList.remove('visible');
+            }
         }
 
         // ── VALIDATION & SUBMIT ──────────────────────────────
         async function handleSubmit() {
             clearAllFieldErrors();
             let hasError = false;
+            let firstFailingField = null;
 
             // 1. Validate participants (medals)
             const medals = [];
@@ -736,6 +1324,7 @@
                         nameErrEl.classList.add('visible');
                     }
                     hasError = true;
+                    if (!firstFailingField) firstFailingField = `medal_name_${i+1}`;
                 } else {
                     medals.push({ name: mName, distance: mDist });
                 }
@@ -753,38 +1342,47 @@
             if (!email) {
                 setFieldError(emailEl, 'err-email', 'Kérjük add meg az e-mail címedet!');
                 hasError = true;
+                if (!firstFailingField) firstFailingField = 'email_empty';
             } else if (!isValidEmail(email)) {
                 setFieldError(emailEl, 'err-email', 'Kérjük érvényes e-mail címet adj meg (pl. janos@email.com)!');
                 hasError = true;
+                if (!firstFailingField) firstFailingField = 'email_invalid';
             }
 
             if (!phone) {
                 setFieldError(phoneEl, 'err-phone', 'Kérjük add meg a telefonszámodat!');
                 hasError = true;
+                if (!firstFailingField) firstFailingField = 'phone_empty';
             } else if (!isValidPhone(phone)) {
                 setFieldError(phoneEl, 'err-phone', 'Érvényes magyar telefonszámot adj meg (pl. +36 30 123 4567 vagy 06301234567)!');
                 hasError = true;
+                if (!firstFailingField) firstFailingField = 'phone_invalid';
             }
 
             if (!billingAddress) {
                 setFieldError(addressEl, 'err-billing', 'Kérjük add meg a számlázási címedet az e-számlához!');
                 hasError = true;
+                if (!firstFailingField) firstFailingField = 'billing_address_empty';
             } else if (!isValidAddress(billingAddress)) {
                 setFieldError(addressEl, 'err-billing', 'Teljes számlázási cím kell irányítószámmal (pl. 1139 Budapest, Csizma utca 3.)!');
                 hasError = true;
+                if (!firstFailingField) firstFailingField = 'billing_address_invalid';
             }
 
             // 3. Delivery validation
             const homeAddressEl = document.getElementById('home-address');
-            const homeAddressVal = homeAddressEl.value.trim();
+            const homeAddressVal = homeAddressEl ? homeAddressEl.value.trim() : '';
 
             if (deliveryMethod === 'home' && homeAddressVal && !isValidAddress(homeAddressVal)) {
                 setFieldError(homeAddressEl, 'err-home-address', 'Teljes szállítási cím kell irányítószámmal (pl. 1139 Budapest, Csizma utca 3.)!');
                 hasError = true;
+                if (!firstFailingField) firstFailingField = 'home_address_invalid';
             }
 
-            // If any input has error, scroll into view and focus the VERY FIRST error element on top
             if (hasError) {
+                if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                    window.VitaTracker.track('form_validation_failed', { error_field: firstFailingField });
+                }
                 const firstErrorEl = document.querySelector('.input-error');
                 if (firstErrorEl) {
                     firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -794,21 +1392,41 @@
             }
 
             if (deliveryMethod === 'foxpost' && !selectedParcelPoint) {
-                const errEl = document.getElementById('error-msg');
-                errEl.textContent = '⚠️ Kérjük válassz egy Foxpost csomagpontot a térképen!';
-                errEl.classList.add('visible');
-                errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                    window.VitaTracker.track('form_validation_failed', { error_field: 'foxpost_not_selected' });
+                }
+                showError('⚠️ Kérjük válassz ki egy Foxpost csomagautomatát!');
+                const searchInp = document.getElementById('foxpost-search-input');
+                if (searchInp) {
+                    searchInp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    searchInp.focus();
+                }
                 return;
             }
 
             const resolvedHomeAddress = homeAddressVal || billingAddress;
 
             const btn = document.getElementById('submit-btn');
-            btn.classList.add('loading');
-            btn.textContent = '⏳ Átirányítás a fizetéshez...';
-            btn.disabled = true;
+            const mobileBtn = document.getElementById('mobile-sticky-btn');
+            if (btn) {
+                btn.classList.add('loading');
+                btn.textContent = '⏳ Átirányítás a fizetéshez...';
+                btn.disabled = true;
+            }
+            if (mobileBtn) {
+                mobileBtn.disabled = true;
+                mobileBtn.innerHTML = '<span>⏳ Átirányítás...</span>';
+            }
 
             const attribution = window.VitaTracker ? window.VitaTracker.getAttribution() : {};
+
+            if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                window.VitaTracker.track('checkout_submit_attempt', {
+                    medals_count: medals.length,
+                    deliveryMethod,
+                    parcelId: selectedParcelPoint?.id || ''
+                });
+            }
 
             const payload = {
                 medals,
@@ -846,20 +1464,43 @@
                     window.location.href = data.url;
                 } else {
                     showError('Hiba a fizetés indításakor: ' + (data.error || 'Kérjük próbáld újra!'));
+                    if (btn) {
+                        btn.classList.remove('loading');
+                        btn.disabled = false;
+                        btn.textContent = '🔒 Tovább a biztonságos fizetéshez';
+                    }
+                    if (mobileBtn) {
+                        mobileBtn.disabled = false;
+                        mobileBtn.innerHTML = '<span>🔒 Tovább a fizetéshez</span>';
+                    }
+                }
+            } catch (err) {
+                showError('Hálózati hiba. Kérjük ellenőrizd az internetkapcsolatod!');
+                if (btn) {
                     btn.classList.remove('loading');
                     btn.disabled = false;
                     btn.textContent = '🔒 Tovább a biztonságos fizetéshez';
                 }
-            } catch (err) {
-                showError('Hálózati hiba. Kérjük ellenőrizd az internetkapcsolatod!');
-                btn.classList.remove('loading');
-                btn.disabled = false;
-                btn.textContent = '🔒 Tovább a biztonságos fizetéshez';
+                if (mobileBtn) {
+                    mobileBtn.disabled = false;
+                    mobileBtn.innerHTML = '<span>🔒 Tovább a fizetéshez</span>';
+                }
             }
         }
 
-        // ── INIT ─────────────────────────────────────────────
-        loadConfig();
+        // ── INIT & EVENT LISTENERS ───────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            loadFoxpostData();
+
+            const billingEl = document.getElementById('cust-billing-address');
+            if (billingEl) {
+                billingEl.addEventListener('input', () => {
+                    setTimeout(checkSmartSuggestions, 200);
+                });
+                billingEl.addEventListener('blur', checkSmartSuggestions);
+            }
+        });
     </script>
     <!-- VitaSteps Analytics & Attribution Tracker -->
     <script src="js/tracker.js"></script>
