@@ -180,6 +180,13 @@ module.exports = async (req, res) => {
 
         // 1b-2. Mark lead as converted if this customer previously signed up as a lead
         try {
+            const leadId = (metadata && (metadata.Lead_Id || metadata.lead_id)) || null;
+            if (leadId) {
+                await supabase.from('leads').update({
+                    converted: true,
+                    converted_at: new Date().toISOString()
+                }).eq('id', leadId);
+            }
             await supabase
                 .from('leads')
                 .update({
@@ -187,7 +194,7 @@ module.exports = async (req, res) => {
                     converted_at: new Date().toISOString()
                 })
                 .eq('email', email.toLowerCase());
-            console.log(`Lead status marked as converted for ${email}`);
+            console.log(`Lead status marked as converted for ${email || leadId}`);
         } catch (leadUpdateErr) {
             console.warn('Optional lead conversion update skipped/warning:', leadUpdateErr.message);
         }

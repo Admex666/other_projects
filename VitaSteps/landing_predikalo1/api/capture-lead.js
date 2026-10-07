@@ -57,7 +57,8 @@ module.exports = async (req, res) => {
             console.warn('Supabase runners upsert warning:', runnerErr.message);
         }
 
-        // 3. Mentés a 'leads' táblába (konverziós státusszal és időbélyeggel)
+        // 3. Mentés a 'leads' táblába (konverziós státusszal és sequence adatokkal)
+        let leadId = null;
         try {
             const leadPayload = {
                 email: cleanEmail,
@@ -66,39 +67,88 @@ module.exports = async (req, res) => {
                 source: 'landing_gated_routes',
                 converted: isConverted,
                 converted_at: isConverted ? new Date().toISOString() : null,
-                created_at: new Date().toISOString()
+                created_at: new Date().toISOString(),
+                sequence: 'lead_nurture_v1',
+                sequence_started_at: new Date().toISOString(),
+                last_sequence_step: 0,
+                last_sequence_sent_at: new Date().toISOString()
             };
 
-            const { error: leadErr } = await supabase
+            const { data: insertedLead, error: leadErr } = await supabase
                 .from('leads')
-                .insert(leadPayload);
+                .insert(leadPayload)
+                .select('id')
+                .maybeSingle();
 
             if (leadErr) {
-                // Ha a converted oszlop még nincs létrehozva a táblában, próbáljuk meg anélkül
-                console.warn('Lead insert with converted status failed, falling back to base columns:', leadErr.message);
-                await supabase
+                // Ha a sequence oszlopok még nincsenek létrehozva a sémában, fallback az alap mezőkre
+                console.warn('Lead insert with sequence columns failed, falling back to base columns:', leadErr.message);
+                const { data: fallbackLead } = await supabase
                     .from('leads')
                     .insert({
                         email: cleanEmail,
                         name: cleanName,
                         campaign: activeCampaign,
                         source: 'landing_gated_routes',
+                        converted: isConverted,
+                        converted_at: isConverted ? new Date().toISOString() : null,
                         created_at: new Date().toISOString()
-                    });
+                    })
+                    .select('id')
+                    .maybeSingle();
+                if (fallbackLead) leadId = fallbackLead.id;
+            } else if (insertedLead) {
+                leadId = insertedLead.id;
             }
         } catch (leadTableErr) {
             console.warn('Leads table insert warning:', leadTableErr.message);
         }
 
-        // 4. Feloldó URL és Kalandfüzet URL generálása
+        // Ha nem kaptunk ID-t az insertből, próbáljuk meg lekérdezni
+        if (!leadId) {
+            try {
+                const { data: fetchedLead } = await supabase
+                    .from('leads')
+                    .select('id')
+                    .eq('email', cleanEmail)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+                if (fetchedLead) leadId = fetchedLead.id;
+            } catch (fetchErr) {}
+        }
+
+        // 4. Analytics: lead_created esemény rögzítése
+        try {
+            await supabase.from('analytics_events').insert({
+                session_id: 'lead_' + Date.now(),
+                visitor_id: leadId ? 'v_lead_' + leadId : 'v_' + cleanEmail,
+                event_name: 'lead_created',
+                event_data: {
+                    lead_id: leadId,
+                    email: cleanEmail,
+                    campaign: activeCampaign,
+                    sequence: 'lead_nurture_v1',
+                    step: 0,
+                    source: 'landing_gated_routes'
+                },
+                created_at: new Date().toISOString()
+            });
+        } catch (analyticsErr) {
+            console.warn('Analytics lead_created insert warning:', analyticsErr.message);
+        }
+
+        // 5. Feloldó URL és Kalandfüzet URL generálása (biztonságos tracking paraméterekkel, e-mail cím nélkül az URL-ben!)
         const host = req.headers['x-forwarded-host'] || req.headers.host || 'vitastepsss.vercel.app';
         const proto = (req.headers['x-forwarded-proto'] || 'https');
         const baseUrl = `${proto}://${host}`;
 
-        const unlockUrl = `${baseUrl}/nagykevely/index.html?lead=true&email=${encodeURIComponent(cleanEmail)}#kalandkonyv`;
-        const kalandkonyvUrl = `${baseUrl}/nagykevely/kalandkonyv.html?lead=true&nev=${encodeURIComponent(cleanName)}`;
+        const leadParam = leadId ? `lead=${encodeURIComponent(leadId)}` : `email=${encodeURIComponent(cleanEmail)}`;
+        const unlockUrl = `${baseUrl}/nagykevely/index.html?${leadParam}&source=email&email_id=lead_v1_day0&sequence=lead_nurture_v1#kalandkonyv`;
+        const kalandkonyvUrl = `${baseUrl}/nagykevely/kalandkonyv.html?${leadParam}&source=email&email_id=lead_v1_day0&sequence=lead_nurture_v1`;
+        const unsubUrl = `${baseUrl}/api/unsubscribe?${leadParam}`;
 
-        // 5. Automatikus e-mail küldés a szabványos e-mail sablonból
+        // 6. Automatikus Day 0 e-mail küldés a lead magnet átadására
         const smtpPassword = process.env.SMTP_PASSWORD;
         if (smtpPassword) {
             const transporter = nodemailer.createTransport({
@@ -111,14 +161,18 @@ module.exports = async (req, res) => {
                 }
             });
 
-            // Sablon betöltése az email_templates mappából
-            const templatePath = path.resolve(__dirname, '../email_templates/lead_routes_kalandkonyv.html');
+            // Sablon betöltése: elsődlegesen a lead_nurture/v1_day0.html sablonból
+            let templatePath = path.resolve(__dirname, '../email_templates/lead_nurture/v1_day0.html');
+            if (!fs.existsSync(templatePath)) {
+                templatePath = path.resolve(__dirname, '../email_templates/lead_routes_kalandkonyv.html');
+            }
+
             let emailHtml = '';
 
             if (fs.existsSync(templatePath)) {
-                const unsubUrl = `${baseUrl}/api/unsubscribe?email=${encodeURIComponent(cleanEmail)}`;
                 emailHtml = fs.readFileSync(templatePath, 'utf8')
                     .replace(/\{\{NAME\}\}/g, cleanName)
+                    .replace(/\{\{CTA_URL\}\}/g, unlockUrl)
                     .replace(/\{\{UNLOCK_URL\}\}/g, unlockUrl)
                     .replace(/\{\{KALANDKONYV_URL\}\}/g, kalandkonyvUrl)
                     .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
@@ -134,7 +188,26 @@ module.exports = async (req, res) => {
                 html: emailHtml
             });
 
-            console.log(`Lead confirmation email sent successfully to ${cleanEmail}`);
+            console.log(`Lead confirmation email (Day 0) sent successfully to ${cleanEmail}`);
+
+            // Analytics: lead_email_sent esemény rögzítése
+            try {
+                await supabase.from('analytics_events').insert({
+                    session_id: 'email_' + Date.now(),
+                    visitor_id: leadId ? 'v_lead_' + leadId : 'v_' + cleanEmail,
+                    event_name: 'lead_email_sent',
+                    event_data: {
+                        lead_id: leadId,
+                        sequence: 'lead_nurture_v1',
+                        step: 0,
+                        email_id: 'lead_v1_day0',
+                        source: 'email'
+                    },
+                    created_at: new Date().toISOString()
+                });
+            } catch (analyticsEmailErr) {
+                console.warn('Analytics lead_email_sent insert warning:', analyticsEmailErr.message);
+            }
         } else {
             console.warn('SMTP_PASSWORD missing, email skipped.');
         }
@@ -143,6 +216,7 @@ module.exports = async (req, res) => {
             success: true,
             message: 'Sikeres feliratkozás! Az e-mailt és a hozzáférési linket elküldtük.',
             converted: isConverted,
+            lead_id: leadId,
             unlockUrl,
             kalandkonyvUrl
         });

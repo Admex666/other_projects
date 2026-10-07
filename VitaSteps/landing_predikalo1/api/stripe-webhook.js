@@ -215,6 +215,25 @@ module.exports = async (req, res) => {
                 console.warn('Analytics purchase webhook logging warning:', anErr.message);
             }
 
+            // 1b-3. Mark lead as converted if this customer was a lead
+            try {
+                const leadId = metadata.Lead_Id || metadata.lead_id || null;
+                if (leadId) {
+                    await supabase.from('leads').update({
+                        converted: true,
+                        converted_at: new Date().toISOString()
+                    }).eq('id', leadId);
+                }
+                if (email) {
+                    await supabase.from('leads').update({
+                        converted: true,
+                        converted_at: new Date().toISOString()
+                    }).eq('email', email.toLowerCase());
+                }
+            } catch (leadUpdateErr) {
+                console.warn('Optional lead conversion update skipped/warning in webhook:', leadUpdateErr.message);
+            }
+
             // 1c. Create runs and shipments for each medal
             const suffix = config.prefix + (isTestTx ? '-TEST' : '');
             const limit = config.limit;

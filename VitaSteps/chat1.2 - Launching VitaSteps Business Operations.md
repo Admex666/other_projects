@@ -3238,7 +3238,7 @@ Microsoft Clarity beépítése nem lehetne jó ötlet?
 
 Csak egy kis script szükséges a `<head>` részbe. Ha megadod a Clarity projekt ID-dat, azonnal beépítem mindkét landing page-be (`/index.html` és `/nagykevely/index.html`).
 
-Ha még nincs fiókod: [clarity.microsoft.com](https://clarity.microsoft.com) → ingyenes regisztráció → `+ New project` → URL: `vitasteps.hu` → kapsz egy kb. 10 karakteres projekt ID-t (pl. `abc123xyz`).
+Ha még nincs fiókod: [clarity.microsoft.com](https://clarity.microsoft.com) → ingyenes regisztráció → `+ New project` → URL: `vitastepsss.vercel.app` → kapsz egy kb. 10 karakteres projekt ID-t (pl. `abc123xyz`).
 
 Hozd el az ID-t és beépítem! 🚀
 

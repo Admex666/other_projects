@@ -154,39 +154,76 @@ module.exports = async (req, res) => {
 
     if (req.method === 'OPTIONS') return res.status(200).end();
 
-    const email = (req.query.email || (req.body && req.body.email) || '').trim().toLowerCase();
-
-    if (!email || !email.includes('@')) {
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        return res.status(400).send(renderUnsubscribePage('', false, 'Hiányzó vagy érvénytelen e-mail cím.'));
-    }
+    const leadParam = (req.query.lead || req.query.lead_id || (req.body && (req.body.lead || req.body.lead_id)) || '').trim();
+    let email = (req.query.email || (req.body && req.body.email) || '').trim().toLowerCase();
+    let resolvedLeadId = leadParam || null;
 
     try {
-        // 1. Megpróbáljuk beállítani az 'unsubscribed = true' értéket
-        let updateResult = await supabase
-            .from('leads')
-            .update({ unsubscribed: true, source: 'unsubscribed' })
-            .eq('email', email);
-
-        // 2. Ha az 'unsubscribed' oszlop még nem létezne a séma gyorsítótárban, frissítjük a 'source'-t
-        if (updateResult.error && updateResult.error.message && updateResult.error.message.includes('column')) {
-            console.warn('Fallback to source=unsubscribed for:', email);
-            updateResult = await supabase
+        // Ha lead ID-val érkezett a kérés, lekérjük a kapcsolódó e-mail címet
+        if (resolvedLeadId) {
+            const { data: leadRecord } = await supabase
                 .from('leads')
-                .update({ source: 'unsubscribed' })
-                .eq('email', email);
+                .select('id, email, sequence')
+                .eq('id', resolvedLeadId)
+                .maybeSingle();
+
+            if (leadRecord && leadRecord.email) {
+                email = leadRecord.email.toLowerCase();
+            }
+        }
+
+        if (!email && !resolvedLeadId) {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            return res.status(400).send(renderUnsubscribePage('', false, 'Hiányzó azonosító vagy e-mail cím.'));
+        }
+
+        // 1. Leiratkozás beállítása a leads táblában (id vagy email alapján)
+        let query = supabase.from('leads').update({ unsubscribed: true, source: 'unsubscribed' });
+        if (resolvedLeadId) {
+            query = query.eq('id', resolvedLeadId);
+        } else {
+            query = query.eq('email', email);
+        }
+
+        let updateResult = await query;
+
+        // Ha az 'unsubscribed' oszlop még nincs a sémában, fallback source=unsubscribed
+        if (updateResult.error && updateResult.error.message && updateResult.error.message.includes('column')) {
+            console.warn('Fallback to source=unsubscribed for:', email || resolvedLeadId);
+            let fbQuery = supabase.from('leads').update({ source: 'unsubscribed' });
+            if (resolvedLeadId) fbQuery = fbQuery.eq('id', resolvedLeadId);
+            else fbQuery = fbQuery.eq('email', email);
+            updateResult = await fbQuery;
         }
 
         if (updateResult.error) {
             console.error('Supabase unsubscribe update error:', updateResult.error);
         }
 
+        // 2. Analytics esemény rögzítése: lead_unsubscribed
+        try {
+            await supabase.from('analytics_events').insert({
+                session_id: 'unsub_' + Date.now(),
+                visitor_id: resolvedLeadId ? 'v_lead_' + resolvedLeadId : (email ? 'v_' + email : 'v_unsub'),
+                event_name: 'lead_unsubscribed',
+                event_data: {
+                    lead_id: resolvedLeadId,
+                    email: email || null,
+                    sequence: 'lead_nurture_v1',
+                    source: 'unsubscribe_page'
+                },
+                created_at: new Date().toISOString()
+            });
+        } catch (analyticsErr) {
+            console.warn('Analytics lead_unsubscribed event insert warning:', analyticsErr.message);
+        }
+
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        return res.status(200).send(renderUnsubscribePage(email, true));
+        return res.status(200).send(renderUnsubscribePage(email || 'feliratkozó', true));
 
     } catch (err) {
         console.error('Unsubscribe handler error:', err);
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        return res.status(500).send(renderUnsubscribePage(email, false, 'Szerverhiba történt a kérés feldolgozása közben.'));
+        return res.status(500).send(renderUnsubscribePage(email || '', false, 'Szerverhiba történt a kérés feldolgozása közben.'));
     }
 };

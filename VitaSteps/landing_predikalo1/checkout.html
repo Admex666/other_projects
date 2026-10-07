@@ -779,6 +779,7 @@
         // Parse query params
         const urlParams = new URLSearchParams(window.location.search);
         const referredBy = urlParams.get('ref') || localStorage.getItem('vitasteps_ref') || '';
+        const leadId = urlParams.get('lead') || urlParams.get('lead_id') || localStorage.getItem('vt_lead_id') || '';
         const utmCampaign = urlParams.get('utm_campaign') || localStorage.getItem('vitasteps_utm_campaign') || '';
         const utmTerm = urlParams.get('utm_term') || localStorage.getItem('vitasteps_utm_term') || '';
         const utmContent = urlParams.get('utm_content') || localStorage.getItem('vitasteps_utm_content') || '';
@@ -1448,6 +1449,7 @@
                 metaCampaignId: attribution.meta_campaign_id,
                 visitorId: attribution.visitor_id,
                 sessionId: attribution.session_id,
+                leadId: leadId || attribution.lead_id || '',
                 isTest,
                 campaign: campaignKey
             };

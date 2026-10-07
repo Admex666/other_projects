@@ -92,11 +92,31 @@
         if (adsetName) params.meta_adset_name = adsetName;
         if (campaignName) params.meta_campaign_name = campaignName;
 
-        // UTMs
-        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'ref'].forEach(key => {
+        // UTMs & Lead Nurture Attribution
+        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'ref', 'source'].forEach(key => {
             const val = urlParams.get(key);
             if (val) params[key] = val;
         });
+
+        // Lead identity from nurture links
+        const leadId = urlParams.get('lead') || urlParams.get('lead_id');
+        const emailId = urlParams.get('email_id');
+        const sequence = urlParams.get('sequence');
+
+        if (leadId) {
+            params.lead_id = leadId;
+            try {
+                localStorage.setItem('vt_lead_id', leadId);
+                sessionStorage.setItem('vt_lead_id', leadId);
+            } catch (e) {}
+        } else {
+            try {
+                const cachedLead = sessionStorage.getItem('vt_lead_id') || localStorage.getItem('vt_lead_id');
+                if (cachedLead) params.lead_id = cachedLead;
+            } catch (e) {}
+        }
+        if (emailId) params.email_id = emailId;
+        if (sequence) params.sequence = sequence;
 
         // Cache in sessionStorage so sub-page navigations in same session retain attribution
         try {
@@ -180,6 +200,26 @@
         title: document.title,
         path: window.location.pathname
     });
+
+    // If arriving from a nurture email link, log lead_email_clicked
+    if (attributionParams.lead_id && attributionParams.email_id) {
+        sendEvent('lead_email_clicked', {
+            lead_id: attributionParams.lead_id,
+            email_id: attributionParams.email_id,
+            sequence: attributionParams.sequence || 'lead_nurture_v1',
+            source: 'email'
+        });
+    }
+
+    // If landing directly on checkout with lead_id, log lead_checkout_started
+    if (attributionParams.lead_id && window.location.pathname.includes('checkout')) {
+        sendEvent('lead_checkout_started', {
+            lead_id: attributionParams.lead_id,
+            email_id: attributionParams.email_id || null,
+            sequence: attributionParams.sequence || 'lead_nurture_v1',
+            source: 'email'
+        });
+    }
 
     // --- 2. Active Time On Page Tracker ---
     document.addEventListener('visibilitychange', function () {
@@ -289,10 +329,30 @@
 
             if (href.includes('checkout')) {
                 isCheckoutStarted = true;
+                const leadId = attributionParams.lead_id || (function () {
+                    try { return localStorage.getItem('vt_lead_id') || sessionStorage.getItem('vt_lead_id'); } catch (e) { return null; }
+                })();
+
                 sendEvent('checkout_start', {
                     button_text: btnText,
-                    destination: href
+                    destination: href,
+                    lead_id: leadId || undefined
                 });
+
+                if (leadId) {
+                    sendEvent('lead_checkout_started', {
+                        lead_id: leadId,
+                        email_id: attributionParams.email_id || null,
+                        sequence: attributionParams.sequence || 'lead_nurture_v1',
+                        source: 'cta_click'
+                    });
+
+                    // Ha a céloldal még nem tartalmazza a ?lead= paramétert, fűzzük hozzá
+                    if (target.tagName === 'A' && !href.includes('lead=')) {
+                        const sep = href.includes('?') ? '&' : '?';
+                        target.setAttribute('href', href + sep + 'lead=' + encodeURIComponent(leadId));
+                    }
+                }
             }
         }
     }, { passive: true });
@@ -313,10 +373,18 @@
         getSessionId: function () {
             return sessionId;
         },
+        getLeadId: function () {
+            return attributionParams.lead_id || (function () {
+                try { return localStorage.getItem('vt_lead_id'); } catch (e) { return null; }
+            })();
+        },
         getAttribution: function () {
             return Object.assign({}, attributionParams, {
                 visitor_id: visitorId,
-                session_id: sessionId
+                session_id: sessionId,
+                lead_id: attributionParams.lead_id || (function () {
+                    try { return localStorage.getItem('vt_lead_id'); } catch (e) { return null; }
+                })()
             });
         }
     };

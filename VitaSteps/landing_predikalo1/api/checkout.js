@@ -29,6 +29,7 @@ module.exports = async (req, res) => {
             metaCampaignId,
             visitorId,
             sessionId,
+            leadId,
             isTest,
             campaign
         } = req.body;
@@ -137,6 +138,7 @@ module.exports = async (req, res) => {
             Meta_Campaign_Id: metaCampaignId || '',
             Visitor_Id: visitorId || '',
             Analytics_Session_Id: sessionId || '',
+            Lead_Id: leadId || '',
             Kampany: campaignKey,
             IsTest: useTestKey ? 'true' : 'false',
             Medaliok: JSON.stringify(medals).substring(0, 490),

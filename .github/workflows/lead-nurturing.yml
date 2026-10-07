@@ -1,0 +1,66 @@
+name: VitaSteps Lead Nurturing Sequence
+
+on:
+  schedule:
+    # Runs 4 times daily during European daytime hours:
+    # 07:00 UTC = 09:00 CEST (Budapest summer) / 08:00 CET
+    # 10:00 UTC = 12:00 CEST (Budapest summer) / 11:00 CET
+    # 13:00 UTC = 15:00 CEST (Budapest summer) / 14:00 CET
+    # 16:00 UTC = 18:00 CEST (Budapest summer) / 17:00 CET
+    - cron: '0 7,10,13,16 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run mód (csak ellenőrzés, nem küld valódi emailt)'
+        type: boolean
+        required: false
+        default: false
+      force_time:
+        description: 'Időablak felülbírálása (küldés éjszaka/teszteléskor is)'
+        type: boolean
+        required: false
+        default: false
+      lead_id:
+        description: 'Célzott tesztelés adott lead UUID-re (opcionális)'
+        type: string
+        required: false
+        default: ''
+
+jobs:
+  run-nurture:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: ./VitaSteps/landing_predikalo1
+        run: |
+          npm ci || npm install
+
+      - name: Run Lead Nurturing Sequence
+        working-directory: ./VitaSteps/landing_predikalo1
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        run: |
+          FLAGS="--send"
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            FLAGS="--dry-run"
+          fi
+          if [ "${{ inputs.force_time }}" = "true" ]; then
+            FLAGS="$FLAGS --force-time"
+          fi
+          if [ -n "${{ inputs.lead_id }}" ]; then
+            FLAGS="$FLAGS --lead-id=${{ inputs.lead_id }}"
+          fi
+
+          echo "Running nurture sequence with flags: $FLAGS"
+          node scripts/run_lead_nurture_sequence.js $FLAGS
