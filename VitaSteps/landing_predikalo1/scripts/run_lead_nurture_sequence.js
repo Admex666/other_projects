@@ -1,30 +1,25 @@
 /**
  * run_lead_nurture_sequence.js
  *
- * VitaSteps Lead Nurturing Engine V1
+ * VitaSteps Lead Nurturing Engine V1 (Biztonsági Teszt Mód)
+ *
+ * BIZTONSÁGI GARANCIA:
+ *   - JELENLEG TESZT ÜZEMMÓD: Valódi leadeknek SOHA nem küld emailt!
+ *   - Minden kimenő email KIZÁRÓLAG az admexgm@gmail.com címre érkezik!
  *
  * Automatikus email sequence a Kalandfüzetet letöltött érdeklődőknek:
- *   Day 0: Azonnali lead magnet (capture-lead.js küldi)
+ *   Day 0: Azonnali lead magnet (GPX + Kalandfüzet)
  *   Day 1: Hasznos túratippek (nem sales)
  *   Day 3: Helytörténeti inspiráció és legendák
  *   Day 5: Célkitűzés és a teljesítmény öröme
  *   Day 7: Emlék & VitaSteps érem ajánlat
  *   Day 10: Utolsó ajánlat (100 db-os limitált széria)
  *
- * Biztonsági garanciák:
- *   - Idempotens: egy lead egy lépést legfeljebb egyszer kaphat meg.
- *   - 2026-10-01 előtti régi leadek SOHA nem kapnak új nurture levelet.
- *   - Vásárlás (converted=true vagy létező run/order) esetén a nurture AZONNAL megáll.
- *   - Leiratkozás (unsubscribed=true) esetén azonnali leállás.
- *   - Időablak ellenőrzés: csak nappal (08:00 - 19:00 Budapest idő) küld, éjjel nem zavarja a felhasználót.
- *   - Minden levélben lead-alapú URL tracking van (nyers email cím nélkül).
- *   - Az elküldött levelekről 'lead_email_sent' esemény kerül az analytics_events táblába.
- *
  * Használat:
- *   node scripts/run_lead_nurture_sequence.js             <-- Dry Run (csak listázza az esedékes leadeket)
- *   node scripts/run_lead_nurture_sequence.js --send      <-- Éles küldés
- *   node scripts/run_lead_nurture_sequence.js --force-time <-- Időablak felülbírálása (tesztekhez)
- *   node scripts/run_lead_nurture_sequence.js --lead-id=<UUID> <-- Csak egy adott lead tesztelése
+ *   node scripts/run_lead_nurture_sequence.js             <-- Dry Run (csak ellenőrzés)
+ *   node scripts/run_lead_nurture_sequence.js --send      <-- Küldés (admexgm@gmail.com-ra átirányítva!)
+ *   node scripts/run_lead_nurture_sequence.js --test-step=1 <-- Day 1 teszt küldése admexgm@gmail.com-ra
+ *   node scripts/run_lead_nurture_sequence.js --test-step=all <-- Összes sablon (Day 0, 1, 3, 5, 7, 10) tesztelése
  */
 
 const fs = require('fs');
@@ -35,11 +30,20 @@ require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const { createClient } = require('@supabase/supabase-js');
 const nodemailer = require('nodemailer');
 
+// ── BIZTONSÁGI TESZT CÍMZETT ─────────────────────────────────────────────────
+const SAFE_TEST_EMAIL = 'admexgm@gmail.com';
+
 // ── PARSE ARGUMENTS ──────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
-const IS_SEND = args.includes('--send');
+const IS_SEND = args.includes('--send') || args.some(a => a.startsWith('--test-step'));
 const IS_DRY_RUN = !IS_SEND || args.includes('--dry-run');
-const FORCE_TIME = args.includes('--force-time');
+const FORCE_TIME = args.includes('--force-time') || args.some(a => a.startsWith('--test-step'));
+
+let TEST_STEP_ARG = null;
+const testStepArg = args.find(a => a.startsWith('--test-step='));
+if (testStepArg) {
+    TEST_STEP_ARG = testStepArg.split('=')[1].trim().toLowerCase();
+}
 
 let TARGET_LEAD_ID = null;
 const leadIdArg = args.find(a => a.startsWith('--lead-id='));
@@ -48,19 +52,28 @@ if (leadIdArg) {
 }
 
 // ── SUPABASE CLIENT ──────────────────────────────────────────────────────────
-const supabase = createClient(
-    process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co',
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+const supabaseUrl = process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;
 
-// ── NODEMAILER TRANSPORTER ───────────────────────────────────────────────────
+if (!supabaseKey) {
+    console.warn('⚠️ Figyelem: SUPABASE_SERVICE_ROLE_KEY nincs beállítva a környezeti változókban!');
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey || 'placeholder-key');
+
+// ── NODEMAILER TRANSPORTER (SSL Port 465) ────────────────────────────────────
+const smtpPassword = process.env.SMTP_PASSWORD;
+if (!smtpPassword) {
+    console.warn('⚠️ Figyelem: SMTP_PASSWORD nincs beállítva a környezeti változókban!');
+}
+
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true,
     auth: {
         user: 'vitasteps.team@gmail.com',
-        pass: process.env.SMTP_PASSWORD,
+        pass: smtpPassword,
     },
 });
 
@@ -68,7 +81,16 @@ const transporter = nodemailer.createTransport({
 const SEQUENCE_NAME = 'lead_nurture_v1';
 const BASE_URL = 'https://vitastepsss.vercel.app';
 
-const SEQUENCE_STEPS = [
+const ALL_SEQUENCE_STEPS = [
+    {
+        step: 0,
+        day: 0,
+        minDelayHours: 0,
+        emailId: 'lead_v1_day0',
+        templateFile: 'v1_day0.html',
+        subject: '🗺️ Nagy-Kevély Túraútvonalak és Kalandfüzet – VitaSteps',
+        getTargetUrl: (leadId) => `${BASE_URL}/nagykevely/index.html?lead=${leadId}&source=email&email_id=lead_v1_day0&sequence=${SEQUENCE_NAME}#kalandkonyv`
+    },
     {
         step: 1,
         day: 1,
@@ -116,6 +138,9 @@ const SEQUENCE_STEPS = [
     }
 ];
 
+// Az automata sequence a Day 1-től indul (a Day 0-t a capture-lead.js küldi regisztrációkor)
+const SEQUENCE_STEPS = ALL_SEQUENCE_STEPS.filter(s => s.step > 0);
+
 // ── HELPER FUNCTIONS ─────────────────────────────────────────────────────────
 
 function extractFirstName(fullName) {
@@ -139,7 +164,6 @@ function isBudapestDaytime() {
             hour12: false
         });
         const currentHour = parseInt(formatter.format(new Date()), 10);
-        // Küldési ablak: reggel 8:00-tól este 19:00-ig Budapest idő szerint
         return currentHour >= 8 && currentHour < 19;
     } catch (e) {
         console.warn('Időzóna formázási figyelmeztetés:', e.message);
@@ -155,12 +179,87 @@ function loadTemplate(templateFile) {
     return fs.readFileSync(templatePath, 'utf8');
 }
 
+// ── DIRECT TEST SENDER TO ADMEXGM@GMAIL.COM ──────────────────────────────────
+
+async function runDirectTest(stepFilter) {
+    console.log(`\n============================================================`);
+    console.log(` 📧 DIRECT TEST KÜLDÉS AZ ADMEXGM@GMAIL.COM CÍMRE`);
+    console.log(` Kért lépés(ek): ${stepFilter}`);
+    console.log(` Címzett: ${SAFE_TEST_EMAIL}`);
+    console.log(`============================================================\n`);
+
+    if (!smtpPassword) {
+        console.error('HIBA: SMTP_PASSWORD környezeti változó hiányzik!');
+        process.exit(1);
+    }
+
+    let stepsToSend = [];
+    if (stepFilter === 'all') {
+        stepsToSend = ALL_SEQUENCE_STEPS;
+    } else {
+        const stepNum = parseInt(stepFilter, 10);
+        const match = ALL_SEQUENCE_STEPS.find(s => s.step === stepNum || s.day === stepNum);
+        if (!match) {
+            console.error(`Ismeretlen teszt lépés: ${stepFilter}. Választható: 0, 1, 3, 5, 7, 10 vagy all`);
+            process.exit(1);
+        }
+        stepsToSend = [match];
+    }
+
+    const testLeadId = 'test-lead-uuid-admex';
+    const testName = 'Ádám';
+
+    for (const step of stepsToSend) {
+        console.log(`\n▶️ Teszt küldés előkészítése: Day ${step.day} (${step.templateFile})`);
+        const targetUrl = step.getTargetUrl(testLeadId);
+        const unsubUrl = `${BASE_URL}/api/unsubscribe?lead=${encodeURIComponent(testLeadId)}`;
+        const kalandkonyvUrl = `${BASE_URL}/nagykevely/kalandkonyv.html?lead=${encodeURIComponent(testLeadId)}&source=email&email_id=${step.emailId}&sequence=${SEQUENCE_NAME}`;
+
+        const rawTemplate = loadTemplate(step.templateFile);
+        const personalizedHtml = rawTemplate
+            .replace(/\{\{NAME\}\}/g, testName)
+            .replace(/\{\{CTA_URL\}\}/g, targetUrl)
+            .replace(/\{\{UNLOCK_URL\}\}/g, targetUrl)
+            .replace(/\{\{KALANDKONYV_URL\}\}/g, kalandkonyvUrl)
+            .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
+
+        const testSubject = `[TESZT Day ${step.day}] ${step.subject}`;
+
+        try {
+            const info = await transporter.sendMail({
+                from: '"VitaSteps Teszt" <vitasteps.team@gmail.com>',
+                to: SAFE_TEST_EMAIL,
+                subject: testSubject,
+                html: personalizedHtml
+            });
+            console.log(`  ✅ SIKERES KÜLDÉS! Message ID: ${info.messageId}`);
+        } catch (err) {
+            console.error(`  ❌ Hiba küldés közben:`, err.message);
+        }
+
+        // Rate limit védelem több levél küldésekor
+        if (stepsToSend.length > 1) {
+            await new Promise(r => setTimeout(r, 1500));
+        }
+    }
+
+    console.log(`\n============================================================`);
+    console.log(` ✅ Teszt küldés befejeződött. Kérlek ellenőrizd az admexgm@gmail.com postaládádat!`);
+    console.log(`============================================================\n`);
+}
+
 // ── MAIN RUNNER ──────────────────────────────────────────────────────────────
 
 async function run() {
+    // 0. Ha direkt teszt lépést kért a felhasználó
+    if (TEST_STEP_ARG) {
+        await runDirectTest(TEST_STEP_ARG);
+        return;
+    }
+
     console.log(`\n============================================================`);
     console.log(` VitaSteps Lead Nurturing Engine (V1 Sequence Runner)`);
-    console.log(` Mód: ${IS_DRY_RUN ? '🔍 DRY RUN (nem küld emaileket, csak ellenőriz)' : '🚀 ÉLES KÜLDÉS'}`);
+    console.log(` Mód: ${IS_DRY_RUN ? '🔍 DRY RUN (nem küld emailt)' : '🔒 BIZTONSÁGI TESZT MÓD (CSAK admexgm@gmail.com kaphat emailt)'}`);
     console.log(` Időpont: ${new Date().toISOString()}`);
     console.log(`============================================================\n`);
 
@@ -169,11 +268,10 @@ async function run() {
     if (!isDaytime && !FORCE_TIME) {
         console.log(`⏰ Jelenlegi idő Budapesten nem esik a nappali küldési ablakba (08:00–19:00).`);
         console.log(`   Az automatikus email küldés szünetel az éjszakai órákban a jó felhasználói élményért.`);
-        console.log(`   (A futtatás felülbírálható a --force-time kapcsolóval.)`);
         return;
     }
 
-    // 2. Összes lead lekérése
+    // 2. Leadek lekérése
     let query = supabase.from('leads').select('*').order('created_at', { ascending: true });
     if (TARGET_LEAD_ID) {
         query = query.eq('id', TARGET_LEAD_ID);
@@ -182,13 +280,13 @@ async function run() {
 
     const { data: leads, error: leadErr } = await query;
     if (leadErr) {
-        console.error('Hiba a leadek lekérésekor:', leadErr);
+        console.error('Hiba a leadek lekérésekor Supabase-ből:', leadErr.message);
         return;
     }
 
     console.log(`Összes lead az adatbázisban: ${leads ? leads.length : 0} db`);
 
-    // 3. Konvertált vásárlók lekérése a duplikált vásárlás-ellenőrzéshez
+    // 3. Konvertált vásárlók lekérése
     const { data: runnersWithRuns } = await supabase
         .from('runners')
         .select('email, runs(id)');
@@ -225,7 +323,7 @@ async function run() {
     let skippedCompletedCount = 0;
     let skippedTooSoonCount = 0;
 
-    for (const lead of leads) {
+    for (const lead of leads || []) {
         processedCount++;
         const email = (lead.email || '').toLowerCase().trim();
         const createdAt = new Date(lead.created_at);
@@ -233,17 +331,6 @@ async function run() {
         // A) Szigorú Legacy szabály: 2026. október 1. előtt keletkezett leadek NEM kaphatnak új levelet!
         if (createdAt < CUTOFF_DATE) {
             skippedLegacyCount++;
-            // Ha még nincs lezárva a lépésszámláló, zárjuk le az adatbázisban
-            if ((lead.last_sequence_step === undefined || lead.last_sequence_step === null || lead.last_sequence_step < 10) && IS_SEND) {
-                try {
-                    await supabase.from('leads').update({
-                        sequence: SEQUENCE_NAME,
-                        last_sequence_step: 10,
-                        sequence_started_at: lead.sequence_started_at || lead.created_at,
-                        last_sequence_sent_at: lead.last_sequence_sent_at || lead.created_at
-                    }).eq('id', lead.id);
-                } catch (e) {}
-            }
             continue;
         }
 
@@ -259,15 +346,6 @@ async function run() {
 
         if (isConvertedInDb || isConvertedInRuns) {
             skippedConvertedCount++;
-            if (!isConvertedInDb && isConvertedInRuns && IS_SEND) {
-                // Szinkronizáljuk a leads táblával
-                try {
-                    await supabase.from('leads').update({
-                        converted: true,
-                        converted_at: new Date().toISOString()
-                    }).eq('id', lead.id);
-                } catch (e) {}
-            }
             continue;
         }
 
@@ -286,7 +364,6 @@ async function run() {
         const elapsedMs = now - sequenceStartedAt;
         const elapsedHours = elapsedMs / (1000 * 60 * 60);
 
-        // Ne küldjünk egymás után 20 órán belül két sequence levelet ugyanannak a személynek
         if (lead.last_sequence_sent_at) {
             const hoursSinceLastSent = (now - new Date(lead.last_sequence_sent_at)) / (1000 * 60 * 60);
             if (hoursSinceLastSent < 20) {
@@ -295,11 +372,10 @@ async function run() {
             }
         }
 
-        // E) Keressük meg a legkisebb esedékes lépést, amit még nem kapott meg
+        // E) Keressük meg a legkisebb esedékes lépést
         const dueStep = SEQUENCE_STEPS.find(s => s.step > lastStep && elapsedHours >= s.minDelayHours);
 
         if (!dueStep) {
-            // Még nem telt el elég idő a következő lépéshez
             continue;
         }
 
@@ -312,16 +388,15 @@ async function run() {
         console.log(`[ESEDÉKES] Lead: ${firstName} <${email}>`);
         console.log(`  └─ Lépés: Day ${dueStep.day} (Step ${dueStep.step}) | Eltelt idő: ${elapsedHours.toFixed(1)} óra (min. ${dueStep.minDelayHours}h)`);
         console.log(`  └─ Tárgy: ${dueStep.subject}`);
-        console.log(`  └─ CTA URL: ${targetUrl}`);
 
         if (IS_DRY_RUN) {
             console.log(`  └─ [DRY RUN]: Nem történt email küldés.`);
             continue;
         }
 
-        // F) Éles küldés
+        // F) BIZTONSÁGI KÜLDÉS: CSAK ADMEXGM@GMAIL.COM-RA!
         try {
-            console.log(`  └─ Küldés folyamatban (${email})...`);
+            console.log(`  🔒 [BIZTONSÁGI MÓD]: Eredeti címzett (${email}) helyett KIZÁRÓLAG ide küldve: ${SAFE_TEST_EMAIL}`);
             const rawTemplate = loadTemplate(dueStep.templateFile);
             const personalizedHtml = rawTemplate
                 .replace(/\{\{NAME\}\}/g, firstName)
@@ -331,50 +406,19 @@ async function run() {
                 .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
 
             await transporter.sendMail({
-                from: '"VitaSteps" <vitasteps.team@gmail.com>',
-                to: email,
-                subject: dueStep.subject,
+                from: '"VitaSteps Teszt" <vitasteps.team@gmail.com>',
+                to: SAFE_TEST_EMAIL,
+                subject: `[TESZT - Eredeti címzett: ${email}] ${dueStep.subject}`,
                 html: personalizedHtml
             });
 
-            console.log(`  └─ SIKERES KÜLDÉS!`);
+            console.log(`  ✅ SIKERES TESZT KÜLDÉS -> ${SAFE_TEST_EMAIL}`);
 
-            // G) Adatbázis állapot frissítése
-            try {
-                await supabase.from('leads').update({
-                    sequence: SEQUENCE_NAME,
-                    last_sequence_step: dueStep.step,
-                    last_sequence_sent_at: new Date().toISOString()
-                }).eq('id', lead.id);
-            } catch (dbErr) {
-                console.warn(`  └─ Figyelmeztetés: lead állapot frissítés hiba:`, dbErr.message);
-            }
-
-            // H) Analytics esemény rögzítése: lead_email_sent
-            try {
-                await supabase.from('analytics_events').insert({
-                    session_id: 'nurture_' + Date.now(),
-                    visitor_id: 'v_lead_' + lead.id,
-                    event_name: 'lead_email_sent',
-                    event_data: {
-                        lead_id: lead.id,
-                        sequence: SEQUENCE_NAME,
-                        step: dueStep.step,
-                        email_id: dueStep.emailId,
-                        subject: dueStep.subject,
-                        source: 'email'
-                    },
-                    created_at: new Date().toISOString()
-                });
-            } catch (anErr) {
-                console.warn(`  └─ Figyelmeztetés: analytics_events rögzítés hiba:`, anErr.message);
-            }
-
-            // 1.2 mp várakozás SMTP rate limit védelemre
+            // Rate limit védelem
             await new Promise(r => setTimeout(r, 1200));
 
         } catch (sendErr) {
-            console.error(`  └─ HIBA küldés közben (${email}):`, sendErr.message);
+            console.error(`  ❌ Hiba küldés közben:`, sendErr.message);
         }
     }
 
@@ -390,4 +434,7 @@ async function run() {
     console.log(`============================================================\n`);
 }
 
-run().catch(console.error);
+run().catch(err => {
+    console.error('Kritikus hiba a futtatás során:', err);
+    process.exit(1);
+});
