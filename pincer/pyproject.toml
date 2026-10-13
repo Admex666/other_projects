@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pincer"
+version = "0.1.0"
+description = "Deterministic Python simulation engine for the Pincer board game"
+authors = [{ name = "Pincer Engine Contributors" }]
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+pythonpath = ["src"]
+testpaths = ["tests"]
