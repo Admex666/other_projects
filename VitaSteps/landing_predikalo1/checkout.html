@@ -22,7 +22,11 @@
             --danger: #ff6b6b;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             background: var(--bg);
@@ -43,14 +47,35 @@
             top: 0;
             z-index: 100;
         }
-        .logo { font-size: 1.3rem; font-weight: 900; letter-spacing: 3px; }
-        .logo span { color: var(--accent); }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
 
         /* LAYOUT */
-        .page-wrapper { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+        .page-wrapper {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
 
-        .page-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.4rem; }
-        .page-subtitle { color: var(--text-mid); font-size: 0.95rem; margin-bottom: 2rem; }
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-mid);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
 
         /* SECTION */
         .section {
@@ -60,6 +85,7 @@
             padding: 1.8rem 2rem;
             margin-bottom: 1.5rem;
         }
+
         .section-title {
             font-size: 1.1rem;
             font-weight: 700;
@@ -75,7 +101,14 @@
             gap: 1.2rem;
             flex-wrap: wrap;
         }
-        .qty-label { font-size: 0.95rem; color: var(--text-mid); flex: 1; min-width: 180px; }
+
+        .qty-label {
+            font-size: 0.95rem;
+            color: var(--text-mid);
+            flex: 1;
+            min-width: 180px;
+        }
+
         .qty-controls {
             display: flex;
             align-items: center;
@@ -85,6 +118,7 @@
             border-radius: 10px;
             overflow: hidden;
         }
+
         .qty-btn {
             width: 42px;
             height: 42px;
@@ -98,7 +132,11 @@
             align-items: center;
             justify-content: center;
         }
-        .qty-btn:hover { background: rgba(196,255,0,0.1); }
+
+        .qty-btn:hover {
+            background: rgba(196, 255, 0, 0.1);
+        }
+
         .qty-display {
             width: 52px;
             text-align: center;
@@ -120,7 +158,11 @@
             position: relative;
             transition: border-color 0.2s;
         }
-        .medal-panel:last-child { margin-bottom: 0; }
+
+        .medal-panel:last-child {
+            margin-bottom: 0;
+        }
+
         .medal-panel-title {
             font-weight: 700;
             font-size: 0.9rem;
@@ -132,8 +174,14 @@
         }
 
         /* FORM ROWS */
-        .form-row { margin-bottom: 1.1rem; }
-        .form-row:last-child { margin-bottom: 0; }
+        .form-row {
+            margin-bottom: 1.1rem;
+        }
+
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
+
         .form-row label {
             display: block;
             font-size: 0.82rem;
@@ -143,13 +191,14 @@
             text-transform: uppercase;
             letter-spacing: 0.4px;
         }
+
         .form-row input[type="text"],
         .form-row input[type="email"],
         .form-row input[type="tel"],
         .form-row select {
             width: 100%;
             padding: 0.85rem 1rem;
-            background: rgba(0,0,0,0.25);
+            background: rgba(0, 0, 0, 0.25);
             border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text-high);
@@ -157,19 +206,24 @@
             font-size: 0.95rem;
             transition: border-color 0.2s;
         }
+
         .form-row input:focus,
         .form-row select:focus {
             outline: none;
-            border-color: rgba(196,255,0,0.5);
+            border-color: rgba(196, 255, 0, 0.5);
         }
-        .form-row select option { background: var(--surface2); }
+
+        .form-row select option {
+            background: var(--surface2);
+        }
 
         /* INLINE FIELD ERRORS */
         .form-row input.input-error,
         .form-row select.input-error {
             border-color: var(--danger) !important;
-            box-shadow: 0 0 0 2px rgba(255,107,107,0.18);
+            box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.18);
         }
+
         .field-error {
             display: none;
             color: var(--danger);
@@ -179,18 +233,42 @@
             padding-left: 0.1rem;
             animation: fadeIn 0.18s ease;
         }
-        .field-error.visible { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
+
+        .field-error.visible {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-3px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         .form-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
         }
-        @media (max-width: 540px) { .form-grid-2 { grid-template-columns: 1fr; } }
+
+        @media (max-width: 540px) {
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
 
         /* DELIVERY OPTION */
-        .delivery-options { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .delivery-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
         .delivery-card {
             flex: 1;
             min-width: 220px;
@@ -205,10 +283,12 @@
             transition: all 0.2s;
             user-select: none;
         }
+
         .delivery-card.selected {
             border-color: var(--accent);
             background: var(--accent-dim);
         }
+
         .delivery-card input[type="radio"] {
             accent-color: var(--accent);
             width: 1.15rem;
@@ -216,10 +296,25 @@
             margin-top: 2px;
             flex-shrink: 0;
         }
-        .delivery-card-name { font-weight: 700; font-size: 0.95rem; }
-        .delivery-card-sub { font-size: 0.78rem; margin-top: 0.15rem; font-weight: 600; }
-        .delivery-card-sub.free { color: var(--accent); }
-        .delivery-card-sub.paid { color: #ffcc44; }
+
+        .delivery-card-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .delivery-card-sub {
+            font-size: 0.78rem;
+            margin-top: 0.15rem;
+            font-weight: 600;
+        }
+
+        .delivery-card-sub.free {
+            color: var(--accent);
+        }
+
+        .delivery-card-sub.paid {
+            color: #ffcc44;
+        }
 
         /* ORDER SUMMARY BOX */
         .order-summary-box {
@@ -229,6 +324,7 @@
             padding: 1.2rem 1.5rem;
             margin-bottom: 1.5rem;
         }
+
         .summary-row {
             display: flex;
             justify-content: space-between;
@@ -238,7 +334,11 @@
             color: var(--text-mid);
             border-bottom: 1px solid var(--border);
         }
-        .summary-row:last-child { border-bottom: none; }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
         .summary-total {
             display: flex;
             justify-content: space-between;
@@ -248,14 +348,19 @@
             font-weight: 900;
             color: var(--text-high);
         }
-        .summary-total-price { color: var(--accent); }
+
+        .summary-total-price {
+            color: var(--accent);
+        }
 
         /* FOXPOST / HOME DELIVERY */
         #foxpost-container,
-        #home-delivery-container { margin-bottom: 1.5rem; }
+        #home-delivery-container {
+            margin-bottom: 1.5rem;
+        }
 
         .selected-point-box {
-            background: rgba(196,255,0,0.08);
+            background: rgba(196, 255, 0, 0.08);
             border: 1.5px solid var(--accent);
             border-radius: 10px;
             padding: 1.1rem 1.3rem;
@@ -263,6 +368,7 @@
             display: none;
             animation: fadeIn 0.2s ease;
         }
+
         .badge-selected {
             background: var(--accent);
             color: #000;
@@ -272,8 +378,9 @@
             border-radius: 4px;
             letter-spacing: 0.5px;
         }
+
         .btn-change-point {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
             border: 1px solid var(--border);
             color: #fff;
             padding: 0.4rem 0.8rem;
@@ -284,7 +391,11 @@
             transition: all 0.2s;
             white-space: nowrap;
         }
-        .btn-change-point:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
+
+        .btn-change-point:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
 
         /* FOXPOST NATIVE AUTOCOMPLETE */
         .foxpost-input-wrap {
@@ -292,22 +403,25 @@
             display: flex;
             align-items: center;
         }
+
         .foxpost-input-wrap input {
             width: 100%;
             padding: 0.95rem 2.6rem 0.95rem 1rem;
-            background: rgba(0,0,0,0.35);
-            border: 1.5px solid rgba(196,255,0,0.3);
+            background: rgba(0, 0, 0, 0.35);
+            border: 1.5px solid rgba(196, 255, 0, 0.3);
             border-radius: 10px;
             color: var(--text-high);
             font-size: 0.95rem;
             font-family: inherit;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
+
         .foxpost-input-wrap input:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(196,255,0,0.15);
+            box-shadow: 0 0 0 3px rgba(196, 255, 0, 0.15);
         }
+
         .foxpost-clear-btn {
             position: absolute;
             right: 12px;
@@ -319,7 +433,10 @@
             padding: 4px;
             display: none;
         }
-        .foxpost-clear-btn:hover { color: #fff; }
+
+        .foxpost-clear-btn:hover {
+            color: #fff;
+        }
 
         .foxpost-results-dropdown {
             margin-top: 0.5rem;
@@ -329,12 +446,13 @@
             border: 1px solid var(--border);
             border-radius: 10px;
             display: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             z-index: 50;
         }
+
         .foxpost-item {
             padding: 0.85rem 1.1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             cursor: pointer;
             transition: background 0.15s;
             display: flex;
@@ -342,29 +460,38 @@
             align-items: center;
             gap: 0.75rem;
         }
-        .foxpost-item:last-child { border-bottom: none; }
-        .foxpost-item:hover, .foxpost-item:active {
-            background: rgba(196,255,0,0.08);
+
+        .foxpost-item:last-child {
+            border-bottom: none;
         }
+
+        .foxpost-item:hover,
+        .foxpost-item:active {
+            background: rgba(196, 255, 0, 0.08);
+        }
+
         .foxpost-item-name {
             font-weight: 700;
             font-size: 0.9rem;
             color: #fff;
         }
+
         .foxpost-item-addr {
             font-size: 0.8rem;
             color: var(--text-mid);
             margin-top: 0.15rem;
         }
+
         .foxpost-item-badge {
             font-size: 0.7rem;
             padding: 0.2rem 0.45rem;
             border-radius: 4px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             color: var(--text-mid);
             white-space: nowrap;
             flex-shrink: 0;
         }
+
         .foxpost-item-badge.outdoor {
             background: rgba(74, 222, 128, 0.15);
             color: #4ade80;
@@ -377,9 +504,10 @@
             gap: 0.5rem;
             flex-wrap: wrap;
         }
+
         .foxpost-chip {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(196,255,0,0.25);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(196, 255, 0, 0.25);
             border-radius: 20px;
             padding: 0.4rem 0.8rem;
             font-size: 0.78rem;
@@ -390,10 +518,153 @@
             align-items: center;
             gap: 0.35rem;
         }
-        .foxpost-chip:hover, .foxpost-chip:active {
-            background: rgba(196,255,0,0.15);
+
+        .foxpost-chip:hover,
+        .foxpost-chip:active {
+            background: rgba(196, 255, 0, 0.15);
             border-color: var(--accent);
             color: var(--accent);
+        }
+
+        /* ── REASSURANCE BANNER ── */
+        .reassurance-card {
+            background: rgba(196, 255, 0, 0.07);
+            border: 1.5px solid rgba(196, 255, 0, 0.35);
+            border-radius: var(--radius);
+            padding: 1.15rem 1.4rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .reassurance-icon {
+            font-size: 2.2rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .reassurance-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 0.25rem;
+        }
+
+        .reassurance-text {
+            font-size: 0.88rem;
+            color: #e2e8f0;
+            line-height: 1.45;
+        }
+
+        .reassurance-text strong {
+            color: #ffffff;
+        }
+
+        /* ── GPS FOXPOST SELECTOR ── */
+        .btn-gps-locate {
+            width: 100%;
+            padding: 0.95rem 1.25rem;
+            background: rgba(196, 255, 0, 0.1);
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(196, 255, 0, 0.15);
+        }
+
+        .btn-gps-locate:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 20px rgba(196, 255, 0, 0.35);
+        }
+
+        .btn-gps-locate:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .gps-results-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .gps-card {
+            background: var(--surface2);
+            border: 1.5px solid rgba(196, 255, 0, 0.25);
+            border-radius: 10px;
+            padding: 0.9rem 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            gap: 0.75rem;
+        }
+
+        .gps-card:hover {
+            border-color: var(--accent);
+            background: rgba(196, 255, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .gps-card-name {
+            font-weight: 800;
+            font-size: 0.92rem;
+            color: #fff;
+        }
+
+        .gps-card-addr {
+            font-size: 0.8rem;
+            color: var(--text-mid);
+            margin-top: 0.2rem;
+        }
+
+        .gps-card-dist {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--accent);
+            background: rgba(196, 255, 0, 0.12);
+            padding: 0.25rem 0.55rem;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .gps-card-btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .no-rush-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.86rem;
+            color: var(--text-mid);
+            margin-bottom: 1.1rem;
+            text-align: center;
+            line-height: 1.35;
+        }
+
+        .no-rush-note strong {
+            color: #fff;
         }
 
         /* MODAL MAP */
@@ -408,18 +679,20 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+
         .btn-map-toggle:hover {
             color: #fff;
-            border-color: rgba(255,255,255,0.3);
-            background: rgba(255,255,255,0.05);
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
         }
+
         .map-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(4px);
             z-index: 1000;
             display: flex;
@@ -427,6 +700,7 @@
             justify-content: center;
             padding: 1rem;
         }
+
         .map-modal-content {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -437,8 +711,9 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
         }
+
         .map-modal-header {
             padding: 1rem 1.25rem;
             border-bottom: 1px solid var(--border);
@@ -447,8 +722,9 @@
             align-items: center;
             background: var(--surface2);
         }
+
         .btn-close-modal {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border: none;
             color: #fff;
             padding: 0.4rem 0.8rem;
@@ -457,7 +733,11 @@
             font-size: 0.85rem;
             cursor: pointer;
         }
-        .btn-close-modal:hover { background: rgba(255,255,255,0.2); }
+
+        .btn-close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
         .map-modal-body {
             flex: 1;
             width: 100%;
@@ -479,8 +759,17 @@
             transition: all 0.2s;
             letter-spacing: 0.5px;
         }
-        .submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
 
         .error-msg {
             color: var(--danger);
@@ -489,7 +778,10 @@
             text-align: center;
             display: none;
         }
-        .error-msg.visible { display: block; }
+
+        .error-msg.visible {
+            display: block;
+        }
 
         .legal-note {
             text-align: center;
@@ -497,7 +789,10 @@
             font-size: 0.78rem;
             margin-top: 0.8rem;
         }
-        .legal-note a { color: var(--text-mid); }
+
+        .legal-note a {
+            color: var(--text-mid);
+        }
 
         .badge-note {
             font-size: 0.75rem;
@@ -510,10 +805,12 @@
         .mobile-sticky-bar {
             display: none;
         }
+
         @media (max-width: 768px) {
             .page-wrapper {
                 padding-bottom: 7rem !important;
             }
+
             .mobile-sticky-bar {
                 display: flex;
                 position: fixed;
@@ -532,10 +829,12 @@
                 gap: 1rem;
                 animation: slideUp 0.3s ease;
             }
+
             .mobile-sticky-info {
                 display: flex;
                 flex-direction: column;
             }
+
             .mobile-sticky-label {
                 font-size: 0.7rem;
                 color: var(--text-mid);
@@ -543,12 +842,14 @@
                 text-transform: uppercase;
                 letter-spacing: 0.4px;
             }
+
             .mobile-sticky-total {
                 font-size: 1.3rem;
                 font-weight: 900;
                 color: var(--accent);
                 font-family: 'Inter', system-ui, sans-serif;
             }
+
             .mobile-sticky-btn {
                 flex: 1;
                 max-width: 230px;
@@ -567,25 +868,33 @@
                 box-shadow: 0 4px 15px rgba(196, 255, 0, 0.25);
                 transition: transform 0.15s, opacity 0.15s;
             }
+
             .mobile-sticky-btn:active {
                 transform: scale(0.98);
             }
+
             .mobile-sticky-btn:disabled {
                 opacity: 0.5;
                 cursor: not-allowed;
             }
         }
+
         @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
         }
     </style>
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
         })(window, document, "clarity", "script", "xx85zg2g25");
     </script>
 </head>
@@ -603,11 +912,25 @@
         <h1 class="page-title">📦 Nevezés & Szállítás</h1>
         <p class="page-subtitle">Add meg a nevezők adatait, és válaszd ki a szállítási módot!</p>
 
+        <!-- ── BIZALOMNÖVELŐ & IDŐKORLÁT-MENTES KIHÍVÁS KÁRTYA ── -->
+        <div class="reassurance-card">
+            <div class="reassurance-icon">📅</div>
+            <div class="reassurance-content">
+                <div class="reassurance-title">Nem kell azonnal elmenned túrázni!</div>
+                <div class="reassurance-text">
+                    Az érmedet előre megkapod a lakóhelyedhez közeli választott csomagautomatába, a túrát pedig
+                    <strong>bármikor az évben, tetszőleges napon, időkorlát nélkül</strong> teljesítheted, amikor neked
+                    és szeretteidnek a legkényelmesebb.
+                </div>
+            </div>
+        </div>
+
         <!-- ── QUANTITY ─────────────────────────────────────── -->
         <div class="section">
             <div class="section-title">🏅 Hány érmet rendelsz?</div>
             <div class="qty-row">
-                <div class="qty-label">Egy érem ára: <strong id="qty-price-display" style="color:var(--accent);">-- Ft</strong></div>
+                <div class="qty-label">Egy érem ára: <strong id="qty-price-display" style="color:var(--accent);">--
+                        Ft</strong></div>
                 <div class="qty-controls">
                     <button class="qty-btn" id="qty-minus" onclick="changeQty(-1)">−</button>
                     <div class="qty-display" id="qty-display">1</div>
@@ -629,13 +952,15 @@
                     <div class="field-error" id="err-email"></div>
                 </div>
                 <div class="form-row">
-                    <label for="cust-phone">Telefonszám * <span style="font-size:0.75rem;color:var(--text-low);">(Foxpost SMS-hez: +36 30...)</span></label>
+                    <label for="cust-phone">Telefonszám * <span
+                            style="font-size:0.75rem;color:var(--text-low);">(Foxpost SMS-hez: +36 30...)</span></label>
                     <input type="tel" id="cust-phone" placeholder="+36 30 123 4567">
                     <div class="field-error" id="err-phone"></div>
                 </div>
             </div>
             <div class="form-row" style="margin-top:1rem;">
-                <label for="cust-billing-address">Számlázási cím * <span style="font-size:0.75rem;color:var(--text-low);">(e-számlához)</span></label>
+                <label for="cust-billing-address">Számlázási cím * <span
+                        style="font-size:0.75rem;color:var(--text-low);">(e-számlához)</span></label>
                 <input type="text" id="cust-billing-address" placeholder="1139 Budapest, Csizma utca 3.">
                 <div class="field-error" id="err-billing"></div>
             </div>
@@ -666,14 +991,16 @@
 
         <!-- ── FOXPOST AUTOCOMPLETE & MAP ─────────────────── -->
         <div id="foxpost-container" class="section" style="padding: 1.5rem;">
-            <div class="section-title" style="margin-bottom: 0.8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+            <div class="section-title"
+                style="margin-bottom: 0.8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
                 <span>🦊 Foxpost Csomagautomata</span>
                 <button type="button" class="btn-map-toggle" onclick="openFoxpostModal()">🗺️ Térkép megnyitása</button>
             </div>
 
             <!-- Smart Suggestions (populated automatically from billing address) -->
             <div id="foxpost-smart-suggestions" style="display: none; margin-bottom: 1rem;">
-                <div style="font-size: 0.78rem; font-weight: 700; color: var(--accent); margin-bottom: 0.45rem;">💡 Címedhez közeli automaták (1 koppintásos választás):</div>
+                <div style="font-size: 0.78rem; font-weight: 700; color: var(--accent); margin-bottom: 0.45rem;">💡
+                    Címedhez közeli automaták (1 koppintásos választás):</div>
                 <div class="foxpost-chips-container" id="foxpost-chips-list"></div>
             </div>
 
@@ -684,26 +1011,56 @@
                         <span style="font-size: 1.8rem; line-height: 1;">🦊</span>
                         <div>
                             <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                                <span id="selected-name" style="font-weight: 800; font-size: 0.95rem; color: #fff;"></span>
+                                <span id="selected-name"
+                                    style="font-weight: 800; font-size: 0.95rem; color: #fff;"></span>
                                 <span class="badge-selected">✓ KIVÁLASZTVA</span>
                             </div>
-                            <div id="selected-address" style="font-size: 0.85rem; color: var(--text-mid); margin-top: 0.2rem;"></div>
-                            <div id="selected-findme" style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;"></div>
+                            <div id="selected-address"
+                                style="font-size: 0.85rem; color: var(--text-mid); margin-top: 0.2rem;"></div>
+                            <div id="selected-findme" style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;">
+                            </div>
                         </div>
                     </div>
                     <button type="button" class="btn-change-point" onclick="resetSelectedPoint()">Módosítás ✕</button>
                 </div>
             </div>
 
+            <!-- 1-Koppintásos GPS Automata Kereső -->
+            <div id="foxpost-gps-container" style="margin-bottom: 1.25rem;">
+                <button type="button" id="btn-foxpost-gps" class="btn-gps-locate" onclick="locateNearestFoxpost()">
+                    <span style="font-size: 1.2rem;">📍</span>
+                    <span id="gps-btn-text">Legközelebbi automaták megkeresése (1 koppintás / GPS)</span>
+                </button>
+                <div id="gps-status-msg"
+                    style="display: none; font-size: 0.8rem; margin-top: 0.45rem; color: var(--text-mid); text-align: center;">
+                </div>
+                <div id="gps-results-list" class="gps-results-cards" style="display: none; margin-top: 0.85rem;"></div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin: 1.2rem 0;">
+                <div style="flex: 1; height: 1px; background: var(--border);"></div>
+                <span
+                    style="font-size: 0.72rem; color: var(--text-low); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">vagy
+                    keresés manuálisan</span>
+                <div style="flex: 1; height: 1px; background: var(--border);"></div>
+            </div>
+
             <!-- Search Input & Autocomplete Dropdown -->
             <div id="foxpost-search-wrapper">
-                <label for="foxpost-search-input" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-mid); margin-bottom: 0.4rem; text-transform: uppercase;">Keresés település, utca, irányítószám vagy üzlet alapján:</label>
+                <label for="foxpost-search-input"
+                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-mid); margin-bottom: 0.4rem; text-transform: uppercase;">Keresés
+                    település, utca, irányítószám vagy üzlet alapján:</label>
                 <div class="foxpost-input-wrap">
-                    <input type="text" id="foxpost-search-input" placeholder="pl. Vác, 1139, Westend, Debrecen Pláza, Spar..." autocomplete="off" oninput="handleFoxpostSearch(this.value)">
-                    <button type="button" id="foxpost-clear-btn" class="foxpost-clear-btn" onclick="clearFoxpostSearch()">✕</button>
+                    <input type="text" id="foxpost-search-input"
+                        placeholder="pl. Vác, 1139, Westend, Debrecen Pláza, Spar..." autocomplete="off"
+                        oninput="handleFoxpostSearch(this.value)">
+                    <button type="button" id="foxpost-clear-btn" class="foxpost-clear-btn"
+                        onclick="clearFoxpostSearch()">✕</button>
                 </div>
                 <div id="foxpost-search-results" class="foxpost-results-dropdown"></div>
-                <div id="foxpost-loading-status" style="font-size: 0.75rem; color: var(--text-low); margin-top: 0.4rem;">⏳ Foxpost automaták betöltése...</div>
+                <div id="foxpost-loading-status"
+                    style="font-size: 0.75rem; color: var(--text-low); margin-top: 0.4rem;">⏳ Foxpost automaták
+                    betöltése...</div>
             </div>
         </div>
 
@@ -728,7 +1085,8 @@
                 <input type="text" id="home-address" placeholder="1139 Budapest, Csizma utca 3.">
                 <div class="field-error" id="err-home-address"></div>
             </div>
-            <p style="font-size:0.82rem;color:var(--text-low);margin-top:0.5rem;">Ha megegyezik a számlázási címeddel, hagyd üresen – azt fogjuk használni.</p>
+            <p style="font-size:0.82rem;color:var(--text-low);margin-top:0.5rem;">Ha megegyezik a számlázási címeddel,
+                hagyd üresen – azt fogjuk használni.</p>
         </div>
 
         <!-- ── ÖSSZESÍTŐ ─────────────────────────────────────── -->
@@ -752,7 +1110,8 @@
         <div id="error-msg" class="error-msg"></div>
 
         <p class="legal-note" style="margin-top:1rem;">
-            A fizetés gombra kattintva elfogadod a <a href="/aszf.html" target="_blank">Nevezési feltételeket (ÁSZF)</a> és az <a href="/adatvedelem.html" target="_blank">Adatvédelmi nyilatkozatot</a>.
+            A fizetés gombra kattintva elfogadod a <a href="/aszf.html" target="_blank">Nevezési feltételeket (ÁSZF)</a>
+            és az <a href="/adatvedelem.html" target="_blank">Adatvédelmi nyilatkozatot</a>.
         </p>
 
     </div>
@@ -803,12 +1162,12 @@
                 const res = await fetch('/config/campaigns.json');
                 const config = await res.json();
                 campaignConfig = config[campaignKey];
-                
+
                 // Set page values
                 medalPrice = campaignConfig.price;
                 document.getElementById('qty-price-display').textContent = formatHuf(medalPrice);
                 document.getElementById('nav-home-link').href = campaignKey === 'pilis' ? '/nagykevely/index.html' : '/predikalo/index.html';
-                
+
                 renderMedalPanels();
                 updateSummary();
             } catch (err) {
@@ -831,6 +1190,115 @@
                 .trim();
         }
 
+        function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Föld sugara km-ben
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        async function locateNearestFoxpost() {
+            const btn = document.getElementById('btn-foxpost-gps');
+            const btnText = document.getElementById('gps-btn-text');
+            const statusMsg = document.getElementById('gps-status-msg');
+            const resultsList = document.getElementById('gps-results-list');
+
+            if (!navigator.geolocation) {
+                if (statusMsg) {
+                    statusMsg.style.display = 'block';
+                    statusMsg.innerHTML = '⚠️ A böngésződ nem támogatja a helymeghatározást. Használd a lenti keresőt!';
+                }
+                return;
+            }
+
+            if (foxpostApts.length === 0) {
+                if (statusMsg) {
+                    statusMsg.style.display = 'block';
+                    statusMsg.innerHTML = '⏳ Automaták betöltése folyamatban...';
+                }
+                await loadFoxpostData();
+            }
+
+            if (btn) btn.disabled = true;
+            if (btnText) btnText.textContent = '⏳ Helyzet lekérése folyamatban...';
+            if (statusMsg) {
+                statusMsg.style.display = 'block';
+                statusMsg.innerHTML = '📍 Kérjük hagyd jóvá a helymeghatározást a böngésződben...';
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    if (btn) btn.disabled = false;
+                    if (btnText) btnText.textContent = '📍 Újrakeresés (GPS)';
+                    const userLat = pos.coords.latitude;
+                    const userLng = pos.coords.longitude;
+
+                    const withDist = [];
+                    for (const apt of foxpostApts) {
+                        if (apt.lat && apt.lng) {
+                            const distKm = calculateDistanceKm(userLat, userLng, apt.lat, apt.lng);
+                            withDist.push({ ...apt, distKm });
+                        }
+                    }
+
+                    withDist.sort((a, b) => a.distKm - b.distKm);
+                    const closest = withDist.slice(0, 3);
+
+                    if (closest.length === 0) {
+                        if (statusMsg) statusMsg.innerHTML = 'Nem sikerült közeli automatát azonosítani. Használd a lenti keresőt!';
+                        return;
+                    }
+
+                    if (statusMsg) statusMsg.innerHTML = `🟢 <strong>${closest.length} legközelebbi automata</strong> a közeledben:`;
+                    if (resultsList) {
+                        resultsList.innerHTML = closest.map(apt => {
+                            const distLabel = apt.distKm < 1 
+                                ? `${Math.round(apt.distKm * 1000)} m`
+                                : `${apt.distKm.toFixed(1)} km`;
+                            const cleanName = apt.name.replace(/^FOXPOST\s*(A-BOX\s*)?/i, '');
+                            return `
+                                <div class="gps-card" onclick="selectFoxpostLocker('${escapeHtml(apt.id)}', 'gps')">
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div class="gps-card-name">🦊 ${escapeHtml(cleanName)}</div>
+                                        <div class="gps-card-addr">${escapeHtml(apt.address)}</div>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:0.5rem; flex-shrink:0;">
+                                        <div class="gps-card-dist">🎯 ${distLabel}</div>
+                                        <button type="button" class="gps-card-btn">Választás</button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                        resultsList.style.display = 'flex';
+                    }
+
+                    if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                        window.VitaTracker.track('foxpost_gps_located', {
+                            count: closest.length,
+                            closest_dist_km: closest[0]?.distKm?.toFixed(2)
+                        });
+                    }
+                },
+                (err) => {
+                    if (btn) btn.disabled = false;
+                    if (btnText) btnText.textContent = '📍 Legközelebbi automaták megkeresése (1 koppintás / GPS)';
+                    if (statusMsg) {
+                        statusMsg.style.display = 'block';
+                        if (err.code === 1) {
+                            statusMsg.innerHTML = '⚠️ A helymeghatározás nem engedélyezett. Kérjük írd be a települést vagy utcát a lenti keresőbe!';
+                        } else {
+                            statusMsg.innerHTML = '⚠️ Nem sikerült pontos helyzetet meghatározni. Használd a lenti keresőmezőt!';
+                        }
+                    }
+                },
+                { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+            );
+        }
+
         async function loadFoxpostData() {
             if (isFoxpostLoading || foxpostApts.length > 0) return;
             isFoxpostLoading = true;
@@ -838,8 +1306,8 @@
 
             // 1. Try LocalStorage cache (<24 hours)
             try {
-                const cached = localStorage.getItem('foxpost_cache_v1');
-                const cacheTime = localStorage.getItem('foxpost_cache_time');
+                const cached = localStorage.getItem('foxpost_cache_v2');
+                const cacheTime = localStorage.getItem('foxpost_cache_time_v2');
                 if (cached && cacheTime && (Date.now() - Number(cacheTime) < 24 * 60 * 60 * 1000)) {
                     foxpostApts = JSON.parse(cached);
                     if (statusEl) statusEl.textContent = `🟢 ${foxpostApts.length.toLocaleString('hu-HU')} automata azonnal kereshető`;
@@ -862,14 +1330,16 @@
                         city: item.city || '',
                         zip: item.zip || '',
                         street: item.street || '',
+                        lat: parseFloat(item.geolat || 0),
+                        lng: parseFloat(item.geolng || 0),
                         findme: (item.findme || '').replace(/<[^>]*>?/gm, ' ').slice(0, 140),
                         isOutdoor: item.isOutdoor === true || (item.name || '').toLowerCase().includes('kültéri'),
                         norm: normalizeText(`${item.zip} ${item.city} ${item.name} ${item.address} ${item.street}`)
                     }));
 
                     try {
-                        localStorage.setItem('foxpost_cache_v1', JSON.stringify(foxpostApts));
-                        localStorage.setItem('foxpost_cache_time', String(Date.now()));
+                        localStorage.setItem('foxpost_cache_v2', JSON.stringify(foxpostApts));
+                        localStorage.setItem('foxpost_cache_time_v2', String(Date.now()));
                     } catch (e) {}
 
                     if (statusEl) statusEl.textContent = `🟢 ${foxpostApts.length.toLocaleString('hu-HU')} automata betöltve`;
@@ -889,7 +1359,7 @@
             clearTimeout(foxpostSearchDebounce);
             const clearBtn = document.getElementById('foxpost-clear-btn');
             const resultsEl = document.getElementById('foxpost-search-results');
-            
+
             if (clearBtn) clearBtn.style.display = val ? 'block' : 'none';
 
             if (!val || val.trim().length < 2) {
@@ -952,12 +1422,12 @@
             resultsEl.style.display = 'block';
         }
 
-        function selectFoxpostLocker(aptId) {
+        function selectFoxpostLocker(aptId, method = 'autocomplete') {
             const apt = foxpostApts.find(a => a.id === aptId);
             if (!apt) return;
 
             setSelectedPoint('foxpost', apt.name, apt.address, apt.id || apt.operator_id, apt.findme);
-            
+
             // Hide dropdown and search input
             const resultsEl = document.getElementById('foxpost-search-results');
             if (resultsEl) resultsEl.style.display = 'none';
@@ -969,7 +1439,7 @@
                     address: apt.address,
                     city: apt.city,
                     id: apt.id,
-                    method: 'autocomplete'
+                    method: method
                 });
             }
         }
@@ -980,10 +1450,12 @@
             document.getElementById('selected-address').textContent = address || '–';
             const findmeEl = document.getElementById('selected-findme');
             if (findmeEl) findmeEl.textContent = findme ? `📍 ${findme}` : '';
-            
+
             document.getElementById('selected-point-box').style.display = 'block';
             document.getElementById('foxpost-search-wrapper').style.display = 'none';
             document.getElementById('foxpost-smart-suggestions').style.display = 'none';
+            const gpsWrap = document.getElementById('foxpost-gps-container');
+            if (gpsWrap) gpsWrap.style.display = 'none';
             clearError();
         }
 
@@ -991,6 +1463,8 @@
             selectedParcelPoint = null;
             document.getElementById('selected-point-box').style.display = 'none';
             document.getElementById('foxpost-search-wrapper').style.display = 'block';
+            const gpsWrap = document.getElementById('foxpost-gps-container');
+            if (gpsWrap) gpsWrap.style.display = 'block';
             checkSmartSuggestions();
             const input = document.getElementById('foxpost-search-input');
             if (input) {
@@ -1075,7 +1549,7 @@
                         }
                     }
                 }
-            } catch (e) {}
+            } catch (e) { }
         }, false);
 
         function escapeHtml(str) {
@@ -1124,9 +1598,9 @@
         function createMedalPanel(index) {
             const panel = document.createElement('div');
             panel.className = 'medal-panel section';
-            
+
             // Build options from config
-            const optionsHtml = (campaignConfig?.distances || []).map(d => 
+            const optionsHtml = (campaignConfig?.distances || []).map(d =>
                 `<option value="${d.value}">${d.label || d.value}</option>`
             ).join('');
 
@@ -1217,7 +1691,7 @@
                     document.getElementById('summary-medal-price').innerHTML = `<span style="text-decoration:line-through;color:var(--text-low);margin-right:6px;font-size:0.85rem;">${formatHuf(price)}</span>${formatHuf(d.firstMedalPrice)}`;
                 } else {
                     document.getElementById('summary-medal-label').innerHTML = `Kihívás Érem × ${qty} db <div style="font-size:0.75rem;color:var(--accent);font-weight:700;margin-top:2px;">${badgeText}</div>`;
-                    document.getElementById('summary-medal-price').innerHTML = `${formatHuf(d.firstMedalPrice)} <span style="font-size:0.75rem;color:var(--text-mid);">(Saját)</span> + ${formatHuf(d.otherMedalsPrice)} <span style="font-size:0.75rem;color:var(--text-mid);">(${qty-1} db)</span>`;
+                    document.getElementById('summary-medal-price').innerHTML = `${formatHuf(d.firstMedalPrice)} <span style="font-size:0.75rem;color:var(--text-mid);">(Saját)</span> + ${formatHuf(d.otherMedalsPrice)} <span style="font-size:0.75rem;color:var(--text-mid);">(${qty - 1} db)</span>`;
                 }
             } else {
                 document.getElementById('summary-medal-label').textContent = `Kihívás Érem × ${qty} db`;
@@ -1325,7 +1799,7 @@
                         nameErrEl.classList.add('visible');
                     }
                     hasError = true;
-                    if (!firstFailingField) firstFailingField = `medal_name_${i+1}`;
+                    if (!firstFailingField) firstFailingField = `medal_name_${i + 1}`;
                 } else {
                     medals.push({ name: mName, distance: mDist });
                 }
