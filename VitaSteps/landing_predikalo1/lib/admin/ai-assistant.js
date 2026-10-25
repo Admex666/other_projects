@@ -276,27 +276,138 @@ async function buildLiveSnapshotContext() {
             getCachedOrFetch('marketing:all:0', 60000, () => toolGetMarketingAndCreativesData({ campaign_filter: 'all', days: 0 }))
         ]);
 
-        const snapshot = {
-            campaigns_and_stock: dbOverview.campaigns,
-            orders_summary: dbOverview.orders_summary,
-            feedbacks_summary: dbOverview.feedbacks_summary,
-            leads_summary: dbOverview.leads_summary,
-            pending_proofs_waiting_approval: dbOverview.pending_proofs_waiting_approval,
-            waiting_to_pack_and_ship_list: dbOverview.waiting_to_pack_and_ship_list,
+        const compactSnapshot = {
+            campaigns: dbOverview.campaigns,
+            orders: dbOverview.orders_summary,
+            feedbacks: {
+                count: dbOverview.feedbacks_summary?.total_feedbacks,
+                avg_medal: dbOverview.feedbacks_summary?.avg_medal_rating_out_of_5,
+                avg_nps: dbOverview.feedbacks_summary?.avg_nps_out_of_10,
+                next_regions: dbOverview.feedbacks_summary?.next_region_votes
+            },
+            leads: dbOverview.leads_summary,
+            pending_approvals: (dbOverview.pending_proofs_waiting_approval || []).map(r => ({
+                name: r.name, campaign: r.campaign, serial: r.serial_number, dist: r.distance
+            })),
+            waiting_to_ship: (dbOverview.waiting_to_pack_and_ship_list || []).map(r => ({
+                name: r.name, campaign: r.campaign, serial: r.serial_number, method: r.method, target: r.parcel_or_address
+            })),
             balance_sheet: finData.balance_sheet,
-            campaign_pnl_summary: finData.campaign_pnl_summary,
-            revolut_category_totals: finData.revolut_category_totals,
-            marketing_summary: mktData.summary,
-            top_meta_creatives: (mktData.creatives_ranked_by_spend || []).slice(0, 8)
+            pnl: finData.campaign_pnl_summary,
+            marketing: mktData.summary,
+            top_creatives: (mktData.creatives_ranked_by_spend || []).slice(0, 5).map(c => ({
+                ad: c.ad_name, camp: c.campaign_name, spend_gross: c.spend_with_27pct_vat_huf, purchases: c.purchases, rev: c.revenue_huf, cpa: c.cpa_gross_huf, roas: c.roas_net
+            }))
         };
 
-        return '\n\n### ⚡ ÉLŐ ELŐTÖLTÖTT ADATBÁZIS, PÉNZÜGYI ÉS MARKETING PILLANATKÉP (MÁR BETÖLTVE):\n' +
-            'FONTOS SZABÁLY A SEBESSÉGÉRT: Az alábbi JSON tartalmazza a legfrissebb élő Supabase, Revolut, Stripe és Meta Ads KPI-okat, a jóváhagyásra és csomagolásra várók teljes listáját, a mérleget, a P&L-t és a top kreatívokat!\n' +
-            'Ha a felhasználó kérdése megválaszolható ebből az előtöltött pillanatképből, **NE HÍVJ FELESLEGESEN TOOLT**, hanem válaszolj AZONNAL ebből az adatból! Toolt (`search_and_read_emails`, `query_supabase_table`, `read_knowledge_graph` stb.) CSAK AKKOR hívj, ha emaileket kérdeznek, tudásbázis fájlt kérnek, vagy olyan egyedi sorokra van szükség, amik nincsenek benne ebben a pillanatképben!\n```json\n' +
-            JSON.stringify(snapshot) + '\n```';
+        return '\n\n### ⚡ ÉLŐ ELŐTÖLTÖTT KPI PILLANATKÉP:\n' +
+            'Ha a kérdés megválaszolható az alábbi élő adatokból, NE hívj toolt, hanem válaszolj AZONNAL! Toolt csak emailekhez, egyedi táblakereséshez vagy Knowledge Graph olvasáshoz hívj:\n' +
+            JSON.stringify(compactSnapshot);
     } catch (e) {
         return '';
     }
+}
+
+// Helper: Call Gemini API with automatic retry and fallback cascade on 503/429 High Demand
+let cachedAvailableModels = null;
+async function getFallbackCandidates(primaryModel, apiKey) {
+    const defaults = [
+        primaryModel,
+        'gemini-3.8-flash-lite',
+        'gemini-3.8-flash',
+        'gemini-3.8-pro',
+        'gemini-2.5-flash-lite',
+        'gemini-2.0-flash'
+    ];
+    try {
+        if (!cachedAvailableModels) {
+            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`);
+            if (r.ok) {
+                const d = await r.json();
+                cachedAvailableModels = (d.models || [])
+                    .filter(m => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes('generateContent'))
+                    .map(m => m.name.replace(/^models\//, ''))
+                    .filter(n => n.startsWith('gemini-') && !n.includes('tts') && !n.includes('image') && !n.includes('embedding') && !n.includes('vision'));
+            }
+        }
+        if (cachedAvailableModels && cachedAvailableModels.length > 0) {
+            for (const m of cachedAvailableModels) {
+                if (!defaults.includes(m)) defaults.push(m);
+            }
+        }
+    } catch (e) {}
+    return [...new Set(defaults)];
+}
+
+async function callGeminiWithResilience(selectedModel, apiKey, payload) {
+    const candidates = await getFallbackCandidates(selectedModel, apiKey);
+    let lastRes = null;
+    let lastData = null;
+    let usedModel = selectedModel;
+
+    // Try primary model first (up to 2 attempts if high demand), then cascade through fallback models
+    const attemptPlan = [
+        { model: selectedModel, delayMs: 0 },
+        { model: selectedModel, delayMs: 900 },
+        ...candidates.filter(m => m !== selectedModel).slice(0, 4).map(m => ({ model: m, delayMs: 300 }))
+    ];
+
+    for (const step of attemptPlan) {
+        if (step.delayMs > 0) {
+            await new Promise(r => setTimeout(r, step.delayMs));
+        }
+        usedModel = step.model;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${usedModel}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+        // Clone payload and remove thinkingConfig if a fallback model doesn't support it
+        const bodyObj = JSON.parse(JSON.stringify(payload));
+        if (usedModel.includes('lite') && bodyObj.generationConfig?.thinkingConfig) {
+            delete bodyObj.generationConfig.thinkingConfig;
+        }
+
+        let res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bodyObj)
+        });
+        let data = await res.json();
+
+        // Retry without thinkingConfig if model complains about thinkingConfig
+        if (!res.ok && bodyObj.generationConfig?.thinkingConfig && (data?.error?.message || '').toLowerCase().includes('thinking')) {
+            delete bodyObj.generationConfig.thinkingConfig;
+            res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bodyObj)
+            });
+            data = await res.json();
+        }
+
+        if (res.ok) {
+            return { res, data, usedModel };
+        }
+
+        lastRes = res;
+        lastData = data;
+        const errMsg = (data?.error?.message || '').toLowerCase();
+        const isTransientOrModelError =
+            res.status === 503 ||
+            res.status === 429 ||
+            res.status === 404 ||
+            errMsg.includes('high demand') ||
+            errMsg.includes('overloaded') ||
+            errMsg.includes('try again') ||
+            errMsg.includes('resource exhausted') ||
+            errMsg.includes('no longer available') ||
+            errMsg.includes('not found') ||
+            errMsg.includes('not supported');
+
+        if (!isTransientOrModelError) {
+            break; // Invalid API key or malformed request -> stop immediately
+        }
+    }
+
+    return { res: lastRes, data: lastData, usedModel };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1115,6 +1226,7 @@ async function handleAiAssistant(req, res) {
             },
             models: [
                 { id: 'gemini-3.8-flash', label: '⚡ Gemini 3.8 Flash (Gyors & Napi elemzés)' },
+                { id: 'gemini-3.8-flash-lite', label: '🚀 Gemini 3.8 Flash-Lite (Ultragyors, túlterhelés-mentes)' },
                 { id: 'gemini-3.8-pro', label: '🧠 Gemini 3.8 Pro (Mély stratégiai & P&L elemzés)' }
             ]
         });
@@ -1147,7 +1259,7 @@ async function handleAiAssistant(req, res) {
         'gemini-2.5-pro': 'gemini-3.8-pro'
     };
     const normalizedModel = MODEL_MAP[model] || model;
-    let selectedModel = ['gemini-3.8-flash', 'gemini-3.8-pro'].includes(normalizedModel)
+    let selectedModel = ['gemini-3.8-flash', 'gemini-3.8-flash-lite', 'gemini-3.8-pro'].includes(normalizedModel)
         ? normalizedModel
         : 'gemini-3.8-flash';
 
@@ -1177,12 +1289,11 @@ async function handleAiAssistant(req, res) {
         let useThinkingConfig = true;
 
         for (let turn = 0; turn < MAX_TURNS; turn++) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${encodeURIComponent(apiKey)}`;
             const genConfig = {
                 temperature: 0.2,
                 maxOutputTokens: 4096
             };
-            if (useThinkingConfig) {
+            if (useThinkingConfig && !selectedModel.includes('lite')) {
                 genConfig.thinkingConfig = {
                     thinkingBudget: selectedModel.includes('flash') ? 256 : 1024
                 };
@@ -1197,40 +1308,8 @@ async function handleAiAssistant(req, res) {
                 generationConfig: genConfig
             };
 
-            let geminiRes = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            let geminiData = await geminiRes.json();
-
-            // If thinkingConfig is rejected by a specific model version, retry without thinkingConfig
-            if (!geminiRes.ok && useThinkingConfig && (geminiData?.error?.message || '').toLowerCase().includes('thinking')) {
-                useThinkingConfig = false;
-                delete payload.generationConfig.thinkingConfig;
-                geminiRes = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                geminiData = await geminiRes.json();
-            }
-
-            // Auto-fallback to gemini-3.8-flash if another model is unavailable
-            if (!geminiRes.ok && selectedModel !== 'gemini-3.8-flash') {
-                const rawErr = (geminiData?.error?.message || '').toLowerCase();
-                if (rawErr.includes('not found') || rawErr.includes('no longer available') || rawErr.includes('not supported') || geminiRes.status === 404) {
-                    selectedModel = 'gemini-3.8-flash';
-                    const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${encodeURIComponent(apiKey)}`;
-                    geminiRes = await fetch(fallbackUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    geminiData = await geminiRes.json();
-                }
-            }
+            const { res: geminiRes, data: geminiData, usedModel } = await callGeminiWithResilience(selectedModel, apiKey, payload);
+            selectedModel = usedModel;
 
             if (!geminiRes.ok) {
                 const errMsg = geminiData?.error?.message || `Gemini API hiba (${geminiRes.status})`;
