@@ -7,6 +7,7 @@ const { handleApproveActions } = require('../lib/admin/approve');
 const { handleFoxpostCreation } = require('../lib/admin/foxpost');
 const { handleGetLeadsData, handleSendLeadsEmail } = require('../lib/admin/leads-email');
 const { handleFinanceData, handleRevolutUpload, getCreativeCsvData } = require('../lib/admin/finance');
+const { handleAiAssistant } = require('../lib/admin/ai-assistant');
 
 const supabase = createClient(
     process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co',
@@ -33,6 +34,11 @@ module.exports = async (req, res) => {
     }
 
     try {
+        // ── 0. AI ASSISTANT (GEMINI) ─────────────────────────────────────────
+        if (type === 'ai_chat' || action === 'ai_chat' || type === 'ai_status' || action === 'ai_status') {
+            return await handleAiAssistant(req, res);
+        }
+
         // ── 1. LEADS EMAIL ACTIONS ───────────────────────────────────────────
         if (type === 'leads_email' || action === 'leads_email') {
             if (req.method === 'GET') {

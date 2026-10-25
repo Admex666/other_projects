@@ -11,6 +11,8 @@ code:
   - landing_predikalo1/lib/admin/foxpost.js
   - landing_predikalo1/lib/admin/leads-email.js
   - landing_predikalo1/lib/admin/finance.js
+  - landing_predikalo1/lib/admin/ai-assistant.js
+  - landing_predikalo1/js/admin-ai.js
 related:
   - "[[proof-verification|Proof Verification]]"
   - "[[order-fulfillment|Order Fulfillment]]"
@@ -83,3 +85,15 @@ A pénzügyi modul 3 önálló, mélyreható al-nézetre van bontva:
 * **🧾 Nyers Tranzakciók (3. al-fül):**
   - Egységesített főkönyv (Revolut Pro banki kivonatok + Stripe kifizetések és vevői tranzakciók).
   - Időszak (`Összes`, `30 nap`, `7 nap`, havi bontás), számla (`Revolut`, `Stripe`) és kategória szerinti szűrés, szabadszavas tranzakció-keresővel.
+
+
+### 7. 🤖 AI Asszisztens (Gemini 3.8 Pro & Flash)
+A VitaSteps Admin AI Asszisztens (`lib/admin/ai-assistant.js`, `js/admin-ai.js`) közvetlen, több-lépéses **Gemini Function Calling** kapcsolaton keresztül valós idejű elemzési és lekérdezési hozzáférést biztosít a teljes ökoszisztémához (önálló **🤖 AI Asszisztens** fülön és bármely más fülről megnyitható jobb alsó lebegő **Slide-Over Drawer** ablakban):
+
+* **6 Integrált Tool (Függvényhívás):**
+  1. `get_database_overview`: Valós idejű készlet-, nevezés-, igazolás-, Foxpost csomagolási-, visszajelzés- (NPS) és lead-összefoglaló kampányonként (`Nagy-Kevély` vs. `Prédikálószék`).
+  2. `query_supabase_table`: Rugalmas, csak-olvasható lekérdezés bármelyik [[supabase|Supabase]] táblán (`runners`, `runs`, `orders`, `shipments`, `feedbacks`, `leads`, `meta_daily_metrics`, `analytics_sessions`, `analytics_visitors`, `analytics_events`).
+  3. `get_financial_and_cashflow_data`: Élő [[stripe|Stripe]] egyenleg, kifizetések, [[revolut|Revolut Pro]] számlatörténet kategória-bontással, raktárkészlet-értékelés és kampány-szintű P&L.
+  4. `get_marketing_and_creatives_data`: [[meta-ads|Meta Ads]] kreatívok (`meta_kreativ_napi_riport.csv` és `meta_daily_metrics`) CPA, ROAS, CTR és napi költés elemzése.
+  5. `read_knowledge_graph`: A teljes `knowledge/` tudásgráf és `config/campaigns.json` beolvasása és keresése.
+  6. `search_and_read_emails`: Élő IMAP kapcsolat a `vitasteps.team@gmail.com` (és opcionális másodlagos) Gmail postafiókhoz beérkezett ügyféllevelek, [[foxpost|Foxpost]] és [[szamlazz-hu|Számlázz.hu]] értesítések keresésére és olvasására.

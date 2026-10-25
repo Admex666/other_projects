@@ -135,19 +135,22 @@ function setFilter(filter) {
     const isFin = filter === 'finance';
     const isFb = filter === 'feedbacks';
     const isEmails = filter === 'emails';
+    const isAi = filter === 'ai';
     const proofListEl = document.getElementById('proof-list');
     const mktEl = document.getElementById('section-marketing');
     const anEl = document.getElementById('section-analytics');
     const finEl = document.getElementById('section-finance');
     const fbEl = document.getElementById('section-feedbacks');
     const emailsEl = document.getElementById('section-emails');
+    const aiEl = document.getElementById('section-ai');
 
-    if (proofListEl) proofListEl.style.display = (isMkt || isAn || isFin || isFb || isEmails) ? 'none' : '';
+    if (proofListEl) proofListEl.style.display = (isMkt || isAn || isFin || isFb || isEmails || isAi) ? 'none' : '';
     if (mktEl) mktEl.style.display = isMkt ? 'block' : 'none';
     if (anEl) anEl.style.display = isAn ? 'block' : 'none';
     if (finEl) finEl.style.display = isFin ? 'block' : 'none';
     if (fbEl) fbEl.style.display = isFb ? 'block' : 'none';
     if (emailsEl) emailsEl.style.display = isEmails ? 'block' : 'none';
+    if (aiEl) aiEl.style.display = isAi ? 'block' : 'none';
 
     if (isFin) {
         loadFinance();
@@ -159,6 +162,8 @@ function setFilter(filter) {
         loadFeedbacks();
     } else if (isEmails) {
         loadEmails();
+    } else if (isAi) {
+        if (typeof loadAiAssistantTab === 'function') loadAiAssistantTab();
     } else {
         renderList();
     }

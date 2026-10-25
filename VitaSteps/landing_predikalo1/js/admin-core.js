@@ -140,11 +140,17 @@ function logout() {
     document.getElementById('screen-dashboard').style.display = 'none';
     document.getElementById('screen-login').style.display = 'block';
     document.getElementById('admin-password').value = '';
+    const fab = document.getElementById('ai-floating-fab');
+    if (fab) fab.style.display = 'none';
+    if (typeof toggleAiDrawer === 'function') toggleAiDrawer(false);
 }
 
 function showApp() {
     document.getElementById('screen-login').style.display = 'none';
     document.getElementById('screen-dashboard').style.display = 'block';
+    const fab = document.getElementById('ai-floating-fab');
+    if (fab) fab.style.display = 'flex';
+    if (typeof loadAiAssistantStatus === 'function') loadAiAssistantStatus();
 }
 
 // Data Fetching
