@@ -55,7 +55,7 @@ if (leadIdArg) {
 const supabaseUrl = process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;
 
-if (!supabaseKey) {
+if (!supabaseKey && require.main === module) {
     console.warn('⚠️ Figyelem: SUPABASE_SERVICE_ROLE_KEY nincs beállítva a környezeti változókban!');
 }
 
@@ -63,7 +63,7 @@ const supabase = createClient(supabaseUrl, supabaseKey || 'placeholder-key');
 
 // ── NODEMAILER TRANSPORTER (SSL Port 465) ────────────────────────────────────
 const smtpPassword = process.env.SMTP_PASSWORD;
-if (!smtpPassword) {
+if (!smtpPassword && require.main === module) {
     console.warn('⚠️ Figyelem: SMTP_PASSWORD nincs beállítva a környezeti változókban!');
 }
 
@@ -80,6 +80,7 @@ const transporter = nodemailer.createTransport({
 // ── SEQUENCE DEFINITION (V1) ─────────────────────────────────────────────────
 const SEQUENCE_NAME = 'lead_nurture_v1';
 const BASE_URL = 'https://vitastepsss.vercel.app';
+const CUTOFF_DATE = new Date('2026-10-01T00:00:00Z');
 
 const ALL_SEQUENCE_STEPS = [
     {
@@ -141,19 +142,113 @@ const ALL_SEQUENCE_STEPS = [
 // Az automata sequence a Day 1-től indul (a Day 0-t a capture-lead.js küldi regisztrációkor)
 const SEQUENCE_STEPS = ALL_SEQUENCE_STEPS.filter(s => s.step > 0);
 
+// ── MAGYAR KERESZTNÉV FELISMERŐ SZÓTÁR ────────────────────────────────────────
+const COMMON_HUNGARIAN_GIVEN_NAMES = new Set([
+    'abigél', 'adél', 'adrián', 'adrienn', 'ágnes', 'ágoston', 'ákos', 'alajos', 'albert', 'alex', 'alexandra', 'alíz',
+    'amália', 'ambrus', 'anastasia', 'anasztázia', 'andor', 'andrás', 'andrea', 'anett', 'angela', 'angyalka', 'anikó',
+    'aniko', 'anita', 'anna', 'annamária', 'annamaria', 'antal', 'antónia', 'áron', 'árpád', 'attila', 'aurél',
+    'balázs', 'balazs', 'bálint', 'balint', 'barbara', 'barbi', 'barna', 'barnabás', 'barnabas', 'béla', 'bela',
+    'bence', 'benedek', 'benjámin', 'benjamin', 'bernadett', 'berni', 'bertalan', 'bettina', 'bianka', 'biborka',
+    'bíborka', 'blanka', 'boglárka', 'boglarka', 'bogi', 'boldizsár', 'borbála', 'borbala', 'boróka', 'botond', 'brigitta',
+    'csaba', 'csilla', 'csongor',
+    'dalma', 'dániel', 'daniel', 'dani', 'dávid', 'david', 'debóra', 'dénes', 'denes', 'dezső', 'dezso', 'diána', 'diana',
+    'dominik', 'dominika', 'donát', 'donat', 'dóra', 'dora', 'dorina', 'dorottya', 'dorka',
+    'edina', 'edit', 'eduárd', 'edvárd', 'elek', 'elemér', 'eleonóra', 'eleonora', 'eliza', 'emese', 'emil', 'emília',
+    'emilia', 'emma', 'emőke', 'emoke', 'endre', 'enikő', 'eniko', 'erik', 'erika', 'ernő', 'erno', 'erzsébet', 'erzsebet',
+    'eszter', 'etelka', 'éva', 'eva', 'evelin',
+    'fanni', 'ferenc', 'flóra', 'flora', 'flórián', 'franciska', 'fruzsina',
+    'gábor', 'gabor', 'gabriella', 'gabi', 'gaspar', 'gáspár', 'gellért', 'gergely', 'gergő', 'gergo', 'géza', 'geza',
+    'gizella', 'gréta', 'greta', 'gyöngyi', 'gyongyi', 'györgy', 'gyorgy', 'györgyi', 'győző', 'gyozo', 'gyula',
+    'hajnalka', 'hajni', 'hanna', 'hedvig', 'helga', 'henrietta', 'henrik', 'hilda', 'hubert', 'hunor',
+    'ibolya', 'ildikó', 'ildiko', 'ilona', 'imre', 'irén', 'iren', 'istván', 'istvan', 'iván', 'ivan', 'izabella',
+    'jakab', 'jános', 'janos', 'jázmin', 'jazmin', 'jenő', 'jeno', 'jolán', 'jolan', 'jónás', 'józsef', 'jozsef',
+    'judit', 'júlia', 'julia', 'julianna', 'jusztina',
+    'kálmán', 'kalman', 'kamilla', 'karola', 'karolina', 'károly', 'karoly', 'kata', 'katalin', 'kati', 'kitti',
+    'klára', 'klara', 'klaudia', 'klementina', 'kolos', 'konrád', 'kornél', 'kornel', 'kornélia', 'kornelia',
+    'kristóf', 'kristof', 'krisztián', 'krisztian', 'krisztina', 'kriszta', 'ksénia',
+    'lajos', 'lászló', 'laszlo', 'laura', 'leila', 'levente', 'lia', 'lídia', 'lidia', 'lili', 'liliána', 'liliana',
+    'lilla', 'lívia', 'livia', 'lőrinc', 'lorinc', 'luca', 'lujza', 'lukács',
+    'magdolna', 'magdi', 'maja', 'marcell', 'margit', 'margó', 'mária', 'maria', 'mariann', 'marianna', 'marika',
+    'márió', 'márk', 'mark', 'márta', 'marta', 'márti', 'márton', 'marton', 'máté', 'mate', 'mátyás', 'matyas',
+    'melinda', 'melissza', 'mihály', 'mihaly', 'miklós', 'miklos', 'milán', 'milan', 'mira', 'mirjam', 'mónika', 'monika',
+    'nándor', 'nandor', 'natália', 'natalia', 'natasa', 'nelli', 'nikolett', 'nikoletta', 'niki', 'noémi', 'noemi',
+    'nóra', 'nora', 'norbert', 'norbi',
+    'olga', 'olivér', 'oliver', 'orsolya', 'orsi', 'oszkár', 'oszkar', 'ottó', 'otto',
+    'pál', 'pal', 'péter', 'peter', 'peti', 'petra', 'piroska',
+    'ráhel', 'ramóna', 'ramona', 'rebeka', 'réka', 'reka', 'renáta', 'renata', 'renátó', 'richárd', 'richard',
+    'rita', 'róbert', 'robert', 'roland', 'róza', 'roza', 'rozália', 'rozalia', 'rudolf',
+    'sándor', 'sandor', 'sára', 'sara', 'sári', 'sarolta', 'sebestyén', 'simon', 'szabolcs', 'szandra', 'szilárd',
+    'szilard', 'szilveszter', 'szilvia', 'szimonetta', 'szonja', 'szófia',
+    'tamás', 'tamas', 'tímea', 'timea', 'timi', 'tibor', 'tivadar', 'tünde', 'tunde',
+    'ulrik',
+    'valéria', 'valeria', 'vanda', 'vanessza', 'veronika', 'vera', 'viktor', 'viktória', 'viktoria', 'viki',
+    'vilmos', 'vince', 'virág', 'virag', 'vivien',
+    'zalán', 'zalan', 'zita', 'zoé', 'zoe', 'zoltán', 'zoltan', 'zoli', 'zsolt', 'zsolti', 'zsófia', 'zsofia',
+    'zsófi', 'zsofi', 'zsombor', 'zsuzsanna', 'zsuzsa', 'zsuzsi'
+]);
+
+const AMBIGUOUS_SURNAME_GIVEN_NAMES = new Set([
+    'ádám', 'adam', 'bálint', 'balint', 'barna', 'benedek', 'csonka', 'deák', 'fábián', 'fabian', 'faragó',
+    'fazekas', 'fehér', 'fekete', 'fodor', 'forró', 'fülöp', 'fulop', 'gál', 'gal', 'gáspár', 'gaspar',
+    'gombos', 'győri', 'hajdú', 'hajdu', 'halász', 'hegedűs', 'horváth', 'horvath', 'illés', 'illes',
+    'jakab', 'juhász', 'juhasz', 'kádár', 'kelemen', 'király', 'kiss', 'kovács', 'kovacs',
+    'kozma', 'lengyel', 'lukács', 'lukacs', 'magyar', 'máté', 'mate', 'mester', 'mezei', 'miklós', 'miklos',
+    'molnár', 'molnar', 'major', 'nagy', 'német', 'németh', 'nemeth', 'nyári', 'oláh', 'olah', 'orbán', 'orban',
+    'orosz', 'örs', 'pál', 'pal', 'pap', 'papp', 'pataki', 'péter', 'peter', 'pintér', 'pinter', 'puskás', 'puskas',
+    'rácz', 'racz', 'simon', 'sipos', 'somogyi', 'soós', 'soos', 'szabó', 'szabo', 'szalai', 'székely',
+    'szekely', 'szilágyi', 'szilagyi', 'szűcs', 'szucs', 'takács', 'takacs', 'tamás', 'tamas', 'tóth', 'toth',
+    'török', 'torok', 'urbán', 'urban', 'varga', 'vargha', 'vass', 'végh', 'vegh', 'veres', 'veress',
+    'virág', 'virag', 'vörös', 'voros'
+]);
+
+function toTitleCaseWord(word) {
+    if (!word) return '';
+    return word
+        .split('-')
+        .map(part => part ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() : '')
+        .join('-');
+}
+
 // ── HELPER FUNCTIONS ─────────────────────────────────────────────────────────
 
 function extractFirstName(fullName) {
     if (!fullName || typeof fullName !== 'string') return 'Túrázó';
     let clean = fullName.trim();
-    if (!clean || clean.includes('@')) return 'Túrázó';
-    clean = clean.replace(/^(dr\.|dr|ifj\.|ifj|id\.|id)\s+/i, '').trim();
-    const parts = clean.split(/\s+/);
+    if (!clean || clean.includes('@') || /\d/.test(clean)) return 'Túrázó';
+
+    clean = clean.replace(/^(dr\.|dr|ifj\.|ifj|id\.|id|prof\.|prof|özv\.|ozv)\s+/i, '').trim();
+    if (!clean) return 'Túrázó';
+
+    const parts = clean.split(/\s+/).filter(Boolean);
     if (parts.length === 1) {
-        return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+        return toTitleCaseWord(parts[0]);
     }
-    const firstName = parts[parts.length - 1];
-    return firstName.charAt(0).toUpperCase() + firstName.slice(1);
+
+    const lastPart = parts[parts.length - 1];
+    const firstPart = parts[0];
+    const lastLower = lastPart.toLowerCase();
+    const firstLower = firstPart.toLowerCase();
+
+    // 1. Ha az utolsó szó "-né"-re végződik (pl. "MIKLÓS ZOLTÁNNÉ", "Belák Udóné")
+    if (/né$/i.test(lastLower)) {
+        if (COMMON_HUNGARIAN_GIVEN_NAMES.has(firstLower) && !AMBIGUOUS_SURNAME_GIVEN_NAMES.has(firstLower)) {
+            return toTitleCaseWord(firstPart);
+        }
+        return parts.map(toTitleCaseWord).join(' ');
+    }
+
+    // 2. Magyar sorrend: az utolsó szó ismert keresztnév (pl. "Szabó Viktória", "Mirczik Ádám", "Ádám Katalin")
+    if (COMMON_HUNGARIAN_GIVEN_NAMES.has(lastLower)) {
+        return toTitleCaseWord(lastPart);
+    }
+
+    // 3. Nyugati sorrend: az első szó ismert keresztnév (pl. "Csaba Tóth", "Annamaria Vincze", "Irén Vizi-Székely", "Anita Babikne Gyovai")
+    if (COMMON_HUNGARIAN_GIVEN_NAMES.has(firstLower)) {
+        return toTitleCaseWord(firstPart);
+    }
+
+    // Alapértelmezett magyar sorrend
+    return toTitleCaseWord(lastPart);
 }
 
 function isBudapestDaytime() {
@@ -177,6 +272,255 @@ function loadTemplate(templateFile) {
         throw new Error(`Nem található az email sablon fájl: ${templatePath}`);
     }
     return fs.readFileSync(templatePath, 'utf8');
+}
+
+function loadLegacySentEmailsSet() {
+    const set = new Set();
+    try {
+        const localPath = path.join(__dirname, '../config/sent_leads_emails.json');
+        if (fs.existsSync(localPath)) {
+            const data = JSON.parse(fs.readFileSync(localPath, 'utf8'));
+            Object.values(data || {}).forEach(arr => {
+                if (Array.isArray(arr)) {
+                    arr.forEach(e => {
+                        if (e) set.add(String(e).toLowerCase().trim());
+                    });
+                }
+            });
+        }
+    } catch (e) {
+        // Ignore
+    }
+    return set;
+}
+
+/**
+ * Deduplikálja és kiértékeli az összes lead sort e-mail cím szerint.
+ * Garantálja:
+ *  - Egy e-mail cím SOHA nem kaphat duplikált levelet több lead sor miatt.
+ *  - Ha egy e-mail bármely sora leiratkozott vagy vásárolt, az egész e-mail kizárásra kerül.
+ *  - Ha egy e-mail legelső regisztrációja 2026-10-01 előtti (vagy szerepel a legacy sent listán), kizárásra kerül.
+ *  - Ha a `leads.last_sequence_step` oszlop hiányzik a DB-ből, az `analytics_events` (`lead_email_sent`) alapján is rekonstruálja az állapotot.
+ */
+function evaluateUniqueLeadsForNurture({
+    leads = [],
+    convertedEmailSet = new Set(),
+    legacySentEmailSet = new Set(),
+    emailEvents = [],
+    now = new Date()
+}) {
+    // 1. Események indexelése lead_id és email alapján
+    const maxStepByLeadId = new Map();
+    const maxStepByEmail = new Map();
+    const lastSentAtByLeadId = new Map();
+    const lastSentAtByEmail = new Map();
+    const unsubscribedByLeadId = new Set();
+    const unsubscribedByEmail = new Set();
+
+    (emailEvents || []).forEach(ev => {
+        const evName = ev.event_name;
+        const data = ev.event_data || {};
+        const lid = data.lead_id ? String(data.lead_id).trim() : null;
+        const em = data.email ? String(data.email).toLowerCase().trim() : null;
+        const ts = ev.created_at ? new Date(ev.created_at) : null;
+
+        if (evName === 'lead_unsubscribed') {
+            if (lid) unsubscribedByLeadId.add(lid);
+            if (em) unsubscribedByEmail.add(em);
+        } else if (evName === 'lead_email_sent') {
+            let step = typeof data.step === 'number' ? data.step : parseInt(data.step, 10);
+            if (isNaN(step) && data.email_id) {
+                const m = String(data.email_id).match(/day(\d+)/i);
+                if (m) step = parseInt(m[1], 10);
+            }
+            if (!isNaN(step)) {
+                if (lid) {
+                    const prev = maxStepByLeadId.has(lid) ? maxStepByLeadId.get(lid) : -1;
+                    if (step > prev) maxStepByLeadId.set(lid, step);
+                }
+                if (em) {
+                    const prev = maxStepByEmail.has(em) ? maxStepByEmail.get(em) : -1;
+                    if (step > prev) maxStepByEmail.set(em, step);
+                }
+            }
+            if (ts && !isNaN(ts.getTime())) {
+                if (lid) {
+                    const prevTs = lastSentAtByLeadId.get(lid);
+                    if (!prevTs || ts > prevTs) lastSentAtByLeadId.set(lid, ts);
+                }
+                if (em) {
+                    const prevTs = lastSentAtByEmail.get(em);
+                    if (!prevTs || ts > prevTs) lastSentAtByEmail.set(em, ts);
+                }
+            }
+        }
+    });
+
+    // 2. Csoportosítás egyedi e-mail cím szerint
+    const byEmail = new Map();
+    let totalRows = 0;
+
+    (leads || []).forEach(lead => {
+        totalRows++;
+        const email = (lead.email || '').toLowerCase().trim();
+        if (!email || !email.includes('@')) return;
+        if (!byEmail.has(email)) {
+            byEmail.set(email, []);
+        }
+        byEmail.get(email).push(lead);
+    });
+
+    let skippedLegacyCount = 0;
+    let skippedConvertedCount = 0;
+    let skippedUnsubscribedCount = 0;
+    let skippedCompletedCount = 0;
+    let skippedTooSoonCount = 0;
+    let skippedNotYetDueCount = 0;
+    const eligibleItems = [];
+
+    for (const [email, rows] of byEmail.entries()) {
+        // Időrendbe rendezés (legkorábbi elöl)
+        rows.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        const earliestRow = rows[0];
+        const latestRow = rows[rows.length - 1];
+
+        // Legjobb név kiválasztása a sorok közül
+        let bestRawName = '';
+        for (const r of rows) {
+            const n = (r.name || '').trim();
+            if (n && !n.includes('@') && !/\d/.test(n)) {
+                bestRawName = n;
+                break;
+            }
+        }
+        if (!bestRawName) {
+            bestRawName = (earliestRow.name || '').trim();
+        }
+
+        // B) Kizárás: Leiratkozottak (ha BÁRMELYIK sor vagy event leiratkozott) — legmagasabb prioritás
+        const isUnsubscribed = rows.some(r =>
+            r.unsubscribed === true ||
+            r.source === 'unsubscribed' ||
+            (r.campaign && r.campaign.toLowerCase() === 'unsubscribed') ||
+            unsubscribedByLeadId.has(String(r.id))
+        ) || unsubscribedByEmail.has(email);
+
+        if (isUnsubscribed) {
+            skippedUnsubscribedCount++;
+            continue;
+        }
+
+        // C) Kizárás: Vásárolt (konvertált) leadek (ha BÁRMELYIK sor konvertált, vagy szerepel a runners/orders táblában)
+        const isConverted = rows.some(r => r.converted === true) || convertedEmailSet.has(email);
+        if (isConverted) {
+            skippedConvertedCount++;
+            continue;
+        }
+
+        // A) Szigorú Legacy szabály: 2026. október 1. előtt keletkezett leadek vagy a szeptemberi kampány címzettjei NEM kaphatnak új levelet!
+        const earliestCreatedAt = new Date(earliestRow.created_at);
+        const isLegacy = earliestCreatedAt < CUTOFF_DATE || legacySentEmailSet.has(email);
+        if (isLegacy) {
+            skippedLegacyCount++;
+            continue;
+        }
+
+        // D) Sequence állapot meghatározása (DB oszlopok ÉS analytics_events uniója)
+        const sequenceStartedAt = new Date(earliestRow.sequence_started_at || earliestRow.created_at);
+
+        let lastStep = 0;
+        for (const r of rows) {
+            if (r.last_sequence_step !== undefined && r.last_sequence_step !== null) {
+                const s = parseInt(r.last_sequence_step, 10);
+                if (!isNaN(s) && s > lastStep) lastStep = s;
+            }
+            if (maxStepByLeadId.has(String(r.id))) {
+                const s = maxStepByLeadId.get(String(r.id));
+                if (s > lastStep) lastStep = s;
+            }
+        }
+        if (maxStepByEmail.has(email) && maxStepByEmail.get(email) > lastStep) {
+            lastStep = maxStepByEmail.get(email);
+        }
+
+        if (lastStep >= 10) {
+            skippedCompletedCount++;
+            continue;
+        }
+
+        // Utolsó kiküldött levél ideje (DB vagy analytics_events)
+        let lastSentAt = null;
+        for (const r of rows) {
+            if (r.last_sequence_sent_at) {
+                const t = new Date(r.last_sequence_sent_at);
+                if (!isNaN(t.getTime()) && (!lastSentAt || t > lastSentAt)) {
+                    lastSentAt = t;
+                }
+            }
+            if (lastSentAtByLeadId.has(String(r.id))) {
+                const t = lastSentAtByLeadId.get(String(r.id));
+                if (!lastSentAt || t > lastSentAt) {
+                    lastSentAt = t;
+                }
+            }
+        }
+        if (lastSentAtByEmail.has(email)) {
+            const t = lastSentAtByEmail.get(email);
+            if (!lastSentAt || t > lastSentAt) {
+                lastSentAt = t;
+            }
+        }
+
+        const elapsedMs = now - sequenceStartedAt;
+        const elapsedHours = elapsedMs / (1000 * 60 * 60);
+
+        if (lastSentAt) {
+            const hoursSinceLastSent = (now - lastSentAt) / (1000 * 60 * 60);
+            if (hoursSinceLastSent < 20) {
+                skippedTooSoonCount++;
+                continue;
+            }
+        }
+
+        // E) Keressük meg a legkisebb esedékes lépést
+        const dueStep = SEQUENCE_STEPS.find(s => s.step > lastStep && elapsedHours >= s.minDelayHours);
+        if (!dueStep) {
+            skippedNotYetDueCount++;
+            continue;
+        }
+
+        const primaryLead = latestRow; // A legfrissebb UUID-t használjuk a linkekhez
+        const firstName = extractFirstName(bestRawName);
+
+        eligibleItems.push({
+            lead: {
+                ...primaryLead,
+                email,
+                name: bestRawName || primaryLead.name
+            },
+            allRowIds: rows.map(r => r.id),
+            rowCount: rows.length,
+            firstName,
+            dueStep,
+            lastStep,
+            elapsedHours,
+            sequenceStartedAt,
+            lastSentAt
+        });
+    }
+
+    return {
+        totalRows,
+        uniqueLeadCount: byEmail.size,
+        duplicateRowsRemoved: totalRows - byEmail.size,
+        skippedLegacyCount,
+        skippedConvertedCount,
+        skippedUnsubscribedCount,
+        skippedCompletedCount,
+        skippedTooSoonCount,
+        skippedNotYetDueCount,
+        eligibleItems
+    };
 }
 
 // ── DIRECT TEST SENDER TO ADMEXGM@GMAIL.COM ──────────────────────────────────
@@ -284,9 +628,9 @@ async function run() {
         return;
     }
 
-    console.log(`Összes lead az adatbázisban: ${leads ? leads.length : 0} db`);
+    console.log(`Összes lead rekord az adatbázisban: ${leads ? leads.length : 0} db`);
 
-    // 3. Konvertált vásárlók lekérése
+    // 3. Konvertált vásárlók lekérése (runners + orders)
     const { data: runnersWithRuns } = await supabase
         .from('runners')
         .select('email, runs(id)');
@@ -313,79 +657,55 @@ async function run() {
 
     console.log(`Aktív vásárlók száma adatbázisban (kizárandó leadek): ${convertedEmailSet.size} fő`);
 
-    // 4. Leadek kiértékelése
-    const CUTOFF_DATE = new Date('2026-10-01T00:00:00Z');
-    let processedCount = 0;
-    let eligibleCount = 0;
-    let skippedLegacyCount = 0;
-    let skippedConvertedCount = 0;
-    let skippedUnsubscribedCount = 0;
-    let skippedCompletedCount = 0;
-    let skippedTooSoonCount = 0;
-
-    for (const lead of leads || []) {
-        processedCount++;
-        const email = (lead.email || '').toLowerCase().trim();
-        const createdAt = new Date(lead.created_at);
-
-        // A) Szigorú Legacy szabály: 2026. október 1. előtt keletkezett leadek NEM kaphatnak új levelet!
-        if (createdAt < CUTOFF_DATE) {
-            skippedLegacyCount++;
-            continue;
+    // 3b. Korábbi szeptemberi kampány címzettek betöltése (extra védelem)
+    const legacySentEmailSet = loadLegacySentEmailsSet();
+    try {
+        const { data: sData, error: sErr } = await supabase.storage
+            .from('medals')
+            .download('campaigns/sent_leads_emails.json');
+        if (sData && !sErr) {
+            const parsed = JSON.parse(await sData.text());
+            Object.values(parsed || {}).forEach(arr => {
+                if (Array.isArray(arr)) {
+                    arr.forEach(e => {
+                        if (e) legacySentEmailSet.add(String(e).toLowerCase().trim());
+                    });
+                }
+            });
         }
+    } catch (e) {
+        // Fallback to local config already loaded
+    }
 
-        // B) Kizárás: Leiratkozottak
-        if (lead.unsubscribed === true || lead.source === 'unsubscribed' || (lead.campaign && lead.campaign.toLowerCase() === 'unsubscribed')) {
-            skippedUnsubscribedCount++;
-            continue;
-        }
+    // 3c. Analytics email események lekérése (állapot-rekonstrukcióhoz és leiratkozás ellenőrzéshez)
+    let emailEvents = [];
+    try {
+        const { data: aeData } = await supabase
+            .from('analytics_events')
+            .select('event_name, event_data, created_at')
+            .in('event_name', ['lead_email_sent', 'lead_unsubscribed']);
+        if (aeData) emailEvents = aeData;
+    } catch (aeErr) {
+        console.warn('Analytics events lekérdezési figyelmeztetés:', aeErr.message);
+    }
 
-        // C) Kizárás: Vásárolt (konvertált) leadek
-        const isConvertedInDb = lead.converted === true;
-        const isConvertedInRuns = convertedEmailSet.has(email);
+    // 4. Egyedi leadek deduplikált kiértékelése
+    const evaluation = evaluateUniqueLeadsForNurture({
+        leads: leads || [],
+        convertedEmailSet,
+        legacySentEmailSet,
+        emailEvents,
+        now: new Date()
+    });
 
-        if (isConvertedInDb || isConvertedInRuns) {
-            skippedConvertedCount++;
-            continue;
-        }
-
-        // D) Sequence állapot meghatározása
-        const sequenceStartedAt = new Date(lead.sequence_started_at || lead.created_at);
-        const lastStep = lead.last_sequence_step !== undefined && lead.last_sequence_step !== null
-            ? parseInt(lead.last_sequence_step, 10)
-            : 0;
-
-        if (lastStep >= 10) {
-            skippedCompletedCount++;
-            continue;
-        }
-
-        const now = new Date();
-        const elapsedMs = now - sequenceStartedAt;
-        const elapsedHours = elapsedMs / (1000 * 60 * 60);
-
-        if (lead.last_sequence_sent_at) {
-            const hoursSinceLastSent = (now - new Date(lead.last_sequence_sent_at)) / (1000 * 60 * 60);
-            if (hoursSinceLastSent < 20) {
-                skippedTooSoonCount++;
-                continue;
-            }
-        }
-
-        // E) Keressük meg a legkisebb esedékes lépést
-        const dueStep = SEQUENCE_STEPS.find(s => s.step > lastStep && elapsedHours >= s.minDelayHours);
-
-        if (!dueStep) {
-            continue;
-        }
-
-        eligibleCount++;
-        const firstName = extractFirstName(lead.name);
+    for (const item of evaluation.eligibleItems) {
+        const { lead, firstName, dueStep, elapsedHours, rowCount } = item;
+        const email = lead.email;
         const targetUrl = dueStep.getTargetUrl(lead.id);
         const unsubUrl = `${BASE_URL}/api/unsubscribe?lead=${encodeURIComponent(lead.id)}`;
         const kalandkonyvUrl = `${BASE_URL}/nagykevely/kalandkonyv.html?lead=${encodeURIComponent(lead.id)}&source=email&email_id=${dueStep.emailId}&sequence=${SEQUENCE_NAME}`;
 
-        console.log(`[ESEDÉKES] Lead: ${firstName} <${email}>`);
+        console.log(`[ESEDÉKES] Lead: ${firstName} <${email}>${rowCount > 1 ? ` (deduplikálva ${rowCount} sorból)` : ''}`);
         console.log(`  └─ Lépés: Day ${dueStep.day} (Step ${dueStep.step}) | Eltelt idő: ${elapsedHours.toFixed(1)} óra (min. ${dueStep.minDelayHours}h)`);
         console.log(`  └─ Tárgy: ${dueStep.subject}`);
 
@@ -424,17 +744,29 @@ async function run() {
 
     console.log(`\n============================================================`);
     console.log(` ÖSSZEGZÉS:`);
-    console.log(`   Összes vizsgált lead: ${processedCount}`);
-    console.log(`   Régi (2026-10-01 előtti) leadek kihagyva: ${skippedLegacyCount}`);
-    console.log(`   Már vásárolt (konvertált) leadek kihagyva: ${skippedConvertedCount}`);
-    console.log(`   Leiratkozott leadek kihagyva: ${skippedUnsubscribedCount}`);
-    console.log(`   Már lezárult sequence (Day 10+) kihagyva: ${skippedCompletedCount}`);
-    console.log(`   20 órán belül már levelet kapott: ${skippedTooSoonCount}`);
-    console.log(`   Most esedékes leadek: ${eligibleCount}`);
+    console.log(`   Összes lead rekord a táblában: ${evaluation.totalRows}`);
+    console.log(`   Egyedi (deduplikált) e-mail címek: ${evaluation.uniqueLeadCount} (duplikált sorok kiszűrve: ${evaluation.duplicateRowsRemoved})`);
+    console.log(`   Régi (2026-10-01 előtti / szept. kampány) kihagyva: ${evaluation.skippedLegacyCount}`);
+    console.log(`   Már vásárolt (konvertált) leadek kihagyva: ${evaluation.skippedConvertedCount}`);
+    console.log(`   Leiratkozott leadek kihagyva: ${evaluation.skippedUnsubscribedCount}`);
+    console.log(`   Már lezárult sequence (Day 10+) kihagyva: ${evaluation.skippedCompletedCount}`);
+    console.log(`   20 órán belül már levelet kapott: ${evaluation.skippedTooSoonCount}`);
+    console.log(`   Most esedékes egyedi leadek: ${evaluation.eligibleItems.length}`);
     console.log(`============================================================\n`);
 }
 
-run().catch(err => {
-    console.error('Kritikus hiba a futtatás során:', err);
-    process.exit(1);
-});
+if (require.main === module) {
+    run().catch(err => {
+        console.error('Kritikus hiba a futtatás során:', err);
+        process.exit(1);
+    });
+}
+
+module.exports = {
+    ALL_SEQUENCE_STEPS,
+    SEQUENCE_STEPS,
+    CUTOFF_DATE,
+    extractFirstName,
+    evaluateUniqueLeadsForNurture,
+    loadTemplate
+};

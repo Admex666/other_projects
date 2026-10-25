@@ -131,14 +131,14 @@ function renderUnsubscribePage(email, success = true, errorMsg = '') {
             ${email ? `<div class="email-badge">${email}</div>` : ''}
             <p style="font-size: 14px;">A jövőben nem fogsz több promóciós vagy motivációs megkeresést kapni tőlünk erre a címre.</p>
             <div style="margin-top: 24px;">
-                <a href="https://vitasteps.vercel.app" class="btn">Vissza a VitaSteps főoldalra</a>
+                <a href="https://vitastepsss.vercel.app" class="btn">Vissza a VitaSteps főoldalra</a>
             </div>
         ` : `
             <div class="icon-circle" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">❌</div>
             <h1>Hiba történt</h1>
             <p>${errorMsg || 'Nem sikerült feldolgozni a leiratkozási kérést.'}</p>
             <div style="margin-top: 24px;">
-                <a href="https://vitasteps.vercel.app" class="btn">Vissza a főoldalra</a>
+                <a href="https://vitastepsss.vercel.app" class="btn">Vissza a főoldalra</a>
             </div>
         `}
         <div class="footer-brand">© 2026 VitaSteps – Természetjáró Kihívások</div>
@@ -163,12 +163,12 @@ module.exports = async (req, res) => {
         if (resolvedLeadId) {
             const { data: leadRecord } = await supabase
                 .from('leads')
-                .select('id, email, sequence')
+                .select('id, email')
                 .eq('id', resolvedLeadId)
                 .maybeSingle();
 
             if (leadRecord && leadRecord.email) {
-                email = leadRecord.email.toLowerCase();
+                email = leadRecord.email.toLowerCase().trim();
             }
         }
 
@@ -177,23 +177,28 @@ module.exports = async (req, res) => {
             return res.status(400).send(renderUnsubscribePage('', false, 'Hiányzó azonosító vagy e-mail cím.'));
         }
 
-        // 1. Leiratkozás beállítása a leads táblában (id vagy email alapján)
-        let query = supabase.from('leads').update({ unsubscribed: true, source: 'unsubscribed' });
-        if (resolvedLeadId) {
-            query = query.eq('id', resolvedLeadId);
-        } else {
-            query = query.eq('email', email);
-        }
+        // 1. Leiratkozás beállítása a leads táblában:
+        // Ha ismert az e-mail cím, az ÖSSZES ehhez az e-mailhez tartozó lead rekordot leiratkozottra állítjuk!
+        const applyUnsubUpdate = async (payload) => {
+            if (email) {
+                return await supabase.from('leads').update(payload).ilike('email', email);
+            }
+            return await supabase.from('leads').update(payload).eq('id', resolvedLeadId);
+        };
 
-        let updateResult = await query;
+        let updateResult = await applyUnsubUpdate({ unsubscribed: true, source: 'unsubscribed' });
 
         // Ha az 'unsubscribed' oszlop még nincs a sémában, fallback source=unsubscribed
         if (updateResult.error && updateResult.error.message && updateResult.error.message.includes('column')) {
             console.warn('Fallback to source=unsubscribed for:', email || resolvedLeadId);
-            let fbQuery = supabase.from('leads').update({ source: 'unsubscribed' });
-            if (resolvedLeadId) fbQuery = fbQuery.eq('id', resolvedLeadId);
-            else fbQuery = fbQuery.eq('email', email);
-            updateResult = await fbQuery;
+            updateResult = await applyUnsubUpdate({ source: 'unsubscribed' });
+        }
+
+        // Ha lead ID is van és email alapján frissítettünk, biztonságképp az ID-ra is futtatjuk
+        if (resolvedLeadId && email) {
+            try {
+                await supabase.from('leads').update({ unsubscribed: true, source: 'unsubscribed' }).eq('id', resolvedLeadId);
+            } catch (e) {}
         }
 
         if (updateResult.error) {

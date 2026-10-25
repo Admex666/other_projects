@@ -1138,7 +1138,8 @@
         // Parse query params
         const urlParams = new URLSearchParams(window.location.search);
         const referredBy = urlParams.get('ref') || localStorage.getItem('vitasteps_ref') || '';
-        const leadId = urlParams.get('lead') || urlParams.get('lead_id') || localStorage.getItem('vt_lead_id') || '';
+        const rawLeadIdParam = urlParams.get('lead') || urlParams.get('lead_id') || localStorage.getItem('vt_lead_id') || '';
+        const leadId = (rawLeadIdParam && rawLeadIdParam !== 'true' && rawLeadIdParam !== 'false') ? rawLeadIdParam : (localStorage.getItem('vt_lead_id') || '');
         const utmCampaign = urlParams.get('utm_campaign') || localStorage.getItem('vitasteps_utm_campaign') || '';
         const utmTerm = urlParams.get('utm_term') || localStorage.getItem('vitasteps_utm_term') || '';
         const utmContent = urlParams.get('utm_content') || localStorage.getItem('vitasteps_utm_content') || '';
@@ -1965,9 +1966,25 @@
         }
 
         // ── INIT & EVENT LISTENERS ───────────────────────────
-        document.addEventListener('DOMContentLoaded', () => {
-            loadConfig();
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadConfig();
             loadFoxpostData();
+
+            // Pre-fill lead email & name if available in localStorage or URL to reduce checkout friction
+            try {
+                const prefillEmail = urlParams.get('email') || localStorage.getItem('vitasteps_lead_email') || '';
+                const emailEl = document.getElementById('cust-email');
+                if (emailEl && !emailEl.value && prefillEmail && prefillEmail.includes('@')) {
+                    emailEl.value = prefillEmail;
+                    fetchDiscountInfo();
+                }
+
+                const prefillName = urlParams.get('nev') || localStorage.getItem('vitasteps_lead_name') || '';
+                const firstMedalNameEl = document.querySelector('.medal-name');
+                if (firstMedalNameEl && !firstMedalNameEl.value && prefillName && isValidName(prefillName)) {
+                    firstMedalNameEl.value = prefillName;
+                }
+            } catch (e) {}
 
             const billingEl = document.getElementById('cust-billing-address');
             if (billingEl) {

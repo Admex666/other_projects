@@ -1510,10 +1510,14 @@
         // Parse query parameters
         const params = new URLSearchParams(window.location.search);
 
-        // Lead Gating Verification
-        const isLeadParam = params.get('lead') === 'true';
+        // Lead Gating Verification (bármilyen nem-üres ?lead= paraméter feloldja a kaput, pl. UUID is!)
+        const rawLeadParam = params.get('lead') || params.get('lead_id');
+        const isLeadParam = Boolean(rawLeadParam && rawLeadParam !== 'false' && rawLeadParam !== '0');
         if (isLeadParam) {
             localStorage.setItem('vitasteps_lead_unlocked', 'true');
+            if (rawLeadParam !== 'true') {
+                localStorage.setItem('vt_lead_id', rawLeadParam);
+            }
         }
 
         const isAuthorized = isLeadParam
@@ -1545,14 +1549,18 @@
             errDiv.style.display = 'none';
 
             try {
-                await fetch('/api/capture-lead', {
+                const res = await fetch('/api/capture-lead', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email, campaign: 'pilis' })
                 });
+                const data = await res.json().catch(() => ({}));
 
                 localStorage.setItem('vitasteps_lead_unlocked', 'true');
                 localStorage.setItem('vitasteps_lead_email', email);
+                if (data && data.lead_id) {
+                    localStorage.setItem('vt_lead_id', data.lead_id);
+                }
                 if (name) {
                     localStorage.setItem('vitasteps_lead_name', name);
                     document.getElementById('input-name').value = name;

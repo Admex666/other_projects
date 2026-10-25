@@ -6,7 +6,11 @@ status: active
 description: The 6-step automated onboarding email sequence & downstream attribution quality tracking for lead magnet subscribers.
 code:
   - landing_predikalo1/api/capture-lead.js
+  - landing_predikalo1/api/unsubscribe.js
+  - landing_predikalo1/scripts/run_lead_nurture_sequence.js
+  - landing_predikalo1/lib/admin/leads-email.js
   - landing_predikalo1/scripts/send_lead_conversion_email.js
+  - landing_predikalo1/scripts/test_lead_nurture_suite.js
   - landing_predikalo1/email_templates/lead_routes_kalandkonyv.html
   - landing_predikalo1/email_templates/lead_conversion_reminder.html
 related:
@@ -59,26 +63,28 @@ sequenceDiagram
 
 ## 3. Technikai Architektúra & Adatbázis
 
-### Adatbázis mezők (`leads` tábla)
+### Adatbázis mezők (`leads` tábla) és Event Fallback (`analytics_events`)
 * **`sequence`:** Verziózott azonosító (alapértelmezett: `'lead_nurture_v1'`).
 * **`sequence_started_at`:** A sequence indulásának ideje (alapértelmezetten a feliratkozás `created_at`).
-* **`last_sequence_step`:** Utoljára sikeresen kiküldött lépés (`0`, `1`, `3`, `5`, `7`, `10`).
+* **`last_sequence_step`:** Utoljára sikeresen kiküldött lépés (`0`, `1`, `3`, `5`, `7`, `10`). Ha a sémamigráció (`supabase_lead_nurturing_schema.sql`) még nem futott le az adatbázisban, a motor az `analytics_events` (`event_name = 'lead_email_sent'`) rekordokból is rekonstruálja a legutóbbi lépést és időbélyeget.
 * **`last_sequence_sent_at`:** Utolsó levélküldés időbélyege (garantálja a legalább 20 órás szünetet lépések között).
 
 ### Idempotencia & Biztonsági Garanciák
-1. **Régi leadek kizárása:** A 2026. október 1. előtt keletkezett (`created_at < '2026-10-01'`) leadek `last_sequence_step = 10` értéket kapnak és a kód szigorúan átugorja őket, így sosem kapnak új levelet.
-2. **Vásárlás védelem (Nurture Stop):** Minden kiküldés előtt a rendszer ellenőrzi a `leads.converted` állapotot, valamint a `runs` és `orders` táblákat. Ha a felhasználó bármikor vásárolt, a nurture azonnal és véglegesen leáll.
-3. **Leiratkozás védelem:** Ha `unsubscribed = true`, egyetlen további email sem mehet ki.
-4. **Időablak ellenőrzés:** A levelek kiküldése kizárólag nappali időablakban történik (**08:00 – 19:00 Europe/Budapest**). Éjszaka a GitHub Action nem zavarja a címzetteket.
+1. **E-mail szintű deduplikáció:** A `run_lead_nurture_sequence.js` és `capture-lead.js` kisbetűsítve, e-mail cím szerint csoportosítja a rekordokat. Ugyanaz az e-mail cím több `leads` sor esetén is legfeljebb **1** levelet kaphat, és új feliratkozáskor nem keletkezik duplikált sor vagy duplikált Day 0 levél.
+2. **Régi leadek és korábbi kampányok kizárása:** A 2026. október 1. előtt keletkezett (`created_at < '2026-10-01'`) leadek, illetve a `sent_leads_emails.json` (Supabase Storage `medals/campaigns/sent_leads_emails.json`) listában szereplő szeptemberi kampánycímzettek szigorúan ki vannak zárva az új levelekből.
+3. **Vásárlás védelem (Cross-Table Nurture Stop):** Minden kiküldés előtt a rendszer ellenőrzi a `leads.converted` állapotot, a `runners` (`runs(id)`) táblát, valamint az `orders` (`billing_email` ahol `is_test = false`) táblát. Ha bármelyikben szerepel az e-mail cím, a nurture azonnal leáll.
+4. **Leiratkozás védelem:** Az `api/unsubscribe.js` az adott e-mail címhez tartozó **összes** `leads` sort frissíti (`unsubscribed = true`), és a küldőmotor a `leads.unsubscribed`, `leads.source = 'unsubscribed'` és `analytics_events` (`lead_unsubscribed`) alapján is blokkolja a küldést.
+5. **Időablak ellenőrzés:** A levelek kiküldése kizárólag nappali időablakban történik (**08:00 – 19:00 Europe/Budapest**).
 
 ---
 
-## 4. URL Tracking & Analytics Események
+## 4. URL Tracking, Kapu Feloldás & Analytics Események
 
 Minden levél linkje kizárólag a **lead azonosítóját (UUID)** tartalmazza, sosem nyers email címet:
 ```text
 https://vitastepsss.vercel.app/nagykevely/index.html?lead={LEAD_ID}&source=email&email_id={EMAIL_ID}&sequence=lead_nurture_v1#kalandkonyv
 ```
+A `nagykevely/index.html` és `nagykevely/kalandkonyv.html` bármilyen nem-üres `?lead=` paraméterre (`true` vagy UUID) azonnal feloldja a zárolt tartalmat, elmenti a `vt_lead_id` azonosítót `localStorage`-ba, és továbbítja a `checkout.html` felé (ahol az e-mail cím és név automatikusan előtöltődik).
 
 ### Integrált Analytics Események (`analytics_events` tábla):
 * **`lead_created`:** Feliratkozáskor (`api/capture-lead.js`)
@@ -90,9 +96,11 @@ https://vitastepsss.vercel.app/nagykevely/index.html?lead={LEAD_ID}&source=email
 ---
 
 ## 5. Kapcsolódó Kódok & Fájlok
-* **`landing_predikalo1/api/capture-lead.js`:** Lead regisztráció és azonnali Day 0 küldés
-* **`landing_predikalo1/scripts/run_lead_nurture_sequence.js`:** Napi idempotens sequence küldő motor
-* **`.github/workflows/lead-nurturing.yml`:** Napi 4x ütemezett GitHub Actions feladat
+* **`landing_predikalo1/api/capture-lead.js`:** Idempotens lead regisztráció és azonnali Day 0 küldés
+* **`landing_predikalo1/scripts/run_lead_nurture_sequence.js`:** Napi idempotens, e-mail szinten deduplikált sequence küldő motor
+* **`landing_predikalo1/lib/admin/leads-email.js`:** Admin kampányküldő és statisztikai modul
+* **`landing_predikalo1/scripts/test_lead_nurture_suite.js`:** 12 pontos automatizált minőségbiztosítási tesztcsomag
+* **`.github/workflows/lead-nurturing.yml`:** Ütemezett GitHub Actions feladat
 * **`landing_predikalo1/email_templates/lead_nurture/`:** A 6 db reszponzív email sablon
 * **`landing_predikalo1/api/unsubscribe.js`:** Leiratkozás kezelő és eseménynaplózó
 * **`landing_predikalo1/supabase_lead_nurturing_schema.sql`:** DDL migrációs script

@@ -1146,6 +1146,17 @@
         const savedUtmContent = utmContent || localStorage.getItem('vitasteps_utm_content');
         const savedRef = ref || localStorage.getItem('vitasteps_ref');
 
+        const initialUrlLead = urlParams.get('lead') || urlParams.get('lead_id');
+        if (initialUrlLead && initialUrlLead !== 'false' && initialUrlLead !== '0') {
+            localStorage.setItem('vitasteps_lead_unlocked', 'true');
+            if (initialUrlLead !== 'true') {
+                localStorage.setItem('vt_lead_id', initialUrlLead);
+            }
+        }
+        const savedLeadId = (initialUrlLead && initialUrlLead !== 'true' && initialUrlLead !== 'false' && initialUrlLead !== '0')
+            ? initialUrlLead
+            : localStorage.getItem('vt_lead_id');
+
         document.querySelectorAll('a[href*="checkout.html"]').forEach(link => {
             const url = new URL(link.href, window.location.origin);
             if (savedRef) url.searchParams.set('ref', savedRef);
@@ -1153,15 +1164,24 @@
             if (savedUtmSrc) url.searchParams.set('utm_source', savedUtmSrc);
             if (savedUtmTerm) url.searchParams.set('utm_term', savedUtmTerm);
             if (savedUtmContent) url.searchParams.set('utm_content', savedUtmContent);
+            if (savedLeadId) url.searchParams.set('lead', savedLeadId);
             link.href = url.pathname + url.search;
         });
 
         // ==========================================
         // LEAD GATE & GATED CONTENT STATE MANAGEMENT
         // ==========================================
+        function getActiveLeadIdParam() {
+            const params = new URLSearchParams(window.location.search);
+            const urlLead = params.get('lead') || params.get('lead_id');
+            if (urlLead && urlLead !== 'false' && urlLead !== '0') return urlLead;
+            return localStorage.getItem('vt_lead_id') || 'true';
+        }
+
         function isLeadUnlocked() {
             const params = new URLSearchParams(window.location.search);
-            if (params.get('lead') === 'true') return true;
+            const leadParam = params.get('lead') || params.get('lead_id');
+            if (leadParam && leadParam !== 'false' && leadParam !== '0') return true;
             return localStorage.getItem('vitasteps_lead_unlocked') === 'true';
         }
 
@@ -1192,8 +1212,9 @@
                     mockupBadge.style.cursor = 'pointer';
                 }
                 if (ctaBox) {
+                    const activeLead = encodeURIComponent(getActiveLeadIdParam());
                     ctaBox.innerHTML = `
-                        <a href="/nagykevely/kalandkonyv.html?lead=true" target="_blank" style="color: var(--accent); font-weight: 700; text-decoration: underline; font-size: 0.95rem;">
+                        <a href="/nagykevely/kalandkonyv.html?lead=${activeLead}" target="_blank" style="color: var(--accent); font-weight: 700; text-decoration: underline; font-size: 0.95rem;">
                             📖 Kattints ide a digitális Kalandfüzet megnyitásához és nyomtatásához (PDF) →
                         </a>
                     `;
@@ -1243,7 +1264,8 @@
 
         function onMockupClick() {
             if (isLeadUnlocked()) {
-                window.open('/nagykevely/kalandkonyv.html?lead=true', '_blank');
+                const activeLead = encodeURIComponent(getActiveLeadIdParam());
+                window.open(`/nagykevely/kalandkonyv.html?lead=${activeLead}`, '_blank');
             } else {
                 scrollToLeadForm();
             }
@@ -1280,10 +1302,20 @@
                     throw new Error(data.error || 'Nem sikerült rögzíteni a feliratkozást.');
                 }
 
-                // Feloldás lokális állapotba mentése
+                // Feloldás és lead_id lokális állapotba mentése
                 localStorage.setItem('vitasteps_lead_unlocked', 'true');
                 localStorage.setItem('vitasteps_lead_email', email);
                 if (name) localStorage.setItem('vitasteps_lead_name', name);
+                if (data.lead_id) {
+                    localStorage.setItem('vt_lead_id', data.lead_id);
+                    document.querySelectorAll('a[href*="checkout.html"]').forEach(link => {
+                        try {
+                            const url = new URL(link.href, window.location.origin);
+                            url.searchParams.set('lead', data.lead_id);
+                            link.href = url.pathname + url.search;
+                        } catch (e) {}
+                    });
+                }
 
                 // UI azonnali átkapcsolása
                 updateLeadGateUI(true);
@@ -1309,7 +1341,7 @@
         }
 
         // Kezdő állapot inicializálása
-        if (urlParams.get('lead') === 'true') {
+        if (initialUrlLead && initialUrlLead !== 'false' && initialUrlLead !== '0') {
             localStorage.setItem('vitasteps_lead_unlocked', 'true');
         }
         if (urlParams.get('email')) {

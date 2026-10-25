@@ -49,25 +49,110 @@ const TEMPLATES = [
     }
 ];
 
+const COMMON_HUNGARIAN_GIVEN_NAMES = new Set([
+    'abigél', 'adél', 'adrián', 'adrienn', 'ágnes', 'ágoston', 'ákos', 'alajos', 'albert', 'alex', 'alexandra', 'alíz',
+    'amália', 'ambrus', 'anastasia', 'anasztázia', 'andor', 'andrás', 'andrea', 'anett', 'angela', 'angyalka', 'anikó',
+    'aniko', 'anita', 'anna', 'annamária', 'annamaria', 'antal', 'antónia', 'áron', 'árpád', 'attila', 'aurél',
+    'balázs', 'balazs', 'bálint', 'balint', 'barbara', 'barbi', 'barna', 'barnabás', 'barnabas', 'béla', 'bela',
+    'bence', 'benedek', 'benjámin', 'benjamin', 'bernadett', 'berni', 'bertalan', 'bettina', 'bianka', 'biborka',
+    'bíborka', 'blanka', 'boglárka', 'boglarka', 'bogi', 'boldizsár', 'borbála', 'borbala', 'boróka', 'botond', 'brigitta',
+    'csaba', 'csilla', 'csongor',
+    'dalma', 'dániel', 'daniel', 'dani', 'dávid', 'david', 'debóra', 'dénes', 'denes', 'dezső', 'dezso', 'diána', 'diana',
+    'dominik', 'dominika', 'donát', 'donat', 'dóra', 'dora', 'dorina', 'dorottya', 'dorka',
+    'edina', 'edit', 'eduárd', 'edvárd', 'elek', 'elemér', 'eleonóra', 'eleonora', 'eliza', 'emese', 'emil', 'emília',
+    'emilia', 'emma', 'emőke', 'emoke', 'endre', 'enikő', 'eniko', 'erik', 'erika', 'ernő', 'erno', 'erzsébet', 'erzsebet',
+    'eszter', 'etelka', 'éva', 'eva', 'evelin',
+    'fanni', 'ferenc', 'flóra', 'flora', 'flórián', 'franciska', 'fruzsina',
+    'gábor', 'gabor', 'gabriella', 'gabi', 'gaspar', 'gáspár', 'gellért', 'gergely', 'gergő', 'gergo', 'géza', 'geza',
+    'gizella', 'gréta', 'greta', 'gyöngyi', 'gyongyi', 'györgy', 'gyorgy', 'györgyi', 'győző', 'gyozo', 'gyula',
+    'hajnalka', 'hajni', 'hanna', 'hedvig', 'helga', 'henrietta', 'henrik', 'hilda', 'hubert', 'hunor',
+    'ibolya', 'ildikó', 'ildiko', 'ilona', 'imre', 'irén', 'iren', 'istván', 'istvan', 'iván', 'ivan', 'izabella',
+    'jakab', 'jános', 'janos', 'jázmin', 'jazmin', 'jenő', 'jeno', 'jolán', 'jolan', 'jónás', 'józsef', 'jozsef',
+    'judit', 'júlia', 'julia', 'julianna', 'jusztina',
+    'kálmán', 'kalman', 'kamilla', 'karola', 'karolina', 'károly', 'karoly', 'kata', 'katalin', 'kati', 'kitti',
+    'klára', 'klara', 'klaudia', 'klementina', 'kolos', 'konrád', 'kornél', 'kornel', 'kornélia', 'kornelia',
+    'kristóf', 'kristof', 'krisztián', 'krisztian', 'krisztina', 'kriszta', 'ksénia',
+    'lajos', 'lászló', 'laszlo', 'laura', 'leila', 'levente', 'lia', 'lídia', 'lidia', 'lili', 'liliána', 'liliana',
+    'lilla', 'lívia', 'livia', 'lőrinc', 'lorinc', 'luca', 'lujza', 'lukács',
+    'magdolna', 'magdi', 'maja', 'marcell', 'margit', 'margó', 'mária', 'maria', 'mariann', 'marianna', 'marika',
+    'márió', 'márk', 'mark', 'márta', 'marta', 'márti', 'márton', 'marton', 'máté', 'mate', 'mátyás', 'matyas',
+    'melinda', 'melissza', 'mihály', 'mihaly', 'miklós', 'miklos', 'milán', 'milan', 'mira', 'mirjam', 'mónika', 'monika',
+    'nándor', 'nandor', 'natália', 'natalia', 'natasa', 'nelli', 'nikolett', 'nikoletta', 'niki', 'noémi', 'noemi',
+    'nóra', 'nora', 'norbert', 'norbi',
+    'olga', 'olivér', 'oliver', 'orsolya', 'orsi', 'oszkár', 'oszkar', 'ottó', 'otto',
+    'pál', 'pal', 'péter', 'peter', 'peti', 'petra', 'piroska',
+    'ráhel', 'ramóna', 'ramona', 'rebeka', 'réka', 'reka', 'renáta', 'renata', 'renátó', 'richárd', 'richard',
+    'rita', 'róbert', 'robert', 'roland', 'róza', 'roza', 'rozália', 'rozalia', 'rudolf',
+    'sándor', 'sandor', 'sára', 'sara', 'sári', 'sarolta', 'sebestyén', 'simon', 'szabolcs', 'szandra', 'szilárd',
+    'szilard', 'szilveszter', 'szilvia', 'szimonetta', 'szonja', 'szófia',
+    'tamás', 'tamas', 'tímea', 'timea', 'timi', 'tibor', 'tivadar', 'tünde', 'tunde',
+    'ulrik',
+    'valéria', 'valeria', 'vanda', 'vanessza', 'veronika', 'vera', 'viktor', 'viktória', 'viktoria', 'viki',
+    'vilmos', 'vince', 'virág', 'virag', 'vivien',
+    'zalán', 'zalan', 'zita', 'zoé', 'zoe', 'zoltán', 'zoltan', 'zoli', 'zsolt', 'zsolti', 'zsófia', 'zsofia',
+    'zsófi', 'zsofi', 'zsombor', 'zsuzsanna', 'zsuzsa', 'zsuzsi'
+]);
+
+const AMBIGUOUS_SURNAME_GIVEN_NAMES = new Set([
+    'ádám', 'adam', 'bálint', 'balint', 'barna', 'benedek', 'csonka', 'deák', 'fábián', 'fabian', 'faragó',
+    'fazekas', 'fehér', 'fekete', 'fodor', 'forró', 'fülöp', 'fulop', 'gál', 'gal', 'gáspár', 'gaspar',
+    'gombos', 'győri', 'hajdú', 'hajdu', 'halász', 'hegedűs', 'horváth', 'horvath', 'illés', 'illes',
+    'jakab', 'juhász', 'juhasz', 'kádár', 'kelemen', 'király', 'kiss', 'kovács', 'kovacs',
+    'kozma', 'lengyel', 'lukács', 'lukacs', 'magyar', 'máté', 'mate', 'mester', 'mezei', 'miklós', 'miklos',
+    'molnár', 'molnar', 'major', 'nagy', 'német', 'németh', 'nemeth', 'nyári', 'oláh', 'olah', 'orbán', 'orban',
+    'orosz', 'örs', 'pál', 'pal', 'pap', 'papp', 'pataki', 'péter', 'peter', 'pintér', 'pinter', 'puskás', 'puskas',
+    'rácz', 'racz', 'simon', 'sipos', 'somogyi', 'soós', 'soos', 'szabó', 'szabo', 'szalai', 'székely',
+    'szekely', 'szilágyi', 'szilagyi', 'szűcs', 'szucs', 'takács', 'takacs', 'tamás', 'tamas', 'tóth', 'toth',
+    'török', 'torok', 'urbán', 'urban', 'varga', 'vargha', 'vass', 'végh', 'vegh', 'veres', 'veress',
+    'virág', 'virag', 'vörös', 'voros'
+]);
+
+function toTitleCaseWord(word) {
+    if (!word) return '';
+    return word
+        .split('-')
+        .map(part => part ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() : '')
+        .join('-');
+}
+
 function extractFirstName(fullName) {
     if (!fullName || typeof fullName !== 'string') return 'Túrázó';
     let clean = fullName.trim();
-    if (!clean || clean.includes('@')) return 'Túrázó';
+    if (!clean || clean.includes('@') || /\d/.test(clean)) return 'Túrázó';
 
-    // Remove titles like Dr., Ifj., Id.
-    clean = clean.replace(/^(dr\.|dr|ifj\.|ifj|id\.|id)\s+/i, '').trim();
+    clean = clean.replace(/^(dr\.|dr|ifj\.|ifj|id\.|id|prof\.|prof|özv\.|ozv)\s+/i, '').trim();
+    if (!clean) return 'Túrázó';
 
-    const parts = clean.split(/\s+/);
+    const parts = clean.split(/\s+/).filter(Boolean);
     if (parts.length === 1) {
-        return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+        return toTitleCaseWord(parts[0]);
     }
-    // In Hungarian format: "Vezetéknév Keresztnév" -> the last word is the first name (e.g. "Szabó Viktória" -> "Viktória")
-    const firstName = parts[parts.length - 1];
-    return firstName.charAt(0).toUpperCase() + firstName.slice(1);
+
+    const lastPart = parts[parts.length - 1];
+    const firstPart = parts[0];
+    const lastLower = lastPart.toLowerCase();
+    const firstLower = firstPart.toLowerCase();
+
+    if (/né$/i.test(lastLower)) {
+        if (COMMON_HUNGARIAN_GIVEN_NAMES.has(firstLower) && !AMBIGUOUS_SURNAME_GIVEN_NAMES.has(firstLower)) {
+            return toTitleCaseWord(firstPart);
+        }
+        return parts.map(toTitleCaseWord).join(' ');
+    }
+
+    if (COMMON_HUNGARIAN_GIVEN_NAMES.has(lastLower)) {
+        return toTitleCaseWord(lastPart);
+    }
+
+    if (COMMON_HUNGARIAN_GIVEN_NAMES.has(firstLower)) {
+        return toTitleCaseWord(firstPart);
+    }
+
+    return toTitleCaseWord(lastPart);
 }
 
 function getDaysRemaining() {
-    const target = new Date('2026-09-27T23:59:59+02:00');
+    const target = new Date('2026-10-31T23:59:59+01:00');
     const now = new Date();
     const diffTime = target - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -123,8 +208,61 @@ async function saveSentEmailsMap(sentMap) {
     }
 }
 
-function aggregateUniqueLeads(allLeads, convertedEmailSet) {
+async function getConvertedEmailsAndUnsubscribed() {
+    const convertedEmailSet = new Set();
     const unsubscribedEmailSet = new Set();
+
+    try {
+        const { data: runners } = await supabase
+            .from('runners')
+            .select('email, runs(id)');
+        if (runners) {
+            runners.forEach(r => {
+                if (r.email && r.runs && r.runs.length > 0) {
+                    convertedEmailSet.add(r.email.toLowerCase().trim());
+                }
+            });
+        }
+    } catch (e) {
+        console.warn('Runners check warning:', e.message);
+    }
+
+    try {
+        const { data: paidOrders } = await supabase
+            .from('orders')
+            .select('billing_email')
+            .eq('is_test', false);
+        if (paidOrders) {
+            paidOrders.forEach(o => {
+                if (o.billing_email) {
+                    convertedEmailSet.add(o.billing_email.toLowerCase().trim());
+                }
+            });
+        }
+    } catch (e) {
+        console.warn('Orders check warning:', e.message);
+    }
+
+    try {
+        const { data: unsubEvents } = await supabase
+            .from('analytics_events')
+            .select('event_data')
+            .eq('event_name', 'lead_unsubscribed');
+        if (unsubEvents) {
+            unsubEvents.forEach(ev => {
+                const em = ev.event_data && ev.event_data.email ? String(ev.event_data.email).toLowerCase().trim() : '';
+                if (em) unsubscribedEmailSet.add(em);
+            });
+        }
+    } catch (e) {
+        // Ignore
+    }
+
+    return { convertedEmailSet, unsubscribedEmailSet };
+}
+
+function aggregateUniqueLeads(allLeads, convertedEmailSet, extraUnsubscribedSet = new Set()) {
+    const unsubscribedEmailSet = new Set(extraUnsubscribedSet);
     const leadConvertedEmailSet = new Set();
     const leadsByEmail = new Map();
 
@@ -167,7 +305,7 @@ function aggregateUniqueLeads(allLeads, convertedEmailSet) {
         let bestRawName = '';
         for (const rec of records) {
             const n = (rec.name || '').trim();
-            if (n && !n.includes('@')) {
+            if (n && !n.includes('@') && !/\d/.test(n)) {
                 bestRawName = n;
                 break;
             }
@@ -207,21 +345,8 @@ async function handleGetLeadsData(req, res) {
 
         if (leadErr) throw leadErr;
 
-        // 2. Vásárlók (konvertáltak) lekérése kizáráshoz
-        const { data: runners, error: runErr } = await supabase
-            .from('runners')
-            .select('email, runs(id)');
-
-        if (runErr) throw runErr;
-
-        const convertedEmailSet = new Set();
-        if (runners) {
-            runners.forEach(r => {
-                if (r.email && r.runs && r.runs.length > 0) {
-                    convertedEmailSet.add(r.email.toLowerCase().trim());
-                }
-            });
-        }
+        // 2. Vásárlók (runners + orders) és leiratkozottak lekérése kizáráshoz
+        const { convertedEmailSet, unsubscribedEmailSet } = await getConvertedEmailsAndUnsubscribed();
 
         const {
             totalUnique,
@@ -229,7 +354,7 @@ async function handleGetLeadsData(req, res) {
             unsubscribedCount,
             convertedCount,
             targetLeads
-        } = aggregateUniqueLeads(leads, convertedEmailSet);
+        } = aggregateUniqueLeads(leads, convertedEmailSet, unsubscribedEmailSet);
 
         // Sablonok betöltése előnézethez
         const templatesWithContent = TEMPLATES.map(t => {
@@ -283,7 +408,7 @@ async function handleSendLeadsEmail(req, res) {
     }
 
     const rawTemplateHtml = fs.readFileSync(templatePath, 'utf8');
-    const DEADLINE_STR = '2026. szeptember 27.';
+    const DEADLINE_STR = '2026. október 31.';
     const LANDING_URL = 'https://vitastepsss.vercel.app/nagykevely/index.html';
     const daysLeft = getDaysRemaining();
 
@@ -351,20 +476,8 @@ async function handleSendLeadsEmail(req, res) {
 
             if (leadErr) throw leadErr;
 
-            const { data: runners } = await supabase
-                .from('runners')
-                .select('email, runs(id)');
-
-            const convertedEmailSet = new Set();
-            if (runners) {
-                runners.forEach(r => {
-                    if (r.email && r.runs && r.runs.length > 0) {
-                        convertedEmailSet.add(r.email.toLowerCase().trim());
-                    }
-                });
-            }
-
-            const { targetLeads: fullTargetList } = aggregateUniqueLeads(leads, convertedEmailSet);
+            const { convertedEmailSet, unsubscribedEmailSet } = await getConvertedEmailsAndUnsubscribed();
+            const { targetLeads: fullTargetList } = aggregateUniqueLeads(leads, convertedEmailSet, unsubscribedEmailSet);
 
             // Load persistent sent list for this template
             const sentEmailsMap = await getSentEmailsMap();
@@ -372,6 +485,16 @@ async function handleSendLeadsEmail(req, res) {
                 sentEmailsMap[templateConfig.id] = [];
             }
             const alreadySentSet = new Set((sentEmailsMap[templateConfig.id] || []).map(e => (e || '').toLowerCase().trim()));
+
+            // Also build a set of all legacy recipients across all 0927 templates
+            const allPreviouslyContactedLegacySet = new Set();
+            Object.values(sentEmailsMap).forEach(arr => {
+                if (Array.isArray(arr)) {
+                    arr.forEach(e => {
+                        if (e) allPreviouslyContactedLegacySet.add(String(e).toLowerCase().trim());
+                    });
+                }
+            });
 
             // Restrict audience to parent template recipients if targetOnlySentOf is defined
             let baseList = fullTargetList;
@@ -383,10 +506,12 @@ async function handleSendLeadsEmail(req, res) {
                 });
             }
 
-            // Filter out already sent recipients
+            // Filter out already sent recipients AND legacy pre-October recipients who already got the 4 September closing emails
             const targetList = baseList.filter(r => {
                 const cleanEmail = (r.email || '').toLowerCase().trim();
-                return cleanEmail && !alreadySentSet.has(cleanEmail);
+                if (!cleanEmail || alreadySentSet.has(cleanEmail)) return false;
+                if (!templateConfig.targetOnlySentOf && allPreviouslyContactedLegacySet.has(cleanEmail)) return false;
+                return true;
             });
 
             if (targetList.length === 0) {
@@ -473,5 +598,7 @@ async function handleSendLeadsEmail(req, res) {
 
 module.exports = {
     handleGetLeadsData,
-    handleSendLeadsEmail
+    handleSendLeadsEmail,
+    extractFirstName,
+    aggregateUniqueLeads
 };

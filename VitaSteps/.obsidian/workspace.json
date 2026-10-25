@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "0065e55ac1b736c9",
+        "id": "004dd6a0cadb99c8",
         "type": "tabs",
         "children": [
           {
-            "id": "daadb016aa126cb9",
+            "id": "7ce2568746e258c5",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -18,21 +18,7 @@
             }
           },
           {
-            "id": "48958c07077e1b68",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "knowledge/concepts/organic-content-pillars.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "organic-content-pillars"
-            }
-          },
-          {
-            "id": "f9abbd4c3c2855bf",
+            "id": "1d39c746d39f0927",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -44,8 +30,37 @@
               "icon": "lucide-file",
               "title": "ADR-009-strategic-ecosystem-pivot"
             }
+          },
+          {
+            "id": "f58dd97f10a2e8c4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "knowledge/processes/lead-nurturing-sequence.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "lead-nurturing-sequence"
+            }
+          },
+          {
+            "id": "59e67c530e4de490",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "knowledge/processes/customer-funnel.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "customer-funnel"
+            }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -212,12 +227,13 @@
       "bases:Új bázis létrehozása": false
     }
   },
-  "active": "daadb016aa126cb9",
+  "active": "f58dd97f10a2e8c4",
   "lastOpenFiles": [
+    "knowledge/decisions/ADR-009-strategic-ecosystem-pivot.md",
+    "knowledge/processes/customer-funnel.md",
+    "knowledge/concepts/organic-content-pillars.md",
     "landing_predikalo1/assets/nagykevely/fb_banner.jfif",
     "landing_predikalo1/assets/nagykevely/Gemini_Generated_Image_5irj5a5irj5a5irj.jfif",
-    "knowledge/concepts/organic-content-pillars.md",
-    "knowledge/decisions/ADR-009-strategic-ecosystem-pivot.md",
     "knowledge/concepts/growth-loop.md",
     "knowledge/learnings/lead-magnet-intent.md",
     "knowledge/entities/hosszu-lepesek.md",
