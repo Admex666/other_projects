@@ -2,6 +2,7 @@
 
 let aiChatHistory = [];
 let aiIsLoading = false;
+let aiLoadingStatusText = "";
 let rawSavedAiModel = localStorage.getItem('vs_ai_model') || 'gemini-3.8-flash';
 if (rawSavedAiModel.includes('2.5') || rawSavedAiModel.includes('2.0')) {
     rawSavedAiModel = rawSavedAiModel.includes('pro') ? 'gemini-3.8-pro' : 'gemini-3.8-flash';
@@ -350,7 +351,7 @@ function renderAiMessages() {
                     <div class="ai-msg-bubble model loading">
                         <div style="display: flex; align-items: center; gap: 0.65rem;">
                             <span class="loading-spinner"></span>
-                            <span>Adatbázisok, pénzügyek és postafiók elemzése folyamatban...</span>
+                            <span>${escapeHtmlAi(aiLoadingStatusText || "Adatbázisok, pénzügyek és postafiók elemzése folyamatban...")}</span>
                         </div>
                     </div>
                 </div>
@@ -390,44 +391,67 @@ async function sendAiChatMessage(overrideText) {
 
     aiChatHistory.push({ role: 'user', text });
     aiIsLoading = true;
+    aiLoadingStatusText = 'Adatbázisok, pénzügyek és postafiók elemzése folyamatban...';
     renderAiMessages();
     renderAiQuickChips('ai-quick-chips-main');
     renderAiQuickChips('ai-quick-chips-drawer');
 
+    const MAX_CLIENT_RETRIES = 6;
     try {
-        const res = await fetch('/api/admin-data', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                admin_secret: adminSecret,
-                type: 'ai_chat',
-                message: text,
-                history: priorHistory,
-                model: aiModel,
-                api_key_override: aiCustomApiKey || undefined
-            })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok || data.error) {
-            const errText = data.message || data.error || 'Ismeretlen hiba történt az AI válaszadás során.';
-            aiChatHistory.push({
-                role: 'model',
-                text: `❌ ${errText}`,
-                isError: true
+        for (let attempt = 1; attempt <= MAX_CLIENT_RETRIES; attempt++) {
+            const res = await fetch('/api/admin-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    admin_secret: adminSecret,
+                    type: 'ai_chat',
+                    message: text,
+                    history: priorHistory,
+                    model: aiModel,
+                    api_key_override: aiCustomApiKey || undefined
+                })
             });
-            if (data.error === 'GEMINI_API_KEY_MISSING') {
-                const keyBannerEl = document.getElementById('ai-api-key-banner');
-                if (keyBannerEl) keyBannerEl.style.display = 'flex';
+
+            const data = await res.json();
+
+            if (!res.ok || data.error) {
+                const errText = String(data.message || data.error || '');
+                const errLower = errText.toLowerCase();
+                const isHighDemand =
+                    res.status === 503 ||
+                    res.status === 429 ||
+                    errLower.includes('high demand') ||
+                    errLower.includes('overloaded') ||
+                    errLower.includes('try again later') ||
+                    errLower.includes('resource exhausted') ||
+                    errLower.includes('temporarily unavailable');
+
+                if (isHighDemand && attempt < MAX_CLIENT_RETRIES) {
+                    aiLoadingStatusText = `Google AI szerverek terheltek, automatikus újraküldés (${attempt + 1}/${MAX_CLIENT_RETRIES}. kísérlet)...`;
+                    renderAiMessages();
+                    await new Promise(r => setTimeout(r, 1500 * attempt));
+                    continue;
+                }
+
+                aiChatHistory.push({
+                    role: 'model',
+                    text: `❌ ${errText || 'Ismeretlen hiba történt az AI válaszadás során.'}`,
+                    isError: true
+                });
+                if (data.error === 'GEMINI_API_KEY_MISSING') {
+                    const keyBannerEl = document.getElementById('ai-api-key-banner');
+                    if (keyBannerEl) keyBannerEl.style.display = 'flex';
+                }
+                break;
+            } else {
+                aiChatHistory.push({
+                    role: 'model',
+                    text: data.reply || 'Kész.',
+                    model: data.model || aiModel,
+                    tools_used: data.tools_used || []
+                });
+                break;
             }
-        } else {
-            aiChatHistory.push({
-                role: 'model',
-                text: data.reply || 'Kész.',
-                model: data.model || aiModel,
-                tools_used: data.tools_used || []
-            });
         }
     } catch (err) {
         aiChatHistory.push({
@@ -437,6 +461,7 @@ async function sendAiChatMessage(overrideText) {
         });
     } finally {
         aiIsLoading = false;
+        aiLoadingStatusText = '';
         renderAiMessages();
         renderAiQuickChips('ai-quick-chips-main');
         renderAiQuickChips('ai-quick-chips-drawer');
