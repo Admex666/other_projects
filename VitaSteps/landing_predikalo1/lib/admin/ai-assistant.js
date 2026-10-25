@@ -234,6 +234,72 @@ const GEMINI_TOOLS = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
+// IN-MEMORY SMART CACHE (60s TTL for instant subsequent / pre-warmed queries)
+// ─────────────────────────────────────────────────────────────────────────────
+const AI_TOOL_CACHE = new Map();
+
+async function getCachedOrFetch(key, ttlMs, fetchFn) {
+    const now = Date.now();
+    const cached = AI_TOOL_CACHE.get(key);
+    if (cached && (now - cached.ts) < ttlMs && cached.data !== null) {
+        return cached.data;
+    }
+    if (cached && cached.inflight) {
+        return cached.inflight;
+    }
+    const promise = Promise.resolve()
+        .then(() => fetchFn())
+        .then(data => {
+            AI_TOOL_CACHE.set(key, { ts: Date.now(), data, inflight: null });
+            return data;
+        })
+        .catch(err => {
+            if (cached) cached.inflight = null;
+            throw err;
+        });
+
+    AI_TOOL_CACHE.set(key, { ts: cached ? cached.ts : 0, data: cached ? cached.data : null, inflight: promise });
+    return promise;
+}
+
+function warmUpAiCache() {
+    getCachedOrFetch('db_overview:true', 60000, () => toolGetDatabaseOverview({ include_recent_items: true })).catch(() => {});
+    getCachedOrFetch('finance:40', 60000, () => toolGetFinancialAndCashflowData({ include_transactions_limit: 40 })).catch(() => {});
+    getCachedOrFetch('marketing:all:0', 60000, () => toolGetMarketingAndCreativesData({ campaign_filter: 'all', days: 0 })).catch(() => {});
+}
+
+async function buildLiveSnapshotContext() {
+    try {
+        const [dbOverview, finData, mktData] = await Promise.all([
+            getCachedOrFetch('db_overview:true', 60000, () => toolGetDatabaseOverview({ include_recent_items: true })),
+            getCachedOrFetch('finance:40', 60000, () => toolGetFinancialAndCashflowData({ include_transactions_limit: 40 })),
+            getCachedOrFetch('marketing:all:0', 60000, () => toolGetMarketingAndCreativesData({ campaign_filter: 'all', days: 0 }))
+        ]);
+
+        const snapshot = {
+            campaigns_and_stock: dbOverview.campaigns,
+            orders_summary: dbOverview.orders_summary,
+            feedbacks_summary: dbOverview.feedbacks_summary,
+            leads_summary: dbOverview.leads_summary,
+            pending_proofs_waiting_approval: dbOverview.pending_proofs_waiting_approval,
+            waiting_to_pack_and_ship_list: dbOverview.waiting_to_pack_and_ship_list,
+            balance_sheet: finData.balance_sheet,
+            campaign_pnl_summary: finData.campaign_pnl_summary,
+            revolut_category_totals: finData.revolut_category_totals,
+            marketing_summary: mktData.summary,
+            top_meta_creatives: (mktData.creatives_ranked_by_spend || []).slice(0, 8)
+        };
+
+        return '\n\n### ⚡ ÉLŐ ELŐTÖLTÖTT ADATBÁZIS, PÉNZÜGYI ÉS MARKETING PILLANATKÉP (MÁR BETÖLTVE):\n' +
+            'FONTOS SZABÁLY A SEBESSÉGÉRT: Az alábbi JSON tartalmazza a legfrissebb élő Supabase, Revolut, Stripe és Meta Ads KPI-okat, a jóváhagyásra és csomagolásra várók teljes listáját, a mérleget, a P&L-t és a top kreatívokat!\n' +
+            'Ha a felhasználó kérdése megválaszolható ebből az előtöltött pillanatképből, **NE HÍVJ FELESLEGESEN TOOLT**, hanem válaszolj AZONNAL ebből az adatból! Toolt (`search_and_read_emails`, `query_supabase_table`, `read_knowledge_graph` stb.) CSAK AKKOR hívj, ha emaileket kérdeznek, tudásbázis fájlt kérnek, vagy olyan egyedi sorokra van szükség, amik nincsenek benne ebben a pillanatképben!\n```json\n' +
+            JSON.stringify(snapshot) + '\n```';
+    } catch (e) {
+        return '';
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // HELPER FUNCTIONS FOR TOOLS
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -448,19 +514,28 @@ async function toolQuerySupabaseTable(args = {}) {
 async function toolGetFinancialAndCashflowData(args = {}) {
     const txLimit = Math.min(Math.max(Number(args.include_transactions_limit) || 40, 5), 150);
 
-    // Reuse handleFinanceData logic without Express res
+    // Fetch ALL Stripe, Supabase Storage, and Supabase DB queries in PARALLEL
     let stripeAvailableHuf = 0;
     let stripePendingHuf = 0;
     let stripeTransactions = [];
     let stripePayouts = [];
+    let revolutCsvText = '';
 
-    try {
-        const bal = await stripe.balance.retrieve();
-        stripeAvailableHuf = (bal.available || []).reduce((s, b) => b.currency.toLowerCase() === 'huf' ? s + (b.amount / 100) : s, 0);
-        stripePendingHuf = (bal.pending || []).reduce((s, b) => b.currency.toLowerCase() === 'huf' ? s + (b.amount / 100) : s, 0);
+    const [balRes, txRes, payoutRes, storageRes, runsRes, ordersRes] = await Promise.all([
+        stripe.balance.retrieve().catch(e => { console.warn('Stripe balance warning:', e.message); return null; }),
+        stripe.balanceTransactions.list({ limit: 100 }).catch(e => { console.warn('Stripe tx warning:', e.message); return null; }),
+        stripe.payouts.list({ limit: 50 }).catch(e => { console.warn('Stripe payout warning:', e.message); return null; }),
+        supabase.storage.from('medals').download('finance/revolut_statement.csv').catch(() => ({ data: null })),
+        supabase.from('runs').select('id, campaign, serial_number, completed, is_test, name, runners(email)'),
+        supabase.from('orders').select('*').eq('stripe_payment_status', 'paid')
+    ]);
 
-        const txResp = await stripe.balanceTransactions.list({ limit: 100 });
-        stripeTransactions = (txResp.data || []).map(t => ({
+    if (balRes) {
+        stripeAvailableHuf = (balRes.available || []).reduce((s, b) => b.currency.toLowerCase() === 'huf' ? s + (b.amount / 100) : s, 0);
+        stripePendingHuf = (balRes.pending || []).reduce((s, b) => b.currency.toLowerCase() === 'huf' ? s + (b.amount / 100) : s, 0);
+    }
+    if (txRes && txRes.data) {
+        stripeTransactions = txRes.data.map(t => ({
             id: t.id,
             date: new Date(t.created * 1000).toISOString().slice(0, 10),
             type: t.type,
@@ -470,27 +545,19 @@ async function toolGetFinancialAndCashflowData(args = {}) {
             status: t.status,
             description: t.description
         }));
-
-        const payoutResp = await stripe.payouts.list({ limit: 50 });
-        stripePayouts = (payoutResp.data || []).map(p => ({
+    }
+    if (payoutRes && payoutRes.data) {
+        stripePayouts = payoutRes.data.map(p => ({
             id: p.id,
             created_date: new Date(p.created * 1000).toISOString().slice(0, 10),
             arrival_date: new Date(p.arrival_date * 1000).toISOString().slice(0, 10),
             amount_huf: p.amount / 100,
             status: p.status
         }));
-    } catch (e) {
-        console.warn('Stripe fetch warning in AI tool:', e.message);
     }
-
-    // Revolut CSV read (check storage first, then local file)
-    let revolutCsvText = '';
-    try {
-        const { data: downData, error } = await supabase.storage.from('medals').download('finance/revolut_statement.csv');
-        if (downData && !error) {
-            revolutCsvText = await downData.text();
-        }
-    } catch (e) {}
+    if (storageRes && storageRes.data && !storageRes.error) {
+        try { revolutCsvText = await storageRes.data.text(); } catch (e) {}
+    }
 
     if (!revolutCsvText || revolutCsvText.length < 20) {
         const candidates = [
@@ -557,11 +624,7 @@ async function toolGetFinancialAndCashflowData(args = {}) {
     revolutRows.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
     const revolutBalanceHuf = revolutRows.length > 0 ? (revolutRows[0].balance_huf || 0) : 0;
 
-    // Fetch runs & paid orders for P&L and Inventory valuation
-    const [runsRes, ordersRes] = await Promise.all([
-        supabase.from('runs').select('id, campaign, serial_number, completed, is_test, name, runners(email)'),
-        supabase.from('orders').select('*').eq('stripe_payment_status', 'paid')
-    ]);
+    // runsRes & ordersRes already fetched in parallel above
 
     const realRuns = (runsRes.data || []).filter(r => !isTestRunRecord(r));
     const pilisSold = realRuns.filter(r => isPilisRunRecord(r)).length;
@@ -983,18 +1046,31 @@ async function toolSearchAndReadEmails(args = {}) {
 async function executeToolCall(name, args) {
     try {
         switch (name) {
-            case 'get_database_overview':
-                return await toolGetDatabaseOverview(args);
-            case 'query_supabase_table':
-                return await toolQuerySupabaseTable(args);
-            case 'get_financial_and_cashflow_data':
-                return await toolGetFinancialAndCashflowData(args);
-            case 'get_marketing_and_creatives_data':
-                return await toolGetMarketingAndCreativesData(args);
-            case 'read_knowledge_graph':
-                return await toolReadKnowledgeGraph(args);
-            case 'search_and_read_emails':
-                return await toolSearchAndReadEmails(args);
+            case 'get_database_overview': {
+                const inc = args?.include_recent_items !== false;
+                return await getCachedOrFetch(`db_overview:${inc}`, 60000, () => toolGetDatabaseOverview(args));
+            }
+            case 'query_supabase_table': {
+                const key = `query_table:${JSON.stringify(args || {})}`;
+                return await getCachedOrFetch(key, 45000, () => toolQuerySupabaseTable(args));
+            }
+            case 'get_financial_and_cashflow_data': {
+                const lim = Math.min(Math.max(Number(args?.include_transactions_limit) || 40, 5), 150);
+                return await getCachedOrFetch(`finance:${lim}`, 60000, () => toolGetFinancialAndCashflowData(args));
+            }
+            case 'get_marketing_and_creatives_data': {
+                const cf = (args?.campaign_filter || 'all').toLowerCase();
+                const d = Number(args?.days) || 0;
+                return await getCachedOrFetch(`marketing:${cf}:${d}`, 60000, () => toolGetMarketingAndCreativesData(args));
+            }
+            case 'read_knowledge_graph': {
+                const key = `kg:${JSON.stringify(args || {})}`;
+                return await getCachedOrFetch(key, 300000, () => toolReadKnowledgeGraph(args));
+            }
+            case 'search_and_read_emails': {
+                const key = `emails:${JSON.stringify(args || {})}`;
+                return await getCachedOrFetch(key, 45000, () => toolSearchAndReadEmails(args));
+            }
             default:
                 return { error: `Ismeretlen tool: ${name}` };
         }
@@ -1022,6 +1098,7 @@ async function handleAiAssistant(req, res) {
 
     // 1. Status Check Endpoint (GET or type=ai_status)
     if (req.method === 'GET' || type === 'ai_status' || action === 'ai_status') {
+        warmUpAiCache();
         const hasServerGeminiKey = Boolean(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY);
         const hasPrimaryGmail = Boolean(process.env.SMTP_PASSWORD || process.env.GMAIL_APP_PASSWORD);
         const hasSecondaryGmail = Boolean(process.env.GMAIL_SECOND_USER && process.env.GMAIL_SECOND_APP_PASSWORD);
@@ -1095,18 +1172,29 @@ async function handleAiAssistant(req, res) {
     const MAX_TURNS = 6;
 
     try {
+        const liveSnapshotAppendix = await buildLiveSnapshotContext();
+        const fullSystemPrompt = SYSTEM_INSTRUCTION + liveSnapshotAppendix;
+        let useThinkingConfig = true;
+
         for (let turn = 0; turn < MAX_TURNS; turn++) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${encodeURIComponent(apiKey)}`;
+            const genConfig = {
+                temperature: 0.2,
+                maxOutputTokens: 4096
+            };
+            if (useThinkingConfig) {
+                genConfig.thinkingConfig = {
+                    thinkingBudget: selectedModel.includes('flash') ? 256 : 1024
+                };
+            }
+
             const payload = {
                 systemInstruction: {
-                    parts: [{ text: SYSTEM_INSTRUCTION }]
+                    parts: [{ text: fullSystemPrompt }]
                 },
                 contents,
                 tools: GEMINI_TOOLS,
-                generationConfig: {
-                    temperature: 0.25,
-                    maxOutputTokens: 8192
-                }
+                generationConfig: genConfig
             };
 
             let geminiRes = await fetch(url, {
@@ -1116,6 +1204,18 @@ async function handleAiAssistant(req, res) {
             });
 
             let geminiData = await geminiRes.json();
+
+            // If thinkingConfig is rejected by a specific model version, retry without thinkingConfig
+            if (!geminiRes.ok && useThinkingConfig && (geminiData?.error?.message || '').toLowerCase().includes('thinking')) {
+                useThinkingConfig = false;
+                delete payload.generationConfig.thinkingConfig;
+                geminiRes = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                geminiData = await geminiRes.json();
+            }
 
             // Auto-fallback to gemini-3.8-flash if another model is unavailable
             if (!geminiRes.ok && selectedModel !== 'gemini-3.8-flash') {
@@ -1164,6 +1264,12 @@ async function handleAiAssistant(req, res) {
                     .join('\n')
                     .trim();
 
+                if (toolsUsed.length === 0 && liveSnapshotAppendix) {
+                    toolsUsed.push({
+                        name: 'live_snapshot',
+                        label: '⚡ Élő Gyorsítótár (DB • Pénzügy • Meta)'
+                    });
+                }
                 return res.status(200).json({
                     success: true,
                     reply: finalText || 'Kész.',
@@ -1172,9 +1278,8 @@ async function handleAiAssistant(req, res) {
                 });
             }
 
-            // Execute all requested function calls in parallel
-            const responseParts = [];
-            for (const part of functionCalls) {
+            // Execute all requested function calls truly in PARALLEL via Promise.all
+            const responseParts = await Promise.all(functionCalls.map(async (part) => {
                 const fc = part.functionCall;
                 const toolName = fc.name;
                 const toolArgs = fc.args || {};
@@ -1195,13 +1300,13 @@ async function handleAiAssistant(req, res) {
                 });
 
                 const toolResult = await executeToolCall(toolName, toolArgs);
-                responseParts.push({
+                return {
                     functionResponse: {
                         name: toolName,
                         response: { result: toolResult }
                     }
-                });
-            }
+                };
+            }));
 
             // Append function responses as a 'user' (or 'function') turn
             contents.push({
