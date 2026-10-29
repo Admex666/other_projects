@@ -313,11 +313,9 @@ let cachedAvailableModels = null;
 async function getFallbackCandidates(primaryModel, apiKey) {
     const defaults = [
         primaryModel,
-        'gemini-3.8-flash-lite',
+        'gemini-3.5-flash',
         'gemini-3.8-flash',
-        'gemini-3.8-pro',
-        'gemini-2.5-flash-lite',
-        'gemini-2.0-flash'
+        'gemini-3.1-pro-preview'
     ];
     try {
         if (!cachedAvailableModels) {
@@ -1225,9 +1223,9 @@ async function handleAiAssistant(req, res) {
                 gmail_secondary: hasSecondaryGmail ? process.env.GMAIL_SECOND_USER : null
             },
             models: [
-                { id: 'gemini-3.8-flash', label: '⚡ Gemini 3.8 Flash (Gyors & Napi elemzés)' },
-                { id: 'gemini-3.8-flash-lite', label: '🚀 Gemini 3.8 Flash-Lite (Ultragyors, túlterhelés-mentes)' },
-                { id: 'gemini-3.8-pro', label: '🧠 Gemini 3.8 Pro (Mély stratégiai & P&L elemzés)' }
+                { id: 'gemini-3.5-flash', label: '⚡ Gemini 3.5 Flash (Ajánlott, Gyors & Stabil)' },
+                { id: 'gemini-3.8-flash', label: '🚀 Gemini 3.8 Flash (Új)' },
+                { id: 'gemini-3.1-pro-preview', label: '🧠 Gemini 3.1 Pro (Mély stratégiai & P&L)' }
             ]
         });
     }
@@ -1236,7 +1234,7 @@ async function handleAiAssistant(req, res) {
     const {
         message,
         history = [],
-        model = 'gemini-3.8-flash',
+        model = 'gemini-3.5-flash',
         api_key_override = ''
     } = req.body || {};
 
@@ -1254,9 +1252,11 @@ async function handleAiAssistant(req, res) {
 
     // Map legacy 2.5 / 2.0 model names automatically to 3.8
     const MODEL_MAP = {
-        'gemini-2.5-flash': 'gemini-3.8-flash',
-        'gemini-2.0-flash': 'gemini-3.8-flash',
-        'gemini-2.5-pro': 'gemini-3.8-pro'
+        'gemini-2.5-flash': 'gemini-3.5-flash',
+        'gemini-2.0-flash': 'gemini-3.5-flash',
+        'gemini-3.8-flash-lite': 'gemini-3.5-flash',
+        'gemini-2.5-pro': 'gemini-3.1-pro-preview',
+        'gemini-3.8-pro': 'gemini-3.1-pro-preview'
     };
     const normalizedModel = MODEL_MAP[model] || model;
     let selectedModel = ['gemini-3.8-flash', 'gemini-3.8-flash-lite', 'gemini-3.8-pro'].includes(normalizedModel)

@@ -3,9 +3,9 @@
 let aiChatHistory = [];
 let aiIsLoading = false;
 let aiLoadingStatusText = "";
-let rawSavedAiModel = localStorage.getItem('vs_ai_model') || 'gemini-3.8-flash';
+let rawSavedAiModel = localStorage.getItem('vs_ai_model') || 'gemini-3.5-flash';
 if (rawSavedAiModel.includes('2.5') || rawSavedAiModel.includes('2.0')) {
-    rawSavedAiModel = rawSavedAiModel.includes('pro') ? 'gemini-3.8-pro' : 'gemini-3.8-flash';
+    rawSavedAiModel = rawSavedAiModel.includes('pro') ? 'gemini-3.8-pro' : 'gemini-3.5-flash';
     localStorage.setItem('vs_ai_model', rawSavedAiModel);
 }
 let aiModel = rawSavedAiModel;
