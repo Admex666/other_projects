@@ -4,13 +4,134 @@
     "id": "1014443515092673",
     "name": "VitaSteps",
     "link": "https://www.facebook.com/1014443515092673",
+    "fan_count": 79,
     "followers_count": 79,
-    "fan_count": 79
+    "talking_about_count": 13,
+    "verification_status": "not_verified",
+    "category": "Sports & recreation",
+    "website": "https://vitastepsss.vercel.app/nagykevely/index.html?utm_source=fb_personal&utm_medium=bio&utm_content=bio_link"
   },
   "total_posts": 9,
-  "permission_notice": "Hiányzó Facebook jogosultság (pages_read_user_content). A reakciók és kommentek automatikus beolvasása ehhez a Meta engedélyhez kötött. A posztok és megosztások megjelenítése aktív.",
+  "permission_notice": "Hiányzó Facebook jogosultság (pages_read_user_content). A reakciók és kommentek automatikus beolvasása ehhez a Meta engedélyhez kötött. A posztok, megosztások, szövegstatisztikák és trendek teljes körűen aktívak.",
   "has_full_engagement_access": false,
-  "last_synced_at": "2026-10-29T16:39:36.246Z",
+  "last_synced_at": "2026-10-29T16:53:03.100Z",
+  "trends": {
+    "weekly_trend": [
+      {
+        "week_key": "2026-W15",
+        "year": 2026,
+        "week_number": 15,
+        "count": 1,
+        "shares": 0,
+        "posts": [
+          "1014443515092673_122098881038808946"
+        ]
+      },
+      {
+        "week_key": "2026-W40",
+        "year": 2026,
+        "week_number": 40,
+        "count": 3,
+        "shares": 0,
+        "posts": [
+          "1014443515092673_122129288744808946",
+          "1014443515092673_1110821804858951",
+          "1014443515092673_122128910396808946"
+        ]
+      },
+      {
+        "week_key": "2026-W42",
+        "year": 2026,
+        "week_number": 42,
+        "count": 2,
+        "shares": 0,
+        "posts": [
+          "1014443515092673_122131547036808946",
+          "1014443515092673_122131236020808946"
+        ]
+      },
+      {
+        "week_key": "2026-W43",
+        "year": 2026,
+        "week_number": 43,
+        "count": 2,
+        "shares": 0,
+        "posts": [
+          "1014443515092673_122132341316808946",
+          "1014443515092673_122132013242808946"
+        ]
+      },
+      {
+        "week_key": "2026-W44",
+        "year": 2026,
+        "week_number": 44,
+        "count": 1,
+        "shares": 0,
+        "posts": [
+          "1014443515092673_122132798876808946"
+        ]
+      }
+    ],
+    "day_distribution": {
+      "Hétfő": 1,
+      "Kedd": 2,
+      "Szerda": 1,
+      "Csütörtök": 1,
+      "Péntek": 1,
+      "Szombat": 3,
+      "Vasárnap": 0
+    },
+    "time_slot_distribution": {
+      "Reggel (06-11)": 2,
+      "Napközben (11-16)": 1,
+      "Késő délután / Este (16-21)": 6,
+      "Éjjel (21-06)": 0
+    },
+    "category_distribution": [
+      {
+        "key": "interactive_poll",
+        "label": "Kérdés & Szavazás (A/B)",
+        "icon": "📊",
+        "count": 1,
+        "shares": 0
+      },
+      {
+        "key": "community_question",
+        "label": "Közösségi kérdés",
+        "icon": "❓",
+        "count": 4,
+        "shares": 0
+      },
+      {
+        "key": "educational_tips",
+        "label": "Edukáció & Túratippek",
+        "icon": "💡",
+        "count": 2,
+        "shares": 0
+      },
+      {
+        "key": "visual_update",
+        "label": "Vizuális frissítés (kép)",
+        "icon": "🖼️",
+        "count": 2,
+        "shares": 0
+      }
+    ],
+    "format_distribution": {
+      "with_image": 7,
+      "text_only": 2
+    },
+    "active_weeks_count": 5,
+    "avg_posts_per_active_week": 1.8,
+    "avg_char_length": 413,
+    "top_category": {
+      "key": "community_question",
+      "label": "Közösségi kérdés",
+      "icon": "❓",
+      "count": 4,
+      "shares": 0
+    }
+  },
   "posts": [
     {
       "id": "1014443515092673_122132798876808946",
@@ -21,10 +142,25 @@
       "status_type": "mobile_status_update",
       "image_url": null,
       "attachment_url": null,
+      "content_analysis": {
+        "char_count": 319,
+        "word_count": 51,
+        "hashtags": [],
+        "category_key": "interactive_poll",
+        "category_label": "Kérdés & Szavazás (A/B)",
+        "category_icon": "📊",
+        "format_type": "text_only",
+        "format_label": "✍️ Szöveges poszt"
+      },
       "reactions_count": null,
       "comments_count": null,
       "engagement_available": false,
-      "insights": null
+      "insights": null,
+      "engagement_score": 2,
+      "performance_badge": {
+        "label": "🔥 Kiemelt interakció",
+        "class": "badge-hot"
+      }
     },
     {
       "id": "1014443515092673_122132341316808946",
@@ -33,12 +169,24 @@
       "permalink_url": "https://www.facebook.com/122133193202808946/posts/122132341316808946",
       "shares_count": 0,
       "status_type": "added_photos",
-      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/846302117_122131102004808946_5336787250513284860_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=110&ccb=1-7&_nc_sid=127cfc&_nc_ohc=upjrh7cxnh0Q7kNvwFc6z6w&_nc_oc=Adpr1FNNTi4-TGie0hb8clz5bImIMaMRqrp5_su9tm7rO2qgVMc9OPU4aU5gSpYDNww&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=ZGaQM9TSTr83gpcLVcTvsA&_nc_tpa=Q5bMBQKdZk6CWrOpYZlYJGgfqre-TH86ab6k7QXQn06J8lBKgNyRPe0Vw8MpJdyJoM5shDuZsCBn_oiEIQ&oh=00_AQQbAlEQ0be_Z6Fd2RvVZv5JtokVvbYSGOJG5_DVbv-lEQ&oe=6AE948CA",
+      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/846302117_122131102004808946_5336787250513284860_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=110&ccb=1-7&_nc_sid=127cfc&_nc_ohc=upjrh7cxnh0Q7kNvwHRJJlC&_nc_oc=AdqDbZcqx7vvsutQv2LSkU8V53eD8cFmcTMxOMn_NOvRfpW-0Dr1WHBcsxAm2qjDBUWiYk38kwC8YGL5UsWVRFDk&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=5rK3K7tltqkVfgNXikSqGQ&_nc_tpa=Q5bMBQIl9_rLHNAvch5nOOPpucG20tG1AS0Ir0q1zQEWZhm7GULDf4IcqRErMNTtuZSwnPRMYIlcnRvYiA&oh=00_AQSYAKXaXtCsqF2cgr2-gWWW-sdiccyX3RnIIbGcCv_evQ&oe=6AE948CA",
       "attachment_url": "https://www.facebook.com/photo.php?fbid=122132341304808946&set=a.122128910306808946&type=3",
+      "content_analysis": {
+        "char_count": 424,
+        "word_count": 65,
+        "hashtags": [],
+        "category_key": "community_question",
+        "category_label": "Közösségi kérdés",
+        "category_icon": "❓",
+        "format_type": "with_image",
+        "format_label": "🖼️ Képes poszt"
+      },
       "reactions_count": null,
       "comments_count": null,
       "engagement_available": false,
-      "insights": null
+      "insights": null,
+      "engagement_score": 3,
+      "performance_badge": null
     },
     {
       "id": "1014443515092673_122132013242808946",
@@ -47,12 +195,27 @@
       "permalink_url": "https://www.facebook.com/122133193202808946/posts/122132013242808946",
       "shares_count": 0,
       "status_type": "added_photos",
-      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/845459220_122131102556808946_5153017702858874631_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=101&ccb=1-7&_nc_sid=127cfc&_nc_ohc=81T5ebvLL9YQ7kNvwFFdv3h&_nc_oc=Adq-QZR-B-rD9BFfCDv8cZfTDzFEu9c-zRfEiMqvyOXTLxIcWLDyjM94Dz94vccXGz8&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=ZGaQM9TSTr83gpcLVcTvsA&_nc_tpa=Q5bMBQLd9bxzGmLuoz1HORFDRVJE1ByHQi6nO5FmAefWSmfoE8rzpJwN0mVB8Z_znIaXinEx07Hd4U2ZJw&oh=00_AQSRNxYHtcbklIWK_YXt_1LoD-qseRemuvUo04MZtvgeRQ&oe=6AE9396A",
+      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/845459220_122131102556808946_5153017702858874631_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=101&ccb=1-7&_nc_sid=127cfc&_nc_ohc=81T5ebvLL9YQ7kNvwHKYItd&_nc_oc=AdqhG278GyMuPPdb_17zzFdJ3KsWPux1rfXKINd_9gLCL_i93wXTOmYQ_7AvxQFFwejVYJ5LXubJtXCO7bUUsSp_&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=5rK3K7tltqkVfgNXikSqGQ&_nc_tpa=Q5bMBQLgMNLncoOqfz2WjrI0uL9-ESSBRQHqUrAs7viGkpyOn4TdHCVYH59u_Pq_JvoZpojnOdpfS1A1gQ&oh=00_AQRU2Q8m1dQUS-EP34XgPuNjixjU69qkOlDZrnW4kdVAag&oe=6AE9396A",
       "attachment_url": "https://www.facebook.com/photo.php?fbid=122132013200808946&set=a.122128910306808946&type=3",
+      "content_analysis": {
+        "char_count": 383,
+        "word_count": 59,
+        "hashtags": [],
+        "category_key": "educational_tips",
+        "category_label": "Edukáció & Túratippek",
+        "category_icon": "💡",
+        "format_type": "with_image",
+        "format_label": "🖼️ Képes poszt"
+      },
       "reactions_count": null,
       "comments_count": null,
       "engagement_available": false,
-      "insights": null
+      "insights": null,
+      "engagement_score": 3,
+      "performance_badge": {
+        "label": "⭐ Értékes tartalom",
+        "class": "badge-star"
+      }
     },
     {
       "id": "1014443515092673_122131547036808946",
@@ -61,12 +224,24 @@
       "permalink_url": "https://www.facebook.com/122133193202808946/posts/122131547036808946",
       "shares_count": 0,
       "status_type": "added_photos",
-      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/847999057_122131101740808946_4932865496401714404_n.jpg?stp=dst-jpg_s1080x2048_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=_9E_KnzIfQ8Q7kNvwGvuY2y&_nc_oc=AdrnLvGYtgiCIyacETE34DqxZRMFVfYM-Sf4Pn70LkKmqkg1Zde6pvaupURuqw5iNUQ&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=ZGaQM9TSTr83gpcLVcTvsA&_nc_tpa=Q5bMBQKOXYLiHYul-2Hm-Q8LTLoqt6L-GlMVV0XUfddB1Yra5C4kZESkjlCfQvq0J7BDRvvmUHJEmwqz2g&oh=00_AQSgeZ4ym1MEENGUPeQbv2UZnAN7eOz84nMwESD3EpA0bw&oe=6AE93045",
+      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/847999057_122131101740808946_4932865496401714404_n.jpg?stp=dst-jpg_s1080x2048_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=_9E_KnzIfQ8Q7kNvwGe_3Zb&_nc_oc=AdrbS2pghw_VYDkr1zi1UvpmqMzzPECjwywAgsKHUEGB-uXcADnrL3MfQHHmYZPg2NOa6YedQ9RR3wmQhZX-zoOi&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=5rK3K7tltqkVfgNXikSqGQ&_nc_tpa=Q5bMBQI2mECy3uIiapGw0KqZTi2zGW-c46WnnhizNtaceaqBJOsyAAxyk59jDr1DNTFiF6iNdymleM86EQ&oh=00_AQSeRKGj_QjnOub-FtojiANaQoOvsqjxDY2FcjFyCKhmQA&oe=6AE96885",
       "attachment_url": "https://www.facebook.com/photo.php?fbid=122131547024808946&set=a.122128910306808946&type=3",
+      "content_analysis": {
+        "char_count": 336,
+        "word_count": 52,
+        "hashtags": [],
+        "category_key": "community_question",
+        "category_label": "Közösségi kérdés",
+        "category_icon": "❓",
+        "format_type": "with_image",
+        "format_label": "🖼️ Képes poszt"
+      },
       "reactions_count": null,
       "comments_count": null,
       "engagement_available": false,
-      "insights": null
+      "insights": null,
+      "engagement_score": 3,
+      "performance_badge": null
     },
     {
       "id": "1014443515092673_122131236020808946",
@@ -77,10 +252,22 @@
       "status_type": "mobile_status_update",
       "image_url": null,
       "attachment_url": null,
+      "content_analysis": {
+        "char_count": 401,
+        "word_count": 62,
+        "hashtags": [],
+        "category_key": "community_question",
+        "category_label": "Közösségi kérdés",
+        "category_icon": "❓",
+        "format_type": "text_only",
+        "format_label": "✍️ Szöveges poszt"
+      },
       "reactions_count": null,
       "comments_count": null,
       "engagement_available": false,
-      "insights": null
+      "insights": null,
+      "engagement_score": 2,
+      "performance_badge": null
     },
     {
       "id": "1014443515092673_122129288744808946",
@@ -89,12 +276,27 @@
       "permalink_url": "https://www.facebook.com/122133193202808946/posts/122129288744808946",
       "shares_count": 0,
       "status_type": "added_photos",
-      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/825266439_122128739282808946_4547788236596046735_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=t-pNLz5QLCYQ7kNvwF_My0-&_nc_oc=AdqcguCCPdlCJk9zCCv6TdQEE30MQ7nvJjsop2Qj5LuEj1JLI_z408no-hFuTjNmp7w&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=ZGaQM9TSTr83gpcLVcTvsA&_nc_tpa=Q5bMBQK76Rl67FQfRlobCmr1qM1MNRFB5RA8FxIjFOKrs2zaes3WtMPKQDvvG89WGMP4im-Wkk7dSqHKng&oh=00_AQRmzwM_zszqd7XCnm7Z5RepWcH-OQl-KgBAJvKYUTIAfA&oe=6AE93628",
+      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/825266439_122128739282808946_4547788236596046735_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=t-pNLz5QLCYQ7kNvwHzzfNy&_nc_oc=AdpMXAS63zKBdGD9SQdghcGy5p89I-BAL4w13coxGu0lq-BJGycgSbqgH3klEyx9o5oKwJ6fiQ2lUviNUMyCVvUK&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=5rK3K7tltqkVfgNXikSqGQ&_nc_tpa=Q5bMBQIYTN7ko6JX_-B-FZJqHC_lss8Sm8GhBJR3Dgd9VDCgYjpJrkGKBfFqtHQiW1NvGnDyHGi6c82EZA&oh=00_AQRo7LR3xwVUmjwxTBczAqCVI6KPDK_wUbgGSHRSp83nuQ&oe=6AE93628",
       "attachment_url": "https://www.facebook.com/photo.php?fbid=122129288732808946&set=a.122128910306808946&type=3",
+      "content_analysis": {
+        "char_count": 680,
+        "word_count": 106,
+        "hashtags": [],
+        "category_key": "educational_tips",
+        "category_label": "Edukáció & Túratippek",
+        "category_icon": "💡",
+        "format_type": "with_image",
+        "format_label": "🖼️ Képes poszt"
+      },
       "reactions_count": null,
       "comments_count": null,
       "engagement_available": false,
-      "insights": null
+      "insights": null,
+      "engagement_score": 3,
+      "performance_badge": {
+        "label": "⭐ Értékes tartalom",
+        "class": "badge-star"
+      }
     },
     {
       "id": "1014443515092673_1110821804858951",
@@ -103,12 +305,24 @@
       "permalink_url": "https://www.facebook.com/122133193202808946/posts/1110821804858951?substory_index=1110821804858951",
       "shares_count": 0,
       "status_type": "added_photos",
-      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/825350941_122129238488808946_4092898460523791075_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=105&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=4XU0hMPcWnAQ7kNvwEvxfJP&_nc_oc=AdqcMhvbrqK3rIRnhTV3CiCeMj-hK6HsQ20ItLPrviS8R5yOdRmN105UuHhS3mdPLCA&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=ZGaQM9TSTr83gpcLVcTvsA&_nc_tpa=Q5bMBQLOUMJQ7sHqPl8VDXKwORo0OddIr8pfAB_CkhD-_rZYItSd9UFayUjtRd0BNEouBeLQOuJJaLrCfg&oh=00_AQSEANdAmbJtbdNG9r4uJFS8sYvmueTWoQ8lFkSGoMic4Q&oe=6AE938DB",
+      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/825350941_122129238488808946_4092898460523791075_n.jpg?stp=dst-jpg_p720x720_tt6&_nc_cat=105&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=4XU0hMPcWnAQ7kNvwFiTaol&_nc_oc=AdpQDvpXckuZ9yISEMoQcfwoond1rpuAFXPiIZN_PlzUEQLjBCvbarPNOa6rBlUbvJHhycp3wiTFIgCP5em0o7my&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=5rK3K7tltqkVfgNXikSqGQ&_nc_tpa=Q5bMBQIlU054CtutOBrV6DH12UolFdEWXNZJvkgQLATfSQNqxRGqAsfM-M8vTm5Fv5sgDY0pc5hm8rAoyg&oh=00_AQSal9SAcr8OsFWJMmOQr19L6Hp04fATCRyfXj-8LmiOgQ&oe=6AE938DB",
       "attachment_url": "https://www.facebook.com/profile.php?id=122133193202808946",
+      "content_analysis": {
+        "char_count": 0,
+        "word_count": 0,
+        "hashtags": [],
+        "category_key": "visual_update",
+        "category_label": "Vizuális frissítés (kép)",
+        "category_icon": "🖼️",
+        "format_type": "with_image",
+        "format_label": "🖼️ Képes poszt"
+      },
       "reactions_count": null,
       "comments_count": null,
       "engagement_available": false,
-      "insights": null
+      "insights": null,
+      "engagement_score": 1,
+      "performance_badge": null
     },
     {
       "id": "1014443515092673_122128910396808946",
@@ -117,12 +331,24 @@
       "permalink_url": "https://www.facebook.com/122133193202808946/posts/122128910396808946",
       "shares_count": 0,
       "status_type": "added_photos",
-      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/825266551_122128738214808946_3548614895732294776_n.jpg?stp=dst-jpg_s1080x2048_tt6&_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=BXMogUDnr08Q7kNvwEkiJVT&_nc_oc=AdrDFoq1eoyZtJcDrLdUCDjzXnEp4SOu6MxsXCngdUBRcxXDyjg-JjSF0N0h6ekSXuY&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=ZGaQM9TSTr83gpcLVcTvsA&_nc_tpa=Q5bMBQJhcMfge6ebPJzibgGAol5M7miAFmyCOAvqXDi8bSWHwcmql0UXsYFxC7HXo1bdqbIKoHAaST6rcQ&oh=00_AQRlb9Y2HFuhTqt_s2BlNeRhrB2RVjBIos6O34LXfTa5fA&oe=6AE9561A",
+      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/825266551_122128738214808946_3548614895732294776_n.jpg?stp=dst-jpg_s1080x2048_tt6&_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=BXMogUDnr08Q7kNvwFRN-QW&_nc_oc=AdqjFqUqk4eHUQanFtsRhHm5IP61t211TRRzZ0wYPoW1A5ujQIg1nlP1J3Z7jaHVIkfIh3MsC8FGYbgdMTB2YTW2&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=5rK3K7tltqkVfgNXikSqGQ&_nc_tpa=Q5bMBQL8jrX5SPM70YsGamcOb70V-XiMtvuMFzPSbTFenxuwm9PAoRpvgwZYiHi2zxPQRr56covSwo9S8w&oh=00_AQQurUBvJPqjKvl7iL2Ta0yxe60GAwUtOBKpNwObgVCTUg&oe=6AE9561A",
       "attachment_url": "https://www.facebook.com/photo.php?fbid=122128910294808946&set=a.122128910306808946&type=3",
+      "content_analysis": {
+        "char_count": 349,
+        "word_count": 56,
+        "hashtags": [],
+        "category_key": "community_question",
+        "category_label": "Közösségi kérdés",
+        "category_icon": "❓",
+        "format_type": "with_image",
+        "format_label": "🖼️ Képes poszt"
+      },
       "reactions_count": null,
       "comments_count": null,
       "engagement_available": false,
-      "insights": null
+      "insights": null,
+      "engagement_score": 3,
+      "performance_badge": null
     },
     {
       "id": "1014443515092673_122098881038808946",
@@ -131,12 +357,24 @@
       "permalink_url": "https://www.facebook.com/122133193202808946/posts/122098881038808946?substory_index=34719914987622824",
       "shares_count": 0,
       "status_type": "added_photos",
-      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/667307052_2833161517044740_6134375696903423288_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=6DZdGSq38VIQ7kNvwEWrnvk&_nc_oc=Adqhyz-MPxWqH1vLkhrsD8mEJ2styWlmlS_PylXt0isll4nKvgJrcoY9IuL8aZZyKJ4&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=ZGaQM9TSTr83gpcLVcTvsA&_nc_tpa=Q5bMBQIkFfweD0zYOAhaQFYfIc0hQJy9A04dUo80mCpHxQ_ym5vbJTo7NEjROJukGUmrtaQZieCbyaquew&oh=00_AQT4VCTcp1Sd3dJbKv84WvxNXkFO9Sggiq99BQ-qT1WXEg&oe=6AE9387C",
+      "image_url": "https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/667307052_2833161517044740_6134375696903423288_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=6DZdGSq38VIQ7kNvwE3a0eD&_nc_oc=AdqpBkZQeYeUUHcDnZR4JR56irvy6k-ufQ4x5ID_4h2wWrJ7VEcJwaIVAs7ZSTyVlrcAY4IV2Jq6snrOXAN3NrrY&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&edm=APyxFHYEAAAA&_nc_gid=5rK3K7tltqkVfgNXikSqGQ&_nc_tpa=Q5bMBQJeu5CqL1v0rnnoSrwvNy8yUVa5iVQhrE0jHE99lG1EB790Qi3ziNxNM-dSb8G0H4EK1he4xQ6ceQ&oh=00_AQRWU22qjHphIrYjduva00p37PQvzfTyfvuTdDQTEVzIug&oe=6AE9387C",
       "attachment_url": "https://www.facebook.com/profile.php?id=122133193202808946",
+      "content_analysis": {
+        "char_count": 0,
+        "word_count": 0,
+        "hashtags": [],
+        "category_key": "visual_update",
+        "category_label": "Vizuális frissítés (kép)",
+        "category_icon": "🖼️",
+        "format_type": "with_image",
+        "format_label": "🖼️ Képes poszt"
+      },
       "reactions_count": null,
       "comments_count": null,
       "engagement_available": false,
-      "insights": null
+      "insights": null,
+      "engagement_score": 1,
+      "performance_badge": null
     }
   ]
 }
