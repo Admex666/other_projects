@@ -1,26 +1,26 @@
 name: VitaSteps Lead Nurturing Sequence
 
-# MEGJEGYZÉS: Az automatikus időzített futtatás (schedule / cron) KIKAPCSOLVA a felhasználó kérésére!
-# A workflow CSAK manuálisan (workflow_dispatch) indítható el a GitHub felületén, és
-# kizárólag teszt üzeneteket küld az admexgm@gmail.com címre (valódi leadeknek NEM küld!).
-#
-# on:
-#   schedule:
-#     - cron: '0 7,10,13,16 * * *'
-
+# Időzítés: Minden nap délelőtt 09:00 és kora délután 14:00 (magyar idő szerint, UTC 08:00 és 13:00)
 on:
+  schedule:
+    - cron: '0 8,13 * * *'
   workflow_dispatch:
     inputs:
-      test_step:
-        description: 'Teszt email lépés admexgm@gmail.com-ra (0, 1, 3, 5, 7, 10 vagy all)'
-        type: string
+      live_send:
+        description: 'Éles küldés valódi leadeknek (HA HAMIS, teszt módban fut az admexgm@gmail.com-ra!)'
+        type: boolean
         required: false
-        default: '1'
+        default: true
       dry_run:
-        description: 'Dry run mód (csak ellenőrzés, nem küld még teszt emailt sem)'
+        description: 'Dry run mód (csak kiértékelés és Pushbullet riport, emailt nem küld)'
         type: boolean
         required: false
         default: false
+      test_step:
+        description: 'Közvetlen teszt sablon lépés admexgm@gmail.com-ra (0, 1, 3, 5, 7, 10 vagy all) - ha megadva, felülbírálja az éles küldést'
+        type: string
+        required: false
+        default: ''
 
 jobs:
   run-nurture:
@@ -46,17 +46,25 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          INPUT_TEST_STEP: ${{ github.event.inputs.test_step }}
+          PUSHBULLET_ACCESS_TOKEN: ${{ secrets.PUSHBULLET_ACCESS_TOKEN }}
+          INPUT_LIVE_SEND: ${{ github.event.inputs.live_send }}
           INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+          INPUT_TEST_STEP: ${{ github.event.inputs.test_step }}
+          IS_SCHEDULED: ${{ github.event_name == 'schedule' }}
         run: |
-          FLAGS="--send"
-          if [ "$INPUT_DRY_RUN" = "true" ]; then
-            FLAGS="--dry-run"
-          fi
+          # Alapértelmezett kapcsolók ütemezett vagy manuális futás esetén
+          FLAGS=""
+
+          # Ha közvetlen tesztlépés van megadva
           if [ -n "$INPUT_TEST_STEP" ]; then
-            FLAGS="$FLAGS --test-step=$INPUT_TEST_STEP"
+            FLAGS="--test-step=$INPUT_TEST_STEP"
+          elif [ "$INPUT_DRY_RUN" = "true" ]; then
+            FLAGS="--dry-run"
+          elif [ "$IS_SCHEDULED" = "true" ] || [ "$INPUT_LIVE_SEND" = "true" ]; then
+            FLAGS="--send --live"
+          else
+            FLAGS="--send"
           fi
-          FLAGS="$FLAGS --force-time"
 
           echo "Running nurture sequence with flags: $FLAGS"
           node scripts/run_lead_nurture_sequence.js $FLAGS

@@ -30,12 +30,14 @@ require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const { createClient } = require('@supabase/supabase-js');
 const nodemailer = require('nodemailer');
 
-// ── BIZTONSÁGI TESZT CÍMZETT ─────────────────────────────────────────────────
+// ── BIZTONSÁGI ÉS TESZT BEÁLLÍTÁSOK ──────────────────────────────────────────
 const SAFE_TEST_EMAIL = 'admexgm@gmail.com';
+const PUSHBULLET_TOKEN = process.env.PUSHBULLET_ACCESS_TOKEN;
 
 // ── PARSE ARGUMENTS ──────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
-const IS_SEND = args.includes('--send') || args.some(a => a.startsWith('--test-step'));
+const IS_LIVE = args.includes('--live');
+const IS_SEND = args.includes('--send') || args.some(a => a.startsWith('--test-step')) || IS_LIVE;
 const IS_DRY_RUN = !IS_SEND || args.includes('--dry-run');
 const FORCE_TIME = args.includes('--force-time') || args.some(a => a.startsWith('--test-step'));
 
@@ -249,6 +251,55 @@ function extractFirstName(fullName) {
 
     // Alapértelmezett magyar sorrend
     return toTitleCaseWord(lastPart);
+}
+
+// ── PUSHBULLET ÉRTESÍTŐ ───────────────────────────────────────────────────────
+async function sendPushbulletNotification(title, body) {
+    if (!PUSHBULLET_TOKEN) {
+        console.log('   ℹ️ PUSHBULLET_ACCESS_TOKEN nincs beállítva, push kihagyva.');
+        return false;
+    }
+    try {
+        const https = require('https');
+        const payload = JSON.stringify({ type: 'note', title, body });
+        return new Promise((resolve) => {
+            const req = https.request('https://api.pushbullet.com/v2/pushes', {
+                method: 'POST',
+                headers: {
+                    'Access-Token': PUSHBULLET_TOKEN,
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(payload)
+                },
+                timeout: 10000
+            }, (res) => {
+                let data = '';
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => {
+                    if (res.statusCode >= 200 && res.statusCode < 300) {
+                        console.log(`   📱 Pushbullet értesítés sikeresen elküldve!`);
+                        resolve(true);
+                    } else {
+                        console.warn(`   ⚠️ Pushbullet HTTP ${res.statusCode}:`, data);
+                        resolve(false);
+                    }
+                });
+            });
+            req.on('error', (err) => {
+                console.warn(`   ⚠️ Pushbullet hiba:`, err.message);
+                resolve(false);
+            });
+            req.on('timeout', () => {
+                req.destroy();
+                console.warn(`   ⚠️ Pushbullet kérés időtúllépés.`);
+                resolve(false);
+            });
+            req.write(payload);
+            req.end();
+        });
+    } catch (e) {
+        console.warn(`   ⚠️ Pushbullet kivétel:`, e.message);
+        return false;
+    }
 }
 
 function isBudapestDaytime() {
@@ -698,9 +749,16 @@ async function run() {
         now: new Date()
     });
 
+    const sentSummary = {
+        sentCount: 0,
+        failedCount: 0,
+        byStep: {}
+    };
+
     for (const item of evaluation.eligibleItems) {
         const { lead, firstName, dueStep, elapsedHours, rowCount } = item;
         const email = lead.email;
+        const recipientEmail = IS_LIVE ? email : SAFE_TEST_EMAIL;
         const targetUrl = dueStep.getTargetUrl(lead.id);
         const unsubUrl = `${BASE_URL}/api/unsubscribe?lead=${encodeURIComponent(lead.id)}`;
         const kalandkonyvUrl = `${BASE_URL}/nagykevely/kalandkonyv.html?lead=${encodeURIComponent(lead.id)}&source=email&email_id=${dueStep.emailId}&sequence=${SEQUENCE_NAME}`;
@@ -714,9 +772,14 @@ async function run() {
             continue;
         }
 
-        // F) BIZTONSÁGI KÜLDÉS: CSAK ADMEXGM@GMAIL.COM-RA!
+        // F) Küldés (Éles vagy Biztonsági tesztmód)
         try {
-            console.log(`  🔒 [BIZTONSÁGI MÓD]: Eredeti címzett (${email}) helyett KIZÁRÓLAG ide küldve: ${SAFE_TEST_EMAIL}`);
+            if (IS_LIVE) {
+                console.log(`  🚀 [ÉLES KÜLDÉS]: Címzett -> ${recipientEmail}`);
+            } else {
+                console.log(`  🔒 [BIZTONSÁGI MÓD]: Eredeti címzett (${email}) helyett ide küldve -> ${SAFE_TEST_EMAIL}`);
+            }
+
             const rawTemplate = loadTemplate(dueStep.templateFile);
             const personalizedHtml = rawTemplate
                 .replace(/\{\{NAME\}\}/g, firstName)
@@ -725,20 +788,58 @@ async function run() {
                 .replace(/\{\{KALANDKONYV_URL\}\}/g, kalandkonyvUrl)
                 .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
 
+            const emailSubject = IS_LIVE ? dueStep.subject : `[TESZT - Eredeti címzett: ${email}] ${dueStep.subject}`;
+
             await transporter.sendMail({
-                from: '"VitaSteps Teszt" <vitasteps.team@gmail.com>',
-                to: SAFE_TEST_EMAIL,
-                subject: `[TESZT - Eredeti címzett: ${email}] ${dueStep.subject}`,
+                from: '"VitaSteps" <vitasteps.team@gmail.com>',
+                to: recipientEmail,
+                subject: emailSubject,
                 html: personalizedHtml
             });
 
-            console.log(`  ✅ SIKERES TESZT KÜLDÉS -> ${SAFE_TEST_EMAIL}`);
+            console.log(`  ✅ SIKERES KÜLDÉS -> ${recipientEmail}`);
+            sentSummary.sentCount++;
+            sentSummary.byStep[`Day ${dueStep.day}`] = (sentSummary.byStep[`Day ${dueStep.day}`] || 0) + 1;
+
+            // G) Éles küldéskor állapot frissítése a Supabase-ben
+            if (IS_LIVE) {
+                try {
+                    await supabase.from('leads').update({
+                        sequence: SEQUENCE_NAME,
+                        last_sequence_step: dueStep.step,
+                        last_sequence_sent_at: new Date().toISOString()
+                    }).eq('id', lead.id);
+                } catch (dbErr) {
+                    console.warn(`  └─ Figyelmeztetés: lead DB frissítés hiba:`, dbErr.message);
+                }
+
+                try {
+                    await supabase.from('analytics_events').insert({
+                        session_id: 'nurture_' + Date.now(),
+                        visitor_id: 'v_lead_' + lead.id,
+                        event_name: 'lead_email_sent',
+                        event_data: {
+                            lead_id: lead.id,
+                            email: email,
+                            sequence: SEQUENCE_NAME,
+                            step: dueStep.step,
+                            email_id: dueStep.emailId,
+                            subject: dueStep.subject,
+                            source: 'email'
+                        },
+                        created_at: new Date().toISOString()
+                    });
+                } catch (anErr) {
+                    console.warn(`  └─ Figyelmeztetés: analytics_events rögzítés hiba:`, anErr.message);
+                }
+            }
 
             // Rate limit védelem
             await new Promise(r => setTimeout(r, 1200));
 
         } catch (sendErr) {
             console.error(`  ❌ Hiba küldés közben:`, sendErr.message);
+            sentSummary.failedCount++;
         }
     }
 
@@ -752,7 +853,34 @@ async function run() {
     console.log(`   Már lezárult sequence (Day 10+) kihagyva: ${evaluation.skippedCompletedCount}`);
     console.log(`   20 órán belül már levelet kapott: ${evaluation.skippedTooSoonCount}`);
     console.log(`   Most esedékes egyedi leadek: ${evaluation.eligibleItems.length}`);
+    if (!IS_DRY_RUN) {
+        console.log(`   Sikeresen kiküldve: ${sentSummary.sentCount} db (${IS_LIVE ? 'ÉLES' : 'TESZT'})`);
+        console.log(`   Sikertelen: ${sentSummary.failedCount} db`);
+    }
     console.log(`============================================================\n`);
+
+    // H) Pushbullet értesítés küldése
+    const modeLabel = IS_DRY_RUN ? 'DRY RUN' : (IS_LIVE ? 'ÉLES' : 'TESZT');
+    const stepBreakdown = Object.entries(sentSummary.byStep)
+        .map(([st, cnt]) => `  • ${st}: ${cnt} db`)
+        .join('\n');
+
+    const pushTitle = `VitaSteps Lead Nurture [${modeLabel}]`;
+    const pushBody = [
+        `📊 Napi Lead Nurturing lefutott (${modeLabel})`,
+        ``,
+        `✉️ Kiküldve: ${IS_DRY_RUN ? `0 (${evaluation.eligibleItems.length} esedékes)` : `${sentSummary.sentCount} db`}`,
+        stepBreakdown ? `${stepBreakdown}\n` : null,
+        `👥 Egyedi leadek száma: ${evaluation.uniqueLeadCount}`,
+        `🚫 Kizárások:`,
+        `  • Már vásárolt: ${evaluation.skippedConvertedCount} fő`,
+        `  • Leiratkozott: ${evaluation.skippedUnsubscribedCount} fő`,
+        `  • Régi szept. lead: ${evaluation.skippedLegacyCount} fő`,
+        `  • 20h cooldown: ${evaluation.skippedTooSoonCount} fő`,
+        sentSummary.failedCount > 0 ? `⚠️ Sikertelen küldések: ${sentSummary.failedCount}` : null
+    ].filter(Boolean).join('\n');
+
+    await sendPushbulletNotification(pushTitle, pushBody);
 }
 
 if (require.main === module) {
