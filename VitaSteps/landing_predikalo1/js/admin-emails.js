@@ -45,6 +45,23 @@ function renderEmails() {
     if (!container || !emailData) return;
 
     const stats = emailData.stats || { total: 0, targetActive: 0, converted: 0, unsubscribed: 0 };
+    const funnel = emailData.funnel || {
+        totalSubscribers: stats.totalRecords || stats.total || 0,
+        totalUniqueLeads: stats.total || 0,
+        emailClicks: 0,
+        checkoutStarts: 0,
+        convertedCount: stats.converted || 0,
+        convRate: 0,
+        unsubscribedCount: stats.unsubscribed || 0,
+        unsubRate: 0,
+        clickRate: 0,
+        checkoutRate: 0,
+        nurture: {
+            steps: { day0: 0, day1: 0, day3: 0, day5: 0, day7: 0, day10: 0 },
+            activeWarmOctoberCount: 0,
+            totalOctoberLeads: 0
+        }
+    };
     const sentMap = emailData.sentEmailsMap || {};
     const templates = emailData.templates || [];
     const activeTemplate = templates.find(t => t.id === selectedTemplateId) || templates[0] || {};
@@ -78,7 +95,161 @@ function renderEmails() {
             .replace(/\{\{UNSUBSCRIBE_URL\}\}/g, unsubUrl);
     }
 
+    const nurtureSteps = funnel.nurture?.steps || { day0: 0, day1: 0, day3: 0, day5: 0, day7: 0, day10: 0 };
+    const activeWarmOctCount = funnel.nurture?.activeWarmOctoberCount ?? 19;
+
     let html = `
+        <!-- 0. Lead Funnel & Nurture Lifecycle Visualizer Card -->
+        <div style="background: linear-gradient(135deg, rgba(20, 27, 45, 0.95) 0%, rgba(13, 17, 28, 0.98) 100%); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.4);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <div style="font-size: 1.15rem; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🌪️</span> <span>Lead Tölcsér (Funnel) & Konverziós Életciklus</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.2rem;">
+                        Kalandfüzet lead magnet feliratkozók teljes útja: megnyitás → CTA kattintás → checkout → vásárlás
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+                    <span style="font-size: 0.75rem; background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); padding: 4px 10px; border-radius: 20px; font-weight: 700;">
+                        🎯 Konverzió: ${funnel.convRate}% (${funnel.convertedCount} vásárló)
+                    </span>
+                    <span style="font-size: 0.75rem; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); padding: 4px 10px; border-radius: 20px; font-weight: 700;">
+                        🔥 Októberi meleg leadek: ${activeWarmOctCount} fő
+                    </span>
+                </div>
+            </div>
+
+            <!-- Funnel Progression Pipeline -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
+                <!-- Step 1: Subscribers -->
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 1rem; position: relative;">
+                    <div style="font-size: 0.72rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.04em;">
+                        1. Feliratkozás
+                    </div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: #fff; margin-top: 0.35rem; font-family: 'Outfit', monospace;">
+                        ${funnel.totalSubscribers} <span style="font-size: 0.82rem; color: #94a3b8; font-weight: 500;">(${funnel.totalUniqueLeads} egyedi)</span>
+                    </div>
+                    <div style="font-size: 0.73rem; color: #64748b; margin-top: 0.25rem;">
+                        100% bázis (Kalandfüzet)
+                    </div>
+                    <div style="height: 4px; background: #3b82f6; border-radius: 2px; margin-top: 0.6rem; width: 100%;"></div>
+                </div>
+
+                <!-- Step 2: Email Clicks / Kalandkonyv open -->
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 1rem; position: relative;">
+                    <div style="font-size: 0.72rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.04em;">
+                        2. Email CTA / Füzet
+                    </div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: #38bdf8; margin-top: 0.35rem; font-family: 'Outfit', monospace;">
+                        ${funnel.emailClicks} <span style="font-size: 0.82rem; color: #7dd3fc; font-weight: 600;">kattintás</span>
+                    </div>
+                    <div style="font-size: 0.73rem; color: #7dd3fc; margin-top: 0.25rem;">
+                        lead_email_clicked (${funnel.clickRate}% CTR)
+                    </div>
+                    <div style="height: 4px; background: #38bdf8; border-radius: 2px; margin-top: 0.6rem; width: ${Math.min(100, Math.max(15, funnel.clickRate * 2))}%;"></div>
+                </div>
+
+                <!-- Step 3: Checkout Started -->
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 1rem; position: relative;">
+                    <div style="font-size: 0.72rem; font-weight: 800; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.04em;">
+                        3. Pénztárba lépés
+                    </div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: #fbbf24; margin-top: 0.35rem; font-family: 'Outfit', monospace;">
+                        ${funnel.checkoutStarts} <span style="font-size: 0.82rem; color: #fde68a; font-weight: 600;">indítás</span>
+                    </div>
+                    <div style="font-size: 0.73rem; color: #fde68a; margin-top: 0.25rem;">
+                        lead_checkout_started (${funnel.checkoutRate}% int.)
+                    </div>
+                    <div style="height: 4px; background: #fbbf24; border-radius: 2px; margin-top: 0.6rem; width: ${Math.min(100, Math.max(15, (funnel.checkoutStarts / Math.max(1, funnel.totalUniqueLeads)) * 100 * 3))}%;"></div>
+                </div>
+
+                <!-- Step 4: Converted Buyers -->
+                <div style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.35); border-radius: 10px; padding: 1rem; position: relative;">
+                    <div style="font-size: 0.72rem; font-weight: 800; color: #4ade80; text-transform: uppercase; letter-spacing: 0.04em;">
+                        4. Vásárolt (Konvertált)
+                    </div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: #4ade80; margin-top: 0.35rem; font-family: 'Outfit', monospace;">
+                        ${funnel.convertedCount} <span style="font-size: 0.82rem; color: #86efac; font-weight: 600;">fő</span>
+                    </div>
+                    <div style="font-size: 0.73rem; color: #86efac; margin-top: 0.25rem;">
+                        Konverziós ráta: <strong>${funnel.convRate}%</strong>
+                    </div>
+                    <div style="height: 4px; background: #4ade80; border-radius: 2px; margin-top: 0.6rem; width: 100%;"></div>
+                </div>
+
+                <!-- Step 5: Unsubscribed Exit -->
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 1rem; position: relative;">
+                    <div style="font-size: 0.72rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.04em;">
+                        5. Leiratkozott
+                    </div>
+                    <div style="font-size: 1.6rem; font-weight: 900; color: #cbd5e1; margin-top: 0.35rem; font-family: 'Outfit', monospace;">
+                        ${funnel.unsubscribedCount} <span style="font-size: 0.82rem; color: #94a3b8; font-weight: 500;">fő</span>
+                    </div>
+                    <div style="font-size: 0.73rem; color: #94a3b8; margin-top: 0.25rem;">
+                        Veszteség: ${funnel.unsubRate}% (biztonságos)
+                    </div>
+                    <div style="height: 4px; background: #64748b; border-radius: 2px; margin-top: 0.6rem; width: 10%;"></div>
+                </div>
+            </div>
+
+            <!-- Nurture V1 Sequence Progress Pipeline -->
+            <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="font-size: 0.85rem; font-weight: 800; color: #f1f5f9; display: flex; align-items: center; gap: 0.45rem;">
+                        <span>📬</span> <span>Nurture V1 6-Lépéses Automatizáció Állapota:</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: #cbd5e1;">
+                        Aktív októberi meleg lead várakozik: <strong style="color: #c4ff00; font-size: 0.85rem;">${activeWarmOctCount} fő</strong>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem;">
+                    <!-- Day 0 -->
+                    <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 0.6rem 0.75rem;">
+                        <div style="font-size: 0.68rem; color: #38bdf8; font-weight: 800;">DAY 0 • AZONNAL</div>
+                        <div style="font-size: 1.15rem; font-weight: 900; color: #fff; margin: 0.2rem 0;">${nurtureSteps.day0} <span style="font-size: 0.72rem; color: #94a3b8;">kiküldve</span></div>
+                        <div style="font-size: 0.68rem; color: #94a3b8;">Kalandfüzet + GPX</div>
+                    </div>
+
+                    <!-- Day 1 -->
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.6rem 0.75rem;">
+                        <div style="font-size: 0.68rem; color: #cbd5e1; font-weight: 800;">DAY 1 • +24 ÓRA</div>
+                        <div style="font-size: 1.15rem; font-weight: 900; color: ${nurtureSteps.day1 > 0 ? '#4ade80' : '#94a3b8'}; margin: 0.2rem 0;">${nurtureSteps.day1} <span style="font-size: 0.72rem; color: #94a3b8;">kiküldve</span></div>
+                        <div style="font-size: 0.68rem; color: #94a3b8;">Hasznos túratippek</div>
+                    </div>
+
+                    <!-- Day 3 -->
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.6rem 0.75rem;">
+                        <div style="font-size: 0.68rem; color: #cbd5e1; font-weight: 800;">DAY 3 • +72 ÓRA</div>
+                        <div style="font-size: 1.15rem; font-weight: 900; color: ${nurtureSteps.day3 > 0 ? '#4ade80' : '#94a3b8'}; margin: 0.2rem 0;">${nurtureSteps.day3} <span style="font-size: 0.72rem; color: #94a3b8;">kiküldve</span></div>
+                        <div style="font-size: 0.68rem; color: #94a3b8;">Inspiráció & legendák</div>
+                    </div>
+
+                    <!-- Day 5 -->
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.6rem 0.75rem;">
+                        <div style="font-size: 0.68rem; color: #cbd5e1; font-weight: 800;">DAY 5 • +120 ÓRA</div>
+                        <div style="font-size: 1.15rem; font-weight: 900; color: ${nurtureSteps.day5 > 0 ? '#4ade80' : '#94a3b8'}; margin: 0.2rem 0;">${nurtureSteps.day5} <span style="font-size: 0.72rem; color: #94a3b8;">kiküldve</span></div>
+                        <div style="font-size: 0.68rem; color: #94a3b8;">Célkitűzés & büszkeség</div>
+                    </div>
+
+                    <!-- Day 7 -->
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.6rem 0.75rem;">
+                        <div style="font-size: 0.68rem; color: #cbd5e1; font-weight: 800;">DAY 7 • +168 ÓRA</div>
+                        <div style="font-size: 1.15rem; font-weight: 900; color: ${nurtureSteps.day7 > 0 ? '#4ade80' : '#94a3b8'}; margin: 0.2rem 0;">${nurtureSteps.day7} <span style="font-size: 0.72rem; color: #94a3b8;">kiküldve</span></div>
+                        <div style="font-size: 0.68rem; color: #94a3b8;">Érem emlékajánlat</div>
+                    </div>
+
+                    <!-- Day 10 -->
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.6rem 0.75rem;">
+                        <div style="font-size: 0.68rem; color: #cbd5e1; font-weight: 800;">DAY 10 • +240 ÓRA</div>
+                        <div style="font-size: 1.15rem; font-weight: 900; color: ${nurtureSteps.day10 > 0 ? '#4ade80' : '#94a3b8'}; margin: 0.2rem 0;">${nurtureSteps.day10} <span style="font-size: 0.72rem; color: #94a3b8;">kiküldve</span></div>
+                        <div style="font-size: 0.68rem; color: #94a3b8;">100 db limitált széria</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 1. KPI Summary Cards -->
         <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
             <!-- Még Kiküldendő Lead -->

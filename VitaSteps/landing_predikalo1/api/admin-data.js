@@ -8,6 +8,7 @@ const { handleFoxpostCreation } = require('../lib/admin/foxpost');
 const { handleGetLeadsData, handleSendLeadsEmail } = require('../lib/admin/leads-email');
 const { handleFinanceData, handleRevolutUpload, getCreativeCsvData } = require('../lib/admin/finance');
 const { handleAiAssistant } = require('../lib/admin/ai-assistant');
+const { fetchFacebookOrganicPosts, CACHE_FILE_PATH } = require('../scripts/fetch_facebook_organic');
 
 const supabase = createClient(
     process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co',
@@ -72,6 +73,22 @@ module.exports = async (req, res) => {
                 success: true,
                 feedbacks: feedbacks || []
             });
+        }
+
+        // ── 4.5. FACEBOOK ORGANIC DATA ────────────────────────────────────────
+        if (type === 'facebook_organic' || action === 'facebook_organic') {
+            const force = req.body?.force_refresh === true || req.query?.force_refresh === 'true' || action === 'refresh_facebook_organic';
+            let result = null;
+            if (!force && fs.existsSync(CACHE_FILE_PATH)) {
+                try {
+                    result = JSON.parse(fs.readFileSync(CACHE_FILE_PATH, 'utf8'));
+                    result.from_cache = true;
+                } catch (e) {}
+            }
+            if (!result) {
+                result = await fetchFacebookOrganicPosts({ forceRefresh: force });
+            }
+            return res.status(200).json(result);
         }
 
         // ── 5. MARKETING & ANALYTICS DATA ────────────────────────────────────

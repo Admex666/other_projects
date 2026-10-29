@@ -356,6 +356,75 @@ async function handleGetLeadsData(req, res) {
             targetLeads
         } = aggregateUniqueLeads(leads, convertedEmailSet, unsubscribedEmailSet);
 
+        // 3. Analytics események lekérése a lead tölcsérhez (clicks, checkouts, nurture lépések)
+        let emailClicksCount = 0;
+        let checkoutStartsCount = 0;
+        const nurtureSteps = { day0: 0, day1: 0, day3: 0, day5: 0, day7: 0, day10: 0 };
+
+        try {
+            const { data: leadEvents, error: evErr } = await supabase
+                .from('analytics_events')
+                .select('event_name, event_data, created_at')
+                .in('event_name', ['lead_email_sent', 'lead_email_clicked', 'lead_checkout_started']);
+
+            if (!evErr && leadEvents) {
+                leadEvents.forEach(ev => {
+                    if (ev.event_name === 'lead_email_clicked') {
+                        emailClicksCount++;
+                    } else if (ev.event_name === 'lead_checkout_started') {
+                        checkoutStartsCount++;
+                    } else if (ev.event_name === 'lead_email_sent') {
+                        const step = String(ev.event_data?.step);
+                        if (step === '0') nurtureSteps.day0++;
+                        else if (step === '1') nurtureSteps.day1++;
+                        else if (step === '3') nurtureSteps.day3++;
+                        else if (step === '5') nurtureSteps.day5++;
+                        else if (step === '7') nurtureSteps.day7++;
+                        else if (step === '10') nurtureSteps.day10++;
+                    }
+                });
+            }
+        } catch (evError) {
+            console.warn('Analytics lead events fetch error:', evError.message);
+        }
+
+        // Aktív októberi meleg leadek (2026. okt 1. utániak, akik még nem vásároltak és nem iratkoztak le)
+        const octLeadsMap = new Map();
+        (leads || []).filter(l => new Date(l.created_at) >= new Date('2026-10-01T00:00:00Z')).forEach(l => {
+            const em = (l.email || '').toLowerCase().trim();
+            if (em && !octLeadsMap.has(em)) octLeadsMap.set(em, l);
+        });
+
+        let activeWarmOctoberCount = 0;
+        octLeadsMap.forEach((l, em) => {
+            if (!convertedEmailSet.has(em) && !unsubscribedEmailSet.has(em) && !l.converted) {
+                activeWarmOctoberCount++;
+            }
+        });
+
+        const convRate = totalUnique > 0 ? parseFloat(((convertedCount / totalUnique) * 100).toFixed(1)) : 0;
+        const unsubRate = totalUnique > 0 ? parseFloat(((unsubscribedCount / totalUnique) * 100).toFixed(1)) : 0;
+        const clickRate = totalUnique > 0 ? parseFloat(((emailClicksCount / totalUnique) * 100).toFixed(1)) : 0;
+        const checkoutRate = emailClicksCount > 0 ? parseFloat(((checkoutStartsCount / emailClicksCount) * 100).toFixed(1)) : 0;
+
+        const funnel = {
+            totalSubscribers: totalRecords,
+            totalUniqueLeads: totalUnique,
+            emailClicks: emailClicksCount,
+            checkoutStarts: checkoutStartsCount,
+            convertedCount: convertedCount,
+            convRate: convRate,
+            unsubscribedCount: unsubscribedCount,
+            unsubRate: unsubRate,
+            clickRate: clickRate,
+            checkoutRate: checkoutRate,
+            nurture: {
+                steps: nurtureSteps,
+                activeWarmOctoberCount: activeWarmOctoberCount,
+                totalOctoberLeads: octLeadsMap.size
+            }
+        };
+
         // Sablonok betöltése előnézethez
         const templatesWithContent = TEMPLATES.map(t => {
             const fullPath = path.resolve(__dirname, '../../email_templates', t.path);
@@ -379,6 +448,7 @@ async function handleGetLeadsData(req, res) {
                 converted: convertedCount,
                 unsubscribed: unsubscribedCount
             },
+            funnel: funnel,
             sentEmailsMap: sentEmailsMap,
             targetLeads: targetLeads.slice(0, 100),
             templates: templatesWithContent,
