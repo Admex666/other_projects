@@ -263,17 +263,17 @@ async function getCachedOrFetch(key, ttlMs, fetchFn) {
 }
 
 function warmUpAiCache() {
-    getCachedOrFetch('db_overview:true', 60000, () => toolGetDatabaseOverview({ include_recent_items: true })).catch(() => {});
-    getCachedOrFetch('finance:40', 60000, () => toolGetFinancialAndCashflowData({ include_transactions_limit: 40 })).catch(() => {});
-    getCachedOrFetch('marketing:all:0', 60000, () => toolGetMarketingAndCreativesData({ campaign_filter: 'all', days: 0 })).catch(() => {});
+    getCachedOrFetch('db_overview:compact', 120000, () => toolGetDatabaseOverview({ include_recent_items: false })).catch(() => {});
+    getCachedOrFetch('finance:10', 120000, () => toolGetFinancialAndCashflowData({ include_transactions_limit: 10 })).catch(() => {});
+    getCachedOrFetch('marketing:all:0', 120000, () => toolGetMarketingAndCreativesData({ campaign_filter: 'all', days: 0 })).catch(() => {});
 }
 
 async function buildLiveSnapshotContext() {
     try {
         const [dbOverview, finData, mktData] = await Promise.all([
-            getCachedOrFetch('db_overview:true', 60000, () => toolGetDatabaseOverview({ include_recent_items: true })),
-            getCachedOrFetch('finance:40', 60000, () => toolGetFinancialAndCashflowData({ include_transactions_limit: 40 })),
-            getCachedOrFetch('marketing:all:0', 60000, () => toolGetMarketingAndCreativesData({ campaign_filter: 'all', days: 0 }))
+            getCachedOrFetch('db_overview:compact', 120000, () => toolGetDatabaseOverview({ include_recent_items: false })),
+            getCachedOrFetch('finance:10', 120000, () => toolGetFinancialAndCashflowData({ include_transactions_limit: 10 })),
+            getCachedOrFetch('marketing:all:0', 120000, () => toolGetMarketingAndCreativesData({ campaign_filter: 'all', days: 0 }))
         ]);
 
         const compactSnapshot = {
@@ -282,26 +282,16 @@ async function buildLiveSnapshotContext() {
             feedbacks: {
                 count: dbOverview.feedbacks_summary?.total_feedbacks,
                 avg_medal: dbOverview.feedbacks_summary?.avg_medal_rating_out_of_5,
-                avg_nps: dbOverview.feedbacks_summary?.avg_nps_out_of_10,
-                next_regions: dbOverview.feedbacks_summary?.next_region_votes
+                avg_nps: dbOverview.feedbacks_summary?.avg_nps_out_of_10
             },
             leads: dbOverview.leads_summary,
-            pending_approvals: (dbOverview.pending_proofs_waiting_approval || []).map(r => ({
-                name: r.name, campaign: r.campaign, serial: r.serial_number, dist: r.distance
-            })),
-            waiting_to_ship: (dbOverview.waiting_to_pack_and_ship_list || []).map(r => ({
-                name: r.name, campaign: r.campaign, serial: r.serial_number, method: r.method, target: r.parcel_or_address
-            })),
             balance_sheet: finData.balance_sheet,
             pnl: finData.campaign_pnl_summary,
-            marketing: mktData.summary,
-            top_creatives: (mktData.creatives_ranked_by_spend || []).slice(0, 5).map(c => ({
-                ad: c.ad_name, camp: c.campaign_name, spend_gross: c.spend_with_27pct_vat_huf, purchases: c.purchases, rev: c.revenue_huf, cpa: c.cpa_gross_huf, roas: c.roas_net
-            }))
+            marketing: mktData.summary
         };
 
         return '\n\n### ⚡ ÉLŐ ELŐTÖLTÖTT KPI PILLANATKÉP:\n' +
-            'Ha a kérdés megválaszolható az alábbi élő adatokból, NE hívj toolt, hanem válaszolj AZONNAL! Toolt csak emailekhez, egyedi táblakereséshez vagy Knowledge Graph olvasáshoz hívj:\n' +
+            'Ha a kérdés megválaszolható az alábbi élő adatokból, NE hívj toolt, hanem válaszolj AZONNAL! Toolt csak emailekhez, részletes táblakereséshez, vagy Knowledge Graphhoz hívj:\n' +
             JSON.stringify(compactSnapshot);
     } catch (e) {
         return '';
@@ -313,41 +303,23 @@ let cachedAvailableModels = null;
 async function getFallbackCandidates(primaryModel, apiKey) {
     const defaults = [
         primaryModel,
+        'gemini-3.1-flash-lite',
         'gemini-3.5-flash',
-        'gemini-3.8-flash',
         'gemini-3.1-pro-preview'
     ];
-    try {
-        if (!cachedAvailableModels) {
-            const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`);
-            if (r.ok) {
-                const d = await r.json();
-                cachedAvailableModels = (d.models || [])
-                    .filter(m => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes('generateContent'))
-                    .map(m => m.name.replace(/^models\//, ''))
-                    .filter(n => n.startsWith('gemini-') && !n.includes('tts') && !n.includes('image') && !n.includes('embedding') && !n.includes('vision'));
-            }
-        }
-        if (cachedAvailableModels && cachedAvailableModels.length > 0) {
-            for (const m of cachedAvailableModels) {
-                if (!defaults.includes(m)) defaults.push(m);
-            }
-        }
-    } catch (e) {}
-    return [...new Set(defaults)];
+    return [...new Set(defaults.filter(Boolean))];
 }
 
-async function callGeminiWithResilience(selectedModel, apiKey, payload) {
+async function callGeminiWithResilience(selectedModel, apiKey, payload, timeoutMs = 15000) {
     const candidates = await getFallbackCandidates(selectedModel, apiKey);
     let lastRes = null;
     let lastData = null;
     let usedModel = selectedModel;
 
-    // Try primary model first (up to 2 attempts if high demand), then cascade through fallback models
+    // Try primary model first, then fallback to other fast models
     const attemptPlan = [
         { model: selectedModel, delayMs: 0 },
-        { model: selectedModel, delayMs: 900 },
-        ...candidates.filter(m => m !== selectedModel).slice(0, 4).map(m => ({ model: m, delayMs: 300 }))
+        ...candidates.filter(m => m !== selectedModel).slice(0, 2).map(m => ({ model: m, delayMs: 250 }))
     ];
 
     for (const step of attemptPlan) {
@@ -357,28 +329,51 @@ async function callGeminiWithResilience(selectedModel, apiKey, payload) {
         usedModel = step.model;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${usedModel}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
-        // Clone payload and remove thinkingConfig if a fallback model doesn't support it
+        // Clone payload and configure thinkingConfig
         const bodyObj = JSON.parse(JSON.stringify(payload));
         if (usedModel.includes('lite') && bodyObj.generationConfig?.thinkingConfig) {
             delete bodyObj.generationConfig.thinkingConfig;
         }
 
-        let res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(bodyObj)
-        });
-        let data = await res.json();
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+        let res;
+        let data;
+        try {
+            res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bodyObj),
+                signal: controller.signal
+            });
+            clearTimeout(timer);
+            data = await res.json();
+        } catch (fetchErr) {
+            clearTimeout(timer);
+            console.warn(`Gemini call to ${usedModel} failed/timed out:`, fetchErr.message);
+            lastRes = { ok: false, status: 504 };
+            lastData = { error: { message: `Időtúllépés vagy hálózati hiba a(z) ${usedModel} modellnél (${fetchErr.message}).` } };
+            continue;
+        }
 
         // Retry without thinkingConfig if model complains about thinkingConfig
         if (!res.ok && bodyObj.generationConfig?.thinkingConfig && (data?.error?.message || '').toLowerCase().includes('thinking')) {
             delete bodyObj.generationConfig.thinkingConfig;
-            res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bodyObj)
-            });
-            data = await res.json();
+            const c2 = new AbortController();
+            const t2 = setTimeout(() => c2.abort(), timeoutMs);
+            try {
+                res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyObj),
+                    signal: c2.signal
+                });
+                clearTimeout(t2);
+                data = await res.json();
+            } catch (err2) {
+                clearTimeout(t2);
+            }
         }
 
         if (res.ok) {
@@ -392,13 +387,15 @@ async function callGeminiWithResilience(selectedModel, apiKey, payload) {
             res.status === 503 ||
             res.status === 429 ||
             res.status === 404 ||
+            res.status === 504 ||
             errMsg.includes('high demand') ||
             errMsg.includes('overloaded') ||
             errMsg.includes('try again') ||
             errMsg.includes('resource exhausted') ||
             errMsg.includes('no longer available') ||
             errMsg.includes('not found') ||
-            errMsg.includes('not supported');
+            errMsg.includes('not supported') ||
+            errMsg.includes('quota');
 
         if (!isTransientOrModelError) {
             break; // Invalid API key or malformed request -> stop immediately
@@ -1223,8 +1220,8 @@ async function handleAiAssistant(req, res) {
                 gmail_secondary: hasSecondaryGmail ? process.env.GMAIL_SECOND_USER : null
             },
             models: [
-                { id: 'gemini-3.5-flash', label: '⚡ Gemini 3.5 Flash (Ajánlott, Gyors & Stabil)' },
-                { id: 'gemini-3.8-flash', label: '🚀 Gemini 3.8 Flash (Új)' },
+                { id: 'gemini-3.1-flash-lite', label: '⚡ Gemini 3.1 Flash-Lite (Leggyorsabb, 1-2 mp válaszidő)' },
+                { id: 'gemini-3.5-flash', label: '🚀 Gemini 3.5 Flash (Részletes elemzés)' },
                 { id: 'gemini-3.1-pro-preview', label: '🧠 Gemini 3.1 Pro (Mély stratégiai & P&L)' }
             ]
         });
@@ -1234,7 +1231,7 @@ async function handleAiAssistant(req, res) {
     const {
         message,
         history = [],
-        model = 'gemini-3.5-flash',
+        model = 'gemini-3.1-flash-lite',
         api_key_override = ''
     } = req.body || {};
 
@@ -1250,18 +1247,19 @@ async function handleAiAssistant(req, res) {
         });
     }
 
-    // Map legacy 2.5 / 2.0 model names automatically to 3.8
+    // Map legacy / overloaded model names automatically
     const MODEL_MAP = {
-        'gemini-2.5-flash': 'gemini-3.5-flash',
-        'gemini-2.0-flash': 'gemini-3.5-flash',
-        'gemini-3.8-flash-lite': 'gemini-3.5-flash',
+        'gemini-2.5-flash': 'gemini-3.1-flash-lite',
+        'gemini-2.0-flash': 'gemini-3.1-flash-lite',
+        'gemini-3.8-flash': 'gemini-3.1-flash-lite',
+        'gemini-3.8-flash-lite': 'gemini-3.1-flash-lite',
         'gemini-2.5-pro': 'gemini-3.1-pro-preview',
         'gemini-3.8-pro': 'gemini-3.1-pro-preview'
     };
     const normalizedModel = MODEL_MAP[model] || model;
-    let selectedModel = ['gemini-3.8-flash', 'gemini-3.8-flash-lite', 'gemini-3.8-pro'].includes(normalizedModel)
+    let selectedModel = ['gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.1-pro-preview'].includes(normalizedModel)
         ? normalizedModel
-        : 'gemini-3.8-flash';
+        : 'gemini-3.1-flash-lite';
 
     // Build conversation contents for Gemini API
     const contents = [];
@@ -1291,11 +1289,11 @@ async function handleAiAssistant(req, res) {
         for (let turn = 0; turn < MAX_TURNS; turn++) {
             const genConfig = {
                 temperature: 0.2,
-                maxOutputTokens: 4096
+                maxOutputTokens: 2048
             };
             if (useThinkingConfig && !selectedModel.includes('lite')) {
                 genConfig.thinkingConfig = {
-                    thinkingBudget: selectedModel.includes('flash') ? 256 : 1024
+                    thinkingBudget: selectedModel.includes('flash') ? 128 : 512
                 };
             }
 

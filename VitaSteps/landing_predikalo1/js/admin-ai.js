@@ -1,11 +1,12 @@
-// ===== ADMIN AI ASSISTANT (GEMINI 3.8) MODULE =====
+// ===== ADMIN AI ASSISTANT MODULE =====
 
 let aiChatHistory = [];
 let aiIsLoading = false;
 let aiLoadingStatusText = "";
-let rawSavedAiModel = localStorage.getItem('vs_ai_model') || 'gemini-3.5-flash';
-if (rawSavedAiModel.includes('2.5') || rawSavedAiModel.includes('2.0')) {
-    rawSavedAiModel = rawSavedAiModel.includes('pro') ? 'gemini-3.8-pro' : 'gemini-3.5-flash';
+let aiActiveAbortController = null;
+let rawSavedAiModel = localStorage.getItem('vs_ai_model') || 'gemini-3.1-flash-lite';
+if (rawSavedAiModel.includes('2.5') || rawSavedAiModel.includes('2.0') || rawSavedAiModel.includes('3.8')) {
+    rawSavedAiModel = rawSavedAiModel.includes('pro') ? 'gemini-3.1-pro-preview' : 'gemini-3.1-flash-lite';
     localStorage.setItem('vs_ai_model', rawSavedAiModel);
 }
 let aiModel = rawSavedAiModel;
@@ -230,8 +231,18 @@ function saveAiCustomApiKey() {
 }
 
 function clearAiConversation() {
+    if (aiActiveAbortController) {
+        try {
+            aiActiveAbortController.abort();
+        } catch (e) {}
+        aiActiveAbortController = null;
+    }
+    aiIsLoading = false;
+    aiLoadingStatusText = "";
     aiChatHistory = [];
     renderAiMessages();
+    renderAiQuickChips('ai-quick-chips-main');
+    renderAiQuickChips('ai-quick-chips-drawer');
 }
 
 function renderAiStatusBar() {
@@ -396,23 +407,47 @@ async function sendAiChatMessage(overrideText) {
     renderAiQuickChips('ai-quick-chips-main');
     renderAiQuickChips('ai-quick-chips-drawer');
 
-    const MAX_CLIENT_RETRIES = 6;
+    const MAX_CLIENT_RETRIES = 2;
     try {
         for (let attempt = 1; attempt <= MAX_CLIENT_RETRIES; attempt++) {
-            const res = await fetch('/api/admin-data', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    admin_secret: adminSecret,
-                    type: 'ai_chat',
-                    message: text,
-                    history: priorHistory,
-                    model: aiModel,
-                    api_key_override: aiCustomApiKey || undefined
-                })
-            });
+            // Setup strict 25s client-side timeout per attempt with abort controller
+            aiActiveAbortController = new AbortController();
+            const timeoutId = setTimeout(() => {
+                if (aiActiveAbortController) {
+                    aiActiveAbortController.abort('CLIENT_TIMEOUT');
+                }
+            }, 25000);
 
-            const data = await res.json();
+            let res;
+            let data;
+            try {
+                res = await fetch('/api/admin-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: aiActiveAbortController.signal,
+                    body: JSON.stringify({
+                        admin_secret: adminSecret,
+                        type: 'ai_chat',
+                        message: text,
+                        history: priorHistory,
+                        model: aiModel,
+                        api_key_override: aiCustomApiKey || undefined
+                    })
+                });
+                clearTimeout(timeoutId);
+                data = await res.json();
+            } catch (fetchErr) {
+                clearTimeout(timeoutId);
+                if (fetchErr.name === 'AbortError' || String(fetchErr).includes('CLIENT_TIMEOUT')) {
+                    if (attempt < MAX_CLIENT_RETRIES) {
+                        aiLoadingStatusText = `A kérés túllépte az időkorlátot (25s), újraküldés (${attempt + 1}/${MAX_CLIENT_RETRIES})...`;
+                        renderAiMessages();
+                        continue;
+                    }
+                    throw new Error('A válaszadás túllépte az időkorlátot (25 másodperc). Kérlek próbáld újra, vagy egyszerűsítsd a kérdést!');
+                }
+                throw fetchErr;
+            }
 
             if (!res.ok || data.error) {
                 const errText = String(data.message || data.error || '');
@@ -429,7 +464,7 @@ async function sendAiChatMessage(overrideText) {
                 if (isHighDemand && attempt < MAX_CLIENT_RETRIES) {
                     aiLoadingStatusText = `Google AI szerverek terheltek, automatikus újraküldés (${attempt + 1}/${MAX_CLIENT_RETRIES}. kísérlet)...`;
                     renderAiMessages();
-                    await new Promise(r => setTimeout(r, 1500 * attempt));
+                    await new Promise(r => setTimeout(r, 1200 * attempt));
                     continue;
                 }
 
@@ -456,10 +491,11 @@ async function sendAiChatMessage(overrideText) {
     } catch (err) {
         aiChatHistory.push({
             role: 'model',
-            text: `❌ Hálózati hiba: ${err.message}`,
+            text: `❌ ${err.message || 'Hálózati hiba történt'}`,
             isError: true
         });
     } finally {
+        aiActiveAbortController = null;
         aiIsLoading = false;
         aiLoadingStatusText = '';
         renderAiMessages();
