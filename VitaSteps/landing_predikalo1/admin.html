@@ -232,6 +232,7 @@
             <button class="filter-tab" onclick="setFilter('feedbacks')" id="tab-feedbacks" style="border: 1px solid rgba(236, 72, 153, 0.4); color: #ec4899;">💬 Visszajelzések</button>
             <button class="filter-tab" onclick="setFilter('logistics')" id="tab-logistics" style="margin-left: auto; border: 1px solid rgba(249, 115, 22, 0.4); color: #f97316;">🦊 Logisztika & Csomagolás</button>
             <button class="filter-tab" onclick="setFilter('marketing')" id="tab-marketing" style="border: 1px solid rgba(196, 255, 0, 0.4); color: #c4ff00;">📊 Marketing</button>
+            <button class="filter-tab" onclick="setFilter('facebook_organic')" id="tab-facebook_organic" style="border: 1px solid rgba(59, 130, 246, 0.5); color: #60a5fa;">📱 FB Organikus</button>
             <button class="filter-tab" onclick="setFilter('analytics')" id="tab-analytics" style="border: 1px solid rgba(14, 165, 233, 0.4); color: #0ea5e9;">🎯 Analytics</button>
             <button class="filter-tab" onclick="setFilter('finance')" id="tab-finance" style="border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8;">💳 Pénzügy & Cashflow</button>
             <button class="filter-tab" onclick="setFilter('emails')" id="tab-emails" style="border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc;">📧 Hírlevelek & Leadek</button>
@@ -314,6 +315,28 @@
             <div id="mkt-last-updated" style="font-size: 0.75rem; color: var(--text-mid); margin-bottom: 1rem;"></div>
             <div id="mkt-cards">
                 <div class="empty-state"><span class="loading-spinner"></span><div style="margin-top:0.5rem">Marketing adatok betöltése...</div></div>
+            </div>
+        </div>
+
+        <!-- FACEBOOK ORGANIKUS MODUL SCREEN -->
+        <div id="section-facebook_organic" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📱</span> <span>Facebook Organikus Tartalom & Poszt-Teljesítmény</span>
+                    </h2>
+                    <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.2rem;">
+                        A VitaSteps hivatalos Facebook oldalán közzétett organikus bejegyzések, megosztások és organikus elérés nyomon követése a 4 hetes teszt alatt.
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button class="btn btn-grey" style="width: auto; padding: 0.45rem 0.85rem; font-size: 0.82rem;" onclick="loadFacebookOrganic(true)">
+                        🔄 Frissítés (Meta API)
+                    </button>
+                </div>
+            </div>
+            <div id="fb-organic-cards">
+                <div class="empty-state"><span class="loading-spinner"></span><div style="margin-top:0.5rem">Posztok betöltése...</div></div>
             </div>
         </div>
 
@@ -530,6 +553,7 @@
 <script src="js/admin-feedbacks.js"></script>
 <script src="js/admin-logistics.js"></script>
 <script src="js/admin-marketing.js"></script>
+<script src="js/admin-facebook-organic.js"></script>
 <script src="js/admin-analytics.js"></script>
 <script src="js/admin-finance.js"></script>
 <script src="js/admin-emails.js"></script>

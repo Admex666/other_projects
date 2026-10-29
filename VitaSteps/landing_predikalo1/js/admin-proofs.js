@@ -136,6 +136,7 @@ function setFilter(filter) {
     const isFb = filter === 'feedbacks';
     const isEmails = filter === 'emails';
     const isAi = filter === 'ai';
+    const isFbOrganic = filter === 'facebook_organic';
     const proofListEl = document.getElementById('proof-list');
     const mktEl = document.getElementById('section-marketing');
     const anEl = document.getElementById('section-analytics');
@@ -143,14 +144,16 @@ function setFilter(filter) {
     const fbEl = document.getElementById('section-feedbacks');
     const emailsEl = document.getElementById('section-emails');
     const aiEl = document.getElementById('section-ai');
+    const fbOrganicEl = document.getElementById('section-facebook_organic');
 
-    if (proofListEl) proofListEl.style.display = (isMkt || isAn || isFin || isFb || isEmails || isAi) ? 'none' : '';
+    if (proofListEl) proofListEl.style.display = (isMkt || isAn || isFin || isFb || isEmails || isAi || isFbOrganic) ? 'none' : '';
     if (mktEl) mktEl.style.display = isMkt ? 'block' : 'none';
     if (anEl) anEl.style.display = isAn ? 'block' : 'none';
     if (finEl) finEl.style.display = isFin ? 'block' : 'none';
     if (fbEl) fbEl.style.display = isFb ? 'block' : 'none';
     if (emailsEl) emailsEl.style.display = isEmails ? 'block' : 'none';
     if (aiEl) aiEl.style.display = isAi ? 'block' : 'none';
+    if (fbOrganicEl) fbOrganicEl.style.display = isFbOrganic ? 'block' : 'none';
 
     if (isFin) {
         loadFinance();
@@ -164,6 +167,8 @@ function setFilter(filter) {
         loadEmails();
     } else if (isAi) {
         if (typeof loadAiAssistantTab === 'function') loadAiAssistantTab();
+    } else if (isFbOrganic) {
+        if (typeof loadFacebookOrganic === 'function') loadFacebookOrganic();
     } else {
         renderList();
     }
