@@ -3,7 +3,7 @@ name: VitaSteps Lead Nurturing Sequence
 # Időzítés: Minden nap délelőtt 09:00 és kora délután 14:00 (magyar idő szerint, UTC 08:00 és 13:00)
 on:
   schedule:
-    - cron: '0 8,13 * * *'
+    - cron: '0 8,12 * * *'
   workflow_dispatch:
     inputs:
       live_send:
@@ -33,7 +33,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install dependencies
         working-directory: ./VitaSteps/landing_predikalo1

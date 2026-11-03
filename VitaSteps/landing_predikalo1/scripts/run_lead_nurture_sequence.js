@@ -61,7 +61,9 @@ if (!supabaseKey && require.main === module) {
     console.warn('⚠️ Figyelem: SUPABASE_SERVICE_ROLE_KEY nincs beállítva a környezeti változókban!');
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey || 'placeholder-key');
+const supabase = createClient(supabaseUrl, supabaseKey || 'placeholder-key', {
+    auth: { persistSession: false }
+});
 
 // ── NODEMAILER TRANSPORTER (SSL Port 465) ────────────────────────────────────
 const smtpPassword = process.env.SMTP_PASSWORD;
