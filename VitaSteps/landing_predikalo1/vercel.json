@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/main", "destination": "/main/index.html" },
+    { "source": "/main/", "destination": "/main/index.html" },
+    { "source": "/kitero", "destination": "/kitero/index.html" },
+    { "source": "/kitero/", "destination": "/kitero/index.html" }
+  ]
+}

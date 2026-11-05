@@ -1,0 +1,2950 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>VitaSteps Kitérő – Történetmesélő Városi Séták a Saját Tempódban</title>
+    <meta name="description"
+        content="Néha a legjobb élmények egy kitérővel kezdődnek. Önálló, digitálisan vezetett prémium városi sétaélmények rejtett történetekkel és különleges megállókkal Budapesten.">
+    <link rel="canonical" href="https://vitastepsss.vercel.app/kitero/index.html">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="VitaSteps Kitérő – Fedezd fel a várost új szemmel!">
+    <meta property="og:description"
+        content="Nem hagyományos idegenvezetés. Egyéni tempójú, prémium hangos történetmeséléssel kísért városi élményséták.">
+    <meta property="og:image" content="/assets/kitero/palotanegyed_screen.png">
+    <meta property="og:type" content="website">
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* Editorial Travel Palette */
+            --bg: #F8F7F2;
+            --surface: #FFFFFF;
+            --surface-subtle: #F1EFEA;
+            --surface-elevated: #FFFFFF;
+            --text-high: #242820;
+            --text-mid: #5A5D55;
+            --text-low: #8C8E87;
+            --accent: #365A45;
+            --accent-hover: #294434;
+            --accent-light: #E8EFE9;
+            --accent-glow: rgba(54, 90, 69, 0.15);
+            --border: #E7E6DF;
+            --border-subtle: #EBEAE4;
+            --warning: #B77935;
+            --warning-light: #FDF6EE;
+            
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+            --font-sans: 'Inter', system-ui, sans-serif;
+            
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 24px;
+            --radius-full: 9999px;
+            
+            --shadow-sm: 0 2px 8px rgba(36, 40, 32, 0.04);
+            --shadow-md: 0 8px 24px rgba(36, 40, 32, 0.07);
+            --shadow-lg: 0 16px 40px rgba(36, 40, 32, 0.10);
+            
+            --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-high);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* ── HEADER ──────────────────────────────────────────────────────── */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(248, 247, 242, 0.88);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .header-inner {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-high);
+        }
+
+        .brand-badge {
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: var(--radius-full);
+        }
+
+        .brand-title {
+            font-family: var(--font-display);
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--text-high);
+        }
+
+        .brand-title span {
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        .header-cta {
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-full);
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header-cta:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        /* ── HERO SECTION ────────────────────────────────────────────────── */
+        .hero {
+            padding: 4rem 0 3rem;
+            position: relative;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 3.5rem;
+            align-items: center;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.3rem, 4.5vw, 3.6rem);
+            line-height: 1.16;
+            letter-spacing: -0.02em;
+            color: var(--text-high);
+            margin-bottom: 1.4rem;
+        }
+
+        .hero h1 em {
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        .hero-lead {
+            font-size: 1.15rem;
+            color: var(--text-mid);
+            line-height: 1.65;
+            margin-bottom: 2rem;
+            max-width: 540px;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-full);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.05rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 18px var(--accent-glow);
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text-high);
+            padding: 0.95rem 1.6rem;
+            border-radius: var(--radius-full);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .hero-trust {
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 0.88rem;
+            color: var(--text-mid);
+        }
+
+        .hero-trust-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hero-trust-item span.icon {
+            color: var(--accent);
+            font-size: 18px;
+        }
+
+        /* Hero Visual Preview - Crisp Native Smartphone Device */
+        .hero-visual {
+            position: relative;
+        }
+
+        .hero-phone-device {
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+            background: #191c1e;
+            border-radius: 44px;
+            padding: 12px;
+            border: 4px solid #2d3135;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
+            transform: rotate(-1.5deg);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+        }
+
+        .hero-phone-device:hover {
+            transform: rotate(0deg) translateY(-6px);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(189, 245, 0, 0.2);
+        }
+
+        .hero-phone-inner {
+            background: #111416;
+            border-radius: 34px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .phone-dynamic-island {
+            height: 24px;
+            background: #111416;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 5px;
+        }
+
+        .phone-dynamic-island .island-pill {
+            width: 86px;
+            height: 13px;
+            background: #000;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+        }
+
+        .island-pill .camera-lens {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            border: 1px solid #333;
+        }
+
+        .hero-app-screen {
+            padding: 0.75rem 0.9rem 1.15rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            color: #e2e2e5;
+        }
+
+        .app-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .app-brand {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        .brand-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #bdf500;
+            box-shadow: 0 0 8px rgba(189, 245, 0, 0.8);
+        }
+
+        .app-status-badge {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #00f1fe;
+            background: rgba(0, 241, 254, 0.12);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .app-walk-card {
+            background: #1d2022;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-walk-img-box {
+            height: 165px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0.75rem;
+        }
+
+        .app-img-gradient {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(17,20,22,0.85) 100%);
+            pointer-events: none;
+        }
+
+        .app-card-badges {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-pill {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: var(--radius-full);
+            background: rgba(17, 20, 22, 0.85);
+            backdrop-filter: blur(8px);
+            color: #ffe088;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .app-pill.rating {
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .app-pill.rating span {
+            color: #ffe088;
+        }
+
+        .app-walk-content {
+            padding: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+
+        .app-loc-text {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #a3a899;
+        }
+
+        .app-walk-heading {
+            font-family: var(--font-display);
+            font-size: 1.08rem;
+            line-height: 1.25;
+            color: #fff;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .app-specs-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 0.15rem 0;
+        }
+
+        .app-spec-chip {
+            background: #282a2d;
+            padding: 5px 3px;
+            border-radius: 8px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: #c3caac;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .app-spec-chip span.material-symbols-outlined {
+            font-size: 13px;
+            color: #bdf500;
+        }
+
+        .app-mini-audio {
+            background: #14171a;
+            border: 1px solid rgba(189, 245, 0, 0.2);
+            border-radius: 12px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mini-audio-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #bdf500;
+            color: #111416;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            box-shadow: 0 0 8px rgba(189, 245, 0, 0.4);
+        }
+
+        .mini-audio-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mini-audio-title {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+
+        .mini-audio-wave {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 10px;
+        }
+
+        .mini-audio-wave span {
+            width: 2.5px;
+            background: #bdf500;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .app-launch-btn {
+            background: #bdf500;
+            color: #111416;
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 0.6rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: var(--transition);
+            margin-top: 0.1rem;
+        }
+
+        .app-launch-btn:hover {
+            background: #d4ff26;
+            transform: translateY(-1px);
+        }
+
+        /* ── PROBLEM & DESIRE ────────────────────────────────────────────── */
+        .problem-section {
+            padding: 5rem 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 680px;
+            margin: 0 auto 3.5rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.5vw, 2.75rem);
+            line-height: 1.22;
+            color: var(--text-high);
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            font-size: 1.05rem;
+            color: var(--text-mid);
+            line-height: 1.6;
+        }
+
+        .contrast-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .contrast-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .contrast-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent);
+        }
+
+        .contrast-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-light);
+            color: var(--accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 1.25rem;
+        }
+
+        .contrast-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: var(--text-high);
+        }
+
+        .contrast-p {
+            font-size: 0.92rem;
+            color: var(--text-mid);
+            line-height: 1.55;
+        }
+
+        /* ── HOW IT WORKS ────────────────────────────────────────────────── */
+        .how-section {
+            padding: 5.5rem 0;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.8rem;
+            position: relative;
+        }
+
+        .step-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.8rem 1.5rem;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .step-card:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .step-number {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            opacity: 0.45;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .step-title {
+            font-size: 1.08rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-high);
+        }
+
+        .step-text {
+            font-size: 0.88rem;
+            color: var(--text-mid);
+            line-height: 1.55;
+        }
+
+        /* ── INTERACTIVE PROTOTYPE SHOWCASE ──────────────────────────────── */
+        .prototype-section {
+            padding: 5rem 0;
+            background: #111416;
+            color: #E2E2E5;
+            border-radius: var(--radius-lg);
+            margin: 2rem auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .proto-header {
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto 3rem;
+        }
+
+        .proto-header h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.2vw, 2.6rem);
+            color: #fff;
+            margin-bottom: 0.8rem;
+        }
+
+        .proto-header p {
+            color: #A3A899;
+            font-size: 1rem;
+        }
+
+        .proto-container {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 3.5rem;
+            align-items: center;
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        /* Mobile Device Frame */
+        .device-mockup {
+            width: 100%;
+            max-width: 360px;
+            background: #191C1E;
+            border-radius: 42px;
+            padding: 12px;
+            border: 4px solid #2D3135;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .device-screen {
+            background: #111416;
+            border-radius: 32px;
+            overflow: hidden;
+            min-height: 580px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .device-notch {
+            height: 24px;
+            background: #111416;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 6px;
+        }
+
+        .notch-pill {
+            width: 80px;
+            height: 14px;
+            background: #000;
+            border-radius: var(--radius-full);
+        }
+
+        /* Prototype Interactive Screens */
+        .proto-view {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            padding: 1.25rem;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        .proto-view.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Screen 1: Walk Detail (HTML Card) */
+        .proto-walk-hero-card {
+            width: 100%;
+            height: 175px;
+            border-radius: 18px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .proto-hero-gradient {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(17,20,22,0.85) 100%);
+            pointer-events: none;
+        }
+
+        .proto-hero-top-badges {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .proto-badge-pill {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: var(--radius-full);
+            background: rgba(17, 20, 22, 0.85);
+            backdrop-filter: blur(8px);
+            color: #ffe088;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .proto-badge-pill.rating {
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .proto-badge-pill.rating span {
+            color: #ffe088;
+        }
+
+        .proto-hero-bottom-tag {
+            position: relative;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: #ddfcff;
+            background: rgba(0, 241, 254, 0.15);
+            backdrop-filter: blur(8px);
+            padding: 3px 8px;
+            border-radius: var(--radius-full);
+            width: fit-content;
+        }
+
+        .proto-loc-sub {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: #a3a899;
+            margin-bottom: 0.25rem;
+        }
+
+        .proto-loc-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #bdf500;
+        }
+
+        .proto-walk-synopsis {
+            font-size: 0.78rem;
+            color: #c3caac;
+            line-height: 1.45;
+            margin-bottom: 0.75rem;
+        }
+
+        .proto-walk-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.25;
+            margin-bottom: 0.4rem;
+        }
+
+        .proto-meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .proto-meta-item {
+            background: #1D2022;
+            padding: 8px 10px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            color: #C3CAAC;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .proto-meta-item strong {
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        /* Screen 2: Map Screen (Native Crisp SVG Cartography) */
+        .map-interactive-view {
+            height: 245px;
+            background: #0c0e11;
+            border-radius: 16px;
+            margin-bottom: 0.85rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            flex-shrink: 0;
+        }
+
+        .map-svg-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .map-overlay-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .map-marker {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .map-marker.stop-completed .marker-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #a5d700;
+            color: #111416;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(165, 215, 0, 0.4);
+        }
+
+        .map-marker.stop-completed .marker-circle span {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .marker-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #e2e2e5;
+            background: rgba(12, 14, 17, 0.85);
+            backdrop-filter: blur(4px);
+            padding: 1px 5px;
+            border-radius: 4px;
+            margin-top: 2px;
+            white-space: nowrap;
+        }
+
+        .map-gps-blip {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            pointer-events: none;
+        }
+
+        .gps-pulse {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(0, 241, 254, 0.3);
+            animation: pingRadar 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes pingRadar {
+            75%, 100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        .gps-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #00f1fe;
+            box-shadow: 0 0 10px #00f1fe;
+            border: 2px solid #fff;
+            position: relative;
+            z-index: 2;
+        }
+
+        .map-marker.stop-active .marker-pulse-glow {
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            background: rgba(189, 245, 0, 0.4);
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.3); opacity: 0.2; }
+        }
+
+        .map-marker.stop-active .marker-circle-active {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #bdf500;
+            color: #111416;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.82rem;
+            box-shadow: 0 0 16px rgba(189, 245, 0, 0.8);
+            position: relative;
+            z-index: 2;
+        }
+
+        .marker-label-active {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #bdf500;
+            background: #1d2022;
+            padding: 2px 7px;
+            border-radius: 10px;
+            margin-top: 3px;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            border: 1px solid rgba(189, 245, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .map-marker.stop-ghost .marker-ghost-circle {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #282a2d;
+            color: #8d9479;
+            font-size: 0.62rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.7;
+        }
+
+        .map-hud-top {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .map-hud-pill {
+            background: rgba(17, 20, 22, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 3px 8px;
+            border-radius: var(--radius-full);
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #e2e2e5;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .map-hud-pill.status {
+            color: #00f1fe;
+        }
+
+        .hud-live-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #00f1fe;
+            box-shadow: 0 0 6px #00f1fe;
+        }
+
+        .poi-stop-item {
+            background: #1D2022;
+            border-radius: 12px;
+            padding: 9px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 7px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: var(--transition);
+        }
+
+        .poi-stop-item:hover, .poi-stop-item.active {
+            border-color: #bdf500;
+            background: #242A20;
+        }
+
+        .poi-stop-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .poi-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #333537;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .poi-stop-item.active .poi-number {
+            background: #bdf500;
+            color: #000;
+        }
+
+        /* Screen 3: Stop Detail & Audio (Native Crisp HTML) */
+        .stop-img-editorial-card {
+            height: 150px;
+            border-radius: 16px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            margin-bottom: 0.35rem;
+            flex-shrink: 0;
+        }
+
+        .stop-img-gradient {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(17,20,22,0.7) 100%);
+            pointer-events: none;
+        }
+
+        .stop-camera-badge {
+            position: relative;
+            z-index: 2;
+            background: rgba(17, 20, 22, 0.85);
+            backdrop-filter: blur(6px);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-size: 0.65rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stop-caption-text {
+            font-size: 0.7rem;
+            color: #a3a899;
+            font-style: italic;
+            line-height: 1.35;
+            margin-bottom: 0.65rem;
+            padding: 0 2px;
+        }
+
+        .audio-player-card {
+            background: #1D2022;
+            border-radius: 16px;
+            padding: 0.85rem;
+            margin: 0.5rem 0;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .audio-controls-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .play-btn-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #bdf500;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(189, 245, 0, 0.4);
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .play-btn-circle:hover {
+            transform: scale(1.05);
+        }
+
+        .audio-meta-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .audio-narrator-pill {
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: #00f1fe;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 2px;
+        }
+
+        .audio-track-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .audio-duration {
+            font-size: 0.7rem;
+            color: #C3CAAC;
+        }
+
+        .audio-waveform-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 22px;
+            margin-top: 8px;
+            padding-top: 2px;
+        }
+
+        .w-bar {
+            flex: 1;
+            background: rgba(189, 245, 0, 0.25);
+            border-radius: 2px;
+            transition: background 0.15s ease, height 0.2s ease;
+        }
+
+        .w-bar.played {
+            background: #bdf500;
+            box-shadow: 0 0 4px rgba(189, 245, 0, 0.6);
+        }
+
+        .stop-quote-card {
+            background: #191c1e;
+            border-left: 3px solid #bdf500;
+            padding: 0.65rem 0.8rem;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 0.65rem;
+        }
+
+        .quote-p {
+            font-size: 0.76rem;
+            color: #e2e2e5;
+            line-height: 1.45;
+            margin: 0;
+        }
+
+        .quote-hl {
+            color: #bdf500;
+            font-weight: 700;
+        }
+
+        .stop-fun-fact-card {
+            background: #1d2022;
+            border-radius: 12px;
+            padding: 0.65rem 0.8rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .fact-icon-wrap {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background: #bdf500;
+            color: #111416;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .fact-title {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #ffe088;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 2px;
+        }
+
+        .fact-desc {
+            font-size: 0.72rem;
+            color: #c3caac;
+            line-height: 1.35;
+            margin: 0;
+        }
+
+        /* Screen Navigation Buttons inside Prototype */
+        .proto-tab-bar {
+            background: #191C1E;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            margin-top: auto;
+        }
+
+        .proto-tab-item {
+            color: #8D9479;
+            font-size: 0.72rem;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .proto-tab-item.active {
+            color: #bdf500;
+        }
+
+        .proto-tab-item span {
+            font-size: 20px;
+        }
+
+        /* Prototype Features Column */
+        .proto-narrative {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .proto-step-pill {
+            display: flex;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: #191C1E;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .proto-step-pill:hover, .proto-step-pill.active {
+            border-color: #bdf500;
+            background: #1D221A;
+            transform: translateX(4px);
+        }
+
+        .proto-step-icon {
+            color: #bdf500;
+            font-size: 24px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .proto-step-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .proto-step-desc {
+            font-size: 0.88rem;
+            color: #A3A899;
+            line-height: 1.5;
+        }
+
+        /* ── CONCRETE WALK SHOWCASE (HTML SHOWCASE CONTAINER) ───────────── */
+        .walk-showcase {
+            padding: 5rem 0;
+        }
+
+        .walk-card-hero {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .walk-cover-showcase {
+            background: #111416;
+            position: relative;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+            overflow: hidden;
+            border-right: 1px solid var(--border);
+        }
+
+        .walk-cover-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.8);
+            transition: transform 0.6s ease;
+        }
+
+        .walk-cover-showcase:hover .walk-cover-bg {
+            transform: scale(1.03);
+        }
+
+        .walk-cover-gradient {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(17,20,22,0.3) 0%, rgba(17,20,22,0.92) 100%);
+            pointer-events: none;
+        }
+
+        .walk-showcase-badges {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .walk-pill-badge {
+            background: rgba(17, 20, 22, 0.85);
+            backdrop-filter: blur(10px);
+            color: #ffe088;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .walk-pill-badge.cyan {
+            color: #00f1fe;
+        }
+
+        .walk-itinerary-preview-card {
+            position: relative;
+            z-index: 2;
+            background: rgba(29, 32, 34, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .itinerary-preview-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #bdf500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .itinerary-mini-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .itinerary-mini-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #e2e2e5;
+        }
+
+        .itin-num {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #282a2d;
+            color: #a3a899;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .itinerary-mini-item.active .itin-num {
+            background: #bdf500;
+            color: #111416;
+        }
+
+        .itin-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .walk-details-content {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .walk-location-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.6rem;
+        }
+
+        .walk-details-content h3 {
+            font-family: var(--font-display);
+            font-size: 2.1rem;
+            line-height: 1.25;
+            color: var(--text-high);
+            margin-bottom: 1rem;
+        }
+
+        .walk-desc-text {
+            color: var(--text-mid);
+            font-size: 0.98rem;
+            line-height: 1.65;
+            margin-bottom: 1.2rem;
+        }
+
+        .walk-discover-highlights {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .walk-hl-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.88rem;
+            color: var(--text-high);
+            line-height: 1.45;
+        }
+
+        .walk-hl-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-light);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .walk-badges-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 1.8rem;
+        }
+
+        .walk-stat-badge {
+            background: var(--surface-subtle);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-high);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ── PRICING & EARLY ACCESS (VALIDATION GATE) ───────────────────── */
+        .pricing-section {
+            padding: 5.5rem 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pricing-card-wrap {
+            max-width: 620px;
+            margin: 0 auto;
+            background: var(--bg);
+            border: 2px solid var(--accent);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            position: relative;
+        }
+
+        .pricing-badge-popular {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 4px 16px;
+            border-radius: var(--radius-full);
+        }
+
+        .pricing-title {
+            font-family: var(--font-display);
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: var(--text-high);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-lead {
+            font-size: 0.95rem;
+            color: var(--text-mid);
+            margin-bottom: 1.5rem;
+        }
+
+        .price-box {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-val {
+            font-family: var(--font-display);
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: var(--text-high);
+        }
+
+        .price-curr {
+            font-size: 1.25rem;
+            color: var(--text-mid);
+            font-weight: 600;
+        }
+
+        .price-original {
+            font-size: 1.2rem;
+            color: var(--text-low);
+            text-decoration: line-through;
+            margin-left: 8px;
+        }
+
+        .pricing-features-list {
+            text-align: left;
+            margin: 1.8rem auto 2.2rem;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .pricing-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            color: var(--text-high);
+        }
+
+        .pricing-feature span.check {
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        /* Early Access Signup Form */
+        .early-access-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 440px;
+            margin: 0 auto;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.95rem 1.2rem;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border);
+            font-family: inherit;
+            font-size: 0.98rem;
+            background: #fff;
+            color: var(--text-high);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-submit-btn {
+            width: 100%;
+            background: var(--accent);
+            color: #fff;
+            padding: 1.05rem 2rem;
+            border-radius: var(--radius-full);
+            border: none;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+
+        .form-submit-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .form-guarantee-note {
+            font-size: 0.8rem;
+            color: var(--text-low);
+            margin-top: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .form-alert-success {
+            display: none;
+            background: var(--accent-light);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        /* ── FAQ SECTION ─────────────────────────────────────────────────── */
+        .faq-section {
+            padding: 5rem 0 6rem;
+        }
+
+        .faq-accordion {
+            max-width: 720px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .faq-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .faq-question {
+            padding: 1.25rem 1.5rem;
+            font-weight: 700;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .faq-question span.arrow {
+            transition: transform 0.25s ease;
+            color: var(--accent);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 1.5rem;
+            color: var(--text-mid);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 250px;
+            padding-bottom: 1.25rem;
+        }
+
+        .faq-item.open .faq-question span.arrow {
+            transform: rotate(180deg);
+        }
+
+        /* ── FOOTER ──────────────────────────────────────────────────────── */
+        footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 3rem 0;
+            font-size: 0.85rem;
+            color: var(--text-mid);
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-mid);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        /* ── RESPONSIVE RULES ────────────────────────────────────────────── */
+        @media (max-width: 900px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .hero-visual {
+                order: -1;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+            .proto-container {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .walk-card-hero {
+                grid-template-columns: 1fr;
+            }
+            .contrast-grid {
+                grid-template-columns: 1fr;
+            }
+            .steps-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                padding: 2.5rem 0 2rem;
+            }
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+            .walk-details-content {
+                padding: 1.8rem;
+            }
+            .pricing-card-wrap {
+                padding: 2rem 1.25rem;
+            }
+            .hero-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-primary, .btn-secondary {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="container header-inner">
+            <a href="/kitero/index.html" class="logo-wrap">
+                <span class="brand-badge">VitaSteps</span>
+                <div class="brand-title">Kitérő<span>.</span></div>
+            </a>
+            <a href="#elojelentkezes" class="header-cta" id="header-cta-btn">
+                <span>Korai Hozzáférés</span>
+                <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- 1. HERO SECTION -->
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <div class="hero-tag">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">explore</span>
+                        <span>Új Digitális Élményplatform</span>
+                    </div>
+                    <h1 id="hero-headline">Néha a legjobb élmények egy <em>kitérővel</em> kezdődnek.</h1>
+                    <p class="hero-lead">
+                        Fedezd fel a várost új szemmel! Történetek, különleges helyek és meglepő érdekességek várnak rád –
+                        <strong>a saját tempódban</strong>, kötöttségek nélkül.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="#prototipus" class="btn-primary" id="hero-cta-btn">
+                            <span id="hero-cta-text">Megnézem a Kitérőt</span>
+                            <span class="material-symbols-outlined">arrow_downward</span>
+                        </a>
+                        <a href="#seta-reszletek" class="btn-secondary">
+                            <span>Séta felfedezése</span>
+                        </a>
+                    </div>
+                    <div class="hero-trust">
+                        <div class="hero-trust-item">
+                            <span class="material-symbols-outlined icon">check_circle</span>
+                            <span>Nem kell letölteni külön appot</span>
+                        </div>
+                        <div class="hero-trust-item">
+                            <span class="material-symbols-outlined icon">check_circle</span>
+                            <span>Saját ritmus, nulla sietség</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <!-- Crisp Native Smartphone Device (Zero pixelation) -->
+                    <div class="hero-phone-device">
+                        <div class="hero-phone-inner">
+                            <div class="phone-dynamic-island">
+                                <div class="island-pill">
+                                    <span class="camera-lens"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="hero-app-screen">
+                                <!-- Top App Bar -->
+                                <div class="app-top-bar">
+                                    <div class="app-brand">
+                                        <span class="brand-dot"></span>
+                                        <span class="brand-name">VitaSteps Kitérő</span>
+                                    </div>
+                                    <div class="app-status-badge">
+                                        <span class="material-symbols-outlined" style="font-size:12px;">near_me</span>
+                                        <span>GPS Kész</span>
+                                    </div>
+                                </div>
+
+                                <!-- Walk Cover Card -->
+                                <div class="app-walk-card">
+                                    <div class="app-walk-img-box" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALOjt5GVAPKgBAkrRM19EntLT6zcXPmu4gpT-48vhuahgj-A7ZjO5hC_U_esnv7w_Muv6pN4y7SHSKa4RcqXd36BQ0HHvdyIM1Xq64NjMDzTRIlnn0QiMnjMLzA-OeyPGHv9BqWeExRMzDuE3cKBBjDtMmMv-p2RgFhmfJkwE6a0NdBk2ALLEztFRLIRQYS53VYz-qsmbVO0S7c5bMwDHExp1DVs75y02OBdECq1g');">
+                                        <div class="app-img-gradient"></div>
+                                        <div class="app-card-badges">
+                                            <span class="app-pill">Prémium Séta</span>
+                                            <span class="app-pill rating"><span class="material-symbols-outlined" style="font-size:12px;">star</span> 4.9 (340+)</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="app-walk-content">
+                                        <div class="app-loc-text">Budapest VIII. · Palotanegyed</div>
+                                        <h4 class="app-walk-heading">A Palotanegyed Titkai: Arisztokraták és Rejtélyek</h4>
+                                        
+                                        <!-- Quick specs -->
+                                        <div class="app-specs-row">
+                                            <div class="app-spec-chip">
+                                                <span class="material-symbols-outlined">straighten</span>
+                                                <span>2.8 km</span>
+                                            </div>
+                                            <div class="app-spec-chip">
+                                                <span class="material-symbols-outlined">schedule</span>
+                                                <span>1.5-2 óra</span>
+                                            </div>
+                                            <div class="app-spec-chip">
+                                                <span class="material-symbols-outlined">place</span>
+                                                <span>8 állomás</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Live Audio Teaser Mini-Player -->
+                                        <div class="app-mini-audio">
+                                            <div class="mini-audio-btn">
+                                                <span class="material-symbols-outlined">play_arrow</span>
+                                            </div>
+                                            <div class="mini-audio-info">
+                                                <span class="mini-audio-title">Hangos narráció · Hegedűs D. Géza</span>
+                                                <div class="mini-audio-wave">
+                                                    <span style="height: 40%;"></span>
+                                                    <span style="height: 80%;"></span>
+                                                    <span style="height: 100%;"></span>
+                                                    <span style="height: 60%;"></span>
+                                                    <span style="height: 90%;"></span>
+                                                    <span style="height: 50%;"></span>
+                                                    <span style="height: 70%;"></span>
+                                                    <span style="height: 30%;"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <a href="#prototipus" class="app-launch-btn">
+                                            <span>Kipróbálom az élményt</span>
+                                            <span class="material-symbols-outlined">arrow_forward</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 2. PROBLEM & DESIRE SECTION -->
+        <section class="problem-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Új Perspektíva</span>
+                    <h2 class="section-title">Hányszor sétáltál már el valami mellett úgy, hogy fogalmad sem volt róla?</h2>
+                    <p class="section-desc">
+                        Nap mint nap ismerős utcákon sietünk végig. Falak, homlokzatok, kapualjak – amelyek mögött elfeledett
+                        párbajok, titkos találkozók és évszázados rejtélyek bújnak meg.
+                    </p>
+                </div>
+
+                <div class="contrast-grid">
+                    <div class="contrast-card">
+                        <div class="contrast-icon">
+                            <span class="material-symbols-outlined">schedule</span>
+                        </div>
+                        <h3 class="contrast-title">1. Kényelem és Nulla Tervezés</h3>
+                        <p class="contrast-p">
+                            Nem kell órákig blogokat és fórumokat bújnod egy jó hétvégi programért. Előre összeállított,
+                            bevált útvonalat kapsz a kezedbe.
+                        </p>
+                    </div>
+
+                    <div class="contrast-card">
+                        <div class="contrast-icon">
+                            <span class="material-symbols-outlined">menu_book</span>
+                        </div>
+                        <h3 class="contrast-title">2. Valódi Történetek</h3>
+                        <p class="contrast-p">
+                            Nem száraz évszámok és lexikális adatok. Érdekes, megkapó emberi történetek, amiket baráti
+                            társaságban is öröm továbbmesélni.
+                        </p>
+                    </div>
+
+                    <div class="contrast-card">
+                        <div class="contrast-icon">
+                            <span class="material-symbols-outlined">directions_walk</span>
+                        </div>
+                        <h3 class="contrast-title">3. Teljes Szabadság</h3>
+                        <p class="contrast-p">
+                            Nincs csoporthoz vagy idegenvezetőhöz kötött időpont. Bármikor megállhatsz egy kávéra vagy
+                            süteményre, és akkor folytatod, amikor kedved tartja.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 3. HOW IT WORKS -->
+        <section class="how-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Egyszerű Menet</span>
+                    <h2 class="section-title">Négy lépés. Egy felejthetetlen séta.</h2>
+                    <p class="section-desc">Nem szükséges technikai felkészülés. Csak egy feltöltött telefon és egy fülhallgató.</p>
+                </div>
+
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">01</div>
+                        <h3 class="step-title">Válassz egy sétát</h3>
+                        <p class="step-text">Böngéssz a kurált témák között: rejtett paloták, titkos kertek vagy bűnügyi rejtélyek.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">02</div>
+                        <h3 class="step-title">Indulj el</h3>
+                        <p class="step-text">Nyisd meg a sétát a mobilod böngészőjében. A térkép azonnal a kezdőpontra navigál.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">03</div>
+                        <h3 class="step-title">Fedezd fel a megállókat</h3>
+                        <p class="step-text">GPS alapján érkezz a pontokra, olvasd el a titkokat és hallgasd meg az audio narrációkat.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">04</div>
+                        <h3 class="step-title">Éld át a ritmusodban</h3>
+                        <p class="step-text">Állj meg fotózni, pihenj egy padon vagy ülj be egy teraszra. A séta megvár.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 4. INTERACTIVE PROTOTYPE / SHOWCASE (IN-BROWSER DEMO) -->
+        <section class="prototype-section" id="prototipus">
+            <div class="container">
+                <div class="proto-header">
+                    <div class="proto-badge">Interaktív Termékbemutató</div>
+                    <h2>Próbáld ki a Kitérő élményt!</h2>
+                    <p>Kattints a megállókra, nézd meg a térképet, és hallgass bele az eredeti hanganyagba:</p>
+                </div>
+
+                <div class="proto-container">
+                    <!-- Mobile Device Simulation Frame -->
+                    <div class="device-mockup">
+                        <div class="device-screen">
+                            <div class="device-notch">
+                                <div class="notch-pill"></div>
+                            </div>
+
+                            <!-- Screen A: Walk Overview (Default - Crisp HTML) -->
+                            <div class="proto-view active" id="view-walk">
+                                <div class="proto-walk-hero-card" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALOjt5GVAPKgBAkrRM19EntLT6zcXPmu4gpT-48vhuahgj-A7ZjO5hC_U_esnv7w_Muv6pN4y7SHSKa4RcqXd36BQ0HHvdyIM1Xq64NjMDzTRIlnn0QiMnjMLzA-OeyPGHv9BqWeExRMzDuE3cKBBjDtMmMv-p2RgFhmfJkwE6a0NdBk2ALLEztFRLIRQYS53VYz-qsmbVO0S7c5bMwDHExp1DVs75y02OBdECq1g');">
+                                    <div class="proto-hero-gradient"></div>
+                                    <div class="proto-hero-top-badges">
+                                        <span class="proto-badge-pill">Prémium Séta</span>
+                                        <span class="proto-badge-pill rating"><span class="material-symbols-outlined" style="font-size:12px;">star</span> 4.9 (342)</span>
+                                    </div>
+                                    <div class="proto-hero-bottom-tag">
+                                        <span class="material-symbols-outlined" style="font-size:13px;">directions_walk</span>
+                                        <span>Gyalogos élmény</span>
+                                    </div>
+                                </div>
+                                <div class="proto-loc-sub"><span class="proto-loc-dot"></span> BUDAPEST VIII. KERÜLET</div>
+                                <div class="proto-walk-title">A Palotanegyed Titkai: Arisztokraták és Rejtélyek</div>
+                                <p class="proto-walk-synopsis">Fedezd fel a pesti arisztokrácia fényűző palotáit, titkos átjáróit és a könyvtárak rejtélyeit.</p>
+                                
+                                <div class="proto-meta-grid">
+                                    <div class="proto-meta-item">
+                                        <span class="material-symbols-outlined" style="font-size:17px; color:#bdf500;">straighten</span>
+                                        <div>Táv: <strong>2.8 km</strong></div>
+                                    </div>
+                                    <div class="proto-meta-item">
+                                        <span class="material-symbols-outlined" style="font-size:17px; color:#bdf500;">schedule</span>
+                                        <div>Idő: <strong>1.5-2 óra</strong></div>
+                                    </div>
+                                    <div class="proto-meta-item">
+                                        <span class="material-symbols-outlined" style="font-size:17px; color:#bdf500;">place</span>
+                                        <div>Megállók: <strong>8 állomás</strong></div>
+                                    </div>
+                                    <div class="proto-meta-item">
+                                        <span class="material-symbols-outlined" style="font-size:17px; color:#bdf500;">headphones</span>
+                                        <div>Audio: <strong>Narrációval</strong></div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="form-submit-btn" style="padding: 0.75rem; font-size: 0.92rem; margin-top: auto;" onclick="switchProtoView('map')">
+                                    🗺️ Útvonal & Térkép megtekintése
+                                </button>
+                            </div>
+
+                            <!-- Screen B: Map & Stops View (Crisp SVG Vector Cartography) -->
+                            <div class="proto-view" id="view-map">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.4rem;">
+                                    <span style="font-weight:700; font-size:0.92rem; color:#fff;">Térképes Útvonal</span>
+                                    <span style="font-size:0.72rem; color:#00f1fe; font-weight:700;">GPS Aktív (45m)</span>
+                                </div>
+
+                                <div class="map-interactive-view">
+                                    <!-- Stylized Dark Cartography Canvas (SVG) -->
+                                    <svg class="map-svg-canvas" preserveAspectRatio="none" viewBox="0 0 400 300">
+                                        <defs>
+                                            <filter id="routeGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                                <feGaussianBlur stdDeviation="3" result="blur"></feGaussianBlur>
+                                                <feMerge>
+                                                    <feMergeNode in="blur"></feMergeNode>
+                                                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                                                </feMerge>
+                                            </filter>
+                                            <pattern id="cityGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                                <rect width="36" height="36" rx="4" fill="#14171a"></rect>
+                                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1d2022" stroke-width="2"></path>
+                                            </pattern>
+                                        </defs>
+                                        <rect width="100%" height="100%" fill="#0c0e11"></rect>
+                                        <rect width="100%" height="100%" fill="url(#cityGrid)" opacity="0.6"></rect>
+                                        <!-- Street grid paths -->
+                                        <path d="M-20,90 Q120,80 220,110 T420,130" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="12"></path>
+                                        <path d="M120,-20 L140,240 L160,380" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="14"></path>
+                                        <path d="M300,-10 L280,180 L290,380" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="10"></path>
+                                        <path d="M-10,240 C140,220 260,250 420,220" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="10"></path>
+                                        <!-- Visited leg (Volt Lime) -->
+                                        <path d="M55,230 L105,175 L165,135" fill="none" stroke="#a5d700" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" opacity="0.9"></path>
+                                        <!-- Active leg (Neon Cyan Glow) -->
+                                        <path d="M165,135 L225,95 L270,85" fill="none" stroke="#00f1fe" stroke-linecap="round" stroke-width="4" stroke-dasharray="6,4" filter="url(#routeGlow)"></path>
+                                        <!-- Future leg (Dotted) -->
+                                        <path d="M270,85 L320,115 L350,180" fill="none" stroke="#434933" stroke-linecap="round" stroke-width="3" stroke-dasharray="3,3"></path>
+                                        <!-- Street Names -->
+                                        <text x="25" y="215" fill="#8d9479" font-family="Inter" font-size="8" letter-spacing="1">MÚZEUM UTCA</text>
+                                        <text x="150" y="155" fill="#8d9479" font-family="Inter" font-size="8" letter-spacing="1">POLLACK MIHÁLY TÉR</text>
+                                        <text x="255" y="72" fill="#8d9479" font-family="Inter" font-size="8" letter-spacing="1">BRÓDY SÁNDOR U.</text>
+                                    </svg>
+
+                                    <!-- Interactive HTML Map Markers -->
+                                    <div class="map-overlay-layer">
+                                        <!-- Stop 1 (Completed) -->
+                                        <div class="map-marker stop-completed" style="left: 14%; top: 76%;">
+                                            <div class="marker-circle"><span class="material-symbols-outlined">check</span></div>
+                                            <span class="marker-label">1. Károlyi</span>
+                                        </div>
+                                        <!-- Stop 2 (Completed) -->
+                                        <div class="map-marker stop-completed" style="left: 27%; top: 57%;">
+                                            <div class="marker-circle"><span class="material-symbols-outlined">check</span></div>
+                                            <span class="marker-label">2. Esterházy</span>
+                                        </div>
+                                        <!-- Current GPS Blip -->
+                                        <div class="map-gps-blip" style="left: 41%; top: 45%;">
+                                            <div class="gps-pulse"></div>
+                                            <div class="gps-dot"></div>
+                                        </div>
+                                        <!-- Stop 3 (Active Target - Festetics) -->
+                                        <div class="map-marker stop-active" style="left: 68%; top: 28%;" onclick="switchProtoView('stop')">
+                                            <div class="marker-pulse-glow"></div>
+                                            <div class="marker-circle-active">3</div>
+                                            <span class="marker-label-active">Festetics-palota</span>
+                                        </div>
+                                        <!-- Stop 4 (Ghost) -->
+                                        <div class="map-marker stop-ghost" style="left: 80%; top: 38%;">
+                                            <div class="marker-ghost-circle">4</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Map HUD overlay -->
+                                    <div class="map-hud-top">
+                                        <span class="map-hud-pill"><span class="material-symbols-outlined" style="font-size:12px; color:#00f1fe;">navigation</span> Észak felé</span>
+                                        <span class="map-hud-pill status"><span class="hud-live-dot"></span> ÉLŐ GPS</span>
+                                    </div>
+                                </div>
+
+                                <div style="font-size: 0.78rem; color:#C3CAAC; margin-bottom: 0.4rem;">Válassz egy megállót:</div>
+                                
+                                <div class="poi-stop-item active" onclick="switchProtoView('stop')">
+                                    <div class="poi-stop-info">
+                                        <div class="poi-number">3</div>
+                                        <div>
+                                            <div style="font-weight:700; font-size:0.82rem; color:#fff;">Festetics-palota</div>
+                                            <div style="font-size:0.7rem; color:#bdf500;">A grófi báltermek világa (350m)</div>
+                                        </div>
+                                    </div>
+                                    <span class="material-symbols-outlined" style="color:#bdf500; font-size:18px;">chevron_right</span>
+                                </div>
+
+                                <div class="poi-stop-item" onclick="switchProtoView('stop')">
+                                    <div class="poi-stop-info">
+                                        <div class="poi-number">1</div>
+                                        <div>
+                                            <div style="font-weight:700; font-size:0.82rem; color:#fff;">Károlyi-palota & Kert</div>
+                                            <div style="font-size:0.7rem; color:#A3A899;">A titkos találkozók helyszíne</div>
+                                        </div>
+                                    </div>
+                                    <span class="material-symbols-outlined" style="color:#8D9479; font-size:18px;">chevron_right</span>
+                                </div>
+
+                                <div class="poi-stop-item" onclick="switchProtoView('stop')">
+                                    <div class="poi-stop-info">
+                                        <div class="poi-number">2</div>
+                                        <div>
+                                            <div style="font-weight:700; font-size:0.82rem; color:#fff;">Esterházy-rezidencia</div>
+                                            <div style="font-size:0.7rem; color:#A3A899;">Párbajok és politikai sakkhúzások</div>
+                                        </div>
+                                    </div>
+                                    <span class="material-symbols-outlined" style="color:#8D9479; font-size:18px;">chevron_right</span>
+                                </div>
+                            </div>
+
+                            <!-- Screen C: Stop Detail & Audio Track (Crisp Native HTML) -->
+                            <div class="proto-view" id="view-stop">
+                                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 0.5rem;">
+                                    <button type="button" onclick="switchProtoView('map')" style="background:none; border:none; color:#bdf500; cursor:pointer; display:flex; align-items:center; gap:4px; font-size:0.78rem; font-weight:700; padding:0;">
+                                        <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+                                        <span>Térképhez</span>
+                                    </button>
+                                    <span style="font-weight:700; font-size:0.75rem; color:#00f1fe; background:rgba(0,241,254,0.12); padding:2px 8px; border-radius:12px;">03 / 08 Megálló</span>
+                                </div>
+
+                                <div class="stop-img-editorial-card" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD75Mw1mLZdqFHz6gu6pjFJqErvDem9B8bNqWxZFsuvY4z8PWwfJ2saenNeyDs7lM7pwZdV7D9SrwYk_HQbanLA5Xyhvl6ONE6tOp89eEWhS5bz-HqxqmYWZoE8BBIa8KM3v9V19MoV7fmKYuuHvUTIXm-O84LngGn4slwroAtA58Cxw9OZl1dXnSHdrOJjApr74iu_7O_tSPa50e5o1vUC229YFfr-xcxkwNHa1lA');">
+                                    <div class="stop-img-gradient"></div>
+                                    <div class="stop-camera-badge">
+                                        <span class="material-symbols-outlined" style="font-size:13px; color:#ffe088;">photo_camera</span>
+                                        <span>Archív & Jelenkor</span>
+                                    </div>
+                                </div>
+                                <div class="stop-caption-text">Festetics-palota márvány bálterme – az 1880-as évek legfényesebb társasági helyszíne.</div>
+
+                                <!-- Audio Player Box -->
+                                <div class="audio-player-card">
+                                    <div class="audio-controls-row">
+                                        <button type="button" class="play-btn-circle" id="proto-audio-btn" onclick="toggleAudioPreview()">
+                                            <span class="material-symbols-outlined" id="proto-play-icon">play_arrow</span>
+                                        </button>
+                                        <div class="audio-meta-text">
+                                            <div class="audio-narrator-pill">HD Narráció · Hegedűs D. Géza</div>
+                                            <div class="audio-track-name">1. Fejezet: A Bálterem Titkai</div>
+                                            <div class="audio-duration" id="audio-timer-display">Kattints a meghallgatáshoz (0:48)</div>
+                                        </div>
+                                    </div>
+                                    <div class="audio-waveform-bars" id="audio-waveform-container">
+                                        <span class="w-bar" style="height: 35%;"></span>
+                                        <span class="w-bar" style="height: 60%;"></span>
+                                        <span class="w-bar" style="height: 85%;"></span>
+                                        <span class="w-bar" style="height: 50%;"></span>
+                                        <span class="w-bar" style="height: 100%;"></span>
+                                        <span class="w-bar" style="height: 75%;"></span>
+                                        <span class="w-bar" style="height: 90%;"></span>
+                                        <span class="w-bar" style="height: 45%;"></span>
+                                        <span class="w-bar" style="height: 70%;"></span>
+                                        <span class="w-bar" style="height: 95%;"></span>
+                                        <span class="w-bar" style="height: 60%;"></span>
+                                        <span class="w-bar" style="height: 40%;"></span>
+                                        <span class="w-bar" style="height: 80%;"></span>
+                                        <span class="w-bar" style="height: 55%;"></span>
+                                        <span class="w-bar" style="height: 90%;"></span>
+                                        <span class="w-bar" style="height: 30%;"></span>
+                                    </div>
+                                </div>
+
+                                <div class="stop-quote-card">
+                                    <p class="quote-p">
+                                        Amikor gróf Festetics Tasziló megbízta a bécsi építészeket: <span class="quote-hl">„Legyen fényűzőbb, mint a bécsi rokonaimé!”</span>
+                                    </p>
+                                </div>
+
+                                <div class="stop-fun-fact-card">
+                                    <div class="fact-icon-wrap">
+                                        <span class="material-symbols-outlined">lightbulb</span>
+                                    </div>
+                                    <div class="fact-text-wrap">
+                                        <div class="fact-title">Tudtad a palotáról?</div>
+                                        <p class="fact-desc">A pince szellőzőrendszere jéghideg dunai levegőt keringetett – Pest legelső klímája!</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Device Nav -->
+                            <div class="proto-tab-bar">
+                                <button type="button" class="proto-tab-item active" id="tab-walk" onclick="switchProtoView('walk')">
+                                    <span class="material-symbols-outlined">description</span>
+                                    <span>Adatlap</span>
+                                </button>
+                                <button type="button" class="proto-tab-item" id="tab-map" onclick="switchProtoView('map')">
+                                    <span class="material-symbols-outlined">map</span>
+                                    <span>Térkép</span>
+                                </button>
+                                <button type="button" class="proto-tab-item" id="tab-stop" onclick="switchProtoView('stop')">
+                                    <span class="material-symbols-outlined">headphones</span>
+                                    <span>Megálló</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Narrative Steps explaining the prototype -->
+                    <div class="proto-narrative">
+                        <div class="proto-step-pill active" onclick="switchProtoView('walk')">
+                            <span class="material-symbols-outlined proto-step-icon">menu_book</span>
+                            <div>
+                                <div class="proto-step-title">1. Séta Adatlap és Áttekintés</div>
+                                <div class="proto-step-desc">Távolság, becsült idő, szint és megállók száma – minden kulcsfontosságú adat egy pillantásra.</div>
+                            </div>
+                        </div>
+
+                        <div class="proto-step-pill" onclick="switchProtoView('map')">
+                            <span class="material-symbols-outlined proto-step-icon">near_me</span>
+                            <div>
+                                <div class="proto-step-title">2. Interaktív GPS Térkép</div>
+                                <div class="proto-step-desc">A telefonod helymeghatározásával mutatja a következő megállót, nem enged eltévedni az utcák labirintusában.</div>
+                            </div>
+                        </div>
+
+                        <div class="proto-step-pill" onclick="switchProtoView('stop')">
+                            <span class="material-symbols-outlined proto-step-icon">volume_up</span>
+                            <div>
+                                <div class="proto-step-title">3. Történetmesélés & Hanganyag</div>
+                                <div class="proto-step-desc">Professzionális hangos narráció korhű zenei aláfestéssel. Hallgasd fülhallgatóval, miközben az épület előtt állsz.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 5. CONCRETE WALK SHOWCASE (100% Crisp Native HTML Container) -->
+        <section class="walk-showcase" id="seta-reszletek">
+            <div class="container">
+                <div class="walk-card-hero">
+                    <!-- Left Column: Rich HTML Editorial Cover & Floating Itinerary Card -->
+                    <div class="walk-cover-showcase">
+                        <div class="walk-cover-bg" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALOjt5GVAPKgBAkrRM19EntLT6zcXPmu4gpT-48vhuahgj-A7ZjO5hC_U_esnv7w_Muv6pN4y7SHSKa4RcqXd36BQ0HHvdyIM1Xq64NjMDzTRIlnn0QiMnjMLzA-OeyPGHv9BqWeExRMzDuE3cKBBjDtMmMv-p2RgFhmfJkwE6a0NdBk2ALLEztFRLIRQYS53VYz-qsmbVO0S7c5bMwDHExp1DVs75y02OBdECq1g');"></div>
+                        <div class="walk-cover-gradient"></div>
+
+                        <!-- Top floating badge pills -->
+                        <div class="walk-showcase-badges">
+                            <span class="walk-pill-badge">
+                                <span class="material-symbols-outlined" style="font-size:14px;">location_on</span>
+                                <span>Budapest VIII. · Palotanegyed</span>
+                            </span>
+                            <span class="walk-pill-badge">
+                                <span class="material-symbols-outlined" style="font-size:14px; color:#ffe088;">star</span>
+                                <span>4.9 (340+ értékelés)</span>
+                            </span>
+                            <span class="walk-pill-badge cyan">
+                                <span class="material-symbols-outlined" style="font-size:14px;">headphones</span>
+                                <span>Hegedűs D. Géza narráció</span>
+                            </span>
+                        </div>
+
+                        <!-- Bottom floating route itinerary preview card -->
+                        <div class="walk-itinerary-preview-card">
+                            <div class="itinerary-preview-title">
+                                <span class="material-symbols-outlined" style="font-size:16px;">route</span>
+                                <span>Kiemelt Állomások az Útvonalon</span>
+                            </div>
+                            <div class="itinerary-mini-list">
+                                <div class="itinerary-mini-item active">
+                                    <span class="itin-num">1</span>
+                                    <span class="itin-text">Károlyi-palota & Kert – A titkos párbajok helyszíne</span>
+                                </div>
+                                <div class="itinerary-mini-item active">
+                                    <span class="itin-num">2</span>
+                                    <span class="itin-text">Festetics-palota bálterme & rejtett lépcsőháza</span>
+                                </div>
+                                <div class="itinerary-mini-item">
+                                    <span class="itin-num">3</span>
+                                    <span class="itin-text">Esterházy-rezidencia – Politikai sakkhúzások</span>
+                                </div>
+                                <div class="itinerary-mini-item">
+                                    <span class="itin-num">4</span>
+                                    <span class="itin-text">Magyar Nemzeti Múzeum kertje – Forradalmi randevúk</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Walk Details & Editorial Value Points -->
+                    <div class="walk-details-content">
+                        <div class="walk-location-tag">
+                            <span class="material-symbols-outlined">explore</span>
+                            <span>Kurált Városi Sétaútvonal</span>
+                        </div>
+                        <h3>A Palotanegyed Titkai: Arisztokraták és Rejtélyek</h3>
+                        <p class="walk-desc-text">
+                            Lépj be a 19. századi mágnások kulisszái mögé. Fedezd fel a pesti arisztokrácia fényűző palotáit,
+                            elfeledett párbajait, titkos átjáróit és a könyvtárak csendjében megbúvó botrányokat.
+                        </p>
+
+                        <!-- Highlights Section: "Mit fogsz felfedezni?" -->
+                        <div class="walk-discover-highlights">
+                            <div class="walk-hl-row">
+                                <span class="walk-hl-icon">✓</span>
+                                <div><strong>Festetics-palota rejtett világa:</strong> A titkos lépcsőház és a grófi bálterem, ahová ma is alig juthat be a nagyközönség.</div>
+                            </div>
+                            <div class="walk-hl-row">
+                                <span class="walk-hl-icon">✓</span>
+                                <div><strong>Századfordulós párbajok:</strong> Hol vívtak becsületbeli párviadalt a legnevesebb politikusok, és mi robbantotta ki a botrányokat.</div>
+                            </div>
+                            <div class="walk-hl-row">
+                                <span class="walk-hl-icon">✓</span>
+                                <div><strong>Arisztokrata szalonok:</strong> A Magyar Nemzeti Múzeum mögötti eldugott paloták intim, intrikákkal teli történetei.</div>
+                            </div>
+                            <div class="walk-hl-row">
+                                <span class="walk-hl-icon">✓</span>
+                                <div><strong>A mágnásnegyed születése:</strong> Hogyan vált a belső Józsefváros a budapesti arisztokrácia fényűző epicentrumává néhány évtized alatt.</div>
+                            </div>
+                        </div>
+
+                        <div class="walk-badges-row">
+                            <div class="walk-stat-badge">
+                                <span class="material-symbols-outlined" style="font-size:16px; color:#bdf500;">straighten</span>
+                                <span>2.8 km séta</span>
+                            </div>
+                            <div class="walk-stat-badge">
+                                <span class="material-symbols-outlined" style="font-size:16px; color:#bdf500;">schedule</span>
+                                <span>1.5 - 2 óra</span>
+                            </div>
+                            <div class="walk-stat-badge">
+                                <span class="material-symbols-outlined" style="font-size:16px; color:#bdf500;">flag</span>
+                                <span>8 különleges megálló</span>
+                            </div>
+                            <div class="walk-stat-badge">
+                                <span class="material-symbols-outlined" style="font-size:16px; color:#bdf500;">accessible</span>
+                                <span>Akadálymentes útvonal</span>
+                            </div>
+                        </div>
+
+                        <a href="#elojelentkezes" class="btn-primary" style="align-self: flex-start;">
+                            <span>Kérem a Korai Hozzáférést</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 6. PRICING & EARLY ACCESS VALIDATION GATE -->
+        <section class="pricing-section" id="elojelentkezes">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Exkluzív Ajánlat</span>
+                    <h2 class="section-title">Légy az elsők között a Kitérőn!</h2>
+                    <p class="section-desc">
+                        A VitaSteps korábbi résztvevőjeként kiemelt kedvezménnyel és elsőként próbálhatod ki a digitális sétát.
+                    </p>
+                </div>
+
+                <div class="pricing-card-wrap">
+                    <div class="pricing-badge-popular">Early Bird Kedvezmény</div>
+                    <div class="pricing-title">Palotanegyed Titkai Sétacsomag</div>
+                    <p class="pricing-lead">Örökös hozzáférés a teljes interaktív sétához és az audio narrációhoz.</p>
+
+                    <div class="price-box">
+                        <span class="price-val" id="dynamic-price-val">2 990</span>
+                        <span class="price-curr">Ft</span>
+                        <span class="price-original">4 990 Ft</span>
+                    </div>
+
+                    <div class="pricing-features-list">
+                        <div class="pricing-feature">
+                            <span class="check">✓</span>
+                            <span>Teljes 2.8 km-es kurált útvonal GPS navigációval</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="check">✓</span>
+                            <span>8 megálló prémium hangos történetmeséléssel</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="check">✓</span>
+                            <span>Közvetlenül a mobil böngésződből fut (app letöltés nélkül)</span>
+                        </div>
+                        <div class="pricing-feature">
+                            <span class="check">✓</span>
+                            <span>Bármikor indítható, megállítható és újrajárható</span>
+                        </div>
+                    </div>
+
+                    <!-- Early Access Form -->
+                    <form class="early-access-form" id="kitero-lead-form" onsubmit="handleLeadSubmit(event)">
+                        <input type="text" class="form-input" id="lead-name" placeholder="Neved (pl. Kovács Péter)" required>
+                        <input type="email" class="form-input" id="lead-email" placeholder="E-mail címed" required>
+                        
+                        <button type="submit" class="form-submit-btn" id="lead-submit-btn">
+                            🔒 Érdekel, kérem a korai hozzáférést!
+                        </button>
+
+                        <div class="form-guarantee-note">
+                            <span class="material-symbols-outlined" style="font-size:16px;">lock</span>
+                            <span>Nem vonunk le semmit most. Értesítünk az induláskor!</span>
+                        </div>
+
+                        <div class="form-alert-success" id="form-success-alert">
+                            🎉 Köszönjük a jelentkezést! Sikeresen rögzítettük az érdeklődésedet. Hamarosan küldjük az első hozzáférési linket!
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 7. FAQ SECTION -->
+        <section class="faq-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-subtitle">Gyakori Kérdések</span>
+                    <h2 class="section-title">Minden, amit a Kitérőről tudni érdemes</h2>
+                </div>
+
+                <div class="faq-accordion">
+                    <div class="faq-item open">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Kell külön alkalmazást letölteni a telefonomra?</span>
+                            <span class="material-symbols-outlined arrow">expand_more</span>
+                        </div>
+                        <div class="faq-answer">
+                            Nem! A VitaSteps Kitérő közvetlenül a mobiltelefonod böngészőjében (Safari, Chrome stb.) fut. Nincs szükség App Store vagy Google Play letöltésre, nem foglal felesleges helyet.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Saját tempóban lehet haladni?</span>
+                            <span class="material-symbols-outlined arrow">expand_more</span>
+                        </div>
+                        <div class="faq-answer">
+                            Igen, pontosan ez a Kitérő lényege. Bármikor megállhatsz ebédelni, kávézni, vagy akár napokkal később is folytathatod a sétát onnan, ahol abbahagytad.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Hogyan működik a térkép és a tájékozódás?</span>
+                            <span class="material-symbols-outlined arrow">expand_more</span>
+                        </div>
+                        <div class="faq-answer">
+                            A felület a telefonod beépített GPS-ét használja. Pontosan látod a saját pozíciódat a térképen és az ajánlott útvonalat a következő titkos megállóig.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Egyedül vagy társasággal érdemes menni?</span>
+                            <span class="material-symbols-outlined arrow">expand_more</span>
+                        </div>
+                        <div class="faq-answer">
+                            Mindkettő nagyszerű élmény! Egyedül igazi befelé figyelős, elmélyült kulturális feltöltődés fülhallgatóval, de pároknak vagy barátoknak is tökéletes hétvégi közös élmény.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Mikor és hogyan vehetem igénybe a sétát?</span>
+                            <span class="material-symbols-outlined arrow">expand_more</span>
+                        </div>
+                        <div class="faq-answer">
+                            A korai hozzáférésre feliratkozóknak az indulás napján küldjük el a személyes hozzáférési linket e-mailben, amit egy kattintással bármikor megnyithatnak.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container footer-inner">
+            <div>
+                <strong>VitaSteps Kitérő</strong> &copy; 2026. Minden jog fenntartva.
+            </div>
+            <div class="footer-links">
+                <a href="/adatvedelem.html">Adatkezelés</a>
+                <a href="/aszf.html">ÁSZF</a>
+                <a href="mailto:vitasteps.team@gmail.com">Kapcsolat</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ANALYTICS TRACKER -->
+    <script src="../js/tracker.js"></script>
+
+    <!-- PAGE SCRIPT & INTERACTIVE LOGIC -->
+    <script>
+        // ── A/B TESTING & URL PARAMETERS ─────────────────────────────────
+        const urlParams = new URLSearchParams(window.location.search);
+        const cidParam = urlParams.get('cid') || '';
+        
+        // Price Variant: 2990 Ft (A) vs 3490 Ft (B)
+        let priceVariant = urlParams.get('p') || localStorage.getItem('kitero_price_variant');
+        if (!priceVariant || (priceVariant !== '2990' && priceVariant !== '3490')) {
+            priceVariant = Math.random() < 0.5 ? '2990' : '3490';
+            localStorage.setItem('kitero_price_variant', priceVariant);
+        }
+
+        // Hero Headline Variant
+        let heroVariant = urlParams.get('h') || localStorage.getItem('kitero_hero_variant');
+        if (!heroVariant || (heroVariant !== 'A' && heroVariant !== 'B')) {
+            heroVariant = Math.random() < 0.5 ? 'A' : 'B';
+            localStorage.setItem('kitero_hero_variant', heroVariant);
+        }
+
+        // Apply Variants
+        document.addEventListener('DOMContentLoaded', () => {
+            // Price update
+            const priceEl = document.getElementById('dynamic-price-val');
+            if (priceEl) {
+                priceEl.textContent = priceVariant === '3490' ? '3 490' : '2 990';
+            }
+
+            // Headline update
+            const headlineEl = document.getElementById('hero-headline');
+            if (headlineEl && heroVariant === 'B') {
+                headlineEl.innerHTML = 'Fedezd fel azt, ami mellett <em>eddig elsétáltál</em>.';
+            }
+
+            // Fire Landing View Event
+            trackEvent('landing_view', {
+                cid: cidParam || null,
+                price_variant: priceVariant,
+                hero_variant: heroVariant
+            });
+
+            // If coming via email CID, track email_click
+            if (cidParam) {
+                trackEvent('email_click', { cid: cidParam });
+            }
+        });
+
+        // ── SCROLL DEPTH TRACKING ─────────────────────────────────────────
+        const scrollThresholds = [25, 50, 75, 90];
+        const firedScrolls = new Set();
+
+        window.addEventListener('scroll', () => {
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            if (docHeight <= 0) return;
+            const scrollPercent = Math.round((window.scrollY / docHeight) * 100);
+
+            scrollThresholds.forEach(thresh => {
+                if (scrollPercent >= thresh && !firedScrolls.has(thresh)) {
+                    firedScrolls.add(thresh);
+                    trackEvent(`scroll_${thresh}`, { scroll_depth: thresh });
+                }
+            });
+
+            // Check if Pricing section reached
+            const pricingSec = document.getElementById('elojelentkezes');
+            if (pricingSec && !firedScrolls.has('pricing_view')) {
+                const rect = pricingSec.getBoundingClientRect();
+                if (rect.top <= window.innerHeight * 0.75) {
+                    firedScrolls.add('pricing_view');
+                    trackEvent('pricing_view', { price_variant: priceVariant });
+                }
+            }
+        }, { passive: true });
+
+        // ── PROTOTYPE INTERACTION ─────────────────────────────────────────
+        let prototypeStarted = false;
+
+        function switchProtoView(viewName) {
+            if (!prototypeStarted) {
+                prototypeStarted = true;
+                trackEvent('prototype_start', { initial_view: viewName });
+            }
+
+            // Track view change
+            trackEvent('prototype_screen_view', { screen_id: viewName });
+
+            // Hide all views
+            document.querySelectorAll('.proto-view').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.proto-tab-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.proto-step-pill').forEach(el => el.classList.remove('active'));
+
+            // Show selected view
+            const targetView = document.getElementById(`view-${viewName}`);
+            const targetTab = document.getElementById(`tab-${viewName}`);
+            if (targetView) targetView.classList.add('active');
+            if (targetTab) targetTab.classList.add('active');
+
+            if (viewName === 'map') {
+                trackEvent('map_preview_open', {});
+            }
+        }
+
+        // ── AUDIO PLAYER SIMULATION ───────────────────────────────────────
+        let isAudioPlaying = false;
+        let audioProgress = 0;
+        let audioInterval = null;
+
+        function toggleAudioPreview() {
+            const btn = document.getElementById('proto-audio-btn');
+            const icon = document.getElementById('proto-play-icon');
+            const bars = document.querySelectorAll('#audio-waveform-container .w-bar');
+            const timer = document.getElementById('audio-timer-display');
+
+            if (!isAudioPlaying) {
+                isAudioPlaying = true;
+                icon.textContent = 'pause';
+                btn.style.background = '#00f1fe';
+                trackEvent('audio_preview_play', { track: 'festetics_chapter_1' });
+
+                audioInterval = setInterval(() => {
+                    audioProgress += 2;
+                    const totalBars = bars.length;
+                    const activeBarsCount = Math.floor((audioProgress / 100) * totalBars);
+                    bars.forEach((b, idx) => {
+                        if (idx <= activeBarsCount) {
+                            b.classList.add('played');
+                        } else {
+                            b.classList.remove('played');
+                        }
+                    });
+
+                    const currentSec = Math.floor((audioProgress / 100) * 48);
+                    timer.textContent = `Lejátszás: 0:${currentSec < 10 ? '0' : ''}${currentSec} / 0:48`;
+
+                    if (audioProgress >= 100) {
+                        clearInterval(audioInterval);
+                        isAudioPlaying = false;
+                        icon.textContent = 'replay';
+                        btn.style.background = '#bdf500';
+                        audioProgress = 0;
+                        timer.textContent = 'Hangminta véget ért (0:48)';
+                        trackEvent('audio_preview_complete', { track: 'festetics_chapter_1' });
+                    }
+                }, 100);
+            } else {
+                isAudioPlaying = false;
+                clearInterval(audioInterval);
+                icon.textContent = 'play_arrow';
+                btn.style.background = '#bdf500';
+            }
+        }
+
+        // ── LEAD SUBMISSION HANDLER ───────────────────────────────────────
+        async function handleLeadSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('lead-name').value.trim();
+            const email = document.getElementById('lead-email').value.trim();
+            const submitBtn = document.getElementById('lead-submit-btn');
+            const successBox = document.getElementById('form-success-alert');
+
+            trackEvent('cta_click', { button_id: 'lead_form_submit' });
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Rögzítés folyamatban...';
+
+            const attribution = window.VitaTracker ? window.VitaTracker.getAttribution() : {};
+
+            try {
+                const res = await fetch('/api/kitero', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        cid: cidParam,
+                        price_variant: priceVariant,
+                        hero_variant: heroVariant,
+                        visitor_id: attribution.visitor_id,
+                        session_id: attribution.session_id
+                    })
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    successBox.style.display = 'block';
+                    submitBtn.style.display = 'none';
+                    document.getElementById('lead-name').style.display = 'none';
+                    document.getElementById('lead-email').style.display = 'none';
+
+                    trackEvent('lead_submit', {
+                        cid: cidParam || null,
+                        price_variant: priceVariant
+                    });
+                } else {
+                    alert('Hiba történt: ' + (data.error || 'Kérjük próbáld újra!'));
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '🔒 Érdekel, kérem a korai hozzáférést!';
+                }
+            } catch (err) {
+                alert('Hálózati hiba. Kérjük ellenőrizd az internetkapcsolatot!');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🔒 Érdekel, kérem a korai hozzáférést!';
+            }
+        }
+
+        // ── FAQ TOGGLE ───────────────────────────────────────────────────
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // ── TRACKING HELPER ───────────────────────────────────────────────
+        function trackEvent(name, data) {
+            if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                window.VitaTracker.track(name, data);
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -22,7 +22,7 @@ Concrete physical, digital, and business objects of the VitaSteps platform.
 * [[campaign-predikaloszek|Campaign Predikaloszek]]: Prédikálószék Vertical 100-medal challenge.
 * [[campaign-nagykevely|Campaign Nagy-Kevely]]: Nagy-Kevély csillagai 100-medal astronomical night challenge.
 * [[virtual-challenge|Virtual Challenge]]: Helyszínfüggetlen távolsági és kilométer-kihívások (MVP modell).
-* [[hosszu-lepesek|Hosszú Lépések]]: Önvezetett tematikus városi audioséták és történetmesélés.
+* [[kitero|VitaSteps Kitérő]]: Önvezetett digitális városi élményséták és történetmesélés.
 
 ---
 
@@ -94,6 +94,8 @@ Durable architectural, product, and strategic decisions.
 * [[ADR-007-revolut-stripe-cashflow-integration|ADR-007 Revolut & Stripe Cashflow]]: Stripe egyenleg és Revolut Pro cashflow egységesítése.
 * [[ADR-008-foxpost-batch-resilience|ADR-008 Foxpost Batch Resilience]]: Előzetes validáció és csoportos hibatűrés a Foxpost API hívásoknál.
 * [[ADR-009-strategic-ecosystem-pivot|ADR-009 Strategic Ecosystem Pivot]]: Átállás az egytermékes modellről a mozgás- és felfedezésközpontú 5-pilléres ökoszisztémára.
+* [[ADR-010-kitero-validation-architecture|ADR-010 Kitérő Validáció]]: VitaSteps Kitérő validációs és analitikai architektúra döntések.
+* [[ADR-011-experience-selector-main-gateway|ADR-011 Élményválasztó Főoldal]]: Élményközpontú interaktív választóoldal (/main) és ökoszisztéma kapu.
 
 ---
 

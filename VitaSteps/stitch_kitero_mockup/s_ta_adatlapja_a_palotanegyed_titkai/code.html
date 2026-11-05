@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="hu"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><title>Hosszú Lépések</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#111416;color:#e2e2e5;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 0.5rem);}.pt-safe{padding-top:env(safe-area-inset-top, 0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "tertiary-fixed-dim": "#e9c349", "background": "#111416", "on-tertiary": "#3c2f00", "secondary-container": "#00f1fe", "on-error": "#690005", "tertiary-container": "#ffe088", "on-primary-fixed-variant": "#394d00", "surface-variant": "#333537", "surface-bright": "#37393c", "on-secondary": "#00363a", "on-tertiary-container": "#7b6100", "on-secondary-fixed": "#002022", "inverse-on-surface": "#2e3133", "primary-container": "#bdf500", "on-secondary-fixed-variant": "#004f54", "on-primary-container": "#526d00", "inverse-surface": "#e2e2e5", "on-surface-variant": "#c3caac", "error": "#ffb4ab", "tertiary": "#ffffff", "on-tertiary-fixed-variant": "#574500", "on-primary": "#273500", "surface-container-lowest": "#0c0e11", "secondary": "#ddfcff", "on-tertiary-fixed": "#241a00", "surface-container": "#1d2022", "tertiary-fixed": "#ffe088", "surface-container-low": "#191c1e", "inverse-primary": "#4d6700", "surface": "#111416", "surface-dim": "#111416", "outline": "#8d9479", "primary-fixed": "#bdf500", "secondary-fixed-dim": "#00dbe7", "outline-variant": "#434933", "on-surface": "#e2e2e5", "error-container": "#93000a", "secondary-fixed": "#74f5ff", "on-primary-fixed": "#151f00", "primary-fixed-dim": "#a5d700", "on-error-container": "#ffdad6", "surface-container-high": "#282a2d", "surface-tint": "#a5d700", "surface-container-highest": "#333537", "primary": "#ffffff", "on-secondary-container": "#006a70", "on-background": "#e2e2e5" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "margin-md": "1.5rem", "space-md": "1rem", "space-lg": "1.5rem", "space-sm": "0.75rem", "space-2xs": "0.25rem", "gutter-md": "1.5rem", "space-3xl": "4rem", "gutter": "1rem", "gutter-lg": "2rem", "space-2xl": "3rem", "space-xs": "0.5rem", "space-xl": "2rem", "margin-lg": "2.5rem", "margin": "1rem" }, fontFamily: { "label-lg": ["Inter"], "label-md": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "label-sm": ["Inter"], "headline-lg-mobile": ["Plus Jakarta Sans"], "body-sm": ["Inter"], "mono-metric": ["Inter"], "headline-xl-mobile": ["Plus Jakarta Sans"], "body-xl": ["Inter"], "body-md": ["Inter"], "headline-lg": ["Plus Jakarta Sans"], "headline-xl": ["Plus Jakarta Sans"] }, fontSize: { "label-lg": ["0.9375rem", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "600" }], "label-md": ["0.8125rem", { "lineHeight": "1.35", "letterSpacing": "0.02em", "fontWeight": "600" }], "headline-sm": ["1.25rem", { "lineHeight": "1.35", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-md": ["1.5rem", { "lineHeight": "1.3", "letterSpacing": "-0.015em", "fontWeight": "700" }], "label-sm": ["0.6875rem", { "lineHeight": "1.25", "letterSpacing": "0.06em", "fontWeight": "700" }], "headline-lg-mobile": ["1.75rem", { "lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-sm": ["0.875rem", { "lineHeight": "1.55", "letterSpacing": "0.005em", "fontWeight": "400" }], "mono-metric": ["1.125rem", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-xl-mobile": ["2.25rem", { "lineHeight": "1.15", "letterSpacing": "-0.025em", "fontWeight": "800" }], "body-xl": ["1.125rem", { "lineHeight": "1.65", "letterSpacing": "-0.01em", "fontWeight": "400" }], "body-md": ["1rem", { "lineHeight": "1.6", "letterSpacing": "0em", "fontWeight": "400" }], "headline-lg": ["2.25rem", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-xl": ["3.25rem", { "lineHeight": "1.1", "letterSpacing": "-0.03em", "fontWeight": "800" }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface min-h-screen text-on-surface antialiased flex flex-col items-center selection:bg-primary-container selection:text-on-primary-container"><div class="w-full max-w-[430px] min-h-screen relative flex flex-col bg-surface shadow-[0_0_50px_rgba(0,0,0,0.8)]"><header class="fixed top-0 max-w-[430px] w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_12px_rgba(0,0,0,0.3)]"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Vissza" class="w-11 h-11 flex items-center justify-center text-on-surface hover:text-primary-container transition-colors -ml-2" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><img alt="Hosszú Lépések Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj0Tptd4k86z8ngDnEOsgxZYHDKhNG33Nzsh0IH7_3-VnzupVQ8uBb9wRh2z-xdYxns7cTJNuKFFzugjyqORi8FcYgTEdbr53e46QgtYsfyFo4L-ft3a_bgh1xUfYtISW6Rd6MaBP_Iq92UtPvD98VUdCJJ7Se7vStQxyySdJl9j5kvgkXAFEN3Q0xiyRxH-LA0ZPUU5K7yG6l6KKEy4eQ18cWJVUzA8hGloAe3Sc"/><h1 class="font-headline-sm text-headline-sm text-on-surface truncate max-w-[200px]">Séta Részletei</h1></div><div class="flex items-center gap-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-outline-variant/40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYPqxceeMXSL4Gycj_O4i14zcHw0N31-nqrb9RckUkyc9WjPz3E_AxUdcoRHt-paRTyQS13R3QfkTSuCZ9W7zQ0OJL7FXW0tsPukcOkzQTDDB_7LFk_jXqPbdVNZ_3boGEfiPBuTHeraAGn64BZaLkCRvIAa-l9073JOuvCogw85u8qfefW_HQu9o4h2Hjm767GFRXxKX0SR86NCslaQv4PMt-XY8P0dfoOVM_v-s"/></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-safe px-gutter bg-surface"><div class="flex flex-col w-full pb-24">
+<!-- Hero Section -->
+<div class="relative w-full rounded-2xl overflow-hidden bg-surface-container-low shadow-xl">
+<div class="w-full h-72 bg-cover bg-center relative flex flex-col justify-between p-space-md" data-alt="Atmospheric twilight photograph of the historic Palace District in Budapest, Hungary. Ornate 19th-century neo-renaissance wrought-iron gates, classical stone facades illuminated by warm golden vintage gas street lamps, slick cobblestone street reflecting deep obsidian night tones and luminescent amber light streaks, moody cinematic depth." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALOjt5GVAPKgBAkrRM19EntLT6zcXPmu4gpT-48vhuahgj-A7ZjO5hC_U_esnv7w_Muv6pN4y7SHSKa4RcqXd36BQ0HHvdyIM1Xq64NjMDzTRIlnn0QiMnjMLzA-OeyPGHv9BqWeExRMzDuE3cKBBjDtMmMv-p2RgFhmfJkwE6a0NdBk2ALLEztFRLIRQYS53VYz-qsmbVO0S7c5bMwDHExp1DVs75y02OBdECq1g')">
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent"></div>
+<!-- Top floating badge pills -->
+<div class="relative z-10 flex flex-wrap items-center gap-space-xs">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-highest/80 backdrop-blur-md text-tertiary-fixed font-label-sm text-label-sm shadow-md">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+          Prémium Városi Séta
+        </span>
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-highest/80 backdrop-blur-md text-on-surface font-label-sm text-label-sm shadow-md">
+<span class="material-symbols-outlined text-tertiary-fixed text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+          4.9 <span class="text-on-surface-variant font-normal">(342)</span>
+</span>
+</div>
+<!-- Bottom overlay tags -->
+<div class="relative z-10 flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-secondary font-label-sm text-label-sm shadow-md">
+<span class="material-symbols-outlined text-[15px]">directions_walk</span>
+          Gyalogos élmény
+        </span>
+<button aria-label="Mentés kedvencekhez" class="w-10 h-10 rounded-full bg-surface-container-highest/80 backdrop-blur-md text-on-surface flex items-center justify-center shadow-lg active:scale-90 transition-transform" id="bookmark-btn">
+<span class="material-symbols-outlined text-[20px]" id="bookmark-icon">bookmark_border</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Title & Narrative Synopsis -->
+<div class="flex flex-col mt-space-md">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container shadow-[0_0_8px_rgba(189,245,0,0.8)]"></span>
+<span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Budapest VIII. kerület</span>
+</div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-1 leading-tight">
+      A Palotanegyed Titkai: Arisztokraták és Rejtélyek
+    </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-space-sm leading-relaxed">
+      Lépj be a 19. századi mágnások kulisszái mögé. Fedezd fel a pesti arisztokrácia fényűző palotáit, elfeledett párbajait, titkos átjáróit és a könyvtárak csendjében megbúvó botrányokat.
+    </p>
+</div>
+<!-- Key Metrics 4-Grid Cards -->
+<div class="grid grid-cols-2 gap-space-xs mt-space-lg">
+<!-- Metric 1 -->
+<div class="flex flex-col p-space-sm bg-surface-container rounded-xl shadow-sm">
+<div class="flex items-center gap-2 text-primary-container">
+<span class="material-symbols-outlined text-[20px]">straighten</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Távolság</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface mt-1">2.8 km</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Kényelmes tempó</span>
+</div>
+<!-- Metric 2 -->
+<div class="flex flex-col p-space-sm bg-surface-container rounded-xl shadow-sm">
+<div class="flex items-center gap-2 text-secondary-container">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Időtartam</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface mt-1">1.5 - 2 óra</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Pihenőkkel együtt</span>
+</div>
+<!-- Metric 3 -->
+<div class="flex flex-col p-space-sm bg-surface-container rounded-xl shadow-sm">
+<div class="flex items-center gap-2 text-tertiary-fixed">
+<span class="material-symbols-outlined text-[20px]">place</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Megállók</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface mt-1">8 állomás</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Audio narrációval</span>
+</div>
+<!-- Metric 4 -->
+<div class="flex flex-col p-space-sm bg-surface-container rounded-xl shadow-sm">
+<div class="flex items-center gap-2 text-secondary-fixed">
+<span class="material-symbols-outlined text-[20px]">hiking</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Nehézség</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface mt-1">Könnyű séta</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Akadálymentes</span>
+</div>
+</div>
+<!-- Audio Atmosphere Teaser -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container-high rounded-xl mt-space-md shadow-md">
+<div class="flex items-center gap-space-sm">
+<button aria-label="Minta meghallgatása" class="w-11 h-11 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-lg active:scale-95 transition-transform" id="preview-play-btn">
+<span class="material-symbols-outlined text-[24px]" id="preview-play-icon" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Hangminta: Bevezető fejezet</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Báltermi zene és korhű történetmesélés (0:48)</span>
+</div>
+</div>
+<div class="flex items-center gap-0.5 pr-2">
+<span class="w-1 h-3 rounded-full bg-primary-container animate-pulse"></span>
+<span class="w-1 h-5 rounded-full bg-primary-container animate-pulse" style="animation-delay: 150ms"></span>
+<span class="w-1 h-2 rounded-full bg-primary-container animate-pulse" style="animation-delay: 300ms"></span>
+</div>
+</div>
+<!-- Highlights: "Mit fogsz felfedezni?" -->
+<div class="flex flex-col mt-space-xl">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[22px]">auto_awesome</span>
+      Mit fogsz felfedezni?
+    </h3>
+<div class="flex flex-col gap-space-xs mt-space-sm">
+<div class="flex items-start gap-space-sm p-space-sm bg-surface-container rounded-xl shadow-sm">
+<div class="w-7 h-7 rounded-full bg-primary-container/15 text-primary-container flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+          A Festetics-palota titkos kertjét és grófi báltermét, ahová ma is csak kevesen léphetnek be.
+        </p>
+</div>
+<div class="flex items-start gap-space-sm p-space-sm bg-surface-container rounded-xl shadow-sm">
+<div class="w-7 h-7 rounded-full bg-primary-container/15 text-primary-container flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+          Hol párbajoztak a századforduló legnevesebb politikusai és milyen botrányok rázták meg a mágnásvilágot.
+        </p>
+</div>
+<div class="flex items-start gap-space-sm p-space-sm bg-surface-container rounded-xl shadow-sm">
+<div class="w-7 h-7 rounded-full bg-primary-container/15 text-primary-container flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+          A Magyar Nemzeti Múzeum mögötti eldugott arisztokrata szalonok intim, intrikákkal teli történetét.
+        </p>
+</div>
+<div class="flex items-start gap-space-sm p-space-sm bg-surface-container rounded-xl shadow-sm">
+<div class="w-7 h-7 rounded-full bg-primary-container/15 text-primary-container flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface">
+            Hogyan vált a belső Józsefváros a budapesti arisztokrácia fényűző epicentrumává néhány évtized alatt.
+          </p>
+</div>
+</div>
+</div>
+<!-- Interactive Route Map & Waypoint List -->
+<div class="flex flex-col mt-space-xl">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container text-[22px]">route</span>
+        Útvonal &amp; Megállók
+      </h3>
+<span class="font-label-md text-label-md text-secondary-container">8 Állomás</span>
+</div>
+<!-- Map Preview Box -->
+<div class="relative w-full h-44 rounded-2xl overflow-hidden mt-space-sm bg-surface-container shadow-md">
+<div class="w-full h-full bg-cover bg-center" data-location="Palace District, Budapest, Hungary" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBOmIl3vPCUyRijy4YGZflj9gs3UbPpp1tLfCf7NzJGI7smaXcIL40jqhVAJgP8WD2gR4CEPRawz8hD0ws7c6hQEEml45b-FYgxruo4Ur1yFD7YMeOMEKdoEZ5ZjQ9xubqgJMgGq2S-0MPrlp-U0bb9lnfbPNwZttkAPl7JoFRbsq4KQhV4Q9IfgG7PUowJh95AYukpVE4WmT5SsqFJSwdKcrBAhmsYL38XyD6XV58')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent pointer-events-none"></div>
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between p-2 rounded-xl bg-surface-container-high/90 backdrop-blur-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container text-[18px]">gps_fixed</span>
+<span class="font-label-sm text-label-sm text-on-surface">Interaktív GPS térkép tartozik a sétához</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">open_in_full</span>
+</div>
+</div>
+<!-- Waypoints Accordion / List Preview -->
+<div class="flex flex-col gap-2 mt-space-sm">
+<!-- Stop 1 -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container rounded-xl">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-secondary-container/15 text-secondary-container flex items-center justify-center font-mono-metric text-mono-metric shrink-0">
+            01
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Károlyi-palota &amp; Kert</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Kezdőpont • Pollack Mihály tér</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">volume_up</span>
+</div>
+<!-- Stop 2 -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container rounded-xl">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-mono-metric text-mono-metric shrink-0">
+            02
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Festetics-palota</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">A grófi fényűzés és báltermek világa</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">volume_up</span>
+</div>
+<!-- Stop 3 -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container rounded-xl">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-mono-metric text-mono-metric shrink-0">
+            03
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Esterházy-rezidencia</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Párbajok és politikai sakkjátszmák</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">volume_up</span>
+</div>
+<!-- Stop 4 -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container rounded-xl">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-mono-metric text-mono-metric shrink-0">
+            04
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Magyar Nemzeti Múzeum kertje</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">A forradalmak és randevúk árnyékában</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">volume_up</span>
+</div>
+<!-- View all stops trigger -->
+<div class="hidden flex-col gap-2" id="more-stops">
+<div class="flex items-center justify-between p-space-sm bg-surface-container rounded-xl">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-mono-metric text-mono-metric shrink-0">
+              05
+            </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Wenckheim-palota (FSZEK)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Aranyozott stukkók és könyvtári csend</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">volume_up</span>
+</div>
+<div class="flex items-center justify-between p-space-sm bg-surface-container rounded-xl">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-mono-metric text-mono-metric shrink-0">
+              06
+            </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Kéményseprő-ház</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">A polgári világ és babonák emléke</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">volume_up</span>
+</div>
+<div class="flex items-center justify-between p-space-sm bg-surface-container rounded-xl">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-mono-metric text-mono-metric shrink-0">
+              07
+            </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Bókay-palota</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Híres orvosprofesszorok és belső udvar</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">volume_up</span>
+</div>
+<div class="flex items-center justify-between p-space-sm bg-surface-container rounded-xl">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-mono-metric text-mono-metric shrink-0">
+              08
+            </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Gutenberg tér és a végállomás</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Záró gondolatok egy kávézó teraszán</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">volume_up</span>
+</div>
+</div>
+<button class="w-full py-2.5 rounded-xl bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 transition-colors" id="toggle-stops-btn">
+<span id="toggle-text">További 4 megálló megtekintése</span>
+<span class="material-symbols-outlined text-[18px]" id="toggle-icon">expand_more</span>
+</button>
+</div>
+</div>
+<!-- How It Works: 3 Steps -->
+<div class="flex flex-col mt-space-xl p-space-md bg-surface-container-low rounded-2xl shadow-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-fixed text-[22px]">smartphone</span>
+      Hogyan működik a digitális séta?
+    </h3>
+<div class="flex flex-col gap-space-md mt-space-md">
+<!-- Step 1 -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container font-mono-metric text-mono-metric flex items-center justify-center shrink-0 font-bold shadow-md">
+          1
+        </div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Vásárold meg online</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Biztonságos azonnali fizetés. A séta automatikusan és örökre bekerül a profilodba.
+          </p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface font-mono-metric text-mono-metric flex items-center justify-center shrink-0 font-bold">
+          2
+        </div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Nyisd meg mobilon, letöltés nélkül</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Bármilyen böngészőből azonnal fut. Nincs szükség nehézkes applikáció letöltésére.
+          </p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface font-mono-metric text-mono-metric flex items-center justify-center shrink-0 font-bold">
+          3
+        </div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Sétálj és hallgasd a saját tempódban</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            A hangos vezetés a GPS koordináták alapján automatikusan megszólal, amikor a megállókhoz érsz.
+          </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Social Proof & Host Mini Card -->
+<div class="flex items-center gap-space-sm p-space-md bg-surface-container rounded-2xl mt-space-md shadow-sm">
+<div class="w-12 h-12 rounded-full bg-cover bg-center shrink-0" data-alt="Close-up portrait of an experienced Hungarian urban historian and tour curator wearing a stylish dark wool trench coat in an atmospheric cobblestone alley." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBvmUIYiLYslRiTmqG9ygKvOLLWc3o7g0nXWUEz98fbOlzpBalEycywmE4Fz4Gm7g-ovKlswRrj7y73pett--R6HmOE8AC1CBe-DZeUxFSE3PDmf553xa0wYGlc0vlbvY32ZKiBDyDddOxPFmXfDythcWzrOIJNYHRM_s-WNdJhsiaK5xWJRgtgZPsmvaPD2NQrvc4Wolies1b0TpOJW9U8q3K4rp6V5QK4DvpxIUM')"></div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Sétavezető: Dr. Bánffy Miklós</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Történész, Budapest-kutató és helytörténeti író</span>
+</div>
+</div>
+<!-- Fixed Sticky Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto z-40 bg-surface/90 backdrop-blur-xl px-gutter py-space-sm shadow-[0_-4px_24px_rgba(0,0,0,0.6)]">
+<div class="flex items-center justify-between gap-space-md">
+<!-- Price & Access Tag -->
+<div class="flex flex-col">
+<div class="flex items-baseline gap-1">
+<span class="font-headline-md text-headline-md text-on-surface font-extrabold tracking-tight">3 990 Ft</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary-container">Örökös hozzáférés</span>
+</div>
+<!-- Action Button -->
+<button class="flex-1 max-w-[210px] h-13 py-3 px-space-md rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(189,245,0,0.4)] active:scale-95 transition-all" id="purchase-cta-btn">
+<span>Séta megvásárlása</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  // Micro-interactions
+  const toggleBtn = document.getElementById('toggle-stops-btn');
+  const moreStops = document.getElementById('more-stops');
+  const toggleText = document.getElementById('toggle-text');
+  const toggleIcon = document.getElementById('toggle-icon');
+
+  if (toggleBtn && moreStops) {
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = moreStops.classList.contains('hidden');
+      if (isHidden) {
+        moreStops.classList.remove('hidden');
+        moreStops.classList.add('flex');
+        toggleText.textContent = 'Kevesebb megálló megjelenítése';
+        toggleIcon.textContent = 'expand_less';
+      } else {
+        moreStops.classList.add('hidden');
+        moreStops.classList.remove('flex');
+        toggleText.textContent = 'További 4 megálló megtekintése';
+        toggleIcon.textContent = 'expand_more';
+      }
+    });
+  }
+
+  const bookmarkBtn = document.getElementById('bookmark-btn');
+  const bookmarkIcon = document.getElementById('bookmark-icon');
+  if (bookmarkBtn && bookmarkIcon) {
+    bookmarkBtn.addEventListener('click', () => {
+      const isSaved = bookmarkIcon.textContent === 'bookmark';
+      bookmarkIcon.textContent = isSaved ? 'bookmark_border' : 'bookmark';
+      if (!isSaved) {
+        bookmarkIcon.style.fontVariationSettings = "'FILL' 1";
+        bookmarkIcon.classList.add('text-primary-container');
+      } else {
+        bookmarkIcon.style.fontVariationSettings = "'FILL' 0";
+        bookmarkIcon.classList.remove('text-primary-container');
+      }
+    });
+  }
+
+  const previewBtn = document.getElementById('preview-play-btn');
+  const previewIcon = document.getElementById('preview-play-icon');
+  if (previewBtn && previewIcon) {
+    previewBtn.addEventListener('click', () => {
+      const isPlaying = previewIcon.textContent === 'pause';
+      previewIcon.textContent = isPlaying ? 'play_arrow' : 'pause';
+    });
+  }
+</script></main></div></body></html>

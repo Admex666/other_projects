@@ -123,9 +123,9 @@ async function processAnalyticsEvent(payload) {
     try {
         const time_on_page     = metrics.time_on_page !== undefined ? Math.round(Number(metrics.time_on_page)) : undefined;
         const max_scroll_depth = metrics.max_scroll_depth !== undefined ? Math.round(Number(metrics.max_scroll_depth)) : undefined;
-        const offer_viewed     = metrics.offer_viewed === true || event_name === 'offer_view';
+        const offer_viewed     = metrics.offer_viewed === true || event_name === 'offer_view' || event_name === 'pricing_view';
         const cta_clicked      = metrics.cta_clicked === true || event_name === 'cta_click';
-        const checkout_started = metrics.checkout_started === true || event_name === 'checkout_start';
+        const checkout_started = metrics.checkout_started === true || event_name === 'checkout_start' || event_name === 'lead_submit';
 
         const { data: existingSession } = await supabase
             .from('analytics_sessions')

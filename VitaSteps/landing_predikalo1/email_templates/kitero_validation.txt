@@ -1,0 +1,28 @@
+Tárgy: Mi lenne, ha legközelebb másfelé indulnál?
+
+Szia!
+
+Emlékszel még, amikor a VitaSteps segítségével egy újabb kihívásba vágtál bele?
+
+Most valami újon dolgozunk. Ezúttal nem feltétlenül kilométereket szeretnénk adni hozzá az életedhez, hanem új élményeket.
+
+Bemutatjuk a VitaSteps Kitérőt!
+
+Képzeld el, hogy elindulsz egy városi sétára, de ezúttal nem csak az utcákat járod végig. Útközben különleges helyeket fedezel fel, érdekes történeteket ismersz meg, és olyan részleteket veszel észre, amelyek mellett korábban talán gondolkodás nélkül elsétáltál volna.
+
+Mindezt a saját tempódban, egy telefon segítségével. Nem kell idegenvezetőhöz igazodnod, és nem kell órákat töltened a program megtervezésével.
+
+Kíváncsi vagy, hogyan működik?
+Készítettünk egy bemutatót, ahol megnézheted, milyen élményen dolgozunk, és ki is próbálhatod az első terveinket.
+
+Kattints ide a megtekintéshez:
+https://vitastepsss.vercel.app/kitero/index.html?cid={{CID}}&utm_source=email&utm_campaign=kitero_val_1
+
+Most különösen kíváncsiak vagyunk a véleményedre, mert szeretnénk úgy megalkotni ezt az élményt, hogy valóban öröm legyen használni.
+
+Köszönjük, hogy eddig is velünk tartottál!
+A VitaSteps csapata
+
+---
+Leiratkozás: https://vitastepsss.vercel.app/unsubscribe.html
+Adatvédelem: https://vitastepsss.vercel.app/adatvedelem.html

@@ -266,6 +266,124 @@ def fetch_leads_summary(target_date: date) -> tuple:
         return 0, 0
 
 
+# ─── Supabase: Funnel & Analytics Stats (Today + Moving Averages) ───────────
+
+def fetch_funnel_stats(target_date: date) -> dict:
+    """Calculates granular funnel metrics for today and 3d, 7d, 30d moving averages."""
+    periods = {
+        "today": 1,
+        "d3": 3,
+        "d7": 7,
+        "d30": 30
+    }
+    stats = {}
+
+    for key, days in periods.items():
+        start_date = target_date - timedelta(days=days - 1)
+        next_day = target_date + timedelta(days=1)
+        path = (
+            "analytics_sessions"
+            f"?created_at=gte.{start_date.isoformat()}T00:00:00Z"
+            f"&created_at=lt.{next_day.isoformat()}T00:00:00Z"
+            "&is_test=eq.false"
+            "&select=session_id,cta_clicked,checkout_started,purchase_completed"
+        )
+        try:
+            rows = supabase_request("GET", path)
+            if not isinstance(rows, list):
+                rows = []
+            
+            total_sessions = len(rows)
+            cta = sum(1 for r in rows if r.get("cta_clicked"))
+            checkout = sum(1 for r in rows if r.get("checkout_started"))
+            purchase = sum(1 for r in rows if r.get("purchase_completed"))
+
+            stats[key] = {
+                "days": days,
+                "total_sessions": total_sessions,
+                "avg_sessions": round(total_sessions / days, 1),
+                "cta": cta,
+                "avg_cta": round(cta / days, 1),
+                "cta_rate": round(cta / total_sessions * 100, 1) if total_sessions else 0.0,
+                "checkout": checkout,
+                "avg_checkout": round(checkout / days, 1),
+                "checkout_rate": round(checkout / total_sessions * 100, 1) if total_sessions else 0.0,
+                "purchase": purchase,
+                "avg_purchase": round(purchase / days, 1),
+                "conv_rate": round(purchase / total_sessions * 100, 2) if total_sessions else 0.0
+            }
+        except Exception as e:
+            print(f"   ⚠️ Funnel stats error for {key}: {e}")
+            stats[key] = {
+                "days": days, "total_sessions": 0, "avg_sessions": 0.0,
+                "cta": 0, "avg_cta": 0.0, "cta_rate": 0.0,
+                "checkout": 0, "avg_checkout": 0.0, "checkout_rate": 0.0,
+                "purchase": 0, "avg_purchase": 0.0, "conv_rate": 0.0
+            }
+
+    return stats
+
+
+# ─── Supabase: Kitérő Campaign Stats ───────────────────────────────────────
+
+def fetch_kitero_stats(target_date: date) -> dict:
+    """Calculates specific traffic, engagement, and conversion metrics for VitaSteps Kitérő."""
+    date_str = target_date.isoformat()
+    next_day = (target_date + timedelta(days=1)).isoformat()
+
+    try:
+        # 1. Sessions on kitero landing page
+        sess_path = (
+            "analytics_sessions"
+            f"?created_at=gte.{date_str}T00:00:00Z"
+            f"&created_at=lt.{next_day}T00:00:00Z"
+            "&is_test=eq.false"
+            "&landing_page=ilike.*kitero*"
+            "&select=session_id,visitor_id,utm_source,cta_clicked,checkout_started,lead_email"
+        )
+        sessions = supabase_request("GET", sess_path)
+        if not isinstance(sessions, list):
+            sessions = []
+
+        total_sessions = len(sessions)
+        unique_visitors = len(set(s.get("visitor_id") for s in sessions if s.get("visitor_id")))
+        email_sessions = sum(1 for s in sessions if s.get("utm_source") == "email")
+
+        # 2. Granular Kitérő events
+        ev_path = (
+            "analytics_events"
+            f"?created_at=gte.{date_str}T00:00:00Z"
+            f"&created_at=lt.{next_day}T00:00:00Z"
+            "&is_test=eq.false"
+            "&select=event_name,event_data"
+        )
+        events = supabase_request("GET", ev_path)
+        if not isinstance(events, list):
+            events = []
+
+        proto_starts = sum(1 for e in events if e.get("event_name") == "prototype_start")
+        audio_plays = sum(1 for e in events if e.get("event_name") == "audio_preview_play")
+        pricing_views = sum(1 for e in events if e.get("event_name") == "pricing_view")
+        cta_clicks = sum(1 for e in events if e.get("event_name") == "cta_click")
+        lead_submits = sum(1 for e in events if e.get("event_name") == "lead_submit")
+
+        return {
+            "total_sessions": total_sessions,
+            "unique_visitors": unique_visitors,
+            "email_sessions": email_sessions,
+            "proto_starts": proto_starts,
+            "audio_plays": audio_plays,
+            "pricing_views": pricing_views,
+            "cta_clicks": cta_clicks,
+            "lead_submits": lead_submits,
+            "active": total_sessions > 0 or proto_starts > 0 or lead_submits > 0
+        }
+    except Exception as e:
+        print(f"   ⚠️ Kitérő stats warning: {e}")
+        return {"total_sessions": 0, "active": False}
+
+
+
 # ─── marketing_targets ───────────────────────────────────────────────────────
 
 def fetch_targets() -> list:
@@ -542,9 +660,50 @@ def run_for_date(target_date: date):
     overall_roas = round(total_revenue / net_marketing_spend, 2) if net_marketing_spend > 0 else 0.0
     overall_cpa = round(gross_marketing_spend / total_purchases, 0) if total_purchases > 0 else 0.0
 
+    # 5f. Funnel & Moving Averages
+    funnel = fetch_funnel_stats(target_date)
+    f_today = funnel.get("today", {})
+    f_d3 = funnel.get("d3", {})
+    f_d7 = funnel.get("d7", {})
+    f_d30 = funnel.get("d30", {})
+
+    funnel_lines = [
+        "🌐 WEB FORGALOM & FUNNEL:",
+        f"  • Munkamenetek (Sessions): {f_today.get('total_sessions', 0)} db (3n átlag: {f_d3.get('avg_sessions', 0)} | 7n: {f_d7.get('avg_sessions', 0)} | 30n: {f_d30.get('avg_sessions', 0)})",
+        f"  • CTA Kattintások: {f_today.get('cta', 0)} db ({f_today.get('cta_rate', 0)}%) (7n átlag: {f_d7.get('avg_cta', 0)} [{f_d7.get('cta_rate', 0)}%])",
+        f"  • Kosár / Checkout indítás: {f_today.get('checkout', 0)} db ({f_today.get('checkout_rate', 0)}%) (7n átlag: {f_d7.get('avg_checkout', 0)} [{f_d7.get('checkout_rate', 0)}%])",
+        f"  • Vásárlási Konverzió: {f_today.get('conv_rate', 0)}% (7n: {f_d7.get('conv_rate', 0)}% | 30n: {f_d30.get('conv_rate', 0)}%)"
+    ]
+
+    # 5g. Kitérő Campaign Stats
+    kitero = fetch_kitero_stats(target_date)
+    kitero_lines = []
+    if kitero.get("active"):
+        k_sess = kitero.get("total_sessions", 0)
+        k_proto = kitero.get("proto_starts", 0)
+        k_price = kitero.get("pricing_views", 0)
+        k_lead = kitero.get("lead_submits", 0)
+        k_audio = kitero.get("audio_plays", 0)
+
+        proto_rate = round(k_proto / k_sess * 100, 1) if k_sess else 0.0
+        price_rate = round(k_price / k_sess * 100, 1) if k_sess else 0.0
+        lead_rate = round(k_lead / k_sess * 100, 1) if k_sess else 0.0
+
+        kitero_lines = [
+            "",
+            "🧭 VITASTEPS KITÉRŐ VALIDÁCIÓ:",
+            f"  • Látogatók: {k_sess} munkamenet ({kitero.get('unique_visitors', 0)} egyedi | E-mailből: {kitero.get('email_sessions', 0)})",
+            f"  • Prototípus indítás: {k_proto} ({proto_rate}%) | Hangminta hallgatás: {k_audio}",
+            f"  • Ár megtekintés: {k_price} ({price_rate}%)",
+            f"  • Early Access Lead: {k_lead} db ({lead_rate}% konverzió)"
+        ]
+
     pushbullet_lines = [
         f"📊 VitaSteps Napi Riport – {target_date}\n",
         f"{leads_line}\n",
+        *funnel_lines,
+        *kitero_lines,
+        "",
         f"💰 ÖSSZESÍTETT BRUTTÓ BEVÉTEL: +{fmtf(total_revenue)} ({total_purchases} db)",
         *rev_lines,
         "",

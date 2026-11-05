@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="hu"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><title>Hosszú Lépések</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#111416;color:#e2e2e5;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 0.5rem);}.pt-safe{padding-top:env(safe-area-inset-top, 0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "tertiary-fixed-dim": "#e9c349", "background": "#111416", "on-tertiary": "#3c2f00", "secondary-container": "#00f1fe", "on-error": "#690005", "tertiary-container": "#ffe088", "on-primary-fixed-variant": "#394d00", "surface-variant": "#333537", "surface-bright": "#37393c", "on-secondary": "#00363a", "on-tertiary-container": "#7b6100", "on-secondary-fixed": "#002022", "inverse-on-surface": "#2e3133", "primary-container": "#bdf500", "on-secondary-fixed-variant": "#004f54", "on-primary-container": "#526d00", "inverse-surface": "#e2e2e5", "on-surface-variant": "#c3caac", "error": "#ffb4ab", "tertiary": "#ffffff", "on-tertiary-fixed-variant": "#574500", "on-primary": "#273500", "surface-container-lowest": "#0c0e11", "secondary": "#ddfcff", "on-tertiary-fixed": "#241a00", "surface-container": "#1d2022", "tertiary-fixed": "#ffe088", "surface-container-low": "#191c1e", "inverse-primary": "#4d6700", "surface": "#111416", "surface-dim": "#111416", "outline": "#8d9479", "primary-fixed": "#bdf500", "secondary-fixed-dim": "#00dbe7", "outline-variant": "#434933", "on-surface": "#e2e2e5", "error-container": "#93000a", "secondary-fixed": "#74f5ff", "on-primary-fixed": "#151f00", "primary-fixed-dim": "#a5d700", "on-error-container": "#ffdad6", "surface-container-high": "#282a2d", "surface-tint": "#a5d700", "surface-container-highest": "#333537", "primary": "#ffffff", "on-secondary-container": "#006a70", "on-background": "#e2e2e5" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "margin-md": "1.5rem", "space-md": "1rem", "space-lg": "1.5rem", "space-sm": "0.75rem", "space-2xs": "0.25rem", "gutter-md": "1.5rem", "space-3xl": "4rem", "gutter": "1rem", "gutter-lg": "2rem", "space-2xl": "3rem", "space-xs": "0.5rem", "space-xl": "2rem", "margin-lg": "2.5rem", "margin": "1rem" }, fontFamily: { "label-lg": ["Inter"], "label-md": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "label-sm": ["Inter"], "headline-lg-mobile": ["Plus Jakarta Sans"], "body-sm": ["Inter"], "mono-metric": ["Inter"], "headline-xl-mobile": ["Plus Jakarta Sans"], "body-xl": ["Inter"], "body-md": ["Inter"], "headline-lg": ["Plus Jakarta Sans"], "headline-xl": ["Plus Jakarta Sans"] }, fontSize: { "label-lg": ["0.9375rem", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "600" }], "label-md": ["0.8125rem", { "lineHeight": "1.35", "letterSpacing": "0.02em", "fontWeight": "600" }], "headline-sm": ["1.25rem", { "lineHeight": "1.35", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-md": ["1.5rem", { "lineHeight": "1.3", "letterSpacing": "-0.015em", "fontWeight": "700" }], "label-sm": ["0.6875rem", { "lineHeight": "1.25", "letterSpacing": "0.06em", "fontWeight": "700" }], "headline-lg-mobile": ["1.75rem", { "lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-sm": ["0.875rem", { "lineHeight": "1.55", "letterSpacing": "0.005em", "fontWeight": "400" }], "mono-metric": ["1.125rem", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-xl-mobile": ["2.25rem", { "lineHeight": "1.15", "letterSpacing": "-0.025em", "fontWeight": "800" }], "body-xl": ["1.125rem", { "lineHeight": "1.65", "letterSpacing": "-0.01em", "fontWeight": "400" }], "body-md": ["1rem", { "lineHeight": "1.6", "letterSpacing": "0em", "fontWeight": "400" }], "headline-lg": ["2.25rem", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-xl": ["3.25rem", { "lineHeight": "1.1", "letterSpacing": "-0.03em", "fontWeight": "800" }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface min-h-screen text-on-surface antialiased flex flex-col items-center selection:bg-primary-container selection:text-on-primary-container"><div class="w-full max-w-[430px] min-h-screen relative flex flex-col bg-surface shadow-[0_0_50px_rgba(0,0,0,0.8)]"><header class="fixed top-0 max-w-[430px] w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_12px_rgba(0,0,0,0.3)]"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Vissza" class="w-11 h-11 flex items-center justify-center text-on-surface hover:text-primary-container transition-colors -ml-2" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><img alt="Hosszú Lépések Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj0Tptd4k86z8ngDnEOsgxZYHDKhNG33Nzsh0IH7_3-VnzupVQ8uBb9wRh2z-xdYxns7cTJNuKFFzugjyqORi8FcYgTEdbr53e46QgtYsfyFo4L-ft3a_bgh1xUfYtISW6Rd6MaBP_Iq92UtPvD98VUdCJJ7Se7vStQxyySdJl9j5kvgkXAFEN3Q0xiyRxH-LA0ZPUU5K7yG6l6KKEy4eQ18cWJVUzA8hGloAe3Sc"/><h1 class="font-headline-sm text-headline-sm text-on-surface truncate max-w-[200px]">Aktív Séta Navigáció</h1></div><div class="flex items-center gap-space-xs"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-outline-variant/40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYPqxceeMXSL4Gycj_O4i14zcHw0N31-nqrb9RckUkyc9WjPz3E_AxUdcoRHt-paRTyQS13R3QfkTSuCZ9W7zQ0OJL7FXW0tsPukcOkzQTDDB_7LFk_jXqPbdVNZ_3boGEfiPBuTHeraAGn64BZaLkCRvIAa-l9073JOuvCogw85u8qfefW_HQu9o4h2Hjm767GFRXxKX0SR86NCslaQv4PMt-XY8P0dfoOVM_v-s"/></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-safe px-gutter bg-surface"><div class="flex flex-col w-full relative">
+<!-- Top HUD Glassmorphism Bar -->
+<div class="w-full bg-surface-container-high/90 backdrop-blur-xl rounded-2xl p-space-sm mb-space-sm shadow-xl flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<button class="flex items-center gap-1 text-on-surface hover:text-primary-container px-2 py-1 rounded-full bg-surface-container/60 transition-colors" onclick="history.back()" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+<span class="font-label-md text-label-md">Kilépés</span>
+</button>
+<div class="text-center min-w-0 px-2 flex-1">
+<h2 class="font-headline-sm text-headline-sm text-on-surface truncate">A Palotanegyed Titkai</h2>
+</div>
+<div class="flex items-center gap-space-2xs">
+<button aria-label="Hangos narráció" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-secondary-container hover:bg-surface-variant transition-colors shadow-sm" id="tts-toggle" type="button">
+<span class="material-symbols-outlined text-[20px]" id="tts-icon">volume_up</span>
+</button>
+<button aria-label="Segítség kérése" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors shadow-sm" onclick="alert('Segítség &amp; Navigáció:\nKövesd a cián színű vonalat. A Festetics-palotához érve koppints a Megálló megnyitása gombra!')" type="button">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+</div>
+</div>
+<!-- Progress Tracker Segment -->
+<div class="flex flex-col gap-1 px-1">
+<div class="flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1 text-primary-fixed">
+<span class="w-2 h-2 rounded-full bg-primary-container inline-block animate-ping"></span>
+          3 / 8 megálló kész
+        </span>
+<span class="font-mono-metric text-primary-fixed text-[11px]">38%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 38%;"></div>
+</div>
+</div>
+</div>
+<!-- GPS Status Pill / Telemetry Header -->
+<div class="flex items-center justify-center mb-space-xs">
+<div class="inline-flex items-center gap-2 bg-surface-container-high/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-md">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-fixed-dim opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary-container"></span>
+</span>
+<span class="font-label-md text-label-md text-on-surface">GPS aktív</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">·</span>
+<span class="font-label-md text-label-md text-secondary-container">45 m a következő pontig</span>
+</div>
+</div>
+<!-- Map Viewport Container -->
+<div class="relative w-full h-[340px] rounded-3xl overflow-hidden bg-surface-container-lowest shadow-2xl flex flex-col justify-between p-3 select-none">
+<!-- Stylized Dark Cartography Canvas (SVG Graphic) -->
+<svg class="absolute inset-0 w-full h-full object-cover pointer-events-none" preserveaspectratio="none" viewbox="0 0 400 360">
+<defs>
+<!-- Route Glow -->
+<filter height="140%" id="routeGlow" width="140%" x="-20%" y="-20%">
+<fegaussianblur result="blur" stddeviation="3"></fegaussianblur>
+<femerge>
+<femergenode in="blur"></femergenode>
+<femergenode in="SourceGraphic"></femergenode>
+</femerge>
+</filter>
+<!-- Building Block Pattern -->
+<pattern height="40" id="cityGrid" patternunits="userSpaceOnUse" width="40">
+<rect fill="#14171a" height="36" rx="4" width="36"></rect>
+<path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1d2022" stroke-width="2"></path>
+</pattern>
+</defs>
+<!-- Background City Blocks -->
+<rect fill="#0c0e11" height="100%" width="100%"></rect>
+<rect fill="url(#cityGrid)" height="100%" opacity="0.6" width="100%"></rect>
+<!-- Secondary Streets -->
+<path d="M-20,90 Q120,80 220,110 T420,130" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="12"></path>
+<path d="M120,-20 L140,240 L160,380" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="14"></path>
+<path d="M300,-10 L280,180 L290,380" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="10"></path>
+<path d="M-10,240 C140,220 260,250 420,220" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="10"></path>
+<!-- Walk Trajectory: Visited Path (Lime Dim) -->
+<path d="M60,270 L95,190 L165,145" fill="none" opacity="0.85" stroke="#a5d700" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"></path>
+<!-- Active Leg: Target Path (Neon Cyan / Electric Volt) -->
+<path d="M165,145 L215,105 L260,95" fill="none" filter="url(#routeGlow)" id="active-leg" stroke="#00f1fe" stroke-dasharray="6,4" stroke-linecap="round" stroke-width="5"></path>
+<!-- Future Leg to Remaining Stops -->
+<path d="M260,95 L310,130 L340,210 L290,290" fill="none" stroke="#434933" stroke-dasharray="3,3" stroke-linecap="round" stroke-width="3"></path>
+<!-- Street Names Overlay -->
+<text fill="#8d9479" font-family="Inter" font-size="9" letter-spacing="1" x="35" y="245">MÚZEUM UTCA</text>
+<text fill="#8d9479" font-family="Inter" font-size="9" letter-spacing="1" x="175" y="165">POLLACK MIHÁLY TÉR</text>
+<text fill="#8d9479" font-family="Inter" font-size="9" letter-spacing="1" x="270" y="80">BRÓDY SÁNDOR U.</text>
+</svg>
+<!-- Map Nodes & GPS Overlays (Interactive HTML Layer) -->
+<div class="absolute inset-0 pointer-events-none">
+<!-- Stop 1: Károlyi-palota (Completed) -->
+<div class="absolute pointer-events-auto flex flex-col items-center" style="left: 15%; top: 73%; transform: translate(-50%, -50%);">
+<div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface bg-surface-container-lowest/80 px-1.5 py-0.5 rounded-md mt-1 scale-90">1. Károlyi</span>
+</div>
+<!-- Stop 2: Esterházy-palota (Completed) -->
+<div class="absolute pointer-events-auto flex flex-col items-center" style="left: 23%; top: 51%; transform: translate(-50%, -50%);">
+<div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface bg-surface-container-lowest/80 px-1.5 py-0.5 rounded-md mt-1 scale-90">2. Esterházy</span>
+</div>
+<!-- Current GPS Location (Pulsing Cyan Blue) -->
+<div class="absolute pointer-events-auto flex items-center justify-center" style="left: 41%; top: 40%; transform: translate(-50%, -50%);">
+<div class="relative flex items-center justify-center w-10 h-10">
+<div class="absolute w-10 h-10 rounded-full bg-secondary-container/20 animate-ping"></div>
+<div class="w-6 h-6 rounded-full bg-secondary-container/40 flex items-center justify-center backdrop-blur-sm">
+<div class="w-3.5 h-3.5 rounded-full bg-secondary-container shadow-[0_0_12px_#00f1fe]"></div>
+</div>
+</div>
+</div>
+<!-- Stop 3: Festetics-palota (ACTIVE TARGET - Pulsing Volt Lime) -->
+<div class="absolute pointer-events-auto flex flex-col items-center" style="left: 64%; top: 25%; transform: translate(-50%, -50%);">
+<div class="relative flex items-center justify-center">
+<div class="absolute -inset-2 rounded-full bg-primary-container/40 animate-pulse"></div>
+<div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-[0_0_20px_rgba(189,245,0,0.8)] z-10">
+<span class="font-headline-sm text-headline-sm font-bold">3</span>
+</div>
+</div>
+<div class="bg-surface-container-high px-2 py-0.5 rounded-full mt-1.5 shadow-md flex items-center gap-1 z-10">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span class="font-label-sm text-label-sm text-primary-fixed">Festetics</span>
+</div>
+</div>
+<!-- Stops 4-8 (Upcoming, Subtle Ghost Markers) -->
+<div class="absolute pointer-events-auto" style="left: 77%; top: 35%; transform: translate(-50%, -50%);">
+<div class="w-6 h-6 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-sm text-label-sm opacity-80">
+          4
+        </div>
+</div>
+<div class="absolute pointer-events-auto" style="left: 84%; top: 58%; transform: translate(-50%, -50%);">
+<div class="w-6 h-6 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-sm text-label-sm opacity-80">
+          5
+        </div>
+</div>
+<div class="absolute pointer-events-auto" style="left: 72%; top: 80%; transform: translate(-50%, -50%);">
+<div class="w-6 h-6 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-sm text-label-sm opacity-80">
+          6
+        </div>
+</div>
+</div>
+<!-- Floating Map Controls HUD (Top-right & Bottom-right) -->
+<div class="flex items-center justify-between w-full z-20 pointer-events-auto">
+<div class="bg-surface-container/85 backdrop-blur-md rounded-full px-2.5 py-1 text-on-surface flex items-center gap-1.5 text-label-sm font-label-sm shadow-md">
+<span class="material-symbols-outlined text-[14px] text-secondary-container">navigation</span>
+<span>Észak felé</span>
+</div>
+<!-- Overview Route Toggle -->
+<button aria-label="Teljes útvonal áttekintése" class="w-10 h-10 rounded-full bg-surface-container-high/90 backdrop-blur-md text-on-surface hover:text-primary-container flex items-center justify-center shadow-lg transition-transform active:scale-95" onclick="alert('Teljes Palotanegyed séta (2.4 km) áttekintve')" type="button">
+<span class="material-symbols-outlined text-[20px]">map</span>
+</button>
+</div>
+<div class="flex items-end justify-between w-full z-20 pointer-events-auto">
+<!-- Mini Direction Tip -->
+<div class="bg-surface-container-high/90 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container text-[20px]">turn_slight_right</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface">Pollack Mihály tér</span>
+<span class="text-[10px] text-on-surface-variant">Jobbra a szobor után</span>
+</div>
+</div>
+<!-- Zoom & Recenter Stack -->
+<div class="flex flex-col gap-2">
+<div class="flex flex-col bg-surface-container-high/90 backdrop-blur-md rounded-full shadow-lg overflow-hidden">
+<button aria-label="Nagyítás" class="w-10 h-9 flex items-center justify-center text-on-surface hover:text-primary-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+<div class="w-full h-[1px] bg-surface-variant"></div>
+<button aria-label="Kicsinyítés" class="w-10 h-9 flex items-center justify-center text-on-surface hover:text-primary-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+</div>
+<button aria-label="Saját pozícióra ugrás" class="w-11 h-11 rounded-full bg-surface-container-high/90 backdrop-blur-md text-secondary-container flex items-center justify-center shadow-xl hover:bg-surface-variant transition-transform active:scale-90" id="recenter-btn" type="button">
+<span class="material-symbols-outlined text-[22px]">my_location</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Floating Sheet: Active Waypoint Detail & Actions -->
+<div class="mt-space-sm w-full bg-surface-container rounded-3xl p-space-md shadow-2xl flex flex-col gap-space-sm relative overflow-hidden">
+<!-- Ambient subtle background glow -->
+<div class="absolute -top-12 -right-12 w-36 h-36 bg-primary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Header & Badge -->
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex flex-col flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full font-label-sm text-label-sm bg-primary-container/15 text-primary-fixed">
+            KÖVETKEZŐ MEGÁLLÓ
+          </span>
+<span class="font-label-sm text-label-sm text-secondary-container flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">directions_walk</span>
+            120 m (kb. 2 perc)
+          </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface leading-tight">
+          3. Megálló: Festetics-palota bálterme &amp; udvara
+        </h3>
+</div>
+<!-- Visual Thumbnail Preview -->
+<div class="w-16 h-16 rounded-2xl overflow-hidden shrink-0 bg-surface-container-highest shadow-inner">
+<img class="w-full h-full object-cover" data-alt="Atmospheric dusk shot of the neoclassical Festetics palace in Budapest with illuminated wrought-iron balconies and grand stone entrance gates" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv4uthdApBv3YuCLfJ1HJdd2G8O5AA7SoPKSc-cVgzJ-86z1uwrd-KxuCL0O6mpaC-8q0z8U1jQzcNrtUoK0gjI7ZM9lQpJ6xAk7_lGI1JEfIsi2NeKxJiKjfOZpkCr-eM_TW4gmBsziOniK7XnlMSQnTq08BOWS_DHHCFLYPLBQqDzW3fTkIT9l1mfThn_6GCNB42TV6sbhT245CeW769ywSooWOjcPjLyUE7G3o"/>
+</div>
+</div>
+<!-- Story Teaser Card -->
+<div class="bg-surface-container-low rounded-2xl p-space-sm flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed text-[22px] shrink-0 mt-0.5">auto_stories</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+        A palota, melynek márványlépcsőjén a királyi család is megfordult. Nézz fel a kovácsoltvas erkélyre, és figyeld meg az eredeti gázlámpa-tartókat!
+      </p>
+</div>
+<!-- Primary & Secondary Interactive Action Zone -->
+<div class="flex flex-col gap-space-xs pt-1">
+<!-- Main Volt Lime Interactive CTA Button -->
+<button class="w-full h-14 bg-primary-container text-on-primary rounded-full flex items-center justify-between px-space-md shadow-[0_0_24px_rgba(189,245,0,0.35)] hover:shadow-[0_0_30px_rgba(189,245,0,0.55)] active:scale-[0.98] transition-all" id="open-stop-cta" type="button">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[22px] font-bold">explore</span>
+<span class="font-headline-sm text-[1.05rem] font-bold">Megálló megnyitása &amp; Történet</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-on-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</div>
+</button>
+<!-- Action Cluster: Quick Audio & Manual Complete -->
+<div class="grid grid-cols-2 gap-space-xs">
+<button class="h-11 rounded-2xl bg-surface-container-high text-on-surface flex items-center justify-center gap-2 px-3 hover:bg-surface-variant transition-colors" id="quick-audio-btn" type="button">
+<span class="material-symbols-outlined text-secondary-container text-[18px]">play_circle</span>
+<span class="font-label-md text-label-md truncate">Audió előzetes</span>
+</button>
+<button class="h-11 rounded-2xl bg-surface-container-high text-on-surface flex items-center justify-center gap-2 px-3 hover:bg-surface-variant transition-colors" id="manual-complete-btn" type="button">
+<span class="material-symbols-outlined text-primary-fixed text-[18px]">task_alt</span>
+<span class="font-label-md text-label-md truncate">Készre jelentés</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Micro-interactions for Map Walk HUD
+  (function() {
+    const ttsToggle = document.getElementById('tts-toggle');
+    const ttsIcon = document.getElementById('tts-icon');
+    let isSpeaking = false;
+
+    if (ttsToggle && ttsIcon) {
+      ttsToggle.addEventListener('click', () => {
+        isSpeaking = !isSpeaking;
+        if (isSpeaking) {
+          ttsIcon.textContent = 'volume_off';
+          ttsToggle.classList.add('bg-secondary-container', 'text-on-secondary-container');
+        } else {
+          ttsIcon.textContent = 'volume_up';
+          ttsToggle.classList.remove('bg-secondary-container', 'text-on-secondary-container');
+        }
+      });
+    }
+
+    const recenterBtn = document.getElementById('recenter-btn');
+    if (recenterBtn) {
+      recenterBtn.addEventListener('click', () => {
+        recenterBtn.classList.add('rotate-45');
+        setTimeout(() => {
+          recenterBtn.classList.remove('rotate-45');
+        }, 300);
+      });
+    }
+
+    const openStopCTA = document.getElementById('open-stop-cta');
+    if (openStopCTA) {
+      openStopCTA.addEventListener('click', () => {
+        openStopCTA.classList.add('scale-95');
+        setTimeout(() => openStopCTA.classList.remove('scale-95'), 150);
+      });
+    }
+
+    const manualCompleteBtn = document.getElementById('manual-complete-btn');
+    if (manualCompleteBtn) {
+      manualCompleteBtn.addEventListener('click', () => {
+        const confirmed = confirm('Biztosan teljesítettnek jelölöd a Festetics-palota megállót?');
+        if (confirmed) {
+          manualCompleteBtn.innerHTML = '<span class="material-symbols-outlined text-primary-fixed text-[18px]">check_circle</span><span class="font-label-md text-label-md text-primary-fixed">Teljesítve!</span>';
+        }
+      });
+    }
+
+    const quickAudioBtn = document.getElementById('quick-audio-btn');
+    if (quickAudioBtn) {
+      let isPlaying = false;
+      quickAudioBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          quickAudioBtn.innerHTML = '<span class="material-symbols-outlined text-primary-fixed text-[18px]">pause_circle</span><span class="font-label-md text-label-md text-primary-fixed">Lejátszás...</span>';
+        } else {
+          quickAudioBtn.innerHTML = '<span class="material-symbols-outlined text-secondary-container text-[18px]">play_circle</span><span class="font-label-md text-label-md">Audió előzetes</span>';
+        }
+      });
+    }
+  })();
+</script></main></div></body></html>

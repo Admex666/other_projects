@@ -9,8 +9,9 @@ related:
   - "[[organic-content-pillars|Organic Content Pillars]]"
   - "[[verified-challenge|Verified Challenge]]"
   - "[[virtual-challenge|Virtual Challenge]]"
-  - "[[hosszu-lepesek|Hosszú Lépések]]"
+  - "[[kitero|VitaSteps Kitérő]]"
   - "[[ADR-009-strategic-ecosystem-pivot|ADR-009 Strategic Ecosystem Pivot]]"
+  - "[[ADR-011-experience-selector-main-gateway|ADR-011 Élményválasztó Főoldal]]"
 ---
 
 # Concept: Strategic Positioning (Stratégiai Pozicionálás)
@@ -45,7 +46,7 @@ graph TD
     
     VS --> P1["1. Valós Túrakihívások<br><i>Nagy-Kevély, Prédikálószék</i><br>(Fizikai prémium érem)"]
     VS --> P2["2. Virtuális Kihívások<br><i>Pl. 100 km Magyarországon át</i><br>(Távok, jelvények, opcionális érem)"]
-    VS --> P3["3. Hosszú Lépések<br><i>Önvezetett városi audioséták</i><br>(Városnézés + történetmesélés)"]
+    VS --> P3["3. VitaSteps Kitérő<br><i>Önvezetett városi élményséták</i><br>(Városnézés + történetmesélés)"]
     VS --> P4["4. Ingyenes Tartalmak<br><i>Túraajánlók, Kalandfüzet, GPX-ek</i><br>(Felfedezés & Lead mágnesek)"]
     VS --> P5["5. Közösség & UGC<br><i>Megosztások, fotók, ajánlások</i><br>(Társas inspiráció & új célok)"]
 ```
@@ -58,9 +59,12 @@ graph TD
 * **Jelleg:** Helyszínfüggetlen mozgáscélok (pl. *"Tegyél meg 100 km-t a hónapban"*).
 * **Folyamat:** Regisztráció $\rightarrow$ kilométerek rögzítése $\rightarrow$ haladás virtuális térképen $\rightarrow$ digitális mérföldkövek és jelvények $\rightarrow$ opcionális fizikai érem.
 
-### 3. Hosszú Lépések ([[hosszu-lepesek|Hosszú Lépések]])
-* **Jelleg:** Önvezetett, tematikus városi séták és hangos idegenvezetés (pl. *"Budapest rejtett titkai"*).
-* **Folyamat:** Séta + GPS pozíció alapú hangos történetmesélés + városi felfedezés 60–90 percben.
+### 3. VitaSteps Kitérő ([[kitero|VitaSteps Kitérő]])
+* **Jelleg:** Önvezetett, tematikus városi élményséták és színészi hangos narráció (pl. *A Palotanegyed Titkai* Hegedűs D. Gézával).
+* **Folyamat:** Séta + GPS pozíció alapú hangos történetmesélés + városi felfedezés a saját tempóban (lásd: [[ADR-010-kitero-validation-architecture|ADR-010]]).
+
+### 3.1. Központi Élményválasztó Főoldal (`/main`)
+* **Szerep:** A látogató nem termékkatalógussal szembesül, hanem interaktív 2-lépéses választóval (hangulat, cél, mozgásforma), amely személyre szabottan ajánlja a hegyi túrákat vagy a városi sétákat (lásd: [[ADR-011-experience-selector-main-gateway|ADR-011]]).
 
 ### 4. Ingyenes tartalmak
 * **Jelleg:** Digitális túraútvonal csomagok, nyomtatható [[campaign-nagykevely|Kalandfüzet]], túratippek és outdoor kalauzok.
