@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Lépéses Nevezés & Foxpost Átvétel – VitaSteps Koncepció 2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap');
+
+        :root {
+            --bg: #090d16;
+            --surface: #101626;
+            --surface-elevated: #162035;
+            --surface-card: #1c2742;
+            --border: rgba(255, 255, 255, 0.09);
+            --border-highlight: rgba(196, 255, 0, 0.35);
+            --accent: #c4ff00;
+            --accent-glow: rgba(196, 255, 0, 0.25);
+            --accent-soft: rgba(196, 255, 0, 0.12);
+            --foxpost-red: #ea1d2d;
+            --foxpost-red-soft: rgba(234, 29, 45, 0.15);
+            --foxpost-red-border: rgba(234, 29, 45, 0.4);
+            --text-high: #f8fafc;
+            --text-mid: #94a3b8;
+            --text-low: #64748b;
+            --success: #10b981;
+            --success-soft: rgba(16, 185, 129, 0.15);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+            --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            background-image: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(196, 255, 0, 0.08), transparent 70%),
+                radial-gradient(circle at 10% 90%, rgba(234, 29, 45, 0.04), transparent 50%);
+            color: var(--text-high);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER */
+        .topbar {
+            padding: 1.1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: rgba(9, 13, 22, 0.85);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        .logo-text span {
+            color: var(--accent);
+        }
+
+        .badge-concept {
+            background: rgba(196, 255, 0, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(196, 255, 0, 0.3);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 9px;
+            border-radius: 999px;
+            letter-spacing: 0.8px;
+        }
+
+        .secure-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            color: var(--text-mid);
+            font-weight: 500;
+        }
+
+        .secure-tag svg {
+            color: var(--success);
+        }
+
+        /* MAIN WRAPPER */
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 2.2rem 1.25rem 5rem;
+        }
+
+        /* HERO HEADER */
+        .challenge-header {
+            text-align: center;
+            margin-bottom: 2.2rem;
+        }
+
+        .pill-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 5px 14px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .challenge-title {
+            font-family: var(--font-display);
+            font-size: 2.1rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .challenge-subtitle {
+            color: var(--text-mid);
+            font-size: 0.98rem;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        /* STEPPER PROGRESS BAR */
+        .stepper-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 0.9rem 1.2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+            transition: var(--transition);
+        }
+
+        .step-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            width: 28px;
+            height: 2px;
+            background: var(--border);
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .step-circle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.88rem;
+            background: var(--surface-card);
+            color: var(--text-low);
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .step-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .step-number {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--text-low);
+        }
+
+        .step-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-mid);
+            white-space: nowrap;
+        }
+
+        /* STEP STATES */
+        .step-item.active .step-circle {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            box-shadow: 0 0 16px var(--accent-glow);
+        }
+
+        .step-item.active .step-number {
+            color: var(--accent);
+        }
+
+        .step-item.active .step-name {
+            color: #fff;
+        }
+
+        .step-item.completed .step-circle {
+            background: var(--success-soft);
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .step-item.completed .step-name {
+            color: var(--text-high);
+        }
+
+        .step-item.completed:not(:last-child)::after {
+            background: rgba(16, 185, 129, 0.4);
+        }
+
+        /* WIZARD CONTAINER & SLIDES */
+        .wizard-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.2rem;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wizard-step {
+            display: none;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .wizard-step.current {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-heading {
+            margin-bottom: 1.8rem;
+        }
+
+        .step-heading h2 {
+            font-family: var(--font-display);
+            font-size: 1.55rem;
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-heading p {
+            color: var(--text-mid);
+            font-size: 0.92rem;
+        }
+
+        /* FORM CONTROLS */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .form-grid.single-col {
+            grid-template-columns: 1fr;
+        }
+
+        .field-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.84rem;
+            font-weight: 600;
+            margin-bottom: 0.45rem;
+            color: var(--text-mid);
+        }
+
+        .form-label span.req {
+            color: var(--foxpost-red);
+            margin-left: 3px;
+        }
+
+        .input-box {
+            width: 100%;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem 1rem;
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .input-box:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+            background: var(--surface-card);
+        }
+
+        .input-hint {
+            font-size: 0.78rem;
+            color: var(--text-low);
+            margin-top: 0.35rem;
+        }
+
+        /* DISTANCE SELECTION */
+        .distance-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 0.4rem;
+        }
+
+        .distance-opt {
+            background: var(--surface-elevated);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .distance-opt:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .distance-opt.selected {
+            background: rgba(196, 255, 0, 0.04);
+            border-color: var(--accent);
+            box-shadow: 0 0 18px rgba(196, 255, 0, 0.15);
+        }
+
+        .distance-radio {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--text-low);
+            margin-top: 2px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .distance-opt.selected .distance-radio {
+            border-color: var(--accent);
+            background: var(--accent);
+        }
+
+        .distance-opt.selected .distance-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #000;
+            border-radius: 50%;
+        }
+
+        .distance-name {
+            font-weight: 700;
+            font-size: 0.98rem;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .distance-desc {
+            font-size: 0.78rem;
+            color: var(--text-mid);
+        }
+
+        .distance-tag {
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 7px;
+            border-radius: 4px;
+            color: var(--text-mid);
+            margin-top: 6px;
+            display: inline-block;
+        }
+
+        .distance-opt.selected .distance-tag {
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* STEP 2: FOXPOST HERO SECTION */
+        .foxpost-hero-banner {
+            background: linear-gradient(135deg, rgba(234, 29, 45, 0.12), rgba(16, 22, 38, 0.8));
+            border: 1px solid var(--foxpost-red-border);
+            border-radius: var(--radius-md);
+            padding: 1.4rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .foxpost-hero-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .foxpost-badge-inline {
+            background: var(--foxpost-red);
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.76rem;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .foxpost-hero-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .gps-btn {
+            background: var(--accent);
+            color: #0b0f19;
+            font-weight: 700;
+            font-size: 0.98rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0.95rem 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 16px rgba(196, 255, 0, 0.25);
+            width: 100%;
+        }
+
+        .gps-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(196, 255, 0, 0.4);
+            filter: brightness(1.05);
+        }
+
+        .gps-btn svg {
+            stroke-width: 2.2;
+        }
+
+        .search-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 1.2rem 0;
+            color: var(--text-low);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .search-divider::before,
+        .search-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .search-box-wrap {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-mid);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: var(--font-body);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--foxpost-red);
+            box-shadow: 0 0 0 3px rgba(234, 29, 45, 0.15);
+        }
+
+        /* LOCKER CARDS */
+        .locker-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .locker-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .locker-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .locker-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 4px;
+        }
+
+        .locker-card {
+            background: var(--surface-elevated);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .locker-card:hover {
+            border-color: rgba(234, 29, 45, 0.5);
+            background: var(--surface-card);
+        }
+
+        .locker-card.selected {
+            border-color: var(--accent);
+            background: rgba(196, 255, 0, 0.04);
+            box-shadow: 0 0 20px rgba(196, 255, 0, 0.12);
+        }
+
+        .locker-info {
+            flex: 1;
+        }
+
+        .locker-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+
+        .locker-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .locker-badge {
+            font-size: 0.7rem;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .badge-24h {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-dist {
+            background: rgba(196, 255, 0, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(196, 255, 0, 0.25);
+        }
+
+        .badge-indoor {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-mid);
+        }
+
+        .locker-addr {
+            font-size: 0.85rem;
+            color: var(--text-mid);
+            margin-bottom: 4px;
+        }
+
+        .locker-time {
+            font-size: 0.76rem;
+            color: var(--text-low);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .select-tag-btn {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        .locker-card.selected .select-tag-btn {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* LOCKER SELECTION NOTIFICATION BOX */
+        .selected-locker-alert {
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-radius: var(--radius-sm);
+            padding: 0.9rem 1.1rem;
+            margin-bottom: 1.4rem;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .selected-locker-alert.show {
+            display: flex;
+        }
+
+        .alert-icon {
+            color: var(--success);
+            flex-shrink: 0;
+        }
+
+        .alert-text-main {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .alert-text-sub {
+            font-size: 0.8rem;
+            color: var(--text-mid);
+        }
+
+        /* STEP 3: SUMMARY & PAYMENT */
+        .summary-card {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.9rem;
+            margin-bottom: 1.1rem;
+        }
+
+        .summary-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #fff;
+        }
+
+        .edit-link {
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .edit-link:hover {
+            text-decoration: underline;
+        }
+
+        .summary-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .summary-label {
+            color: var(--text-mid);
+        }
+
+        .summary-val {
+            font-weight: 600;
+            color: #fff;
+            text-align: right;
+        }
+
+        .summary-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 1rem 0;
+        }
+
+        .summary-total-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        .total-amount {
+            font-family: var(--font-display);
+            font-size: 1.7rem;
+            color: var(--accent);
+        }
+
+        /* EXPRESS CHECKOUT PILLS */
+        .express-pay-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .express-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 0.5rem;
+        }
+
+        .express-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0.85rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .express-btn.gpay {
+            background: #000;
+            color: #fff;
+            border: 1px solid var(--border);
+        }
+
+        .express-btn:hover {
+            transform: scale(0.99);
+            filter: brightness(0.95);
+        }
+
+        .or-card-divider {
+            text-align: center;
+            position: relative;
+            margin: 1.4rem 0;
+            color: var(--text-low);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .or-card-divider::before,
+        .or-card-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 42%;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .or-card-divider::before {
+            left: 0;
+        }
+
+        .or-card-divider::after {
+            right: 0;
+        }
+
+        /* CARD FORM */
+        .card-form-box {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .card-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* TRUST CAROUSEL / BADGES */
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 1.8rem;
+        }
+
+        .trust-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem;
+            text-align: center;
+        }
+
+        .trust-pill svg {
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .trust-pill h4 {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .trust-pill p {
+            font-size: 0.7rem;
+            color: var(--text-mid);
+            line-height: 1.3;
+        }
+
+        /* WIZARD ACTIONS BAR */
+        .wizard-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding-top: 1.2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-mid);
+            font-weight: 600;
+            padding: 0.85rem 1.4rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-back:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .btn-next {
+            background: var(--accent);
+            color: #0b0f19;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0.95rem 1.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            box-shadow: 0 4px 18px rgba(196, 255, 0, 0.22);
+        }
+
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(196, 255, 0, 0.38);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-final-pay {
+            background: linear-gradient(135deg, #c4ff00 0%, #a3d900 100%);
+            color: #070a10;
+            font-weight: 800;
+            font-size: 1.05rem;
+            padding: 1.1rem 2rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 25px rgba(196, 255, 0, 0.35);
+            transition: var(--transition);
+        }
+
+        .btn-final-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(196, 255, 0, 0.5);
+        }
+
+        /* SIMULATED SUCCESS MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(4, 7, 13, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-lg);
+            max-width: 480px;
+            width: 100%;
+            padding: 2.2rem;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(196, 255, 0, 0.25);
+            animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.2rem;
+        }
+
+        .modal-box h3 {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-box p {
+            color: var(--text-mid);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-summary-box {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-btn {
+            background: var(--accent);
+            color: #000;
+            font-weight: 700;
+            padding: 0.85rem 1.6rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.2rem 1rem 3.5rem;
+            }
+
+            .stepper-nav {
+                padding: 0.75rem 0.6rem;
+            }
+
+            .step-number {
+                display: none;
+            }
+
+            .step-name {
+                font-size: 0.75rem;
+            }
+
+            .step-circle {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+
+            .step-item:not(:last-child)::after {
+                width: 14px;
+                right: 4px;
+            }
+
+            .wizard-card {
+                padding: 1.4rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .distance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .express-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .locker-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .select-tag-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="logo-wrap">
+            <div class="logo-text">VITA<span>STEPS</span></div>
+            <span class="badge-concept">Koncepció 2 • 3-Lépéses Wizard</span>
+        </div>
+        <div class="secure-tag">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            256-bit SSL Biztonság
+        </div>
+    </header>
+
+    <!-- WRAPPER -->
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="challenge-header">
+            <div class="pill-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Teljesítsd saját tempódban bármikor!
+            </div>
+            <h1 class="challenge-title">Prédikálószék Éremkihívás</h1>
+            <p class="challenge-subtitle">Válaszd ki a távodat, jelöld ki a legközelebbi Foxpost automatát, és zsebeld be a prémium fémérmet!</p>
+        </div>
+
+        <!-- STEPPER NAV BAR -->
+        <nav class="stepper-nav" aria-label="Nevezési lépések">
+            <div class="step-item active" id="step-nav-1" onclick="jumpToStep(1)">
+                <div class="step-circle" id="circle-1">1</div>
+                <div class="step-content">
+                    <span class="step-number">1. Lépés</span>
+                    <span class="step-name">Nevező & Táv</span>
+                </div>
+            </div>
+
+            <div class="step-item" id="step-nav-2" onclick="jumpToStep(2)">
+                <div class="step-circle" id="circle-2">2</div>
+                <div class="step-content">
+                    <span class="step-number">2. Lépés</span>
+                    <span class="step-name">Foxpost Átvétel</span>
+                </div>
+            </div>
+
+            <div class="step-item" id="step-nav-3" onclick="jumpToStep(3)">
+                <div class="step-circle" id="circle-3">3</div>
+                <div class="step-content">
+                    <span class="step-number">3. Lépés</span>
+                    <span class="step-name">Fizetés & Garancia</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- WIZARD CARD -->
+        <div class="wizard-card">
+
+            <!-- ============================================== -->
+            <!-- STEP 1: PARTICIPANT & DISTANCE                 -->
+            <!-- ============================================== -->
+            <section class="wizard-step current" id="step-panel-1">
+                <div class="step-heading">
+                    <h2>
+                        <span>👤</span> Nevező adatai & Távválasztás
+                    </h2>
+                    <p>Egyetlen egységes név a csomaghoz és az oklevélhez, felesleges dupla mezők nélkül.</p>
+                </div>
+
+                <!-- FORM FIELDS -->
+                <div class="form-grid">
+                    <div class="field-full">
+                        <label class="form-label">Teljes Név <span class="req">*</span></label>
+                        <input type="text" id="cust-name" class="input-box" placeholder="pl. Kovács Péter" value="Kovács Péter">
+                        <div class="input-hint">Ez a név szerepel majd a gravírozott emlékérmen, az oklevélen és a csomagon is.</div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Email cím <span class="req">*</span></label>
+                        <input type="email" id="cust-email" class="input-box" placeholder="peter@pelda.hu" value="kovacs.peter@gmail.com">
+                        <div class="input-hint">Ide küldjük a visszaigazolást & a GPX útvonalat.</div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Telefonszám (Foxpost SMS-hez) <span class="req">*</span></label>
+                        <input type="tel" id="cust-phone" class="input-box" placeholder="+36 30 123 4567" value="+36 30 555 1234">
+                        <div class="input-hint">Erre a számra kapod a nyitókódot az automatához.</div>
+                    </div>
+
+                    <div class="field-full" style="margin-top: 0.5rem;">
+                        <label class="form-label">Válassz kihívást / távot <span class="req">*</span></label>
+                        <div class="distance-grid">
+                            
+                            <!-- Opt 1 -->
+                            <div class="distance-opt" onclick="selectDistance('5km', 'Családi Túra (5 km)')">
+                                <div class="distance-radio"></div>
+                                <div>
+                                    <div class="distance-name">Családi Túra (5 km)</div>
+                                    <div class="distance-desc">Könnyed erdei séta, tökéletes gyerekekkel vagy kutyával.</div>
+                                    <span class="distance-tag">Szint: ~140m</span>
+                                </div>
+                            </div>
+
+                            <!-- Opt 2 (Default Selected) -->
+                            <div class="distance-opt selected" onclick="selectDistance('10km', 'Klasszikus Csúcs (10 km)')">
+                                <div class="distance-radio"></div>
+                                <div>
+                                    <div class="distance-name">Klasszikus Csúcs (10 km)</div>
+                                    <div class="distance-desc">A legnépszerűbb panoráma útvonal Dömös felől.</div>
+                                    <span class="distance-tag">Szint: ~480m • Bestseller</span>
+                                </div>
+                            </div>
+
+                            <!-- Opt 3 -->
+                            <div class="distance-opt" onclick="selectDistance('13km', 'Vadálló-kövek Extra (13 km)')">
+                                <div class="distance-radio"></div>
+                                <div>
+                                    <div class="distance-name">Vadálló Extra (13 km)</div>
+                                    <div class="distance-desc">Technikás, meredek gerinctúra igazi kalandoroknak.</div>
+                                    <span class="distance-tag">Szint: ~620m</span>
+                                </div>
+                            </div>
+
+                            <!-- Opt 4 -->
+                            <div class="distance-opt" onclick="selectDistance('21km', 'Dunakanyar Félmaraton (21 km)')">
+                                <div class="distance-radio"></div>
+                                <div>
+                                    <div class="distance-name">Félmaraton (21 km)</div>
+                                    <div class="distance-desc">Trail running és hosszú távú túrázó élmény.</div>
+                                    <span class="distance-tag">Szint: ~890m</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="wizard-actions">
+                    <span style="color: var(--text-low); font-size: 0.85rem;">1 / 3 Lépés</span>
+                    <button type="button" class="btn-next" onclick="goToStep(2)">
+                        Tovább a Foxpost átvételhez
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+
+            <!-- ============================================== -->
+            <!-- STEP 2: FOXPOST AUTOMATA SELECTION (MANDATORY) -->
+            <!-- ============================================== -->
+            <section class="wizard-step" id="step-panel-2">
+                <div class="step-heading">
+                    <h2>
+                        <span>📦</span> Foxpost Automata Kiválasztása
+                    </h2>
+                    <p>Az érem és rajtszám csomagod ide érkezik. Válassz kényelmesen a közeledben!</p>
+                </div>
+
+                <!-- HERO GPS BUTTON -->
+                <div class="foxpost-hero-banner">
+                    <div class="foxpost-hero-header">
+                        <div class="foxpost-badge-inline">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <rect x="1" y="3" width="15" height="13"></rect>
+                                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                            </svg>
+                            KÖZVETLEN FOXPOST INTEGRÁCIÓ
+                        </div>
+                        <span style="font-size: 0.78rem; color: #fca5a5;">Átvétel 0-24 órában</span>
+                    </div>
+
+                    <button type="button" class="gps-btn" id="gps-trigger-btn" onclick="triggerGpsSearch()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span id="gps-btn-text">📍 Legközelebbi automata keresése (GPS alapján)</span>
+                    </button>
+                </div>
+
+                <!-- SEARCH DIVIDER -->
+                <div class="search-divider">vagy keress város, utca vagy pláza szerint</div>
+
+                <!-- INSTANT SEARCH -->
+                <div class="search-box-wrap">
+                    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" class="search-input" id="locker-search-input" placeholder="pl. Budapest Allee, Győr Árkád, Pécs Plaza..." onkeyup="filterLockers(this.value)">
+                </div>
+
+                <!-- CONFIRMATION ALERT (WHEN SELECTED) -->
+                <div class="selected-locker-alert" id="selected-alert">
+                    <svg class="alert-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <div>
+                        <div class="alert-text-main" id="alert-locker-name">Kiválasztva: Budapest XI. Allee Bevásárlóközpont</div>
+                        <div class="alert-text-sub" id="alert-locker-addr">1117 Budapest, Október huszonharmadika u. 8-10. (Kültéri 0-24h)</div>
+                    </div>
+                </div>
+
+                <!-- LOCKER CARDS CONTAINER -->
+                <div class="locker-list" id="locker-list-container">
+                    
+                    <!-- Locker 1 -->
+                    <div class="locker-card selected" onclick="pickLocker(this, 'Budapest XI. Allee Bevásárlóközpont', '1117 Budapest, Október huszonharmadika u. 8-10.', 'Kültéri (0-24h)')">
+                        <div class="locker-info">
+                            <div class="locker-title-row">
+                                <span class="locker-name">Budapest XI. Allee Bevásárlóközpont</span>
+                                <span class="locker-badge badge-dist">📍 850 m</span>
+                                <span class="locker-badge badge-24h">0-24h Kültéri</span>
+                            </div>
+                            <div class="locker-addr">1117 Budapest, Október huszonharmadika u. 8-10.</div>
+                            <div class="locker-time">⏱️ Nyitvatartás: Hétfő - Vasárnap: 0:00 - 24:00</div>
+                        </div>
+                        <button type="button" class="select-tag-btn">Kiválasztva ✓</button>
+                    </div>
+
+                    <!-- Locker 2 -->
+                    <div class="locker-card" onclick="pickLocker(this, 'Budapest XI. Etele Plaza', '1119 Budapest, Hadak útja 1.', 'Beltéri (P1 szint)')">
+                        <div class="locker-info">
+                            <div class="locker-title-row">
+                                <span class="locker-name">Budapest XI. Etele Plaza</span>
+                                <span class="locker-badge badge-dist">📍 1.4 km</span>
+                                <span class="locker-badge badge-indoor">Beltéri P1</span>
+                            </div>
+                            <div class="locker-addr">1119 Budapest, Hadak útja 1.</div>
+                            <div class="locker-time">⏱️ Nyitvatartás: H-Szo 08:00-21:00, V 09:00-19:00</div>
+                        </div>
+                        <button type="button" class="select-tag-btn">Kiválasztom</button>
+                    </div>
+
+                    <!-- Locker 3 -->
+                    <div class="locker-card" onclick="pickLocker(this, 'Budapest XI. Móricz Zsigmond körtér - MOL', '1117 Budapest, Karinthy Frigyes út 1.', 'Kültéri (0-24h)')">
+                        <div class="locker-info">
+                            <div class="locker-title-row">
+                                <span class="locker-name">Budapest XI. Móricz Zs. körtér (MOL)</span>
+                                <span class="locker-badge badge-dist">📍 1.9 km</span>
+                                <span class="locker-badge badge-24h">0-24h Kültéri</span>
+                            </div>
+                            <div class="locker-addr">1117 Budapest, Karinthy Frigyes út 1.</div>
+                            <div class="locker-time">⏱️ Nyitvatartás: Hétfő - Vasárnap: 0:00 - 24:00</div>
+                        </div>
+                        <button type="button" class="select-tag-btn">Kiválasztom</button>
+                    </div>
+
+                    <!-- Locker 4 -->
+                    <div class="locker-card" onclick="pickLocker(this, 'Budapest XII. MOM Park', '1123 Budapest, Alkotás u. 53.', 'Beltéri mélygarázs')">
+                        <div class="locker-info">
+                            <div class="locker-title-row">
+                                <span class="locker-name">Budapest XII. MOM Park</span>
+                                <span class="locker-badge badge-indoor">Beltéri -1</span>
+                            </div>
+                            <div class="locker-addr">1123 Budapest, Alkotás u. 53.</div>
+                            <div class="locker-time">⏱️ Nyitvatartás: H-V 07:00-22:00</div>
+                        </div>
+                        <button type="button" class="select-tag-btn">Kiválasztom</button>
+                    </div>
+
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="wizard-actions">
+                    <button type="button" class="btn-back" onclick="goToStep(1)">
+                        ← Vissza az adatokhoz
+                    </button>
+                    <button type="button" class="btn-next" id="btn-to-step3" onclick="goToStep(3)">
+                        Tovább a fizetéshez & Összegzéshez
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+
+            <!-- ============================================== -->
+            <!-- STEP 3: SUMMARY, PAYMENT & GUARANTEES          -->
+            <!-- ============================================== -->
+            <section class="wizard-step" id="step-panel-3">
+                <div class="step-heading">
+                    <h2>
+                        <span>🔒</span> Rendelés Összegzése & Biztonságos Fizetés
+                    </h2>
+                    <p>Ellenőrizd az adataidat és válaszd ki a kényelmes fizetési módot.</p>
+                </div>
+
+                <!-- SUMMARY CARD -->
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-title">Rendelésed részletei</span>
+                        <a class="edit-link" onclick="goToStep(1)">Módosítás ✎</a>
+                    </div>
+
+                    <div class="summary-item-row">
+                        <span class="summary-label">Nevező neve:</span>
+                        <span class="summary-val" id="sum-name">Kovács Péter</span>
+                    </div>
+
+                    <div class="summary-item-row">
+                        <span class="summary-label">Értesítési adatok:</span>
+                        <span class="summary-val" id="sum-contact">kovacs.peter@gmail.com • +36 30 555 1234</span>
+                    </div>
+
+                    <div class="summary-item-row">
+                        <span class="summary-label">Választott táv / Csomag:</span>
+                        <span class="summary-val" id="sum-distance">Klasszikus Csúcs (10 km)</span>
+                    </div>
+
+                    <div class="summary-item-row">
+                        <span class="summary-label">Kézbesítés módja:</span>
+                        <span class="summary-val" style="color: #f87171;">Foxpost Csomagautomata (Ingyenes)</span>
+                    </div>
+
+                    <div class="summary-item-row">
+                        <span class="summary-label">Átvételi automata:</span>
+                        <span class="summary-val" id="sum-locker">Budapest XI. Allee Bevásárlóközpont</span>
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-total-row">
+                        <span>Fizetendő végösszeg:</span>
+                        <span class="total-amount">7 990 Ft</span>
+                    </div>
+                </div>
+
+                <!-- TRUST BADGES GRID -->
+                <div class="trust-grid">
+                    <div class="trust-pill">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        <h4>100% Pénzvisszafizetés</h4>
+                        <p>30 napos garancia, ha nem lennél elégedett.</p>
+                    </div>
+
+                    <div class="trust-pill">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 14 14"></polyline>
+                        </svg>
+                        <h4>Nincs Időkorlát</h4>
+                        <p>Bármikor lefuthatod vagy lesétálhatod idén.</p>
+                    </div>
+
+                    <div class="trust-pill">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                            <line x1="2" y1="10" x2="22" y2="10"></line>
+                        </svg>
+                        <h4>Stripe Biztonság</h4>
+                        <p>Banki titkosítás, Apple & Google Pay támogatás.</p>
+                    </div>
+                </div>
+
+                <!-- EXPRESS CHECKOUT BUTTONS -->
+                <div class="express-pay-box">
+                    <div class="form-label">Gyors fizetés 1 kattintással</div>
+                    <div class="express-buttons">
+                        <button type="button" class="express-btn" onclick="simulatePayment('Apple Pay')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.63-.77 1.06-1.85.94-2.93-.93.04-2.03.62-2.68 1.39-.58.67-1.09 1.77-.95 2.82 1.04.08 2.07-.53 2.69-1.28z"/>
+                            </svg>
+                            Apple Pay
+                        </button>
+                        <button type="button" class="express-btn gpay" onclick="simulatePayment('Google Pay')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                            </svg>
+                            Google Pay
+                        </button>
+                    </div>
+                </div>
+
+                <div class="or-card-divider">vagy bankkártyás fizetés</div>
+
+                <!-- CARD FORM -->
+                <div class="card-form-box">
+                    <div style="margin-bottom: 0.9rem;">
+                        <label class="form-label">Kártyaszám</label>
+                        <input type="text" class="input-box" placeholder="•••• •••• •••• ••••" value="5542 3200 1289 4410">
+                    </div>
+
+                    <div class="card-row-2">
+                        <div>
+                            <label class="form-label">Lejárat (HH/ÉÉ)</label>
+                            <input type="text" class="input-box" placeholder="12/28" value="08/29">
+                        </div>
+                        <div>
+                            <label class="form-label">CVC / CVV</label>
+                            <input type="text" class="input-box" placeholder="123" value="789">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FINAL CTA -->
+                <button type="button" class="btn-final-pay" onclick="simulatePayment('Bankkártya')">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Nevezés Megerősítése & Fizetés (7 990 Ft)
+                </button>
+
+                <!-- ACTIONS -->
+                <div class="wizard-actions" style="margin-top: 1.5rem;">
+                    <button type="button" class="btn-back" onclick="goToStep(2)">
+                        ← Vissza a Foxpost választáshoz
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+
+    <!-- SUCCESS MODAL -->
+    <div class="modal-overlay" id="success-modal">
+        <div class="modal-box">
+            <div class="modal-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h3>Sikeres Nevezés! 🎉</h3>
+            <p>Köszönjük! A rendelést rögzítettük és a visszaigazolást elküldtük emailben.</p>
+            
+            <div class="modal-summary-box">
+                <div style="margin-bottom: 5px;"><strong>Nevező:</strong> <span id="m-name"></span></div>
+                <div style="margin-bottom: 5px;"><strong>Választott Táv:</strong> <span id="m-dist"></span></div>
+                <div style="margin-bottom: 5px;"><strong>Átvételi pont:</strong> <span id="m-locker"></span></div>
+                <div><strong>Fizetési mód:</strong> <span id="m-method"></span> (7 990 Ft)</div>
+            </div>
+
+            <button type="button" class="modal-btn" onclick="closeModal()">Rendben, vissza az elejére</button>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // State
+        let currentStep = 1;
+        let selectedDistanceName = 'Klasszikus Csúcs (10 km)';
+        let selectedLockerData = {
+            name: 'Budapest XI. Allee Bevásárlóközpont',
+            addr: '1117 Budapest, Október huszonharmadika u. 8-10.',
+            type: 'Kültéri (0-24h)'
+        };
+
+        // Navigation
+        function goToStep(step) {
+            // Validation before going to Step 2
+            if (currentStep === 1 && step === 2) {
+                const name = document.getElementById('cust-name').value.trim();
+                const email = document.getElementById('cust-email').value.trim();
+                const phone = document.getElementById('cust-phone').value.trim();
+                if (!name || !email || !phone) {
+                    alert('Kérjük töltsd ki a nevet, email címet és telefonszámot a továbblépéshez!');
+                    return;
+                }
+            }
+
+            // Validation before going to Step 3
+            if (currentStep === 2 && step === 3) {
+                if (!selectedLockerData.name) {
+                    alert('Kérjük válassz egy Foxpost automatát a csomagod átvételéhez!');
+                    return;
+                }
+                updateSummary();
+            }
+
+            // Hide old step, show new step
+            document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('current'));
+            document.getElementById(`step-panel-${step}`).classList.add('current');
+
+            // Update Stepper Navigation
+            for (let i = 1; i <= 3; i++) {
+                const navItem = document.getElementById(`step-nav-${i}`);
+                const circle = document.getElementById(`circle-${i}`);
+                
+                navItem.classList.remove('active', 'completed');
+                if (i === step) {
+                    navItem.classList.add('active');
+                    circle.innerHTML = i;
+                } else if (i < step) {
+                    navItem.classList.add('completed');
+                    circle.innerHTML = '✓';
+                } else {
+                    circle.innerHTML = i;
+                }
+            }
+
+            currentStep = step;
+            window.scrollTo({ top: 120, behavior: 'smooth' });
+        }
+
+        function jumpToStep(step) {
+            if (step < currentStep) {
+                goToStep(step);
+            } else if (step === currentStep + 1) {
+                goToStep(step);
+            }
+        }
+
+        // Distance Selection
+        function selectDistance(distKey, distLabel) {
+            selectedDistanceName = distLabel;
+            document.querySelectorAll('.distance-opt').forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+
+        // Foxpost Locker Selection
+        function pickLocker(cardEl, name, addr, type) {
+            selectedLockerData = { name, addr, type };
+
+            // Update card states
+            document.querySelectorAll('.locker-card').forEach(c => {
+                c.classList.remove('selected');
+                c.querySelector('.select-tag-btn').textContent = 'Kiválasztom';
+            });
+            cardEl.classList.add('selected');
+            cardEl.querySelector('.select-tag-btn').textContent = 'Kiválasztva ✓';
+
+            // Show selected alert box
+            const alertBox = document.getElementById('selected-alert');
+            document.getElementById('alert-locker-name').textContent = 'Kiválasztva: ' + name;
+            document.getElementById('alert-locker-addr').textContent = addr + ' (' + type + ')';
+            alertBox.classList.add('show');
+
+            // Enable next button
+            const nextBtn = document.getElementById('btn-to-step3');
+            if (nextBtn) nextBtn.disabled = false;
+        }
+
+        // Simulated GPS Search
+        function triggerGpsSearch() {
+            const btn = document.getElementById('gps-trigger-btn');
+            const text = document.getElementById('gps-btn-text');
+            const originalText = text.innerHTML;
+
+            text.innerHTML = '⏳ Pozíció meghatározása folyamatban...';
+            btn.style.opacity = '0.85';
+
+            setTimeout(() => {
+                text.innerHTML = '✓ Megtaláltuk a 3 legközelebbi automatát!';
+                btn.style.background = '#10b981';
+                btn.style.color = '#fff';
+
+                const list = document.getElementById('locker-list-container');
+                list.innerHTML = `
+                    <div class="locker-card selected" onclick="pickLocker(this, 'Budapest XI. Allee Bevásárlóközpont', '1117 Budapest, Október huszonharmadika u. 8-10.', 'Kültéri 0-24h')">
+                        <div class="locker-info">
+                            <div class="locker-title-row">
+                                <span class="locker-name">Budapest XI. Allee Bevásárlóközpont</span>
+                                <span class="locker-badge badge-dist">🎯 Legközelebbi • 850 m</span>
+                                <span class="locker-badge badge-24h">0-24h Kültéri</span>
+                            </div>
+                            <div class="locker-addr">1117 Budapest, Október huszonharmadika u. 8-10.</div>
+                            <div class="locker-time">⏱️ Mindig nyitva (0-24h)</div>
+                        </div>
+                        <button type="button" class="select-tag-btn">Kiválasztva ✓</button>
+                    </div>
+
+                    <div class="locker-card" onclick="pickLocker(this, 'Budapest XI. Fehérvári úti Vásárcsarnok', '1117 Budapest, Kőrösy József u. 7.', '0-24h Kültéri')">
+                        <div class="locker-info">
+                            <div class="locker-title-row">
+                                <span class="locker-name">Budapest XI. Fehérvári úti Vásárcsarnok</span>
+                                <span class="locker-badge badge-dist">📍 1.1 km</span>
+                                <span class="locker-badge badge-24h">0-24h Kültéri</span>
+                            </div>
+                            <div class="locker-addr">1117 Budapest, Kőrösy József u. 7.</div>
+                            <div class="locker-time">⏱️ Mindig nyitva (0-24h)</div>
+                        </div>
+                        <button type="button" class="select-tag-btn">Kiválasztom</button>
+                    </div>
+
+                    <div class="locker-card" onclick="pickLocker(this, 'Budapest XI. Etele Plaza (P1 szint)', '1119 Budapest, Hadak útja 1.', 'Beltéri')">
+                        <div class="locker-info">
+                            <div class="locker-title-row">
+                                <span class="locker-name">Budapest XI. Etele Plaza</span>
+                                <span class="locker-badge badge-dist">📍 1.4 km</span>
+                                <span class="locker-badge badge-indoor">Beltéri P1</span>
+                            </div>
+                            <div class="locker-addr">1119 Budapest, Hadak útja 1.</div>
+                            <div class="locker-time">⏱️ Nyitvatartás: H-Szo 08:00-21:00, V 09:00-19:00</div>
+                        </div>
+                        <button type="button" class="select-tag-btn">Kiválasztom</button>
+                    </div>
+                `;
+
+                // Auto select first
+                pickLocker(
+                    list.firstElementChild, 
+                    'Budapest XI. Allee Bevásárlóközpont', 
+                    '1117 Budapest, Október huszonharmadika u. 8-10.', 
+                    'Kültéri 0-24h'
+                );
+
+                setTimeout(() => {
+                    text.innerHTML = '📍 Legközelebbi automata keresése (GPS frissítése)';
+                    btn.style.background = 'var(--accent)';
+                    btn.style.color = '#0b0f19';
+                    btn.style.opacity = '1';
+                }, 2500);
+
+            }, 750);
+        }
+
+        // Search Filter
+        function filterLockers(query) {
+            const q = query.toLowerCase().trim();
+            const cards = document.querySelectorAll('.locker-card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(q)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Summary Updater
+        function updateSummary() {
+            const name = document.getElementById('cust-name').value.trim() || 'Kovács Péter';
+            const email = document.getElementById('cust-email').value.trim() || 'kovacs.peter@gmail.com';
+            const phone = document.getElementById('cust-phone').value.trim() || '+36 30 555 1234';
+
+            document.getElementById('sum-name').textContent = name;
+            document.getElementById('sum-contact').textContent = `${email} • ${phone}`;
+            document.getElementById('sum-distance').textContent = selectedDistanceName;
+            document.getElementById('sum-locker').textContent = `${selectedLockerData.name} (${selectedLockerData.addr})`;
+        }
+
+        // Payment Simulation Modal
+        function simulatePayment(method) {
+            const name = document.getElementById('cust-name').value.trim() || 'Kovács Péter';
+            
+            document.getElementById('m-name').textContent = name;
+            document.getElementById('m-dist').textContent = selectedDistanceName;
+            document.getElementById('m-locker').textContent = selectedLockerData.name;
+            document.getElementById('m-method').textContent = method;
+
+            document.getElementById('success-modal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('success-modal').classList.remove('open');
+            goToStep(1);
+        }
+    </script>
+</body>
+
+</html>

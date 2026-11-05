@@ -4,22 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nevezés & Szállítás – VitaSteps</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+    <title>Nevezés & Átvétel – VitaSteps Kihívás</title>
 
+    <!-- Google Fonts: Space Grotesk & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <style>
         :root {
-            --bg: #0b0f19;
-            --surface: #121824;
-            --surface2: #1a2235;
+            --bg: #090d16;
+            --surface: #101625;
+            --surface-elevated: #162035;
+            --surface-card: #1c2742;
+            --surface-card-hover: #223050;
             --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.16);
+            --border-focus: #c4ff00;
             --accent: #c4ff00;
-            --accent-dim: rgba(196, 255, 0, 0.12);
-            --text-high: #ffffff;
-            --text-mid: #8a99b3;
-            --text-low: #4a5568;
-            --radius: 12px;
-            --danger: #ff6b6b;
+            --accent-glow: rgba(196, 255, 0, 0.22);
+            --accent-soft: rgba(196, 255, 0, 0.12);
+            --accent-hover: #d2ff33;
+            --foxpost-red: #ea1d2d;
+            --foxpost-red-soft: rgba(234, 29, 45, 0.12);
+            --foxpost-red-border: rgba(234, 29, 45, 0.35);
+            --text-high: #f8fafc;
+            --text-mid: #94a3b8;
+            --text-low: #64748b;
+            --success: #10b981;
+            --success-soft: rgba(16, 185, 129, 0.14);
+            --danger: #f43f5e;
+            --danger-soft: rgba(244, 63, 94, 0.14);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --font-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
@@ -29,1158 +50,2188 @@
         }
 
         body {
-            background: var(--bg);
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(ellipse 90% 45% at 50% -10%, rgba(196, 255, 0, 0.07), transparent 70%),
+                radial-gradient(ellipse 50% 30% at 85% 95%, rgba(234, 29, 45, 0.04), transparent 60%);
             color: var(--text-high);
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: var(--font-body);
             min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* NAV */
-        .nav {
-            padding: 1.2rem 2rem;
+        /* ── TOPBAR ────────────────────────────────────────── */
+        .topbar {
+            padding: 1.1rem 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--border);
-            background: var(--bg);
+            background: rgba(9, 13, 22, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .logo {
-            font-size: 1.3rem;
-            font-weight: 900;
-            letter-spacing: 3px;
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
         }
 
-        .logo span {
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: 2.5px;
+            color: #fff;
+        }
+
+        .logo-text span {
             color: var(--accent);
         }
 
-        /* LAYOUT */
-        .page-wrapper {
-            max-width: 860px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem 4rem;
-        }
-
-        .page-title {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 0.4rem;
-        }
-
-        .page-subtitle {
+        .badge-secure {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 5px 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
             color: var(--text-mid);
-            font-size: 0.95rem;
+        }
+
+        .badge-secure svg {
+            color: var(--success);
+        }
+
+        /* ── MAIN CONTAINER ─────────────────────────────────── */
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 2.2rem 1.25rem 6rem;
+        }
+
+        /* ── CHALLENGE HEADER ───────────────────────────────── */
+        .challenge-header {
+            text-align: center;
             margin-bottom: 2rem;
         }
 
-        /* SECTION */
-        .section {
+        .challenge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(196, 255, 0, 0.08);
+            border: 1px solid rgba(196, 255, 0, 0.22);
+            padding: 5px 14px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            margin-bottom: 0.85rem;
+        }
+
+        .challenge-title {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 0.45rem;
+        }
+
+        .challenge-subtitle {
+            color: var(--text-mid);
+            font-size: 0.98rem;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        /* ── STEPPER NAV ────────────────────────────────────── */
+        .stepper-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.8rem 2rem;
-            margin-bottom: 1.5rem;
+            border-radius: var(--radius-lg);
+            padding: 0.85rem 1.2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35);
         }
 
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 1.4rem;
-            padding-bottom: 0.6rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        /* QUANTITY SELECTOR */
-        .qty-row {
+        .step-item {
             display: flex;
             align-items: center;
-            gap: 1.2rem;
-            flex-wrap: wrap;
-        }
-
-        .qty-label {
-            font-size: 0.95rem;
-            color: var(--text-mid);
+            gap: 10px;
             flex: 1;
-            min-width: 180px;
-        }
-
-        .qty-controls {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .qty-btn {
-            width: 42px;
-            height: 42px;
-            background: transparent;
-            border: none;
-            color: var(--text-high);
-            font-size: 1.3rem;
             cursor: pointer;
-            transition: background 0.2s;
+            position: relative;
+            z-index: 2;
+            transition: var(--transition);
+        }
+
+        .step-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            width: 30px;
+            height: 2px;
+            background: var(--border);
+            transform: translateY(-50%);
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        .step-circle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .qty-btn:hover {
-            background: rgba(196, 255, 0, 0.1);
-        }
-
-        .qty-display {
-            width: 52px;
-            text-align: center;
-            font-size: 1.15rem;
-            font-weight: 700;
-            border-left: 1px solid var(--border);
-            border-right: 1px solid var(--border);
-            height: 42px;
-            line-height: 42px;
-        }
-
-        /* MEDAL PANEL */
-        .medal-panel {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 1.4rem 1.6rem;
-            margin-bottom: 1rem;
-            position: relative;
-            transition: border-color 0.2s;
-        }
-
-        .medal-panel:last-child {
-            margin-bottom: 0;
-        }
-
-        .medal-panel-title {
+            font-family: var(--font-display);
             font-weight: 700;
             font-size: 0.9rem;
-            color: var(--accent);
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* FORM ROWS */
-        .form-row {
-            margin-bottom: 1.1rem;
-        }
-
-        .form-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .form-row label {
-            display: block;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--text-mid);
-            margin-bottom: 0.45rem;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-
-        .form-row input[type="text"],
-        .form-row input[type="email"],
-        .form-row input[type="tel"],
-        .form-row select {
-            width: 100%;
-            padding: 0.85rem 1rem;
-            background: rgba(0, 0, 0, 0.25);
+            background: var(--surface-elevated);
+            color: var(--text-low);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .step-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .step-number {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            color: var(--text-low);
+            transition: var(--transition);
+        }
+
+        .step-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-mid);
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        /* Stepper States */
+        .step-item.active .step-circle {
+            background: var(--accent);
+            color: #0b0f19;
+            border-color: var(--accent);
+            box-shadow: 0 0 14px var(--accent-glow);
+        }
+
+        .step-item.active .step-number {
+            color: var(--accent);
+        }
+
+        .step-item.active .step-name {
+            color: #fff;
+        }
+
+        .step-item.completed .step-circle {
+            background: var(--success-soft);
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.45);
+        }
+
+        .step-item.completed .step-name {
             color: var(--text-high);
-            font-family: inherit;
-            font-size: 0.95rem;
-            transition: border-color 0.2s;
         }
 
-        .form-row input:focus,
-        .form-row select:focus {
-            outline: none;
-            border-color: rgba(196, 255, 0, 0.5);
+        .step-item.completed:not(:last-child)::after {
+            background: rgba(16, 185, 129, 0.45);
         }
 
-        .form-row select option {
-            background: var(--surface2);
+        /* ── WIZARD CARD ────────────────────────────────────── */
+        .wizard-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.2rem;
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.45);
+            position: relative;
         }
 
-        /* INLINE FIELD ERRORS */
-        .form-row input.input-error,
-        .form-row select.input-error {
-            border-color: var(--danger) !important;
-            box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.18);
-        }
-
-        .field-error {
+        .wizard-step {
             display: none;
-            color: var(--danger);
-            font-size: 0.78rem;
-            font-weight: 600;
-            margin-top: 0.35rem;
-            padding-left: 0.1rem;
-            animation: fadeIn 0.18s ease;
+            animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .field-error.visible {
+        .wizard-step.current {
             display: block;
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(-3px);
+                transform: translateY(8px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .form-grid-2 {
+        .step-heading {
+            margin-bottom: 1.8rem;
+        }
+
+        .step-heading h2 {
+            font-family: var(--font-display);
+            font-size: 1.55rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-heading p {
+            color: var(--text-mid);
+            font-size: 0.92rem;
+        }
+
+        /* ── FORM ELEMENTS ──────────────────────────────────── */
+        .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
         }
 
-        @media (max-width: 540px) {
-            .form-grid-2 {
-                grid-template-columns: 1fr;
-            }
+        .field-full {
+            grid-column: 1 / -1;
         }
 
-        /* DELIVERY OPTION */
-        .delivery-options {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
+        .form-label {
+            display: block;
+            font-size: 0.84rem;
+            font-weight: 600;
+            margin-bottom: 0.45rem;
+            color: var(--text-mid);
         }
 
-        .delivery-card {
-            flex: 1;
-            min-width: 220px;
+        .form-label span.req {
+            color: var(--danger);
+            margin-left: 3px;
+        }
+
+        .input-box {
+            width: 100%;
+            background: var(--surface-elevated);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem 1rem;
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .input-box:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+            background: var(--surface-card);
+        }
+
+        .input-box.input-error {
+            border-color: var(--danger) !important;
+            background: rgba(244, 63, 94, 0.05);
+            box-shadow: 0 0 0 3px var(--danger-soft) !important;
+        }
+
+        .input-hint {
+            font-size: 0.77rem;
+            color: var(--text-low);
+            margin-top: 0.35rem;
+        }
+
+        .field-error {
+            font-size: 0.78rem;
+            color: var(--danger);
+            margin-top: 0.35rem;
+            display: none;
+            font-weight: 600;
+        }
+
+        .field-error.visible {
+            display: block;
+        }
+
+        /* Structured Billing Address Row */
+        .billing-row-3 {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 12px;
+        }
+
+        /* ── DISTANCE SELECTION CARDS ───────────────────────── */
+        .distance-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 0.5rem;
+        }
+
+        .distance-card {
+            background: var(--surface-elevated);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.05rem 1.15rem;
+            cursor: pointer;
+            transition: var(--transition);
             display: flex;
             align-items: flex-start;
-            gap: 0.9rem;
-            background: var(--surface2);
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.1rem 1.3rem;
-            cursor: pointer;
-            transition: all 0.2s;
+            gap: 12px;
             user-select: none;
         }
 
-        .delivery-card.selected {
-            border-color: var(--accent);
-            background: var(--accent-dim);
+        .distance-card:hover {
+            border-color: var(--border-hover);
+            background: var(--surface-card);
+            transform: translateY(-2px);
         }
 
-        .delivery-card input[type="radio"] {
-            accent-color: var(--accent);
-            width: 1.15rem;
-            height: 1.15rem;
+        .distance-card.selected {
+            background: rgba(196, 255, 0, 0.04);
+            border-color: var(--accent);
+            box-shadow: 0 0 16px rgba(196, 255, 0, 0.14);
+        }
+
+        .distance-radio-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--text-low);
             margin-top: 2px;
             flex-shrink: 0;
-        }
-
-        .delivery-card-name {
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .delivery-card-sub {
-            font-size: 0.78rem;
-            margin-top: 0.15rem;
-            font-weight: 600;
-        }
-
-        .delivery-card-sub.free {
-            color: var(--accent);
-        }
-
-        .delivery-card-sub.paid {
-            color: #ffcc44;
-        }
-
-        /* ORDER SUMMARY BOX */
-        .order-summary-box {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-            font-size: 0.92rem;
-            color: var(--text-mid);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .summary-row:last-child {
-            border-bottom: none;
-        }
-
-        .summary-total {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem 0 0;
-            font-size: 1.25rem;
-            font-weight: 900;
-            color: var(--text-high);
-        }
-
-        .summary-total-price {
-            color: var(--accent);
-        }
-
-        /* FOXPOST / HOME DELIVERY */
-        #foxpost-container,
-        #home-delivery-container {
-            margin-bottom: 1.5rem;
-        }
-
-        .selected-point-box {
-            background: rgba(196, 255, 0, 0.08);
-            border: 1.5px solid var(--accent);
-            border-radius: 10px;
-            padding: 1.1rem 1.3rem;
-            margin-bottom: 1.2rem;
-            display: none;
-            animation: fadeIn 0.2s ease;
-        }
-
-        .badge-selected {
-            background: var(--accent);
-            color: #000;
-            font-size: 0.68rem;
-            font-weight: 800;
-            padding: 0.18rem 0.45rem;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-change-point {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border);
-            color: #fff;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .btn-change-point:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        /* FOXPOST NATIVE AUTOCOMPLETE */
-        .foxpost-input-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .foxpost-input-wrap input {
-            width: 100%;
-            padding: 0.95rem 2.6rem 0.95rem 1rem;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1.5px solid rgba(196, 255, 0, 0.3);
-            border-radius: 10px;
-            color: var(--text-high);
-            font-size: 0.95rem;
-            font-family: inherit;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .foxpost-input-wrap input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(196, 255, 0, 0.15);
-        }
-
-        .foxpost-clear-btn {
-            position: absolute;
-            right: 12px;
-            background: transparent;
-            border: none;
-            color: var(--text-mid);
-            font-size: 1.1rem;
-            cursor: pointer;
-            padding: 4px;
-            display: none;
-        }
-
-        .foxpost-clear-btn:hover {
-            color: #fff;
-        }
-
-        .foxpost-results-dropdown {
-            margin-top: 0.5rem;
-            max-height: 280px;
-            overflow-y: auto;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            display: none;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            z-index: 50;
-        }
-
-        .foxpost-item {
-            padding: 0.85rem 1.1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            cursor: pointer;
-            transition: background 0.15s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .foxpost-item:last-child {
-            border-bottom: none;
-        }
-
-        .foxpost-item:hover,
-        .foxpost-item:active {
-            background: rgba(196, 255, 0, 0.08);
-        }
-
-        .foxpost-item-name {
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #fff;
-        }
-
-        .foxpost-item-addr {
-            font-size: 0.8rem;
-            color: var(--text-mid);
-            margin-top: 0.15rem;
-        }
-
-        .foxpost-item-badge {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.45rem;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-mid);
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .foxpost-item-badge.outdoor {
-            background: rgba(74, 222, 128, 0.15);
-            color: #4ade80;
-            font-weight: 600;
-        }
-
-        /* SMART CHIPS */
-        .foxpost-chips-container {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .foxpost-chip {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(196, 255, 0, 0.25);
-            border-radius: 20px;
-            padding: 0.4rem 0.8rem;
-            font-size: 0.78rem;
-            color: #e2e8f0;
-            cursor: pointer;
-            transition: all 0.18s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        .foxpost-chip:hover,
-        .foxpost-chip:active {
-            background: rgba(196, 255, 0, 0.15);
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        /* ── REASSURANCE BANNER ── */
-        .reassurance-card {
-            background: rgba(196, 255, 0, 0.07);
-            border: 1.5px solid rgba(196, 255, 0, 0.35);
-            border-radius: var(--radius);
-            padding: 1.15rem 1.4rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1.1rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        .reassurance-icon {
-            font-size: 2.2rem;
-            line-height: 1;
-            flex-shrink: 0;
-        }
-
-        .reassurance-title {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: var(--accent);
-            margin-bottom: 0.25rem;
-        }
-
-        .reassurance-text {
-            font-size: 0.88rem;
-            color: #e2e8f0;
-            line-height: 1.45;
-        }
-
-        .reassurance-text strong {
-            color: #ffffff;
-        }
-
-        /* ── GPS FOXPOST SELECTOR ── */
-        .btn-gps-locate {
-            width: 100%;
-            padding: 0.95rem 1.25rem;
-            background: rgba(196, 255, 0, 0.1);
-            border: 1.5px solid var(--accent);
-            color: var(--accent);
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 800;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.6rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 10px rgba(196, 255, 0, 0.15);
+            transition: var(--transition);
         }
 
-        .btn-gps-locate:hover {
-            background: var(--accent);
-            color: #000;
-            box-shadow: 0 0 20px rgba(196, 255, 0, 0.35);
-        }
-
-        .btn-gps-locate:disabled {
-            opacity: 0.65;
-            cursor: not-allowed;
-        }
-
-        .gps-results-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 0.65rem;
-        }
-
-        .gps-card {
-            background: var(--surface2);
-            border: 1.5px solid rgba(196, 255, 0, 0.25);
-            border-radius: 10px;
-            padding: 0.9rem 1.1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.18s ease;
-            gap: 0.75rem;
-        }
-
-        .gps-card:hover {
+        .distance-card.selected .distance-radio-dot {
             border-color: var(--accent);
-            background: rgba(196, 255, 0, 0.08);
-            transform: translateY(-1px);
-        }
-
-        .gps-card-name {
-            font-weight: 800;
-            font-size: 0.92rem;
-            color: #fff;
-        }
-
-        .gps-card-addr {
-            font-size: 0.8rem;
-            color: var(--text-mid);
-            margin-top: 0.2rem;
-        }
-
-        .gps-card-dist {
-            font-size: 0.75rem;
-            font-weight: 800;
-            color: var(--accent);
-            background: rgba(196, 255, 0, 0.12);
-            padding: 0.25rem 0.55rem;
-            border-radius: 6px;
-            white-space: nowrap;
-        }
-
-        .gps-card-btn {
             background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 0.4rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 800;
-            cursor: pointer;
-            white-space: nowrap;
         }
 
-        .no-rush-note {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 0.86rem;
+        .distance-card.selected .distance-radio-dot::after {
+            content: '';
+            width: 7px;
+            height: 7px;
+            background: #0b0f19;
+            border-radius: 50%;
+        }
+
+        .distance-name {
+            font-weight: 700;
+            font-size: 0.98rem;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .distance-desc {
+            font-size: 0.78rem;
             color: var(--text-mid);
-            margin-bottom: 1.1rem;
-            text-align: center;
             line-height: 1.35;
         }
 
-        .no-rush-note strong {
+        .distance-tag {
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 2px 7px;
+            border-radius: 4px;
+            color: var(--text-mid);
+            margin-top: 6px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .distance-card.selected .distance-tag {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        /* ── MULTI-MEDAL / EXTRA PARTICIPANT SECTION ────────── */
+        .extra-medals-box {
+            margin-top: 1.5rem;
+            border-top: 1px dashed var(--border);
+            padding-top: 1.2rem;
+        }
+
+        .extra-medals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .extra-medal-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.2rem;
+            position: relative;
+        }
+
+        .extra-medal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .extra-medal-title {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-remove-medal {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .btn-remove-medal:hover {
+            background: var(--danger-soft);
+        }
+
+        .btn-add-medal {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            color: var(--text-high);
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 0.75rem 1.2rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-add-medal:hover {
+            background: rgba(196, 255, 0, 0.06);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ── STEP 2: FOXPOST HERO SECTION ───────────────────── */
+        .foxpost-hero-banner {
+            background: linear-gradient(135deg, rgba(234, 29, 45, 0.12) 0%, rgba(16, 22, 37, 0.9) 100%);
+            border: 1.5px solid var(--foxpost-red-border);
+            border-radius: var(--radius-md);
+            padding: 1.4rem;
+            margin-bottom: 1.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .foxpost-hero-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .foxpost-badge-inline {
+            background: var(--foxpost-red);
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.74rem;
+            letter-spacing: 0.6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .foxpost-hero-sub {
+            font-size: 0.8rem;
+            color: #fca5a5;
+            font-weight: 600;
+        }
+
+        .gps-btn {
+            background: var(--accent);
+            color: #0b0f19;
+            font-family: var(--font-body);
+            font-weight: 800;
+            font-size: 1rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0.95rem 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 16px rgba(196, 255, 0, 0.22);
+            width: 100%;
+        }
+
+        .gps-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(196, 255, 0, 0.35);
+        }
+
+        .gps-status {
+            font-size: 0.82rem;
+            color: var(--text-mid);
+            text-align: center;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .search-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 1.2rem 0;
+            color: var(--text-low);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .search-divider::before,
+        .search-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .search-box-wrap {
+            position: relative;
+            margin-bottom: 1.2rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-mid);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--surface-elevated);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: var(--font-body);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--foxpost-red);
+            box-shadow: 0 0 0 3px rgba(234, 29, 45, 0.15);
+            background: var(--surface-card);
+        }
+
+        /* Smart suggestions chips based on city */
+        .smart-chips-wrap {
+            display: none;
+            margin-bottom: 1.2rem;
+        }
+
+        .smart-chips-label {
+            font-size: 0.78rem;
+            color: var(--text-mid);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .smart-chips-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .smart-chip-btn {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-high);
+            font-size: 0.78rem;
+            padding: 5px 11px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .smart-chip-btn:hover {
+            border-color: var(--foxpost-red);
+            background: rgba(234, 29, 45, 0.08);
+        }
+
+        /* ── CONFIRMED LOCKER BANNER ────────────────────────── */
+        .selected-locker-alert {
+            display: none;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1.5px solid rgba(16, 185, 129, 0.4);
+            border-radius: var(--radius-md);
+            padding: 1.1rem 1.25rem;
+            margin-bottom: 1.4rem;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .selected-locker-alert.show {
+            display: flex;
+        }
+
+        .alert-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .alert-icon {
+            color: var(--success);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .alert-text-main {
+            font-weight: 700;
+            font-size: 0.98rem;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .alert-text-sub {
+            font-size: 0.82rem;
+            color: var(--text-mid);
+            word-break: break-word;
+        }
+
+        .alert-change-link {
+            color: var(--accent);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            text-decoration: none;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .alert-change-link:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        /* ── LOCKER LIST CARDS ──────────────────────────────── */
+        .locker-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .locker-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .locker-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+
+        .locker-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.14);
+            border-radius: 4px;
+        }
+
+        .locker-card {
+            background: var(--surface-elevated);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .locker-card:hover {
+            border-color: rgba(234, 29, 45, 0.45);
+            background: var(--surface-card);
+            transform: translateY(-1px);
+        }
+
+        .locker-card.selected {
+            border-color: var(--accent);
+            background: rgba(196, 255, 0, 0.04);
+            box-shadow: 0 0 18px rgba(196, 255, 0, 0.12);
+        }
+
+        .locker-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .locker-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+
+        .locker-name {
+            font-weight: 700;
+            font-size: 0.98rem;
             color: #fff;
         }
 
-        /* MODAL MAP */
+        .locker-badge {
+            font-size: 0.7rem;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .badge-24h {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-dist {
+            background: rgba(196, 255, 0, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(196, 255, 0, 0.25);
+        }
+
+        .badge-indoor {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-mid);
+        }
+
+        .locker-addr {
+            font-size: 0.85rem;
+            color: var(--text-mid);
+            margin-bottom: 4px;
+        }
+
+        .locker-time {
+            font-size: 0.76rem;
+            color: var(--text-low);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .select-tag-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .locker-card.selected .select-tag-btn {
+            background: var(--accent);
+            color: #0b0f19;
+            border-color: var(--accent);
+        }
+
+        .locker-empty-state {
+            padding: 2rem 1rem;
+            text-align: center;
+            color: var(--text-mid);
+            font-size: 0.9rem;
+        }
+
         .btn-map-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             background: transparent;
             border: 1px solid var(--border);
             color: var(--text-mid);
-            padding: 0.35rem 0.7rem;
+            font-size: 0.82rem;
+            padding: 6px 12px;
             border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            margin-top: 0.8rem;
+            transition: var(--transition);
         }
 
         .btn-map-toggle:hover {
             color: #fff;
             border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.05);
         }
 
-        .map-modal-overlay {
+        /* ── STEP 3: SUMMARY & FINAL CTA ────────────────────── */
+        .summary-card {
+            background: var(--surface-elevated);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1.6rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.9rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .summary-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .edit-link {
+            font-size: 0.82rem;
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .edit-link:hover {
+            text-decoration: underline;
+        }
+
+        .summary-item-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            gap: 15px;
+        }
+
+        .summary-label {
+            color: var(--text-mid);
+            flex-shrink: 0;
+        }
+
+        .summary-val {
+            font-weight: 600;
+            color: #fff;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .summary-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 1.1rem 0;
+        }
+
+        .summary-total-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        .total-amount {
+            font-family: var(--font-display);
+            font-size: 1.85rem;
+            color: var(--accent);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        /* Referral Discount Callout in Summary */
+        .discount-badge-box {
+            display: none;
+            background: rgba(196, 255, 0, 0.08);
+            border: 1px solid rgba(196, 255, 0, 0.3);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.2rem;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* ── TRUST BADGES GRID ──────────────────────────────── */
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .trust-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1rem 0.9rem;
+            text-align: center;
+        }
+
+        .trust-pill svg {
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .trust-pill h4 {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .trust-pill p {
+            font-size: 0.72rem;
+            color: var(--text-mid);
+            line-height: 1.35;
+        }
+
+        /* Card Logos Row */
+        .card-logos-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 1.5rem;
+            opacity: 0.7;
+        }
+
+        .card-logo-svg {
+            height: 24px;
+            fill: currentColor;
+            color: var(--text-mid);
+        }
+
+        /* ── WIZARD ACTIONS & SUBMIT BUTTON ─────────────────── */
+        .wizard-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-mid);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 0.85rem 1.4rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-back:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .btn-next {
+            background: var(--accent);
+            color: #0b0f19;
+            font-family: var(--font-body);
+            font-weight: 800;
+            font-size: 1rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0.95rem 1.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            box-shadow: 0 4px 18px var(--accent-glow);
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(196, 255, 0, 0.35);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-final-pay {
+            background: linear-gradient(135deg, #c4ff00 0%, #a6db00 100%);
+            color: #070a10;
+            font-family: var(--font-body);
+            font-weight: 800;
+            font-size: 1.1rem;
+            padding: 1.15rem 2rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 25px rgba(196, 255, 0, 0.32);
+            transition: var(--transition);
+        }
+
+        .btn-final-pay:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(196, 255, 0, 0.45);
+        }
+
+        .btn-final-pay:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.2);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+
+        .btn-final-pay.loading .spinner {
+            display: inline-block;
+        }
+
+        .btn-final-pay.loading .btn-text-content {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error Notification Banner */
+        .error-alert-banner {
+            display: none;
+            background: rgba(244, 63, 94, 0.1);
+            border: 1.5px solid var(--danger);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.25rem;
+            margin-top: 1.2rem;
+            color: #fca5a5;
+            font-size: 0.9rem;
+            font-weight: 600;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-alert-banner.visible {
+            display: flex;
+        }
+
+        /* ── FOXPOST MAP IFRAME MODAL ───────────────────────── */
+        .modal-overlay {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(4px);
+            right: 0;
+            bottom: 0;
+            background: rgba(4, 7, 13, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1000;
-            display: flex;
             align-items: center;
             justify-content: center;
             padding: 1rem;
         }
 
-        .map-modal-content {
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-dialog {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
+            border-radius: var(--radius-md);
             width: 100%;
-            max-width: 800px;
+            max-width: 820px;
             height: 85vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
         }
 
-        .map-modal-header {
-            padding: 1rem 1.25rem;
+        .modal-head {
+            padding: 1rem 1.4rem;
             border-bottom: 1px solid var(--border);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            background: var(--surface2);
+            justify-content: space-between;
         }
 
-        .btn-close-modal {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: #fff;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
+        .modal-head h3 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
             font-weight: 700;
-            font-size: 0.85rem;
+        }
+
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-mid);
+            font-size: 1.5rem;
+            line-height: 1;
             cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: var(--transition);
         }
 
-        .btn-close-modal:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .modal-close-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
         }
 
-        .map-modal-body {
+        .modal-iframe-wrap {
             flex: 1;
             width: 100%;
-            height: 100%;
+            background: #fff;
         }
 
-        /* SUBMIT */
-        .submit-btn {
+        .modal-iframe-wrap iframe {
             width: 100%;
-            margin-top: 0.5rem;
-            padding: 1.15rem;
-            background: var(--accent);
-            color: #000;
-            font-size: 1.05rem;
-            font-weight: 800;
+            height: 100%;
             border: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all 0.2s;
-            letter-spacing: 0.5px;
         }
 
-        .submit-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        .submit-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .error-msg {
-            color: var(--danger);
-            font-size: 0.87rem;
-            margin-top: 0.9rem;
-            text-align: center;
-            display: none;
-        }
-
-        .error-msg.visible {
-            display: block;
-        }
-
-        .legal-note {
-            text-align: center;
-            color: var(--text-low);
-            font-size: 0.78rem;
-            margin-top: 0.8rem;
-        }
-
-        .legal-note a {
-            color: var(--text-mid);
-        }
-
-        .badge-note {
-            font-size: 0.75rem;
-            color: var(--text-low);
-            margin-left: 0.4rem;
-            font-weight: 400;
-        }
-
-        /* ── MOBILE STICKY CHECKOUT BAR ────────────────────── */
-        .mobile-sticky-bar {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .page-wrapper {
-                padding-bottom: 7rem !important;
+        /* ── RESPONSIVE & MOBILE STICKY BAR ─────────────────── */
+        @media (max-width: 680px) {
+            .container {
+                padding: 1.2rem 1rem 4rem;
             }
 
-            .mobile-sticky-bar {
-                display: flex;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                background: rgba(18, 24, 36, 0.95);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border-top: 1.5px solid rgba(196, 255, 0, 0.35);
-                padding: 0.85rem 1.25rem;
-                z-index: 999;
-                box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.7);
-                align-items: center;
-                justify-content: space-between;
+            .challenge-title {
+                font-size: 1.75rem;
+            }
+
+            .stepper-nav {
+                padding: 0.75rem 0.6rem;
+            }
+
+            .step-number {
+                display: none;
+            }
+
+            .step-name {
+                font-size: 0.75rem;
+            }
+
+            .step-circle {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+            }
+
+            .step-item:not(:last-child)::after {
+                width: 16px;
+                right: 4px;
+            }
+
+            .wizard-card {
+                padding: 1.4rem 1.1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
                 gap: 1rem;
-                animation: slideUp 0.3s ease;
             }
 
-            .mobile-sticky-info {
-                display: flex;
+            .distance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .billing-row-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .locker-card {
                 flex-direction: column;
+                align-items: flex-start;
             }
 
-            .mobile-sticky-label {
-                font-size: 0.7rem;
-                color: var(--text-mid);
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.4px;
+            .select-tag-btn {
+                width: 100%;
+                text-align: center;
             }
 
-            .mobile-sticky-total {
-                font-size: 1.3rem;
-                font-weight: 900;
-                color: var(--accent);
-                font-family: 'Inter', system-ui, sans-serif;
+            .summary-total-row {
+                font-size: 1.05rem;
             }
 
-            .mobile-sticky-btn {
-                flex: 1;
-                max-width: 230px;
-                padding: 0.9rem 1rem;
-                background: var(--accent);
-                color: #000;
-                font-weight: 800;
-                font-size: 0.95rem;
-                border: none;
-                border-radius: 10px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.35rem;
-                box-shadow: 0 4px 15px rgba(196, 255, 0, 0.25);
-                transition: transform 0.15s, opacity 0.15s;
-            }
-
-            .mobile-sticky-btn:active {
-                transform: scale(0.98);
-            }
-
-            .mobile-sticky-btn:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-            }
-
-            to {
-                transform: translateY(0);
+            .total-amount {
+                font-size: 1.5rem;
             }
         }
     </style>
-    <!-- Microsoft Clarity -->
-    <script type="text/javascript">
-        (function (c, l, a, r, i, t, y) {
-            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
-            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-        })(window, document, "clarity", "script", "xx85zg2g25");
-    </script>
 </head>
 
 <body>
 
-    <nav class="nav">
-        <a id="nav-home-link" href="#" style="text-decoration: none; color: inherit;">
-            <div class="logo">VITA<span>STEPS</span></div>
+    <!-- ── TOPBAR ────────────────────────────────────────── -->
+    <header class="topbar">
+        <a href="/" class="logo-wrap" id="nav-home-link" title="Vissza a főoldalra">
+            <div class="logo-text">VITA<span>STEPS</span></div>
         </a>
-    </nav>
-
-    <div class="page-wrapper">
-
-        <h1 class="page-title">📦 Nevezés & Szállítás</h1>
-        <p class="page-subtitle">Add meg a nevezők adatait, és válaszd ki a szállítási módot!</p>
-
-        <!-- ── BIZALOMNÖVELŐ & IDŐKORLÁT-MENTES KIHÍVÁS KÁRTYA ── -->
-        <div class="reassurance-card">
-            <div class="reassurance-icon">📅</div>
-            <div class="reassurance-content">
-                <div class="reassurance-title">Nem kell azonnal elmenned túrázni!</div>
-                <div class="reassurance-text">
-                    Az érmedet előre megkapod a lakóhelyedhez közeli választott csomagautomatába, a túrát pedig
-                    <strong>bármikor az évben, tetszőleges napon, időkorlát nélkül</strong> teljesítheted, amikor neked
-                    és szeretteidnek a legkényelmesebb.
-                </div>
-            </div>
+        <div class="badge-secure">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            256-bit SSL Biztonság
         </div>
+    </header>
 
-        <!-- ── QUANTITY ─────────────────────────────────────── -->
-        <div class="section">
-            <div class="section-title">🏅 Hány érmet rendelsz?</div>
-            <div class="qty-row">
-                <div class="qty-label">Egy érem ára: <strong id="qty-price-display" style="color:var(--accent);">--
-                        Ft</strong></div>
-                <div class="qty-controls">
-                    <button class="qty-btn" id="qty-minus" onclick="changeQty(-1)">−</button>
-                    <div class="qty-display" id="qty-display">1</div>
-                    <button class="qty-btn" id="qty-plus" onclick="changeQty(1)">+</button>
+    <!-- ── CONTAINER ─────────────────────────────────────── -->
+    <main class="container">
+
+        <!-- Challenge Hero Head -->
+        <header class="challenge-header">
+            <div class="challenge-pill" id="campaign-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span id="campaign-badge-text">Teljesítsd saját tempódban bármikor!</span>
+            </div>
+            <h1 class="challenge-title" id="page-challenge-title">Prédikálószék Éremkihívás</h1>
+            <p class="challenge-subtitle">Add meg az adataidat, válaszd ki a legközelebbi Foxpost automatát, és zsebeld be a prémium nehézfém emlékérmet!</p>
+        </header>
+
+        <!-- ── STEPPER NAV ───────────────────────────────────── -->
+        <nav class="stepper-nav" aria-label="Nevezési folyamat lépései">
+            <div class="step-item active" id="step-nav-1" onclick="jumpToStep(1)">
+                <div class="step-circle" id="circle-1">1</div>
+                <div class="step-content">
+                    <span class="step-number">1. Lépés</span>
+                    <span class="step-name">Nevező & Számlázás</span>
                 </div>
             </div>
-        </div>
 
-        <!-- ── MEDAL PANELS ──────────── -->
-        <div id="medal-panels-container"></div>
-
-        <!-- ── VÁSÁRLÓ ADATAI (billing + contact) ───────────── -->
-        <div class="section" id="buyer-section">
-            <div class="section-title">🧾 Vásárló adatai <span class="badge-note">(számla & portál)</span></div>
-            <div class="form-grid-2">
-                <div class="form-row">
-                    <label for="cust-email">E-mail cím *</label>
-                    <input type="email" id="cust-email" placeholder="janos@email.com" oninput="handleEmailInput()">
-                    <div class="field-error" id="err-email"></div>
-                </div>
-                <div class="form-row">
-                    <label for="cust-phone">Telefonszám * <span
-                            style="font-size:0.75rem;color:var(--text-low);">(Foxpost SMS-hez: +36 30...)</span></label>
-                    <input type="tel" id="cust-phone" placeholder="+36 30 123 4567">
-                    <div class="field-error" id="err-phone"></div>
+            <div class="step-item" id="step-nav-2" onclick="jumpToStep(2)">
+                <div class="step-circle" id="circle-2">2</div>
+                <div class="step-content">
+                    <span class="step-number">2. Lépés</span>
+                    <span class="step-name">Foxpost Átvétel</span>
                 </div>
             </div>
-            <div class="form-row" style="margin-top:1rem;">
-                <label for="cust-billing-address">Számlázási cím * <span
-                        style="font-size:0.75rem;color:var(--text-low);">(e-számlához)</span></label>
-                <input type="text" id="cust-billing-address" placeholder="1139 Budapest, Csizma utca 3.">
-                <div class="field-error" id="err-billing"></div>
-            </div>
-        </div>
 
-        <!-- ── SZÁLLÍTÁSI MÓD ────────────────────────────────── -->
-        <div class="section">
-            <div class="section-title">🚚 Szállítás módja</div>
-            <div class="delivery-options">
-                <label class="delivery-card selected" id="label-foxpost" for="deliv-foxpost">
-                    <input type="radio" id="deliv-foxpost" name="delivery-method" value="foxpost" checked
-                        onchange="handleDeliveryChange('foxpost')">
-                    <div>
-                        <div class="delivery-card-name">🦊 Foxpost automata</div>
-                        <div class="delivery-card-sub free">INGYENES – CSOMAGPONTI ÁTVÉTEL</div>
+            <div class="step-item" id="step-nav-3" onclick="jumpToStep(3)">
+                <div class="step-circle" id="circle-3">3</div>
+                <div class="step-content">
+                    <span class="step-number">3. Lépés</span>
+                    <span class="step-name">Összegzés & Fizetés</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ── WIZARD CARD ───────────────────────────────────── -->
+        <section class="wizard-card">
+
+            <!-- ============================================== -->
+            <!-- STEP 1: NEVEZŐ & SZÁMLÁZÁSI ADATOK             -->
+            <!-- ============================================== -->
+            <div class="wizard-step current" id="step-panel-1">
+                <div class="step-heading">
+                    <h2>
+                        <span>👤</span> Nevező adatai & Távválasztás
+                    </h2>
+                    <p>Egyetlen egységes név a gravírozott emlékéremhez, a csomaghoz és az e-számlához.</p>
+                </div>
+
+                <div class="form-grid">
+                    <!-- Participant Name -->
+                    <div class="field-full">
+                        <label class="form-label" for="cust-name">Nevező teljes neve <span class="req">*</span></label>
+                        <input type="text" id="cust-name" class="input-box" placeholder="pl. Kovács Péter" autocomplete="name">
+                        <div class="input-hint">Ez a név szerepel a csomagon, az oklevélen és az e-számlán is.</div>
+                        <div class="field-error" id="err-name">Kérjük add meg a teljes nevedet (pl. Kovács Péter)!</div>
                     </div>
-                </label>
-                <label class="delivery-card" id="label-home" for="deliv-home">
-                    <input type="radio" id="deliv-home" name="delivery-method" value="home"
-                        onchange="handleDeliveryChange('home')">
+
+                    <!-- Email -->
                     <div>
-                        <div class="delivery-card-name">📬 Házhozszállítás</div>
-                        <div class="delivery-card-sub paid">+1 200 Ft – FoxPost Házhoz</div>
+                        <label class="form-label" for="cust-email">E-mail cím <span class="req">*</span></label>
+                        <input type="email" id="cust-email" class="input-box" placeholder="peter@pelda.hu" autocomplete="email" onblur="handleEmailBlur()" oninput="handleEmailInput()">
+                        <div class="input-hint">Ide küldjük a visszaigazolást és a letölthető GPX fájlt.</div>
+                        <div class="field-error" id="err-email">Kérjük érvényes e-mail címet adj meg!</div>
                     </div>
-                </label>
-            </div>
-        </div>
 
-        <!-- ── FOXPOST AUTOCOMPLETE & MAP ─────────────────── -->
-        <div id="foxpost-container" class="section" style="padding: 1.5rem;">
-            <div class="section-title"
-                style="margin-bottom: 0.8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
-                <span>🦊 Foxpost Csomagautomata</span>
-                <button type="button" class="btn-map-toggle" onclick="openFoxpostModal()">🗺️ Térkép megnyitása</button>
-            </div>
+                    <!-- Phone -->
+                    <div>
+                        <label class="form-label" for="cust-phone">Telefonszám (Foxpost nyitókódhoz) <span class="req">*</span></label>
+                        <input type="tel" id="cust-phone" class="input-box" placeholder="+36 30 123 4567" autocomplete="tel" onblur="handlePhoneBlur()">
+                        <div class="input-hint">Erre a mobilszámra kapod az SMS-t az automata nyitókódjával.</div>
+                        <div class="field-error" id="err-phone">Kérjük érvényes magyar telefonszámot adj meg!</div>
+                    </div>
 
-            <!-- Smart Suggestions (populated automatically from billing address) -->
-            <div id="foxpost-smart-suggestions" style="display: none; margin-bottom: 1rem;">
-                <div style="font-size: 0.78rem; font-weight: 700; color: var(--accent); margin-bottom: 0.45rem;">💡
-                    Címedhez közeli automaták (1 koppintásos választás):</div>
-                <div class="foxpost-chips-container" id="foxpost-chips-list"></div>
-            </div>
+                    <!-- Distance Selector -->
+                    <div class="field-full" style="margin-top: 0.5rem;">
+                        <label class="form-label">Válassz kihívást / távot <span class="req">*</span></label>
+                        <div class="distance-grid" id="distance-grid-container">
+                            <!-- Populated dynamically via renderDistances() -->
+                        </div>
+                        <div class="field-error" id="err-distance">Kérjük válassz egy távot!</div>
+                    </div>
 
-            <!-- Selected Point Box -->
-            <div class="selected-point-box" id="selected-point-box">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem;">
-                    <div style="display: flex; align-items: flex-start; gap: 0.8rem;">
-                        <span style="font-size: 1.8rem; line-height: 1;">🦊</span>
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                                <span id="selected-name"
-                                    style="font-weight: 800; font-size: 0.95rem; color: #fff;"></span>
-                                <span class="badge-selected">✓ KIVÁLASZTVA</span>
+                    <!-- Billing Address Section -->
+                    <div class="field-full" style="margin-top: 0.8rem;">
+                        <label class="form-label">Számlázási cím (az automatikus NAV e-számlához) <span class="req">*</span></label>
+                        
+                        <div class="billing-row-3" style="margin-bottom: 0.6rem;">
+                            <div>
+                                <input type="text" id="cust-billing-zip" class="input-box" placeholder="1139" maxlength="4" inputmode="numeric" oninput="syncBillingAddress()">
+                                <div class="input-hint" style="font-size:0.72rem;">Irányítószám</div>
                             </div>
-                            <div id="selected-address"
-                                style="font-size: 0.85rem; color: var(--text-mid); margin-top: 0.2rem;"></div>
-                            <div id="selected-findme" style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;">
+                            <div>
+                                <input type="text" id="cust-billing-city" class="input-box" placeholder="Budapest" oninput="syncBillingAddress()">
+                                <div class="input-hint" style="font-size:0.72rem;">Település</div>
                             </div>
                         </div>
+
+                        <div>
+                            <input type="text" id="cust-billing-street" class="input-box" placeholder="pl. Váci út 45. 2. em. 4." oninput="syncBillingAddress()">
+                            <div class="input-hint" style="font-size:0.72rem;">Utca, házszám, emelet/ajtó</div>
+                        </div>
+
+                        <!-- Hidden synced field for unified billingAddress string: "1139 Budapest, Váci út 45." -->
+                        <input type="hidden" id="cust-billing-address">
+                        <div class="field-error" id="err-billing">Kérjük add meg a teljes számlázási címedet (irányítószám, település, utca, hsz.)!</div>
                     </div>
-                    <button type="button" class="btn-change-point" onclick="resetSelectedPoint()">Módosítás ✕</button>
+                </div>
+
+                <!-- Additional Medals / Multi-runner container -->
+                <div class="extra-medals-box">
+                    <div class="extra-medals-list" id="extra-medals-list"></div>
+                    <button type="button" class="btn-add-medal" id="btn-add-extra-medal" onclick="addExtraMedal()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>+ További érem hozzáadása (barátnak, családtagnak)</span>
+                    </button>
+                </div>
+
+                <!-- Wizard Actions -->
+                <div class="wizard-actions">
+                    <span style="color: var(--text-low); font-size: 0.85rem; font-weight: 600;">1 / 3 Lépés</span>
+                    <button type="button" class="btn-next" onclick="validateAndGoToStep(2)">
+                        Tovább a Foxpost átvételhez
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
-            <!-- 1-Koppintásos GPS Automata Kereső -->
-            <div id="foxpost-gps-container" style="margin-bottom: 1.25rem;">
-                <button type="button" id="btn-foxpost-gps" class="btn-gps-locate" onclick="locateNearestFoxpost()">
-                    <span style="font-size: 1.2rem;">📍</span>
-                    <span id="gps-btn-text">Legközelebbi automaták megkeresése (1 koppintás / GPS)</span>
+
+            <!-- ============================================== -->
+            <!-- STEP 2: FOXPOST AUTOMATA (MANDATORY)          -->
+            <!-- ============================================== -->
+            <div class="wizard-step" id="step-panel-2">
+                <div class="step-heading">
+                    <h2>
+                        <span>📦</span> Foxpost Automata Kiválasztása
+                    </h2>
+                    <p>A nevedre szóló emlékérem és rajtszám csomagod ide érkezik. Kérjük válassz egy kényelmes automatát!</p>
+                </div>
+
+                <!-- Confirmed Selection Banner (Visible if selected) -->
+                <div class="selected-locker-alert" id="selected-alert">
+                    <div class="alert-left">
+                        <svg class="alert-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <div>
+                            <div class="alert-text-main" id="alert-locker-name">Kiválasztva: Foxpost Automata</div>
+                            <div class="alert-text-sub" id="alert-locker-addr">Pontos cím betöltése...</div>
+                        </div>
+                    </div>
+                    <button type="button" class="alert-change-link" onclick="focusLockerSearch()">Módosítás ✎</button>
+                </div>
+
+                <!-- GPS Hero Section -->
+                <div class="foxpost-hero-banner">
+                    <div class="foxpost-hero-header">
+                        <div class="foxpost-badge-inline">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <rect x="1" y="3" width="15" height="13"></rect>
+                                <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
+                                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                            </svg>
+                            KÖZVETLEN FOXPOST HÁLÓZAT
+                        </div>
+                        <span class="foxpost-hero-sub">Ingyenes átvétel 0-24 órában</span>
+                    </div>
+
+                    <button type="button" class="gps-btn" id="btn-foxpost-gps" onclick="locateNearestFoxpost()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span id="gps-btn-text">📍 Legközelebbi automata keresése (GPS)</span>
+                    </button>
+                    <div class="gps-status" id="gps-status-msg"></div>
+                </div>
+
+                <!-- Search Divider -->
+                <div class="search-divider">vagy keress település, utca vagy pláza szerint</div>
+
+                <!-- Live Search Box -->
+                <div class="search-box-wrap">
+                    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" class="search-input" id="locker-search-input" placeholder="pl. Budapest Allee, Győr Árkád, Pécs Plaza..." oninput="handleLockerSearch(this.value)">
+                </div>
+
+
+                <!-- Locker Cards List -->
+                <div class="locker-list" id="locker-list-container">
+                    <div class="locker-empty-state" id="locker-loading-state">
+                        ⏳ Automaták betöltése folyamatban...
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 1.2rem;">
+                    <button type="button" class="btn-map-toggle" onclick="openFoxpostMapModal()">
+                        🗺️ Nem találod? Nyisd meg a hivatalos térképes keresőt
+                    </button>
+                </div>
+
+                <div class="field-error" id="err-locker" style="margin-bottom: 1.2rem; text-align: center;">
+                    ⚠️ Kérjük válassz ki egy Foxpost csomagautomatát a továbblépéshez!
+                </div>
+
+                <!-- Wizard Actions -->
+                <div class="wizard-actions">
+                    <button type="button" class="btn-back" onclick="goToStep(1)">
+                        ← Vissza az adatokhoz
+                    </button>
+                    <button type="button" class="btn-next" id="btn-to-step3" onclick="validateAndGoToStep(3)">
+                        Tovább az összegzéshez
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+
+            <!-- ============================================== -->
+            <!-- STEP 3: ÖSSZEGZÉS & BIZTONSÁGOS FIZETÉS         -->
+            <!-- ============================================== -->
+            <div class="wizard-step" id="step-panel-3">
+                <div class="step-heading">
+                    <h2>
+                        <span>🔒</span> Rendelés Összegzése & Fizetés
+                    </h2>
+                    <p>Ellenőrizd az adataidat! A fizetés közvetlenül a Stripe titkosított banki felületén történik.</p>
+                </div>
+
+                <!-- Referral Discount Banner (if active) -->
+                <div class="discount-badge-box" id="summary-discount-banner"></div>
+
+                <!-- Order Summary Card -->
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-title">Rendelésed részletei</span>
+                        <a class="edit-link" onclick="goToStep(1)">Módosítás ✎</a>
+                    </div>
+
+                    <div class="summary-item-row">
+                        <span class="summary-label">Nevező(k) & Táv:</span>
+                        <span class="summary-val" id="sum-participants">–</span>
+                    </div>
+
+                    <div class="summary-item-row">
+                        <span class="summary-label">Értesítési kapcsolat:</span>
+                        <span class="summary-val" id="sum-contact">–</span>
+                    </div>
+
+                    <div class="summary-item-row">
+                        <span class="summary-label">Számlázási cím:</span>
+                        <span class="summary-val" id="sum-billing">–</span>
+                    </div>
+
+                    <div class="summary-item-row">
+                        <span class="summary-label">Átvételi pont:</span>
+                        <span class="summary-val" id="sum-locker" style="color: #6ee7b7;">–</span>
+                    </div>
+
+                    <div class="summary-item-row">
+                        <span class="summary-label">Szállítási díj:</span>
+                        <span class="summary-val" style="color: var(--success); font-weight: 700;">Ingyenes (0 Ft)</span>
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-total-row">
+                        <span>Fizetendő végösszeg:</span>
+                        <span class="total-amount" id="sum-total">7 990 Ft</span>
+                    </div>
+                </div>
+
+                <!-- Trust Badges Grid -->
+                <div class="trust-grid">
+                    <div class="trust-pill">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        <h4>100% Pénzvisszafizetés</h4>
+                        <p>A túra előtt indoklás nélkül visszakapod az összeget.</p>
+                    </div>
+
+                    <div class="trust-pill">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 14 14"></polyline>
+                        </svg>
+                        <h4>Nincs Időkorlát</h4>
+                        <p>Bármikor teljesítheted idén, az érmed garantáltan félretéve.</p>
+                    </div>
+
+                    <div class="trust-pill">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                            <line x1="2" y1="10" x2="22" y2="10"></line>
+                        </svg>
+                        <h4>Stripe Biztonság</h4>
+                        <p>Banki titkosítás, Apple Pay és Google Pay támogatás.</p>
+                    </div>
+                </div>
+
+                <!-- Supported Payment Methods -->
+                <div class="card-logos-row">
+                    <!-- Mastercard -->
+                    <svg class="card-logo-svg" viewBox="0 0 36 24">
+                        <circle cx="14" cy="12" r="8" fill="#EB001B" fill-opacity="0.9"/>
+                        <circle cx="22" cy="12" r="8" fill="#F79E1B" fill-opacity="0.9"/>
+                    </svg>
+                    <!-- Visa -->
+                    <span style="font-weight: 800; font-size: 1.15rem; font-style: italic; color: #94a3b8; letter-spacing: 1px;">VISA</span>
+                    <!-- Apple Pay -->
+                    <span style="font-weight: 700; font-size: 0.95rem; color: #94a3b8; display:flex; align-items:center; gap:2px;">
+                        Pay
+                    </span>
+                    <!-- Google Pay -->
+                    <span style="font-weight: 700; font-size: 0.95rem; color: #94a3b8;">GPay</span>
+                </div>
+
+                <!-- Final Payment CTA Button -->
+                <button type="button" class="btn-final-pay" id="btn-submit-order" onclick="handleSubmit()">
+                    <span class="spinner" id="pay-spinner"></span>
+                    <span class="btn-text-content" id="pay-btn-label">
+                        🔒 Tovább a biztonságos fizetéshez (<span id="btn-pay-price">7 990 Ft</span>)
+                    </span>
                 </button>
-                <div id="gps-status-msg"
-                    style="display: none; font-size: 0.8rem; margin-top: 0.45rem; color: var(--text-mid); text-align: center;">
-                </div>
-                <div id="gps-results-list" class="gps-results-cards" style="display: none; margin-top: 0.85rem;"></div>
-            </div>
 
-            <div style="display: flex; align-items: center; gap: 0.75rem; margin: 1.2rem 0;">
-                <div style="flex: 1; height: 1px; background: var(--border);"></div>
-                <span
-                    style="font-size: 0.72rem; color: var(--text-low); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">vagy
-                    keresés manuálisan</span>
-                <div style="flex: 1; height: 1px; background: var(--border);"></div>
-            </div>
-
-            <!-- Search Input & Autocomplete Dropdown -->
-            <div id="foxpost-search-wrapper">
-                <label for="foxpost-search-input"
-                    style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-mid); margin-bottom: 0.4rem; text-transform: uppercase;">Keresés
-                    település, utca, irányítószám vagy üzlet alapján:</label>
-                <div class="foxpost-input-wrap">
-                    <input type="text" id="foxpost-search-input"
-                        placeholder="pl. Vác, 1139, Westend, Debrecen Pláza, Spar..." autocomplete="off"
-                        oninput="handleFoxpostSearch(this.value)">
-                    <button type="button" id="foxpost-clear-btn" class="foxpost-clear-btn"
-                        onclick="clearFoxpostSearch()">✕</button>
+                <!-- Error Alert Box -->
+                <div class="error-alert-banner" id="checkout-error-banner">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <span id="checkout-error-text">Hiba történt a fizetés indításakor. Kérjük próbáld újra!</span>
                 </div>
-                <div id="foxpost-search-results" class="foxpost-results-dropdown"></div>
-                <div id="foxpost-loading-status"
-                    style="font-size: 0.75rem; color: var(--text-low); margin-top: 0.4rem;">⏳ Foxpost automaták
-                    betöltése...</div>
-            </div>
-        </div>
 
-        <!-- Térkép Modal (Csak gombnyomásra nyílik meg, sosem akasztja meg a lap görgetését) -->
-        <div id="foxpost-map-modal" class="map-modal-overlay" style="display: none;">
-            <div class="map-modal-content">
-                <div class="map-modal-header">
-                    <span style="font-weight: 800; font-size: 1rem; color: #fff;">🗺️ Foxpost Automata Térkép</span>
-                    <button type="button" class="btn-close-modal" onclick="closeFoxpostModal()">✕ Bezárás</button>
-                </div>
-                <div class="map-modal-body">
-                    <iframe id="foxpost-iframe" src="" width="100%" height="100%" frameborder="0"></iframe>
+                <!-- Wizard Actions -->
+                <div class="wizard-actions">
+                    <button type="button" class="btn-back" onclick="goToStep(2)">
+                        ← Vissza a Foxpost választáshoz
+                    </button>
                 </div>
             </div>
-        </div>
 
-        <!-- ── HÁZHOZSZÁLLÍTÁS CIME ──────────────────────────── -->
-        <div id="home-delivery-container" class="section" style="display:none;">
-            <div class="section-title">📬 Szállítási cím megadása</div>
-            <div class="form-row">
-                <label for="home-address">Pontos szállítási cím *</label>
-                <input type="text" id="home-address" placeholder="1139 Budapest, Csizma utca 3.">
-                <div class="field-error" id="err-home-address"></div>
-            </div>
-            <p style="font-size:0.82rem;color:var(--text-low);margin-top:0.5rem;">Ha megegyezik a számlázási címeddel,
-                hagyd üresen – azt fogjuk használni.</p>
-        </div>
+        </section>
+    </main>
 
-        <!-- ── ÖSSZESÍTŐ ─────────────────────────────────────── -->
-        <div class="order-summary-box">
-            <div class="summary-row">
-                <span id="summary-medal-label">Kihívás Érem × 1 db</span>
-                <span id="summary-medal-price">-- Ft</span>
+    <!-- ── FOXPOST MAP IFRAME MODAL ───────────────────────── -->
+    <div class="modal-overlay" id="foxpost-map-modal">
+        <div class="modal-dialog">
+            <div class="modal-head">
+                <h3>🗺️ Foxpost Csomagautomata Kereső Térkép</h3>
+                <button type="button" class="modal-close-btn" onclick="closeFoxpostMapModal()" aria-label="Bezárás">&times;</button>
             </div>
-            <div class="summary-row" id="summary-shipping-row" style="display:none;">
-                <span>Házhozszállítás</span>
-                <span>+1 200 Ft</span>
-            </div>
-            <div class="summary-total">
-                <span>Végösszeg</span>
-                <span class="summary-total-price" id="summary-total">-- Ft</span>
+            <div class="modal-iframe-wrap">
+                <iframe id="foxpost-iframe" title="Foxpost automata térkép" src="about:blank"></iframe>
             </div>
         </div>
-
-        <!-- ── SUBMIT ────────────────────────────────────────── -->
-        <button id="submit-btn" class="submit-btn" onclick="handleSubmit()">🔒 Tovább a biztonságos fizetéshez</button>
-        <div id="error-msg" class="error-msg"></div>
-
-        <p class="legal-note" style="margin-top:1rem;">
-            A fizetés gombra kattintva elfogadod a <a href="/aszf.html" target="_blank">Nevezési feltételeket (ÁSZF)</a>
-            és az <a href="/adatvedelem.html" target="_blank">Adatvédelmi nyilatkozatot</a>.
-        </p>
-
     </div>
 
-    <!-- ── MOBILE STICKY CHECKOUT BAR ────────────────────── -->
-    <div class="mobile-sticky-bar" id="mobile-sticky-bar">
-        <div class="mobile-sticky-info">
-            <span class="mobile-sticky-label">Végösszeg:</span>
-            <span class="mobile-sticky-total" id="mobile-sticky-total">-- Ft</span>
-        </div>
-        <button type="button" class="mobile-sticky-btn" id="mobile-sticky-btn" onclick="handleSubmit()">
-            <span>🔒 Tovább a fizetéshez</span>
-        </button>
-    </div>
-
+    <!-- ── JAVASCRIPT LOGIC ───────────────────────────────── -->
     <script>
-        // ── CONFIG & STATE ──────────────────────────────────
-        let campaignConfig = null;
-        let campaignKey = 'pilis'; // default
-        let medalPrice = 7990;
-        const SHIPPING_SURCHARGE = 1200;
-        const MAX_QTY = 5;
+        // ── DEFAULT CONFIGS & STATE ──────────────────────────
+        const DEFAULT_CAMPAIGNS = {
+            predikaloszek: {
+                name: "Prédikálószék",
+                productName: "Prédikálószék Kihívás Érem",
+                price: 7990,
+                limit: 99,
+                distances: [
+                    { value: "10 km", label: "Klasszikus (10 km)", desc: "A legnépszerűbb panoráma útvonal Dömös felől.", tag: "Szint: ~480m • Bestseller" },
+                    { value: "15 km", label: "Félmaraton (15 km)", desc: "Bővített körtúra a Vadálló-kövek érintésével.", tag: "Szint: ~650m" },
+                    { value: "20 km", label: "Hosszú (20 km)", desc: "Erdei táv tapasztaltabb túrázóknak.", tag: "Szint: ~820m" },
+                    { value: "25 km", label: "Ultra (25 km)", desc: "Egész napos embert próbáló túrakihívás.", tag: "Szint: ~1050m" }
+                ]
+            },
+            pilis: {
+                name: "A Nagy-Kevély csillagai",
+                productName: "A Nagy-Kevély csillagai kihívás Érem",
+                price: 7990,
+                limit: 100,
+                distances: [
+                    { value: "csaladi", label: "Családi (5 km)", desc: "Könnyed erdei séta, tökéletes gyerekekkel vagy kutyával.", tag: "Szint: ~140m" },
+                    { value: "klasszikus", label: "Klasszikus (10 km)", desc: "A népszerű klasszikus csúcshódító élménytúra.", tag: "Szint: ~420m • Bestseller" },
+                    { value: "extra", label: "Extra (13 km)", desc: "Technikásabb gerinctúra lenyűgöző kilátással.", tag: "Szint: ~580m" },
+                    { value: "felmaraton", label: "Félmaraton (21 km)", desc: "Trail running és kihívás a pilisi bérceken.", tag: "Szint: ~850m" }
+                ]
+            }
+        };
 
-        // Parse query params
+        let currentStep = 1;
+        let campaignKey = 'predikaloszek';
+        let campaignConfig = DEFAULT_CAMPAIGNS.predikaloszek;
+        let medalPrice = 7990;
+        let primaryDistance = '10 km';
+
+        // Additional medals array: [{ id: 1, name: '', distance: '' }]
+        let extraMedals = [];
+
+        // Foxpost Data State
+        let foxpostApts = [];
+        let isFoxpostLoading = false;
+        let selectedParcelPoint = null;
+        let foxpostSearchDebounce = null;
+        let discountDebounceTimer = null;
+        let activeDiscountData = null;
+
+        // URL Parameters & Attribution Extraction
         const urlParams = new URLSearchParams(window.location.search);
+        const paramC = (urlParams.get('c') || '').toLowerCase();
+        if (paramC === 'pilis' || paramC === 'nagykevely' || paramC === 'kevely') {
+            campaignKey = 'pilis';
+            campaignConfig = DEFAULT_CAMPAIGNS.pilis;
+        } else {
+            campaignKey = 'predikaloszek';
+            campaignConfig = DEFAULT_CAMPAIGNS.predikaloszek;
+        }
+
         const referredBy = urlParams.get('ref') || localStorage.getItem('vitasteps_ref') || '';
-        const rawLeadIdParam = urlParams.get('lead') || urlParams.get('lead_id') || localStorage.getItem('vt_lead_id') || '';
-        const leadId = (rawLeadIdParam && rawLeadIdParam !== 'true' && rawLeadIdParam !== 'false') ? rawLeadIdParam : (localStorage.getItem('vt_lead_id') || '');
+        const rawLeadId = urlParams.get('lead') || urlParams.get('lead_id') || localStorage.getItem('vt_lead_id') || '';
+        const leadId = (rawLeadId && rawLeadId !== 'true' && rawLeadId !== 'false') ? rawLeadId : (localStorage.getItem('vt_lead_id') || '');
         const utmCampaign = urlParams.get('utm_campaign') || localStorage.getItem('vitasteps_utm_campaign') || '';
         const utmTerm = urlParams.get('utm_term') || localStorage.getItem('vitasteps_utm_term') || '';
         const utmContent = urlParams.get('utm_content') || localStorage.getItem('vitasteps_utm_content') || '';
-        const paramCampaign = urlParams.get('c') || '';
-        if (paramCampaign === 'predikaloszek' || paramCampaign === 'predikalo') {
-            campaignKey = 'predikaloszek';
-        } else {
-            campaignKey = 'pilis';
-        }
-
         const isTest = urlParams.get('test') === 'true' || window.location.hostname === 'localhost';
-        let qty = 1;
-        let deliveryMethod = 'foxpost';
-        let selectedParcelPoint = null;
 
-        // ── LOAD CONFIG ─────────────────────────────────────
-        async function loadConfig() {
+        // ── INITIALIZATION ───────────────────────────────────
+        document.addEventListener('DOMContentLoaded', async () => {
+            initCampaignHeaders();
+            renderDistances();
+            await loadCampaignConfig();
+            await loadFoxpostData();
+            prefillLeadData();
 
+            // Track initial step view
+            if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                window.VitaTracker.track('checkout_step_view', {
+                    step: 1,
+                    step_name: 'participant_billing',
+                    campaign: campaignKey
+                });
+            }
+        });
 
-            try {
-                const res = await fetch('/config/campaigns.json');
-                const config = await res.json();
-                campaignConfig = config[campaignKey];
-
-                // Set page values
-                medalPrice = campaignConfig.price;
-                document.getElementById('qty-price-display').textContent = formatHuf(medalPrice);
-                document.getElementById('nav-home-link').href = campaignKey === 'pilis' ? '/nagykevely/index.html' : '/predikalo/index.html';
-
-                renderMedalPanels();
-                updateSummary();
-            } catch (err) {
-                console.error("Config load error:", err);
+        function initCampaignHeaders() {
+            const pageTitle = document.getElementById('page-challenge-title');
+            const navLink = document.getElementById('nav-home-link');
+            
+            if (campaignKey === 'pilis') {
+                pageTitle.textContent = 'A Nagy-Kevély csillagai Éremkihívás';
+                if (navLink) navLink.href = '/nagykevely/index.html';
+                primaryDistance = campaignConfig.distances[1]?.value || 'klasszikus';
+            } else {
+                pageTitle.textContent = 'Prédikálószék Éremkihívás';
+                if (navLink) navLink.href = '/predikalo/index.html';
+                primaryDistance = campaignConfig.distances[0]?.value || '10 km';
             }
         }
 
-        // ── FOXPOST NATIVE STATE & LOGIC ────────────────────
-        let foxpostApts = [];
-        let isFoxpostLoading = false;
-        let foxpostSearchDebounce = null;
+        async function loadCampaignConfig() {
+            try {
+                const res = await fetch('/config/campaigns.json');
+                if (res.ok) {
+                    const allConfigs = await res.json();
+                    if (allConfigs && allConfigs[campaignKey]) {
+                        campaignConfig = Object.assign({}, DEFAULT_CAMPAIGNS[campaignKey], allConfigs[campaignKey]);
+                        medalPrice = campaignConfig.price || 7990;
+                        renderDistances();
+                    }
+                }
+            } catch (e) {
+                console.warn('[checkout] campaigns.json fallback used:', e.message);
+            }
+            updateSummaryUI();
+        }
 
+        function prefillLeadData() {
+            try {
+                const pEmail = urlParams.get('email') || localStorage.getItem('vitasteps_lead_email') || '';
+                const emailEl = document.getElementById('cust-email');
+                if (emailEl && !emailEl.value && pEmail && pEmail.includes('@')) {
+                    emailEl.value = pEmail.trim();
+                    fetchDiscountInfo();
+                }
+
+                const pName = urlParams.get('nev') || localStorage.getItem('vitasteps_lead_name') || '';
+                const nameEl = document.getElementById('cust-name');
+                if (nameEl && !nameEl.value && pName && isValidName(pName)) {
+                    nameEl.value = pName.trim();
+                }
+            } catch (e) {}
+        }
+
+        // ── DISTANCE CARDS RENDERING ─────────────────────────
+        function renderDistances() {
+            const grid = document.getElementById('distance-grid-container');
+            if (!grid) return;
+
+            const distances = campaignConfig.distances || DEFAULT_CAMPAIGNS[campaignKey].distances;
+            
+            grid.innerHTML = distances.map((d, index) => {
+                const isSelected = d.value === primaryDistance;
+                return `
+                    <div class="distance-card ${isSelected ? 'selected' : ''}" onclick="selectPrimaryDistance('${escapeHtml(d.value)}')">
+                        <div class="distance-radio-dot"></div>
+                        <div style="flex:1; min-width:0;">
+                            <div class="distance-name">${escapeHtml(d.label || d.value)}</div>
+                            <div class="distance-desc">${escapeHtml(d.desc || '')}</div>
+                            ${d.tag ? `<span class="distance-tag">${escapeHtml(d.tag)}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectPrimaryDistance(val) {
+            primaryDistance = val;
+            renderDistances();
+            clearFieldError('err-distance');
+            updateSummaryUI();
+        }
+
+        // ── MULTI-MEDAL / EXTRA RUNNERS ──────────────────────
+        function addExtraMedal() {
+            if (extraMedals.length >= 4) {
+                alert('Egy rendelésben maximum 5 érem igényelhető!');
+                return;
+            }
+            const newId = Date.now();
+            const distances = campaignConfig.distances || DEFAULT_CAMPAIGNS[campaignKey].distances;
+            const defaultDist = distances[0]?.value || '';
+
+            extraMedals.push({
+                id: newId,
+                name: '',
+                distance: defaultDist
+            });
+
+            renderExtraMedalsList();
+            fetchDiscountInfo();
+        }
+
+        function removeExtraMedal(id) {
+            extraMedals = extraMedals.filter(m => m.id !== id);
+            renderExtraMedalsList();
+            fetchDiscountInfo();
+        }
+
+        function handleExtraNameInput(id, val) {
+            const medal = extraMedals.find(m => m.id === id);
+            if (medal) {
+                medal.name = val;
+                updateSummaryUI();
+            }
+        }
+
+        function handleExtraDistChange(id, val) {
+            const medal = extraMedals.find(m => m.id === id);
+            if (medal) {
+                medal.distance = val;
+                updateSummaryUI();
+            }
+        }
+
+        function renderExtraMedalsList() {
+            const container = document.getElementById('extra-medals-list');
+            if (!container) return;
+
+            const distances = campaignConfig.distances || DEFAULT_CAMPAIGNS[campaignKey].distances;
+
+            container.innerHTML = extraMedals.map((m, idx) => {
+                const num = idx + 2;
+                const optionsHtml = distances.map(d => `
+                    <option value="${escapeHtml(d.value)}" ${d.value === m.distance ? 'selected' : ''}>
+                        ${escapeHtml(d.label || d.value)}
+                    </option>
+                `).join('');
+
+                return `
+                    <div class="extra-medal-card" id="extra-card-${m.id}">
+                        <div class="extra-medal-header">
+                            <span class="extra-medal-title">🏅 ${num}. Érem – További nevező</span>
+                            <button type="button" class="btn-remove-medal" onclick="removeExtraMedal(${m.id})">Eltávolítás ✕</button>
+                        </div>
+                        <div class="form-grid" style="margin-bottom:0;">
+                            <div>
+                                <label class="form-label">Nevező teljes neve <span class="req">*</span></label>
+                                <input type="text" class="input-box extra-name-inp" placeholder="pl. Kovács Anna" value="${escapeHtml(m.name)}" oninput="handleExtraNameInput(${m.id}, this.value)">
+                            </div>
+                            <div>
+                                <label class="form-label">Választott távolság <span class="req">*</span></label>
+                                <select class="input-box" onchange="handleExtraDistChange(${m.id}, this.value)">
+                                    ${optionsHtml}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ── BILLING ADDRESS SYNCHRONIZATION ──────────────────
+        function syncBillingAddress() {
+            const zip = (document.getElementById('cust-billing-zip')?.value || '').trim();
+            const city = (document.getElementById('cust-billing-city')?.value || '').trim();
+            const street = (document.getElementById('cust-billing-street')?.value || '').trim();
+
+            const full = `${zip} ${city}, ${street}`.trim().replace(/^,\s*/, '');
+            const hiddenEl = document.getElementById('cust-billing-address');
+            if (hiddenEl) hiddenEl.value = full;
+
+            if (zip.length === 4 && city.length >= 2) {
+                clearFieldError('err-billing');
+                checkSmartLockerSuggestions(city, zip);
+            }
+        }
+
+        // ── STEPPER & WIZARD NAVIGATION ──────────────────────
+        function goToStep(step) {
+            document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('current'));
+            const targetPanel = document.getElementById(`step-panel-${step}`);
+            if (targetPanel) targetPanel.classList.add('current');
+
+            for (let i = 1; i <= 3; i++) {
+                const navItem = document.getElementById(`step-nav-${i}`);
+                const circle = document.getElementById(`circle-${i}`);
+                if (!navItem || !circle) continue;
+
+                navItem.classList.remove('active', 'completed');
+                if (i === step) {
+                    navItem.classList.add('active');
+                    circle.innerHTML = i;
+                } else if (i < step) {
+                    navItem.classList.add('completed');
+                    circle.innerHTML = '✓';
+                } else {
+                    circle.innerHTML = i;
+                }
+            }
+
+            currentStep = step;
+            window.scrollTo({ top: 90, behavior: 'smooth' });
+
+            // Analytics step tracking
+            if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                const stepNames = { 1: 'participant_billing', 2: 'foxpost_selection', 3: 'payment_summary' };
+                window.VitaTracker.track('checkout_step_view', {
+                    step: step,
+                    step_name: stepNames[step] || 'unknown',
+                    campaign: campaignKey
+                });
+            }
+        }
+
+        function jumpToStep(step) {
+            if (step < currentStep) {
+                goToStep(step);
+            } else if (step === currentStep + 1) {
+                validateAndGoToStep(step);
+            }
+        }
+
+        // ── VALIDATION RULES ─────────────────────────────────
+        function isValidName(name) {
+            if (!name) return false;
+            const trimmed = name.trim();
+            if (trimmed.length < 3 || /\d/.test(trimmed)) return false;
+            const parts = trimmed.split(/\s+/);
+            return parts.length >= 2 && parts.every(p => p.length >= 1);
+        }
+
+        function isValidEmail(email) {
+            return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.trim());
+        }
+
+        function isValidPhone(phone) {
+            const cleaned = phone.replace(/\D/g, '');
+            return (cleaned.startsWith('06') || cleaned.startsWith('36')) && cleaned.length >= 9 && cleaned.length <= 11;
+        }
+
+        function formatPhoneClean(phone) {
+            let clean = phone.replace(/[^\d+]/g, '');
+            if (clean.startsWith('06')) {
+                clean = '+36' + clean.slice(2);
+            } else if (clean.startsWith('36') && !clean.startsWith('+36')) {
+                clean = '+' + clean;
+            } else if (!clean.startsWith('+') && clean.length > 0 && !clean.startsWith('0')) {
+                clean = '+36' + clean;
+            }
+            return clean;
+        }
+
+        function setFieldError(errId, inputId) {
+            const errEl = document.getElementById(errId);
+            if (errEl) errEl.classList.add('visible');
+            const inp = document.getElementById(inputId);
+            if (inp) inp.classList.add('input-error');
+        }
+
+        function clearFieldError(errId, inputId) {
+            const errEl = document.getElementById(errId);
+            if (errEl) errEl.classList.remove('visible');
+            if (inputId) {
+                const inp = document.getElementById(inputId);
+                if (inp) inp.classList.remove('input-error');
+            }
+        }
+
+        function handleEmailBlur() {
+            const emailEl = document.getElementById('cust-email');
+            if (!emailEl) return;
+            emailEl.value = emailEl.value.trim().toLowerCase();
+            if (emailEl.value && isValidEmail(emailEl.value)) {
+                clearFieldError('err-email', 'cust-email');
+                fetchDiscountInfo();
+            }
+        }
+
+        function handleEmailInput() {
+            clearTimeout(discountDebounceTimer);
+            discountDebounceTimer = setTimeout(fetchDiscountInfo, 400);
+        }
+
+        function handlePhoneBlur() {
+            const phoneEl = document.getElementById('cust-phone');
+            if (!phoneEl) return;
+            const cleaned = formatPhoneClean(phoneEl.value.trim());
+            if (cleaned) phoneEl.value = cleaned;
+            if (isValidPhone(phoneEl.value)) {
+                clearFieldError('err-phone', 'cust-phone');
+            }
+        }
+
+        function validateAndGoToStep(targetStep) {
+            // Validation to go from 1 to 2
+            if (currentStep === 1 && targetStep === 2) {
+                let hasError = false;
+                let firstFail = null;
+
+                const nameEl = document.getElementById('cust-name');
+                const emailEl = document.getElementById('cust-email');
+                const phoneEl = document.getElementById('cust-phone');
+                const zipEl = document.getElementById('cust-billing-zip');
+                const cityEl = document.getElementById('cust-billing-city');
+                const streetEl = document.getElementById('cust-billing-street');
+
+                if (!isValidName(nameEl.value)) {
+                    setFieldError('err-name', 'cust-name');
+                    hasError = true;
+                    firstFail = firstFail || 'name';
+                } else {
+                    clearFieldError('err-name', 'cust-name');
+                }
+
+                if (!isValidEmail(emailEl.value)) {
+                    setFieldError('err-email', 'cust-email');
+                    hasError = true;
+                    firstFail = firstFail || 'email';
+                } else {
+                    clearFieldError('err-email', 'cust-email');
+                }
+
+                if (!isValidPhone(phoneEl.value)) {
+                    setFieldError('err-phone', 'cust-phone');
+                    hasError = true;
+                    firstFail = firstFail || 'phone';
+                } else {
+                    clearFieldError('err-phone', 'cust-phone');
+                }
+
+                const zip = zipEl.value.trim();
+                const city = cityEl.value.trim();
+                const street = streetEl.value.trim();
+                if (!zip || zip.length !== 4 || !city || city.length < 2 || !street || street.length < 2) {
+                    setFieldError('err-billing', 'cust-billing-street');
+                    hasError = true;
+                    firstFail = firstFail || 'billing';
+                } else {
+                    clearFieldError('err-billing', 'cust-billing-street');
+                    syncBillingAddress();
+                }
+
+                // Check extra medals if present
+                for (let i = 0; i < extraMedals.length; i++) {
+                    if (!isValidName(extraMedals[i].name)) {
+                        alert(`Kérjük add meg a(z) ${i + 2}. érem nevezőjének teljes nevét is!`);
+                        hasError = true;
+                        firstFail = firstFail || `extra_medal_${i + 2}`;
+                        break;
+                    }
+                }
+
+                if (hasError) {
+                    if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                        window.VitaTracker.track('form_validation_failed', { step: 1, error_field: firstFail });
+                    }
+                    const firstErrInput = document.querySelector('.input-error');
+                    if (firstErrInput) firstErrInput.focus();
+                    return;
+                }
+
+                // Ready to go to Step 2
+                checkSmartLockerSuggestions(city, zip);
+                goToStep(2);
+                return;
+            }
+
+            // Validation to go from 2 to 3
+            if (currentStep === 2 && targetStep === 3) {
+                if (!selectedParcelPoint || !selectedParcelPoint.id) {
+                    setFieldError('err-locker');
+                    if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                        window.VitaTracker.track('form_validation_failed', { step: 2, error_field: 'foxpost_not_selected' });
+                    }
+                    const searchInp = document.getElementById('locker-search-input');
+                    if (searchInp) {
+                        searchInp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        searchInp.focus();
+                    }
+                    return;
+                }
+                clearFieldError('err-locker');
+                updateSummaryUI();
+                goToStep(3);
+                return;
+            }
+
+            goToStep(targetStep);
+        }
+
+        // ── FOXPOST DATA LOADING & GPS ───────────────────────
         function normalizeText(str) {
             if (!str) return '';
             return String(str)
@@ -1192,133 +2243,31 @@
         }
 
         function calculateDistanceKm(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Föld sugara km-ben
+            const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
                       Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
-        }
-
-        async function locateNearestFoxpost() {
-            const btn = document.getElementById('btn-foxpost-gps');
-            const btnText = document.getElementById('gps-btn-text');
-            const statusMsg = document.getElementById('gps-status-msg');
-            const resultsList = document.getElementById('gps-results-list');
-
-            if (!navigator.geolocation) {
-                if (statusMsg) {
-                    statusMsg.style.display = 'block';
-                    statusMsg.innerHTML = '⚠️ A böngésződ nem támogatja a helymeghatározást. Használd a lenti keresőt!';
-                }
-                return;
-            }
-
-            if (foxpostApts.length === 0) {
-                if (statusMsg) {
-                    statusMsg.style.display = 'block';
-                    statusMsg.innerHTML = '⏳ Automaták betöltése folyamatban...';
-                }
-                await loadFoxpostData();
-            }
-
-            if (btn) btn.disabled = true;
-            if (btnText) btnText.textContent = '⏳ Helyzet lekérése folyamatban...';
-            if (statusMsg) {
-                statusMsg.style.display = 'block';
-                statusMsg.innerHTML = '📍 Kérjük hagyd jóvá a helymeghatározást a böngésződben...';
-            }
-
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    if (btn) btn.disabled = false;
-                    if (btnText) btnText.textContent = '📍 Újrakeresés (GPS)';
-                    const userLat = pos.coords.latitude;
-                    const userLng = pos.coords.longitude;
-
-                    const withDist = [];
-                    for (const apt of foxpostApts) {
-                        if (apt.lat && apt.lng) {
-                            const distKm = calculateDistanceKm(userLat, userLng, apt.lat, apt.lng);
-                            withDist.push({ ...apt, distKm });
-                        }
-                    }
-
-                    withDist.sort((a, b) => a.distKm - b.distKm);
-                    const closest = withDist.slice(0, 3);
-
-                    if (closest.length === 0) {
-                        if (statusMsg) statusMsg.innerHTML = 'Nem sikerült közeli automatát azonosítani. Használd a lenti keresőt!';
-                        return;
-                    }
-
-                    if (statusMsg) statusMsg.innerHTML = `🟢 <strong>${closest.length} legközelebbi automata</strong> a közeledben:`;
-                    if (resultsList) {
-                        resultsList.innerHTML = closest.map(apt => {
-                            const distLabel = apt.distKm < 1 
-                                ? `${Math.round(apt.distKm * 1000)} m`
-                                : `${apt.distKm.toFixed(1)} km`;
-                            const cleanName = apt.name.replace(/^FOXPOST\s*(A-BOX\s*)?/i, '');
-                            return `
-                                <div class="gps-card" onclick="selectFoxpostLocker('${escapeHtml(apt.id)}', 'gps')">
-                                    <div style="flex: 1; min-width: 0;">
-                                        <div class="gps-card-name">🦊 ${escapeHtml(cleanName)}</div>
-                                        <div class="gps-card-addr">${escapeHtml(apt.address)}</div>
-                                    </div>
-                                    <div style="display:flex; align-items:center; gap:0.5rem; flex-shrink:0;">
-                                        <div class="gps-card-dist">🎯 ${distLabel}</div>
-                                        <button type="button" class="gps-card-btn">Választás</button>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('');
-                        resultsList.style.display = 'flex';
-                    }
-
-                    if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
-                        window.VitaTracker.track('foxpost_gps_located', {
-                            count: closest.length,
-                            closest_dist_km: closest[0]?.distKm?.toFixed(2)
-                        });
-                    }
-                },
-                (err) => {
-                    if (btn) btn.disabled = false;
-                    if (btnText) btnText.textContent = '📍 Legközelebbi automaták megkeresése (1 koppintás / GPS)';
-                    if (statusMsg) {
-                        statusMsg.style.display = 'block';
-                        if (err.code === 1) {
-                            statusMsg.innerHTML = '⚠️ A helymeghatározás nem engedélyezett. Kérjük írd be a települést vagy utcát a lenti keresőbe!';
-                        } else {
-                            statusMsg.innerHTML = '⚠️ Nem sikerült pontos helyzetet meghatározni. Használd a lenti keresőmezőt!';
-                        }
-                    }
-                },
-                { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
-            );
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         }
 
         async function loadFoxpostData() {
             if (isFoxpostLoading || foxpostApts.length > 0) return;
             isFoxpostLoading = true;
-            const statusEl = document.getElementById('foxpost-loading-status');
 
-            // 1. Try LocalStorage cache (<24 hours)
+            // Try LocalStorage cache (<24 hours)
             try {
                 const cached = localStorage.getItem('foxpost_cache_v2');
                 const cacheTime = localStorage.getItem('foxpost_cache_time_v2');
                 if (cached && cacheTime && (Date.now() - Number(cacheTime) < 24 * 60 * 60 * 1000)) {
                     foxpostApts = JSON.parse(cached);
-                    if (statusEl) statusEl.textContent = `🟢 ${foxpostApts.length.toLocaleString('hu-HU')} automata azonnal kereshető`;
                     isFoxpostLoading = false;
-                    checkSmartSuggestions();
+                    renderInitialLockers();
                     return;
                 }
             } catch (e) {}
 
-            // 2. Fetch from Foxpost official CDN
             try {
                 const res = await fetch('https://cdn.foxpost.hu/foxplus.json');
                 if (res.ok) {
@@ -1334,7 +2283,7 @@
                         lat: parseFloat(item.geolat || 0),
                         lng: parseFloat(item.geolng || 0),
                         findme: (item.findme || '').replace(/<[^>]*>?/gm, ' ').slice(0, 140),
-                        isOutdoor: item.isOutdoor === true || (item.name || '').toLowerCase().includes('kültéri'),
+                        isOutdoor: item.isOutdoor === true || (item.name || '').toLowerCase().includes('kültéri') || (item.findme || '').toLowerCase().includes('kültéri'),
                         norm: normalizeText(`${item.zip} ${item.city} ${item.name} ${item.address} ${item.street}`)
                     }));
 
@@ -1343,97 +2292,110 @@
                         localStorage.setItem('foxpost_cache_time_v2', String(Date.now()));
                     } catch (e) {}
 
-                    if (statusEl) statusEl.textContent = `🟢 ${foxpostApts.length.toLocaleString('hu-HU')} automata betöltve`;
-                    checkSmartSuggestions();
-                } else {
-                    throw new Error('Foxpost CDN hiba');
+                    renderInitialLockers();
                 }
             } catch (err) {
-                console.warn('Foxpost fetch warning, fallback to modal:', err);
-                if (statusEl) statusEl.innerHTML = `⚠️ Nem sikerült a gyorslista betöltése. <a href="javascript:void(0)" onclick="openFoxpostModal()" style="color:var(--accent);font-weight:700;">Nyisd meg a térképes keresőt!</a>`;
+                console.warn('[foxpost] Error fetching foxplus.json:', err);
+                const loadingEl = document.getElementById('locker-loading-state');
+                if (loadingEl) {
+                    loadingEl.innerHTML = `⚠️ Nem sikerült a gyorslista betöltése. <a href="javascript:void(0)" onclick="openFoxpostMapModal()" style="color:var(--accent); font-weight:700;">Nyisd meg a térképes keresőt!</a>`;
+                }
             } finally {
                 isFoxpostLoading = false;
             }
         }
 
-        function handleFoxpostSearch(val) {
-            clearTimeout(foxpostSearchDebounce);
-            const clearBtn = document.getElementById('foxpost-clear-btn');
-            const resultsEl = document.getElementById('foxpost-search-results');
-
-            if (clearBtn) clearBtn.style.display = val ? 'block' : 'none';
-
-            if (!val || val.trim().length < 2) {
-                if (resultsEl) resultsEl.style.display = 'none';
-                return;
-            }
-
-            foxpostSearchDebounce = setTimeout(() => {
-                performFoxpostSearch(val.trim());
-            }, 120);
+        function renderInitialLockers() {
+            if (!foxpostApts.length) return;
+            // Render first 8 popular lockers (Budapest / major hubs)
+            const sample = foxpostApts.slice(0, 8);
+            renderLockerCards(sample);
         }
 
-        function clearFoxpostSearch() {
-            const input = document.getElementById('foxpost-search-input');
-            if (input) {
-                input.value = '';
-                input.focus();
-            }
-            handleFoxpostSearch('');
-        }
+        function renderLockerCards(list, distInfoMap = null) {
+            const container = document.getElementById('locker-list-container');
+            if (!container) return;
 
-        function performFoxpostSearch(query) {
-            const resultsEl = document.getElementById('foxpost-search-results');
-            if (!resultsEl) return;
-
-            const qNorm = normalizeText(query);
-            const tokens = qNorm.split(' ').filter(t => t.length > 0);
-
-            if (!tokens.length) {
-                resultsEl.style.display = 'none';
-                return;
-            }
-
-            // Filter matching lockers
-            const matches = [];
-            for (const apt of foxpostApts) {
-                const matchAll = tokens.every(t => apt.norm.includes(t));
-                if (matchAll) {
-                    matches.push(apt);
-                    if (matches.length >= 15) break; // Limit to top 15 for fast DOM render
-                }
-            }
-
-            if (!matches.length) {
-                resultsEl.innerHTML = `<div style="padding: 1rem; text-align: center; color: var(--text-mid); font-size: 0.85rem;">Nincs találat a(z) "<strong>${escapeHtml(query)}</strong>" keresésre.<br><button type="button" class="btn-map-toggle" style="margin-top:0.5rem;" onclick="openFoxpostModal()">🗺️ Keresés a térképen</button></div>`;
-                resultsEl.style.display = 'block';
-                return;
-            }
-
-            resultsEl.innerHTML = matches.map(apt => `
-                <div class="foxpost-item" onclick="selectFoxpostLocker('${escapeHtml(apt.id)}')">
-                    <div style="flex: 1; min-width: 0;">
-                        <div class="foxpost-item-name">${escapeHtml(apt.name)}</div>
-                        <div class="foxpost-item-addr">${escapeHtml(apt.address)}</div>
+            if (!list || list.length === 0) {
+                container.innerHTML = `
+                    <div class="locker-empty-state">
+                        Nincs találat erre a keresésre.<br>
+                        <button type="button" class="btn-map-toggle" onclick="openFoxpostMapModal()">🗺️ Keresés a hivatalos térképen</button>
                     </div>
-                    <span class="foxpost-item-badge ${apt.isOutdoor ? 'outdoor' : ''}">${apt.isOutdoor ? '🌿 0-24h Kültéri' : '🏪 Beltéri'}</span>
-                </div>
-            `).join('');
+                `;
+                return;
+            }
 
-            resultsEl.style.display = 'block';
+            container.innerHTML = list.map(apt => {
+                const isSelected = selectedParcelPoint && selectedParcelPoint.id === apt.id;
+                const cleanName = apt.name.replace(/^FOXPOST\s*(A-BOX\s*)?/i, '');
+                
+                let distBadgeHtml = '';
+                if (distInfoMap && distInfoMap[apt.id] !== undefined) {
+                    const km = distInfoMap[apt.id];
+                    const label = km < 1 ? `🎯 ${Math.round(km * 1000)} m` : `📍 ${km.toFixed(1)} km`;
+                    distBadgeHtml = `<span class="locker-badge badge-dist">${label}</span>`;
+                }
+
+                return `
+                    <div class="locker-card ${isSelected ? 'selected' : ''}" onclick="pickLocker('${escapeHtml(apt.id)}')">
+                        <div class="locker-info">
+                            <div class="locker-title-row">
+                                <span class="locker-name">${escapeHtml(cleanName)}</span>
+                                ${distBadgeHtml}
+                                <span class="locker-badge ${apt.isOutdoor ? 'badge-24h' : 'badge-indoor'}">
+                                    ${apt.isOutdoor ? '🌿 0-24h Kültéri' : '🏪 Beltéri'}
+                                </span>
+                            </div>
+                            <div class="locker-addr">${escapeHtml(apt.address)}</div>
+                            <div class="locker-time">
+                                ⏱️ ${apt.isOutdoor ? 'Mindig elérhető (0-24h)' : (apt.findme ? escapeHtml(apt.findme.slice(0, 75)) : 'Normál nyitvatartás')}
+                            </div>
+                        </div>
+                        <button type="button" class="select-tag-btn">
+                            ${isSelected ? 'Kiválasztva ✓' : 'Kiválasztom'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
         }
 
-        function selectFoxpostLocker(aptId, method = 'autocomplete') {
+        function pickLocker(aptId, method = 'list_click') {
             const apt = foxpostApts.find(a => a.id === aptId);
             if (!apt) return;
 
-            setSelectedPoint('foxpost', apt.name, apt.address, apt.id || apt.operator_id, apt.findme);
+            selectedParcelPoint = {
+                carrier: 'foxpost',
+                id: apt.id,
+                name: apt.name,
+                address: apt.address,
+                city: apt.city,
+                zip: apt.zip
+            };
 
-            // Hide dropdown and search input
-            const resultsEl = document.getElementById('foxpost-search-results');
-            if (resultsEl) resultsEl.style.display = 'none';
+            // Update UI Confirmation Banner
+            const alertBox = document.getElementById('selected-alert');
+            const alertName = document.getElementById('alert-locker-name');
+            const alertAddr = document.getElementById('alert-locker-addr');
+            if (alertBox && alertName && alertAddr) {
+                alertName.textContent = 'Kiválasztva: ' + apt.name.replace(/^FOXPOST\s*/i, '');
+                alertAddr.textContent = apt.address + (apt.isOutdoor ? ' (Kültéri 0-24h)' : ' (Beltéri)');
+                alertBox.classList.add('show');
+            }
 
-            // Send analytics
+            clearFieldError('err-locker');
+
+            // Refresh cards to show selected state
+            document.querySelectorAll('.locker-card').forEach(c => {
+                c.classList.remove('selected');
+                const btn = c.querySelector('.select-tag-btn');
+                if (btn) btn.textContent = 'Kiválasztom';
+            });
+            event?.currentTarget?.classList?.add('selected');
+            const thisBtn = event?.currentTarget?.querySelector?.('.select-tag-btn');
+            if (thisBtn) thisBtn.textContent = 'Kiválasztva ✓';
+
+            // Analytics
             if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
                 window.VitaTracker.track('foxpost_point_selected', {
                     name: apt.name,
@@ -1443,115 +2405,385 @@
                     method: method
                 });
             }
+
+            updateSummaryUI();
         }
 
-        function setSelectedPoint(carrier, name, address, id, findme = '') {
-            selectedParcelPoint = { carrier, name, address, id };
-            document.getElementById('selected-name').textContent = name || '–';
-            document.getElementById('selected-address').textContent = address || '–';
-            const findmeEl = document.getElementById('selected-findme');
-            if (findmeEl) findmeEl.textContent = findme ? `📍 ${findme}` : '';
-
-            document.getElementById('selected-point-box').style.display = 'block';
-            document.getElementById('foxpost-search-wrapper').style.display = 'none';
-            document.getElementById('foxpost-smart-suggestions').style.display = 'none';
-            const gpsWrap = document.getElementById('foxpost-gps-container');
-            if (gpsWrap) gpsWrap.style.display = 'none';
-            clearError();
-        }
-
-        function resetSelectedPoint() {
-            selectedParcelPoint = null;
-            document.getElementById('selected-point-box').style.display = 'none';
-            document.getElementById('foxpost-search-wrapper').style.display = 'block';
-            const gpsWrap = document.getElementById('foxpost-gps-container');
-            if (gpsWrap) gpsWrap.style.display = 'block';
-            checkSmartSuggestions();
-            const input = document.getElementById('foxpost-search-input');
+        function focusLockerSearch() {
+            const input = document.getElementById('locker-search-input');
             if (input) {
                 input.focus();
-                if (input.value) handleFoxpostSearch(input.value);
+                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
 
-        // ── SMART SUGGESTIONS (Based on Billing Address / City) ──
-        function checkSmartSuggestions() {
-            if (selectedParcelPoint || !foxpostApts.length) return;
-            const billingEl = document.getElementById('cust-billing-address');
-            const billingVal = billingEl ? billingEl.value.trim() : '';
-            const suggestionsWrap = document.getElementById('foxpost-smart-suggestions');
-            const chipsList = document.getElementById('foxpost-chips-list');
+        // ── HERO GPS LOCATOR ─────────────────────────────────
+        async function locateNearestFoxpost() {
+            const btn = document.getElementById('btn-foxpost-gps');
+            const text = document.getElementById('gps-btn-text');
+            const statusMsg = document.getElementById('gps-status-msg');
 
-            if (!billingVal || billingVal.length < 3) {
-                if (suggestionsWrap) suggestionsWrap.style.display = 'none';
+            if (!navigator.geolocation) {
+                if (statusMsg) {
+                    statusMsg.style.display = 'block';
+                    statusMsg.innerHTML = '⚠️ A böngésződ nem támogatja a helymeghatározást. Használd a fenti keresőt!';
+                }
                 return;
             }
 
-            const normBilling = normalizeText(billingVal);
-            const tokens = normBilling.split(' ').filter(t => t.length >= 3);
+            if (foxpostApts.length === 0) {
+                if (statusMsg) {
+                    statusMsg.style.display = 'block';
+                    statusMsg.innerHTML = '⏳ Automaták betöltése folyamatban...';
+                }
+                await loadFoxpostData();
+            }
 
-            let smartMatches = [];
+            if (btn) btn.disabled = true;
+            if (text) text.textContent = '⏳ Pozíció meghatározása folyamatban...';
+            if (statusMsg) {
+                statusMsg.style.display = 'block';
+                statusMsg.innerHTML = '📍 Kérjük hagyd jóvá a helymeghatározást a böngésződben...';
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    if (btn) btn.disabled = false;
+                    if (text) text.textContent = '📍 Újrakeresés (GPS frissítése)';
+                    const userLat = pos.coords.latitude;
+                    const userLng = pos.coords.longitude;
+
+                    const withDist = [];
+                    const distMap = {};
+
+                    for (const apt of foxpostApts) {
+                        if (apt.lat && apt.lng) {
+                            const km = calculateDistanceKm(userLat, userLng, apt.lat, apt.lng);
+                            distMap[apt.id] = km;
+                            withDist.push({ apt, km });
+                        }
+                    }
+
+                    withDist.sort((a, b) => a.km - b.km);
+                    const closest = withDist.slice(0, 6).map(w => w.apt);
+
+                    if (statusMsg) {
+                        statusMsg.innerHTML = `🟢 <strong>${closest.length} legközelebbi automata</strong> megtalálva a közeledben:`;
+                    }
+
+                    renderLockerCards(closest, distMap);
+
+                    // Auto select the #1 closest locker
+                    if (closest.length > 0) {
+                        pickLocker(closest[0].id, 'gps_auto');
+                    }
+
+                    if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                        window.VitaTracker.track('foxpost_gps_located', {
+                            count: closest.length,
+                            closest_dist_km: withDist[0]?.km?.toFixed(2)
+                        });
+                    }
+                },
+                (err) => {
+                    if (btn) btn.disabled = false;
+                    if (text) text.textContent = '📍 Legközelebbi automata keresése (GPS)';
+                    if (statusMsg) {
+                        statusMsg.style.display = 'block';
+                        statusMsg.innerHTML = err.code === 1
+                            ? '⚠️ Helymeghatározás nincs engedélyezve. Kérjük keress a lenti keresőben!'
+                            : '⚠️ Nem sikerült a pozíció meghatározása. Használd a lenti keresőt!';
+                    }
+                },
+                { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+            );
+        }
+
+        // ── LIVE SEARCH & DEBOUNCING ─────────────────────────
+        function handleLockerSearch(val) {
+            clearTimeout(foxpostSearchDebounce);
+            foxpostSearchDebounce = setTimeout(() => {
+                performLockerFilter(val.trim());
+            }, 120);
+        }
+
+        function performLockerFilter(query) {
+            if (!query || query.length < 2) {
+                renderInitialLockers();
+                return;
+            }
+
+            const qNorm = normalizeText(query);
+            const tokens = qNorm.split(' ').filter(t => t.length > 0);
+
+            const matches = [];
             for (const apt of foxpostApts) {
-                const matchToken = tokens.some(t => apt.norm.includes(t));
-                if (matchToken) {
-                    smartMatches.push(apt);
-                    if (smartMatches.length >= 4) break;
+                if (tokens.every(t => apt.norm.includes(t))) {
+                    matches.push(apt);
+                    if (matches.length >= 15) break;
                 }
             }
 
-            if (smartMatches.length > 0 && suggestionsWrap && chipsList) {
-                chipsList.innerHTML = smartMatches.map(apt => `
-                    <button type="button" class="foxpost-chip" onclick="selectFoxpostLocker('${escapeHtml(apt.id)}')">
-                        <span>🦊</span> <span>${escapeHtml(apt.name.replace(/^FOXPOST\s*/i, ''))}</span>
-                    </button>
-                `).join('');
-                suggestionsWrap.style.display = 'block';
-            } else if (suggestionsWrap) {
-                suggestionsWrap.style.display = 'none';
-            }
+            renderLockerCards(matches);
         }
 
-        // ── MAP MODAL CONTROLLERS ────────────────────────────
-        function openFoxpostModal() {
+        // ── SMART CITY SUGGESTIONS (DEPRECATED) ───────────────────
+        function checkSmartLockerSuggestions(city, zip) {
+            // Disabled per user request
+        }
+
+        // ── FOXPOST MAP MODAL FALLBACK ───────────────────────
+        function openFoxpostMapModal() {
             const modal = document.getElementById('foxpost-map-modal');
             const iframe = document.getElementById('foxpost-iframe');
             if (modal && iframe) {
-                if (!iframe.src || iframe.src === 'about:blank' || iframe.src === window.location.href) {
+                if (!iframe.src || iframe.src === 'about:blank') {
                     iframe.src = 'https://cdn.foxpost.hu/apt-finder/v1/app/';
                 }
-                modal.style.display = 'flex';
+                modal.classList.add('open');
                 document.body.style.overflow = 'hidden';
             }
         }
 
-        function closeFoxpostModal() {
+        function closeFoxpostMapModal() {
             const modal = document.getElementById('foxpost-map-modal');
             if (modal) {
-                modal.style.display = 'none';
+                modal.classList.remove('open');
                 document.body.style.overflow = '';
             }
         }
 
-        // ── FOXPOST MESSAGE LISTENER ─────────────────────────
         window.addEventListener('message', function (event) {
             try {
-                if (event.origin.includes('foxpost.hu')) {
-                    const apt = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-                    if (apt && (apt.name || apt.place_id || apt.operator_id)) {
-                        setSelectedPoint('foxpost', apt.name, apt.address, apt.operator_id || apt.place_id || '', apt.findme || '');
-                        closeFoxpostModal();
-                        if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
-                            window.VitaTracker.track('foxpost_point_selected', {
-                                name: apt.name,
-                                address: apt.address,
-                                id: apt.operator_id || apt.place_id,
-                                method: 'map_modal'
-                            });
-                        }
+                if (event.origin && event.origin.includes('foxpost.hu')) {
+                    const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+                    if (data && (data.name || data.place_id || data.operator_id)) {
+                        const targetId = String(data.place_id || data.operator_id || '');
+                        pickLocker(targetId, 'map_modal');
+                        closeFoxpostMapModal();
                     }
                 }
-            } catch (e) { }
-        }, false);
+            } catch (e) {}
+        });
+
+        // ── REFERRAL & DISCOUNTS CHECKER ─────────────────────
+        async function fetchDiscountInfo() {
+            const email = (document.getElementById('cust-email')?.value || '').trim();
+            const totalQty = 1 + extraMedals.length;
+            try {
+                const res = await fetch(`/api/check-limit?action=check-referral&email=${encodeURIComponent(email)}&qty=${totalQty}&referredBy=${encodeURIComponent(referredBy)}&campaign=${encodeURIComponent(campaignKey)}`);
+                if (res.ok) {
+                    activeDiscountData = await res.json();
+                }
+            } catch (e) {
+                console.warn('[checkout] referral check warning:', e.message);
+            }
+            updateSummaryUI();
+        }
+
+        function formatHuf(val) {
+            return (val || 0).toLocaleString('hu-HU') + ' Ft';
+        }
+
+        // ── SUMMARY CARD UPDATER ─────────────────────────────
+        function updateSummaryUI() {
+            const totalQty = 1 + extraMedals.length;
+            const primaryName = (document.getElementById('cust-name')?.value || '').trim() || 'Nevező';
+            const email = (document.getElementById('cust-email')?.value || '').trim();
+            const phone = (document.getElementById('cust-phone')?.value || '').trim();
+            const billing = (document.getElementById('cust-billing-address')?.value || '').trim();
+
+            // Participants row
+            const participantsEl = document.getElementById('sum-participants');
+            if (participantsEl) {
+                if (extraMedals.length === 0) {
+                    participantsEl.textContent = `${primaryName} (${primaryDistance})`;
+                } else {
+                    const extraStr = extraMedals.map(m => `${m.name || 'Nevező'} (${m.distance})`).join(', ');
+                    participantsEl.textContent = `${primaryName} (${primaryDistance}), ${extraStr}`;
+                }
+            }
+
+            // Contact row
+            const contactEl = document.getElementById('sum-contact');
+            if (contactEl) {
+                contactEl.textContent = `${email || '–'} • ${phone || '–'}`;
+            }
+
+            // Billing row
+            const billingEl = document.getElementById('sum-billing');
+            if (billingEl) {
+                billingEl.textContent = billing || '–';
+            }
+
+            // Locker row
+            const lockerEl = document.getElementById('sum-locker');
+            if (lockerEl) {
+                if (selectedParcelPoint) {
+                    lockerEl.textContent = `${selectedParcelPoint.name} (${selectedParcelPoint.address})`;
+                } else {
+                    lockerEl.textContent = 'Még nincs kiválasztva';
+                }
+            }
+
+            // Calculate Price
+            let calculatedTotal = medalPrice * totalQty;
+            const discountBanner = document.getElementById('summary-discount-banner');
+
+            if (activeDiscountData && activeDiscountData.discountPercent > 0) {
+                calculatedTotal = activeDiscountData.totalMedalsPrice;
+                if (discountBanner) {
+                    let text = `🎉 ${activeDiscountData.discountPercent}% kedvezmény levonva a saját érmedre!`;
+                    if (activeDiscountData.effectiveReferrals >= 5) {
+                        text = `🏆 100% ingyenes saját érem (${activeDiscountData.effectiveReferrals} sikeres ajánlás)!`;
+                    }
+                    discountBanner.textContent = text;
+                    discountBanner.style.display = 'block';
+                }
+            } else if (discountBanner) {
+                discountBanner.style.display = 'none';
+            }
+
+            const formattedTotal = formatHuf(calculatedTotal);
+            const sumTotalEl = document.getElementById('sum-total');
+            if (sumTotalEl) sumTotalEl.textContent = formattedTotal;
+
+            const btnPayPrice = document.getElementById('btn-pay-price');
+            if (btnPayPrice) btnPayPrice.textContent = formattedTotal;
+        }
+
+        // ── FINAL SUBMISSION TO /api/checkout ─────────────────
+        async function handleSubmit() {
+            const btn = document.getElementById('btn-submit-order');
+            const errBanner = document.getElementById('checkout-error-banner');
+            const errText = document.getElementById('checkout-error-text');
+
+            if (errBanner) errBanner.classList.remove('visible');
+
+            // 1. Participant medals array
+            const primaryName = (document.getElementById('cust-name')?.value || '').trim();
+            const medals = [{ name: primaryName, distance: primaryDistance }];
+
+            for (const extra of extraMedals) {
+                medals.push({
+                    name: (extra.name || '').trim(),
+                    distance: extra.distance || primaryDistance
+                });
+            }
+
+            // 2. Buyer contact & billing
+            const email = (document.getElementById('cust-email')?.value || '').trim().toLowerCase();
+            const phone = formatPhoneClean((document.getElementById('cust-phone')?.value || '').trim());
+            const billingAddress = (document.getElementById('cust-billing-address')?.value || '').trim();
+
+            if (!email || !phone || !billingAddress || medals.some(m => !isValidName(m.name))) {
+                goToStep(1);
+                return;
+            }
+
+            if (!selectedParcelPoint || !selectedParcelPoint.id) {
+                goToStep(2);
+                return;
+            }
+
+            // Attribution & session data
+            const attribution = (window.VitaTracker && typeof window.VitaTracker.getAttribution === 'function')
+                ? window.VitaTracker.getAttribution()
+                : {};
+
+            const payload = {
+                medals: medals,
+                email: email,
+                phone: phone,
+                billingAddress: billingAddress,
+                deliveryMethod: 'foxpost',
+                parcelCarrier: 'foxpost',
+                parcelName: selectedParcelPoint.name,
+                parcelAddress: selectedParcelPoint.address,
+                parcelId: selectedParcelPoint.id,
+                homeAddress: '',
+                referredBy: referredBy,
+                utmCampaign: utmCampaign || attribution.utm_campaign || '',
+                utmTerm: utmTerm || attribution.utm_term || '',
+                utmContent: utmContent || attribution.utm_content || '',
+                metaAdId: attribution.meta_ad_id || '',
+                metaAdsetId: attribution.meta_adset_id || '',
+                metaCampaignId: attribution.meta_campaign_id || '',
+                visitorId: attribution.visitor_id || (window.VitaTracker ? window.VitaTracker.getVisitorId() : ''),
+                sessionId: attribution.session_id || (window.VitaTracker ? window.VitaTracker.getSessionId() : ''),
+                leadId: leadId || attribution.lead_id || '',
+                isTest: isTest,
+                campaign: campaignKey
+            };
+
+            // Lock button & show loading state
+            if (btn) {
+                btn.disabled = true;
+                btn.classList.add('loading');
+            }
+
+            if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                window.VitaTracker.track('checkout_submit_attempt', {
+                    medals_count: medals.length,
+                    deliveryMethod: 'foxpost',
+                    parcelId: selectedParcelPoint.id,
+                    campaign: campaignKey
+                });
+            }
+
+            try {
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.url) {
+                    window.location.href = data.url;
+                } else {
+                    const failMsg = data.error || 'A fizetési átirányítás sikertelen volt. Kérjük próbáld újra!';
+                    if (errText) errText.textContent = failMsg;
+                    if (errBanner) {
+                        errBanner.classList.add('visible');
+                        errBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+
+                    if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                        window.VitaTracker.track('checkout_error', {
+                            error: failMsg,
+                            campaign: campaignKey
+                        });
+                    }
+
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.classList.remove('loading');
+                    }
+                }
+            } catch (err) {
+                console.error('[checkout] Submit network error:', err);
+                const netMsg = 'Hálózati hiba lépett fel. Kérjük ellenőrizd az internetkapcsolatodat!';
+                if (errText) errText.textContent = netMsg;
+                if (errBanner) {
+                    errBanner.classList.add('visible');
+                    errBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+
+                if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
+                    window.VitaTracker.track('checkout_error', {
+                        error: err.message || 'network_error',
+                        campaign: campaignKey
+                    });
+                }
+
+                if (btn) {
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                }
+            }
+        }
 
         function escapeHtml(str) {
             if (!str) return '';
@@ -1562,439 +2794,8 @@
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#039;');
         }
-
-        // ── QUANTITY ─────────────────────────────────────────
-        function changeQty(delta) {
-            const newQty = qty + delta;
-            if (newQty < 1 || newQty > MAX_QTY) return;
-            qty = newQty;
-            document.getElementById('qty-display').textContent = qty;
-            document.getElementById('qty-minus').disabled = qty <= 1;
-            document.getElementById('qty-plus').disabled = qty >= MAX_QTY;
-            renderMedalPanels();
-            updateSummary();
-        }
-
-        function renderMedalPanels() {
-            const container = document.getElementById('medal-panels-container');
-            const current = container.querySelectorAll('.medal-panel');
-            const currentQty = current.length;
-
-            // Add panels
-            for (let i = currentQty; i < qty; i++) {
-                const panel = createMedalPanel(i);
-                container.appendChild(panel);
-            }
-            // Remove excess panels
-            for (let i = currentQty - 1; i >= qty; i--) {
-                current[i].remove();
-            }
-
-            // Update titles
-            container.querySelectorAll('.medal-panel-title').forEach((el, idx) => {
-                el.textContent = qty === 1 ? '🏅 Nevező adatai' : `🏅 ${idx + 1}. érem – Nevező adatai`;
-            });
-        }
-
-        function createMedalPanel(index) {
-            const panel = document.createElement('div');
-            panel.className = 'medal-panel section';
-
-            // Build options from config
-            const optionsHtml = (campaignConfig?.distances || []).map(d =>
-                `<option value="${d.value}">${d.label || d.value}</option>`
-            ).join('');
-
-            panel.innerHTML = `
-                <div class="medal-panel-title">${qty === 1 ? '🏅 Nevező adatai' : `🏅 ${index + 1}. érem – Nevező adatai`}</div>
-                <div class="form-grid-2">
-                    <div class="form-row">
-                        <label>Nevező teljes neve *</label>
-                        <input type="text" class="medal-name" placeholder="Minta János">
-                        <div class="field-error medal-name-error"></div>
-                    </div>
-                    <div class="form-row">
-                        <label>Választott távolság *</label>
-                        <select class="medal-distance">
-                            ${optionsHtml}
-                        </select>
-                    </div>
-                </div>
-            `;
-            return panel;
-        }
-
-        // ── DELIVERY ─────────────────────────────────────────
-        function handleDeliveryChange(method) {
-            deliveryMethod = method;
-            const foxpostEl = document.getElementById('foxpost-container');
-            const homeEl = document.getElementById('home-delivery-container');
-            const labelFox = document.getElementById('label-foxpost');
-            const labelHome = document.getElementById('label-home');
-            const shippingRow = document.getElementById('summary-shipping-row');
-
-            if (method === 'foxpost') {
-                foxpostEl.style.display = 'block';
-                homeEl.style.display = 'none';
-                labelFox.classList.add('selected');
-                labelHome.classList.remove('selected');
-                shippingRow.style.display = 'none';
-                loadFoxpostData();
-            } else {
-                foxpostEl.style.display = 'none';
-                homeEl.style.display = 'block';
-                labelFox.classList.remove('selected');
-                labelHome.classList.add('selected');
-                shippingRow.style.display = 'flex';
-            }
-            updateSummary();
-        }
-
-        // ── SUMMARY & DISCOUNTS ──────────────────────────────
-        let activeDiscountData = null;
-        let discountDebounceTimer = null;
-
-        function updateSummary() {
-            fetchDiscountInfo();
-        }
-
-        async function fetchDiscountInfo() {
-            const emailEl = document.getElementById('cust-email');
-            const email = emailEl ? emailEl.value.trim() : '';
-            try {
-                const res = await fetch(`/api/check-limit?action=check-referral&email=${encodeURIComponent(email)}&qty=${qty}&referredBy=${encodeURIComponent(referredBy)}&campaign=${encodeURIComponent(campaignKey)}`);
-                if (res.ok) {
-                    activeDiscountData = await res.json();
-                }
-            } catch (e) {
-                console.error('Error checking referral discount:', e);
-            }
-            updateSummaryUI();
-        }
-
-        function updateSummaryUI() {
-            const shippingFee = deliveryMethod === 'home' ? SHIPPING_SURCHARGE : 0;
-            const price = medalPrice;
-
-            let medalTotal = price * qty;
-
-            if (activeDiscountData && activeDiscountData.discountPercent > 0) {
-                const d = activeDiscountData;
-                medalTotal = d.totalMedalsPrice;
-
-                let badgeText = '';
-                if (d.effectiveReferrals >= 5) badgeText = `🏆 100% ingyen saját érem (${d.effectiveReferrals} ajánlás)`;
-                else if (d.effectiveReferrals > 0) badgeText = `🎉 ${d.effectiveReferrals} ajánlás → ${d.discountPercent}% kedvezmény a saját érmedre!`;
-                else if (referredBy) badgeText = `🎁 Ajánlói hivatkozás: 10% kedvezmény a saját érmedre`;
-
-                if (qty === 1) {
-                    document.getElementById('summary-medal-label').innerHTML = `1 db érem (Saját) <div style="font-size:0.75rem;color:var(--accent);font-weight:700;margin-top:2px;">${badgeText}</div>`;
-                    document.getElementById('summary-medal-price').innerHTML = `<span style="text-decoration:line-through;color:var(--text-low);margin-right:6px;font-size:0.85rem;">${formatHuf(price)}</span>${formatHuf(d.firstMedalPrice)}`;
-                } else {
-                    document.getElementById('summary-medal-label').innerHTML = `Kihívás Érem × ${qty} db <div style="font-size:0.75rem;color:var(--accent);font-weight:700;margin-top:2px;">${badgeText}</div>`;
-                    document.getElementById('summary-medal-price').innerHTML = `${formatHuf(d.firstMedalPrice)} <span style="font-size:0.75rem;color:var(--text-mid);">(Saját)</span> + ${formatHuf(d.otherMedalsPrice)} <span style="font-size:0.75rem;color:var(--text-mid);">(${qty - 1} db)</span>`;
-                }
-            } else {
-                document.getElementById('summary-medal-label').textContent = `Kihívás Érem × ${qty} db`;
-                document.getElementById('summary-medal-price').textContent = formatHuf(medalTotal);
-            }
-
-            const total = medalTotal + shippingFee;
-            const formattedTotal = formatHuf(total);
-            document.getElementById('summary-total').textContent = formattedTotal;
-            const mobileTotalEl = document.getElementById('mobile-sticky-total');
-            if (mobileTotalEl) mobileTotalEl.textContent = formattedTotal;
-        }
-
-        function handleEmailInput() {
-            clearTimeout(discountDebounceTimer);
-            discountDebounceTimer = setTimeout(fetchDiscountInfo, 350);
-        }
-
-        function formatHuf(amount) {
-            return amount.toLocaleString('hu-HU') + ' Ft';
-        }
-
-        // ── VALIDATION HELPER FUNCTIONS ───────────────────────
-        function isValidEmail(email) {
-            return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-        }
-
-        function isValidPhone(phone) {
-            const cleaned = phone.replace(/\D/g, '');
-            return (cleaned.startsWith('06') || cleaned.startsWith('36')) && cleaned.length >= 9 && cleaned.length <= 11;
-        }
-
-        function isValidName(name) {
-            if (!name) return false;
-            const trimmed = name.trim();
-            if (trimmed.length < 3) return false;
-            if (/\d/.test(trimmed)) return false;
-            const parts = trimmed.split(/\s+/);
-            return parts.length >= 2 && parts.every(p => p.length >= 1);
-        }
-
-        function isValidAddress(address) {
-            const trimmed = address.trim();
-            const hasZip = /\b\d{4}\b/.test(trimmed);
-            return hasZip && trimmed.length >= 8 && trimmed.includes(' ');
-        }
-
-        // ── INLINE FIELD ERROR HELPERS ───────────────────────
-        function setFieldError(inputEl, errElId, msg) {
-            inputEl.classList.add('input-error');
-            const errEl = document.getElementById(errElId);
-            if (errEl) { errEl.textContent = msg; errEl.classList.add('visible'); }
-        }
-        function clearFieldError(inputEl, errElId) {
-            inputEl.classList.remove('input-error');
-            const errEl = document.getElementById(errElId);
-            if (errEl) { errEl.textContent = ''; errEl.classList.remove('visible'); }
-        }
-        function clearAllFieldErrors() {
-            document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
-            document.querySelectorAll('.field-error').forEach(el => { el.textContent = ''; el.classList.remove('visible'); });
-            document.querySelectorAll('.medal-name-error').forEach(el => { el.textContent = ''; el.classList.remove('visible'); });
-            const errBox = document.getElementById('error-msg');
-            if (errBox) errBox.classList.remove('visible');
-        }
-
-        function showError(msg) {
-            const errEl = document.getElementById('error-msg');
-            if (errEl) {
-                errEl.textContent = msg;
-                errEl.classList.add('visible');
-                errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-        function clearError() {
-            const errEl = document.getElementById('error-msg');
-            if (errEl) {
-                errEl.textContent = '';
-                errEl.classList.remove('visible');
-            }
-        }
-
-        // ── VALIDATION & SUBMIT ──────────────────────────────
-        async function handleSubmit() {
-            clearAllFieldErrors();
-            let hasError = false;
-            let firstFailingField = null;
-
-            // 1. Validate participants (medals)
-            const medals = [];
-            const panels = document.querySelectorAll('.medal-panel');
-            for (let i = 0; i < panels.length; i++) {
-                const nameEl = panels[i].querySelector('.medal-name');
-                const distEl = panels[i].querySelector('.medal-distance');
-                const mName = nameEl.value.trim();
-                const mDist = distEl.value;
-                const nameErrEl = panels[i].querySelector('.medal-name-error');
-
-                if (!mName || !isValidName(mName)) {
-                    nameEl.classList.add('input-error');
-                    if (nameErrEl) {
-                        nameErrEl.textContent = !mName
-                            ? `Kérjük add meg a(z) ${i + 1}. nevező teljes nevét!`
-                            : `Teljes nevet adj meg (Vezetéknév + Keresztnév, pl. Minta János)!`;
-                        nameErrEl.classList.add('visible');
-                    }
-                    hasError = true;
-                    if (!firstFailingField) firstFailingField = `medal_name_${i + 1}`;
-                } else {
-                    medals.push({ name: mName, distance: mDist });
-                }
-            }
-
-            // 2. Validate buyer fields
-            const emailEl = document.getElementById('cust-email');
-            const phoneEl = document.getElementById('cust-phone');
-            const addressEl = document.getElementById('cust-billing-address');
-
-            const email = emailEl.value.trim();
-            const phone = phoneEl.value.trim();
-            const billingAddress = addressEl.value.trim();
-
-            if (!email) {
-                setFieldError(emailEl, 'err-email', 'Kérjük add meg az e-mail címedet!');
-                hasError = true;
-                if (!firstFailingField) firstFailingField = 'email_empty';
-            } else if (!isValidEmail(email)) {
-                setFieldError(emailEl, 'err-email', 'Kérjük érvényes e-mail címet adj meg (pl. janos@email.com)!');
-                hasError = true;
-                if (!firstFailingField) firstFailingField = 'email_invalid';
-            }
-
-            if (!phone) {
-                setFieldError(phoneEl, 'err-phone', 'Kérjük add meg a telefonszámodat!');
-                hasError = true;
-                if (!firstFailingField) firstFailingField = 'phone_empty';
-            } else if (!isValidPhone(phone)) {
-                setFieldError(phoneEl, 'err-phone', 'Érvényes magyar telefonszámot adj meg (pl. +36 30 123 4567 vagy 06301234567)!');
-                hasError = true;
-                if (!firstFailingField) firstFailingField = 'phone_invalid';
-            }
-
-            if (!billingAddress) {
-                setFieldError(addressEl, 'err-billing', 'Kérjük add meg a számlázási címedet az e-számlához!');
-                hasError = true;
-                if (!firstFailingField) firstFailingField = 'billing_address_empty';
-            } else if (!isValidAddress(billingAddress)) {
-                setFieldError(addressEl, 'err-billing', 'Teljes számlázási cím kell irányítószámmal (pl. 1139 Budapest, Csizma utca 3.)!');
-                hasError = true;
-                if (!firstFailingField) firstFailingField = 'billing_address_invalid';
-            }
-
-            // 3. Delivery validation
-            const homeAddressEl = document.getElementById('home-address');
-            const homeAddressVal = homeAddressEl ? homeAddressEl.value.trim() : '';
-
-            if (deliveryMethod === 'home' && homeAddressVal && !isValidAddress(homeAddressVal)) {
-                setFieldError(homeAddressEl, 'err-home-address', 'Teljes szállítási cím kell irányítószámmal (pl. 1139 Budapest, Csizma utca 3.)!');
-                hasError = true;
-                if (!firstFailingField) firstFailingField = 'home_address_invalid';
-            }
-
-            if (hasError) {
-                if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
-                    window.VitaTracker.track('form_validation_failed', { error_field: firstFailingField });
-                }
-                const firstErrorEl = document.querySelector('.input-error');
-                if (firstErrorEl) {
-                    firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    firstErrorEl.focus();
-                }
-                return;
-            }
-
-            if (deliveryMethod === 'foxpost' && !selectedParcelPoint) {
-                if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
-                    window.VitaTracker.track('form_validation_failed', { error_field: 'foxpost_not_selected' });
-                }
-                showError('⚠️ Kérjük válassz ki egy Foxpost csomagautomatát!');
-                const searchInp = document.getElementById('foxpost-search-input');
-                if (searchInp) {
-                    searchInp.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    searchInp.focus();
-                }
-                return;
-            }
-
-            const resolvedHomeAddress = homeAddressVal || billingAddress;
-
-            const btn = document.getElementById('submit-btn');
-            const mobileBtn = document.getElementById('mobile-sticky-btn');
-            if (btn) {
-                btn.classList.add('loading');
-                btn.textContent = '⏳ Átirányítás a fizetéshez...';
-                btn.disabled = true;
-            }
-            if (mobileBtn) {
-                mobileBtn.disabled = true;
-                mobileBtn.innerHTML = '<span>⏳ Átirányítás...</span>';
-            }
-
-            const attribution = window.VitaTracker ? window.VitaTracker.getAttribution() : {};
-
-            if (window.VitaTracker && typeof window.VitaTracker.track === 'function') {
-                window.VitaTracker.track('checkout_submit_attempt', {
-                    medals_count: medals.length,
-                    deliveryMethod,
-                    parcelId: selectedParcelPoint?.id || ''
-                });
-            }
-
-            const payload = {
-                medals,
-                email,
-                phone,
-                billingAddress,
-                deliveryMethod,
-                parcelCarrier: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.carrier || '') : '',
-                parcelName: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.name || '') : '',
-                parcelAddress: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.address || '') : '',
-                parcelId: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.id || '') : '',
-                homeAddress: deliveryMethod === 'home' ? resolvedHomeAddress : '',
-                referredBy,
-                utmCampaign: utmCampaign || attribution.utm_campaign,
-                utmTerm: utmTerm || attribution.utm_term,
-                utmContent: utmContent || attribution.utm_content,
-                metaAdId: attribution.meta_ad_id,
-                metaAdsetId: attribution.meta_adset_id,
-                metaCampaignId: attribution.meta_campaign_id,
-                visitorId: attribution.visitor_id,
-                sessionId: attribution.session_id,
-                leadId: leadId || attribution.lead_id || '',
-                isTest,
-                campaign: campaignKey
-            };
-
-            try {
-                const response = await fetch('/api/checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-                if (response.ok && data.url) {
-                    window.location.href = data.url;
-                } else {
-                    showError('Hiba a fizetés indításakor: ' + (data.error || 'Kérjük próbáld újra!'));
-                    if (btn) {
-                        btn.classList.remove('loading');
-                        btn.disabled = false;
-                        btn.textContent = '🔒 Tovább a biztonságos fizetéshez';
-                    }
-                    if (mobileBtn) {
-                        mobileBtn.disabled = false;
-                        mobileBtn.innerHTML = '<span>🔒 Tovább a fizetéshez</span>';
-                    }
-                }
-            } catch (err) {
-                showError('Hálózati hiba. Kérjük ellenőrizd az internetkapcsolatod!');
-                if (btn) {
-                    btn.classList.remove('loading');
-                    btn.disabled = false;
-                    btn.textContent = '🔒 Tovább a biztonságos fizetéshez';
-                }
-                if (mobileBtn) {
-                    mobileBtn.disabled = false;
-                    mobileBtn.innerHTML = '<span>🔒 Tovább a fizetéshez</span>';
-                }
-            }
-        }
-
-        // ── INIT & EVENT LISTENERS ───────────────────────────
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadConfig();
-            loadFoxpostData();
-
-            // Pre-fill lead email & name if available in localStorage or URL to reduce checkout friction
-            try {
-                const prefillEmail = urlParams.get('email') || localStorage.getItem('vitasteps_lead_email') || '';
-                const emailEl = document.getElementById('cust-email');
-                if (emailEl && !emailEl.value && prefillEmail && prefillEmail.includes('@')) {
-                    emailEl.value = prefillEmail;
-                    fetchDiscountInfo();
-                }
-
-                const prefillName = urlParams.get('nev') || localStorage.getItem('vitasteps_lead_name') || '';
-                const firstMedalNameEl = document.querySelector('.medal-name');
-                if (firstMedalNameEl && !firstMedalNameEl.value && prefillName && isValidName(prefillName)) {
-                    firstMedalNameEl.value = prefillName;
-                }
-            } catch (e) {}
-
-            const billingEl = document.getElementById('cust-billing-address');
-            if (billingEl) {
-                billingEl.addEventListener('input', () => {
-                    setTimeout(checkSmartSuggestions, 200);
-                });
-                billingEl.addEventListener('blur', checkSmartSuggestions);
-            }
-        });
     </script>
+
     <!-- VitaSteps Analytics & Attribution Tracker -->
     <script src="js/tracker.js"></script>
 </body>

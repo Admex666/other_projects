@@ -237,6 +237,36 @@ module.exports = async (req, res) => {
 
     } catch (err) {
         console.error('Stripe API error:', err);
+
+        // Send Pushbullet notification if token configured
+        try {
+            const pbToken = process.env.PUSHBULLET_ACCESS_TOKEN;
+            if (pbToken) {
+                const https = require('https');
+                const pbPayload = JSON.stringify({
+                    type: 'note',
+                    title: '⚠️ VitaSteps Checkout Hiba!',
+                    body: `Hiba a fizetés indításakor:\n${err.message}\nEmail: ${req.body?.email || 'N/A'}\nKampány: ${req.body?.campaign || 'N/A'}`
+                });
+                const pbReq = https.request({
+                    hostname: 'api.pushbullet.com',
+                    path: '/v2/pushes',
+                    method: 'POST',
+                    timeout: 4000,
+                    headers: {
+                        'Access-Token': pbToken,
+                        'Content-Type': 'application/json',
+                        'Content-Length': Buffer.byteLength(pbPayload)
+                    }
+                });
+                pbReq.on('error', () => {});
+                pbReq.write(pbPayload);
+                pbReq.end();
+            }
+        } catch (pbErr) {
+            console.warn('[checkout.js] Pushbullet error:', pbErr.message);
+        }
+
         res.status(500).json({ error: err.message });
     }
 };

@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nevezés & Biztonságos Fizetés – Nagy-Kevély Éremtúra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0d1117;
+            --bg-left: #0f172a;
+            --bg-right: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.035);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-gold: #f59e0b;
+            --accent-gold-glow: rgba(245, 158, 11, 0.25);
+            --accent-emerald: #10b981;
+            --accent-emerald-glow: rgba(16, 185, 129, 0.2);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-darker: #64748b;
+            --input-bg: #131b2e;
+            --input-border: #1e293b;
+            --input-focus: #38bdf8;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Space Grotesk', sans-serif;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Mobile Order Summary Bar */
+        .mobile-summary-toggle {
+            display: none;
+            background: #111827;
+            border-bottom: 1px solid var(--card-border);
+            padding: 1rem 1.25rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+        }
+
+        .mobile-summary-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .mobile-summary-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #38bdf8;
+        }
+
+        .mobile-summary-left svg {
+            transition: transform 0.25s ease;
+        }
+
+        .mobile-summary-left.active svg {
+            transform: rotate(180deg);
+        }
+
+        .mobile-summary-price {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #fff;
+        }
+
+        /* Main Split Layout */
+        .split-layout {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* LEFT COLUMN: Editorial & Showcase */
+        .left-col {
+            flex: 0 0 48%;
+            background: radial-gradient(circle at 15% 20%, rgba(245, 158, 11, 0.08), transparent 45%),
+                        radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.06), transparent 50%),
+                        var(--bg-left);
+            border-right: 1px solid rgba(255, 255, 255, 0.07);
+            padding: 3.5rem 3.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .brand-badge span.pulse-dot {
+            width: 7px;
+            height: 7px;
+            background: #fbbf24;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #fbbf24;
+            animation: pulseDot 1.8s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.35; transform: scale(0.8); }
+        }
+
+        .logo-txt {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.3rem;
+            letter-spacing: -0.02em;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .logo-txt span {
+            color: var(--accent-gold);
+        }
+
+        /* Hero Editorial Card */
+        .showcase-hero {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.8));
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            position: relative;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+        }
+
+        .medal-preview-wrap {
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            aspect-ratio: 16/10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .medal-img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
+            transition: transform 0.4s ease;
+        }
+
+        .medal-preview-wrap:hover .medal-img {
+            transform: scale(1.03) rotate(1deg);
+        }
+
+        .medal-overlay-tag {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .editorial-title {
+            font-family: var(--font-display);
+            font-size: 1.45rem;
+            font-weight: 700;
+            line-height: 1.3;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .editorial-desc {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 1.25rem;
+        }
+
+        /* Pricing Details in Editorial */
+        .order-summary-box {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 1.25rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.92rem;
+            margin-bottom: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .summary-row.main-item {
+            color: #f1f5f9;
+            font-weight: 600;
+        }
+
+        .summary-row.badge-row span.free-pill {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            font-weight: 700;
+            font-size: 0.78rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .summary-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            margin: 0.9rem 0;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .summary-total span.label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .summary-total span.amount {
+            font-family: var(--font-display);
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            letter-spacing: -0.02em;
+        }
+
+        .summary-total span.vat-note {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-darker);
+            text-align: right;
+            margin-top: 0.15rem;
+        }
+
+        /* Trust & Social Proof Section */
+        .trust-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        .social-proof-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(16, 185, 129, 0.06);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 0.85rem 1.15rem;
+            border-radius: var(--radius-md);
+        }
+
+        .stars-row {
+            color: #f59e0b;
+            letter-spacing: 2px;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .proof-text {
+            font-size: 0.83rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .proof-text strong {
+            color: #fff;
+        }
+
+        .trust-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+        }
+
+        .trust-pill {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .trust-icon {
+            font-size: 1.25rem;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .trust-pill-content h4 {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 0.2rem;
+        }
+
+        .trust-pill-content p {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+        }
+
+        /* RIGHT COLUMN: Modern Checkout Flow */
+        .right-col {
+            flex: 0 0 52%;
+            background-color: var(--bg-right);
+            padding: 3.5rem 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+
+        .checkout-container {
+            max-width: 540px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Express Checkout */
+        .express-checkout {
+            margin-bottom: 2rem;
+        }
+
+        .express-heading {
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.85rem;
+        }
+
+        .express-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .btn-express {
+            background: #ffffff;
+            color: #000;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0.85rem 1rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-express:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        .btn-express.google-pay {
+            background: #000000;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-express.google-pay:hover {
+            background: #18181b;
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .or-divider {
+            position: relative;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .or-divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+
+        .or-divider span {
+            position: relative;
+            z-index: 2;
+            background: var(--bg-right);
+            padding: 0 1.25rem;
+            font-size: 0.8rem;
+            color: var(--text-darker);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .section-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border-radius: 50%;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .form-group {
+            margin-bottom: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-label small {
+            color: var(--text-darker);
+            font-weight: 400;
+        }
+
+        .input-text, .select-custom {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem 1rem;
+            color: #fff;
+            font-size: 0.92rem;
+            font-family: var(--font-main);
+            transition: all 0.2s ease;
+        }
+
+        .input-text:focus, .select-custom:focus {
+            outline: none;
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+            background: #172238;
+        }
+
+        .input-text::placeholder {
+            color: #475569;
+        }
+
+        /* Distance Selector Pills */
+        .distance-pills {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .distance-pill {
+            cursor: pointer;
+            text-align: center;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            padding: 0.75rem 0.5rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+        }
+
+        .distance-pill:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: #182239;
+        }
+
+        .distance-pill.active {
+            border-color: var(--accent-gold);
+            background: rgba(245, 158, 11, 0.12);
+            box-shadow: 0 0 0 1px var(--accent-gold);
+        }
+
+        .distance-pill .dist-km {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            display: block;
+        }
+
+        .distance-pill.active .dist-km {
+            color: #fbbf24;
+        }
+
+        .distance-pill .dist-tag {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* Foxpost Mandatory Box */
+        .foxpost-box {
+            background: linear-gradient(145deg, rgba(239, 68, 68, 0.05), rgba(15, 23, 42, 0.8));
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            position: relative;
+        }
+
+        .foxpost-badge-top {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #f87171;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .gps-search-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: #38bdf8;
+            font-weight: 700;
+            font-size: 0.88rem;
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-bottom: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .gps-search-btn:hover {
+            background: rgba(56, 189, 248, 0.12);
+            border-color: #38bdf8;
+            transform: translateY(-1px);
+        }
+
+        .foxpost-search-wrap {
+            position: relative;
+        }
+
+        .foxpost-input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            pointer-events: none;
+        }
+
+        .foxpost-search-input {
+            width: 100%;
+            background: #0d1527;
+            border: 1px solid #24344d;
+            border-radius: var(--radius-sm);
+            padding: 0.85rem 2.5rem 0.85rem 2.5rem;
+            color: #fff;
+            font-size: 0.9rem;
+            font-family: var(--font-main);
+            transition: border-color 0.2s ease;
+        }
+
+        .foxpost-search-input:focus {
+            outline: none;
+            border-color: #38bdf8;
+        }
+
+        .foxpost-clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Foxpost Dropdown Suggestions */
+        .foxpost-dropdown {
+            margin-top: 0.5rem;
+            background: #111a2e;
+            border: 1px solid #243552;
+            border-radius: var(--radius-sm);
+            max-height: 230px;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+            display: none;
+            z-index: 20;
+        }
+
+        .foxpost-item {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .foxpost-item:last-child {
+            border-bottom: none;
+        }
+
+        .foxpost-item:hover {
+            background: rgba(56, 189, 248, 0.12);
+        }
+
+        .foxpost-item-name {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .foxpost-item-name .badge-outdoor {
+            font-size: 0.65rem;
+            background: rgba(16, 185, 129, 0.18);
+            color: #34d399;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .foxpost-item-address {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Selected Foxpost Confirmed Box */
+        .foxpost-confirmed {
+            margin-top: 0.85rem;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem 1rem;
+            display: none;
+            position: relative;
+        }
+
+        .confirmed-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.3rem;
+        }
+
+        .confirmed-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #34d399;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .confirmed-change-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .confirmed-name {
+            font-weight: 700;
+            font-size: 0.92rem;
+            color: #fff;
+        }
+
+        .confirmed-desc {
+            font-size: 0.78rem;
+            color: #cbd5e1;
+            margin-top: 0.15rem;
+        }
+
+        .confirmed-timing {
+            font-size: 0.72rem;
+            color: #38bdf8;
+            margin-top: 0.3rem;
+            font-weight: 600;
+        }
+
+        /* Primary Payment CTA */
+        .cta-container {
+            margin-top: 2rem;
+        }
+
+        .btn-submit-order {
+            width: 100%;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #0b0f19;
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            padding: 1.15rem 1.5rem;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.4);
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .btn-submit-order:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(245, 158, 11, 0.6);
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+        }
+
+        .btn-submit-order:active {
+            transform: translateY(0);
+        }
+
+        .cta-guarantee-note {
+            text-align: center;
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            margin-top: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .legal-check {
+            margin-top: 1.25rem;
+            font-size: 0.78rem;
+            color: var(--text-darker);
+            line-height: 1.4;
+        }
+
+        .legal-check a {
+            color: #94a3b8;
+            text-decoration: underline;
+        }
+
+        /* Notification Toast */
+        .toast-popup {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #1e293b;
+            color: #fff;
+            padding: 1rem 1.4rem;
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--accent-gold);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            font-size: 0.86rem;
+            z-index: 100;
+            transform: translateY(120%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast-popup.visible {
+            transform: translateY(0);
+        }
+
+        /* RESPONSIVE BREAKPOINTS */
+        @media (max-width: 992px) {
+            .split-layout {
+                flex-direction: column;
+            }
+
+            .left-col {
+                flex: none;
+                width: 100%;
+                padding: 2.5rem 1.5rem;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .right-col {
+                flex: none;
+                width: 100%;
+                padding: 2.5rem 1.5rem;
+            }
+
+            .mobile-summary-toggle {
+                display: block;
+            }
+
+            #editorial-left-summary {
+                display: none;
+            }
+
+            #editorial-left-summary.mobile-expanded {
+                display: block;
+                animation: slideDown 0.3s ease;
+            }
+
+            @keyframes slideDown {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        }
+
+        @media (max-width: 580px) {
+            .trust-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .express-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .distance-pills {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MOBILE EXPANDABLE ORDER SUMMARY BAR -->
+    <div class="mobile-summary-toggle" id="mobile-toggle" onclick="toggleMobileSummary()">
+        <div class="mobile-summary-inner">
+            <div class="mobile-summary-left" id="toggle-indicator">
+                <span>Rendelés részletei</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+            <div class="mobile-summary-price">7 990 Ft</div>
+        </div>
+    </div>
+
+    <div class="split-layout">
+        <!-- LEFT COLUMN: EDITORIAL SHOWCASE & SOCIAL PROOF -->
+        <div class="left-col" id="left-column">
+            <div>
+                <!-- Brand Header -->
+                <div class="brand-header">
+                    <div class="logo-txt">
+                        <span>🏔️</span> VitaSteps
+                    </div>
+                    <div class="brand-badge">
+                        <span class="pulse-dot"></span>
+                        Még 33 db elérhető
+                    </div>
+                </div>
+
+                <!-- Medal & Product Editorial Card -->
+                <div class="showcase-hero">
+                    <div class="medal-preview-wrap">
+                        <img src="/assets/nagykevely/nagy_kevely_creative_v4.png" alt="Nagy-Kevély Csillagai Érem" class="medal-img" onerror="this.onerror=null; this.src='assets/nagy_kevely_medal.png';">
+                        <div class="medal-overlay-tag">
+                            <span>✨</span> 3D Öntött Bronz • 70 mm
+                        </div>
+                    </div>
+
+                    <h1 class="editorial-title">A Nagy-Kevély csillagai – Limitált sorszámozott érem</h1>
+                    <p class="editorial-desc">
+                        Prémium egyedi tervezésű túraérem díszdobozban, névre szóló digitális oklevéllel és ingyenes Foxpost automatás szállítással.
+                    </p>
+
+                    <!-- Order Summary Box -->
+                    <div class="order-summary-box" id="editorial-left-summary">
+                        <div class="summary-row main-item">
+                            <span>1x Nevezési csomag (Érem + Oklevél)</span>
+                            <span>7 990 Ft</span>
+                        </div>
+                        <div class="summary-row badge-row">
+                            <span>Foxpost szállítás országszerte</span>
+                            <span class="free-pill">INGYENES (0 Ft)</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Kezelési & csomagolási díj</span>
+                            <span>0 Ft</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-total">
+                            <div>
+                                <span class="label">Összesen fizetendő:</span>
+                                <span class="vat-note">27% ÁFA-t tartalmaz</span>
+                            </div>
+                            <span class="amount" id="display-total-amount">7 990 Ft</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trust Signals & Social Proof -->
+                <div class="trust-section">
+                    <div class="social-proof-bar">
+                        <div class="stars-row">★★★★★</div>
+                        <div class="proof-text">
+                            <strong>10/10 NPS vásárlói elégedettség</strong> • 67 sikeres teljesítő az előző futamban!
+                        </div>
+                    </div>
+
+                    <div class="trust-grid">
+                        <div class="trust-pill">
+                            <div class="trust-icon">🛡️</div>
+                            <div class="trust-pill-content">
+                                <h4>100% Pénzvisszafizetés</h4>
+                                <p>Kérdés nélkül visszafizetjük az összeget, ha a túra előtt meggondolnád magad.</p>
+                            </div>
+                        </div>
+
+                        <div class="trust-pill">
+                            <div class="trust-icon">⏳</div>
+                            <div class="trust-pill-content">
+                                <h4>Nincs Időkorlát</h4>
+                                <p>A nevezésed nem jár le. Akkor teljesíted a távot, amikor neked a legkényelmesebb.</p>
+                            </div>
+                        </div>
+
+                        <div class="trust-pill">
+                            <div class="trust-icon">📦</div>
+                            <div class="trust-pill-content">
+                                <h4>Garantált Érem</h4>
+                                <p>A sikeres nevezéssel a fizikai érmed azonnal félre van téve és névre szólóan vár.</p>
+                            </div>
+                        </div>
+
+                        <div class="trust-pill">
+                            <div class="trust-icon">🔒</div>
+                            <div class="trust-pill-content">
+                                <h4>256-bit Stripe Védelem</h4>
+                                <p>Banki szintű SSL titkosítás, bankkártya adatok mentése nélkül.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; font-size: 0.74rem; color: #475569; text-align: center;">
+                © 2026 VitaSteps • Hivatalos Élménytúra Platform • Minden jog fenntartva.
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: STREAMLINED EDITORIAL CHECKOUT -->
+        <div class="right-col">
+            <div class="checkout-container">
+
+                <!-- 1. Express Checkout Header -->
+                <div class="express-checkout">
+                    <div class="express-heading">Villámgyors Fizetés</div>
+                    <div class="express-buttons">
+                        <button type="button" class="btn-express" onclick="triggerExpress('Apple Pay')">
+                            <svg width="18" height="18" viewBox="0 0 170 170" fill="currentColor">
+                                <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.67-7.81-11.96-14.34-6.41-9.79-11.39-20.94-14.93-33.47-3.55-12.53-5.32-23.86-5.32-33.99 0-14.19 3.55-25.92 10.65-35.19 7.1-9.27 16.03-14.07 26.79-14.41 4.79 0 10.05 1.25 15.79 3.75 5.74 2.5 9.4 3.81 10.97 3.93 1.96-.25 5.75-1.6 11.37-4.06 5.62-2.46 10.66-3.61 15.12-3.44 11.97.64 21.6 4.98 28.91 13.01-10.42 6.32-15.51 14.89-15.26 25.72.25 8.71 3.52 16.03 9.8 21.96 6.28 5.93 13.9 9.38 22.86 10.35-2.02 6.27-4.47 12.44-7.36 18.51zM119.22 32.74c0-7.31 2.65-14.28 7.95-20.91 5.3-6.63 11.91-10.87 19.83-12.71.59 2.1.88 4.2.88 6.3 0 7.31-2.73 14.35-8.2 21.12-5.46 6.77-12.26 10.97-20.46 12.61-.17-2.18-.26-4.32-.26-6.41z"/>
+                            </svg>
+                            <span>Pay</span>
+                        </button>
+                        <button type="button" class="btn-express google-pay" onclick="triggerExpress('Google Pay')">
+                            <span style="font-weight: 800; font-family: sans-serif; letter-spacing: -0.5px;">G Pay</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="or-divider">
+                    <span>Vagy fizetés bankkártyával</span>
+                </div>
+
+                <!-- Checkout Form -->
+                <form id="checkout-form" onsubmit="event.preventDefault(); handleCheckoutSubmit();">
+
+                    <!-- STEP 1: Kapcsolattartási Adatok -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="section-num">1</span>
+                                <span>Kapcsolattartó adatok</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label class="form-label">
+                                    <span>E-mail cím</span>
+                                    <small>Ide küldjük az igazolást & GPX-et</small>
+                                </label>
+                                <input type="email" id="email" class="input-text" placeholder="pelda@email.hu" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label class="form-label">
+                                    <span>Telefonszám (SMS értesítés Foxposthoz)</span>
+                                    <small>+36...</small>
+                                </label>
+                                <input type="tel" id="phone" class="input-text" placeholder="+36 30 123 4567" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Résztvevő & Táv Választás -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="section-num">2</span>
+                                <span>Résztvevő & Táv választás</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <span>Nevező teljes neve</span>
+                                <small>Ez a név kerül a számlára és oklevélre</small>
+                            </label>
+                            <input type="text" id="fullname" class="input-text" placeholder="Kovács Balázs" required>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label class="form-label">
+                                <span>Választott túratáv:</span>
+                                <small id="selected-dist-label">10 km (Klasszikus)</small>
+                            </label>
+                            <div class="distance-pills">
+                                <div class="distance-pill" onclick="selectDistance('5', 'Családi táv', this)">
+                                    <span class="dist-km">5 km</span>
+                                    <span class="dist-tag">Családi</span>
+                                </div>
+                                <div class="distance-pill active" onclick="selectDistance('10', 'Klasszikus', this)">
+                                    <span class="dist-km">10 km</span>
+                                    <span class="dist-tag">Klasszik</span>
+                                </div>
+                                <div class="distance-pill" onclick="selectDistance('13', 'Panoráma kör', this)">
+                                    <span class="dist-km">13 km</span>
+                                    <span class="dist-tag">Panoráma</span>
+                                </div>
+                                <div class="distance-pill" onclick="selectDistance('21', 'Félmaraton', this)">
+                                    <span class="dist-km">21 km</span>
+                                    <span class="dist-tag">Trail 21K</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Ingyenes Foxpost Átvételi Pont (Mandatory) -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="section-num">3</span>
+                                <span>Érem átvétele (Foxpost automata)</span>
+                            </div>
+                            <span style="font-size: 0.75rem; color: #34d399; font-weight: 700;">Díjmentes</span>
+                        </div>
+
+                        <div class="foxpost-box">
+                            <div class="foxpost-badge-top">
+                                <span>📍</span> Kötelező kiválasztani az átvételi automatát
+                            </div>
+
+                            <!-- GPS Quick Action -->
+                            <button type="button" class="gps-search-btn" onclick="findNearestFoxpostGPS()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                                </svg>
+                                <span>Legközelebbi automata keresése (GPS)</span>
+                            </button>
+
+                            <!-- Native Autocomplete Input -->
+                            <div class="foxpost-search-wrap">
+                                <span class="foxpost-input-icon">🔍</span>
+                                <input type="text" id="foxpost-input" class="foxpost-search-input" placeholder="Keress város, utca, pláza vagy irányítószám szerint..." oninput="handleFoxpostFilter(this.value)" autocomplete="off">
+                                <button type="button" id="foxpost-clear" class="foxpost-clear-btn" onclick="clearFoxpostSearch()">✕</button>
+                            </div>
+
+                            <!-- Dropdown Results -->
+                            <div id="foxpost-results" class="foxpost-dropdown">
+                                <!-- Dynamically populated -->
+                            </div>
+
+                            <!-- Confirmed Selected Box -->
+                            <div id="foxpost-confirmed-card" class="foxpost-confirmed">
+                                <div class="confirmed-header">
+                                    <span class="confirmed-title">✓ Kiválasztott automata</span>
+                                    <button type="button" class="confirmed-change-btn" onclick="reopenFoxpostSearch()">Módosítás</button>
+                                </div>
+                                <div class="confirmed-name" id="conf-name">Budapest XI. - Allee Bevásárlóközpont</div>
+                                <div class="confirmed-desc" id="conf-addr">1117 Budapest, Október huszonharmadika u. 8-10. (MOL mellett)</div>
+                                <div class="confirmed-timing" id="conf-open">⏰ 0-24 órás hozzáférés • Kültéri automata</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Submit Section -->
+                    <div class="cta-container">
+                        <button type="submit" id="btn-submit" class="btn-submit-order">
+                            <span>🔒 Tovább a biztonságos fizetéshez (7 990 Ft)</span>
+                        </button>
+                        <div class="cta-guarantee-note">
+                            <span>🛡️</span> 100% Pénzvisszafizetési garancia • Azonnali automatikus visszaigazolás
+                        </div>
+                    </div>
+
+                    <!-- Terms & Privacy -->
+                    <div class="legal-check">
+                        A "Tovább a biztonságos fizetéshez" gombra kattintva elfogadod az <a href="aszf.html" target="_blank">Általános Szerződési Feltételeket</a> és az <a href="adatvedelem.html" target="_blank">Adatkezelési Tájékoztatót</a>.
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Toast -->
+    <div id="toast" class="toast-popup">
+        Sikeres választás!
+    </div>
+
+    <script>
+        // Sample default fallback data for instant responsiveness
+        const sampleFoxposts = [
+            { id: "101", name: "Budapest XI. ker. - Allee Bevásárlóközpont", zip: "1117", city: "Budapest", address: "Október huszonharmadika u. 8-10.", outdoor: true, lat: 47.4746, lng: 19.0494 },
+            { id: "102", name: "Budapest III. ker. - Stop Shop Óbuda", zip: "1036", city: "Budapest", address: "Bécsi út 136.", outdoor: true, lat: 47.5385, lng: 19.0345 },
+            { id: "103", name: "Budapest II. ker. - Mammut I.", zip: "1024", city: "Budapest", address: "Lövőház utca 2-6.", outdoor: false, lat: 47.5091, lng: 19.0264 },
+            { id: "104", name: "Szentendre - Spar Partner", zip: "2000", city: "Szentendre", address: "Dunakanyar krt. 2.", outdoor: true, lat: 47.6694, lng: 19.0756 },
+            { id: "105", name: "Pilisvörösvár - Penny Market", zip: "2085", city: "Pilisvörösvár", address: "Fő út 12.", outdoor: true, lat: 47.6212, lng: 18.9102 },
+            { id: "106", name: "Pomáz - HÉV Állomás", zip: "2013", city: "Pomáz", address: "Vasút sor 1.", outdoor: true, lat: 47.6468, lng: 19.0272 },
+            { id: "107", name: "Budapest XII. ker. - MOM Park", zip: "1123", city: "Budapest", address: "Alkotás u. 53.", outdoor: false, lat: 47.4925, lng: 19.0225 },
+            { id: "108", name: "Budapest XIII. ker. - Duna Plaza", zip: "1138", city: "Budapest", address: "Váci út 178.", outdoor: false, lat: 47.5544, lng: 19.0792 },
+            { id: "109", name: "Debrecen - Fórum Bevásárlóközpont", zip: "4026", city: "Debrecen", address: "Csapó u. 30.", outdoor: false, lat: 47.5332, lng: 21.6291 },
+            { id: "110", name: "Szeged - Árkád", zip: "6722", city: "Szeged", address: "Londoni krt. 3.", outdoor: false, lat: 46.2536, lng: 20.1415 },
+            { id: "111", name: "Győr - Árkád", zip: "9027", city: "Győr", address: "Budai út 1.", outdoor: true, lat: 47.6895, lng: 17.6441 }
+        ];
+
+        let foxpostList = [...sampleFoxposts];
+        let selectedFoxpost = null;
+        let selectedDistanceKm = '10';
+
+        // Load Live CDN Foxpost in background if available
+        async function initFoxpostData() {
+            try {
+                const res = await fetch('https://cdn.foxpost.hu/foxplus.json');
+                if (res.ok) {
+                    const data = await res.json();
+                    foxpostList = data.map(item => ({
+                        id: String(item.place_id || item.operator_id || ''),
+                        name: item.name || '',
+                        address: item.address || item.street || '',
+                        city: item.city || '',
+                        zip: item.zip || '',
+                        outdoor: item.isOutdoor === true || (item.name || '').toLowerCase().includes('kültéri'),
+                        lat: parseFloat(item.geolat || 0),
+                        lng: parseFloat(item.geolng || 0)
+                    }));
+                }
+            } catch (e) {
+                console.log("Using cached/sample foxposts for mockup.");
+            }
+        }
+        initFoxpostData();
+
+        // Distance selection pill
+        function selectDistance(km, label, element) {
+            document.querySelectorAll('.distance-pill').forEach(pill => pill.classList.remove('active'));
+            element.classList.add('active');
+            selectedDistanceKm = km;
+            document.getElementById('selected-dist-label').textContent = `${km} km (${label})`;
+            showToast(`Választott táv: ${km} km`);
+        }
+
+        // Mobile Summary Accordion
+        function toggleMobileSummary() {
+            const summaryBox = document.getElementById('editorial-left-summary');
+            const indicator = document.getElementById('toggle-indicator');
+            summaryBox.classList.toggle('mobile-expanded');
+            indicator.classList.toggle('active');
+        }
+
+        // Foxpost filtering & rendering
+        function handleFoxpostFilter(query) {
+            const cleanQuery = query.toLowerCase().trim();
+            const resultsEl = document.getElementById('foxpost-results');
+            const clearBtn = document.getElementById('foxpost-clear');
+
+            clearBtn.style.display = cleanQuery ? 'block' : 'none';
+
+            if (cleanQuery.length < 2) {
+                resultsEl.style.display = 'none';
+                return;
+            }
+
+            const filtered = foxpostList.filter(item => 
+                item.name.toLowerCase().includes(cleanQuery) ||
+                item.city.toLowerCase().includes(cleanQuery) ||
+                item.zip.includes(cleanQuery) ||
+                item.address.toLowerCase().includes(cleanQuery)
+            ).slice(0, 8);
+
+            if (filtered.length === 0) {
+                resultsEl.innerHTML = `<div style="padding:1rem;color:#94a3b8;font-size:0.85rem;text-align:center;">Nincs találat a(z) "<strong>${escapeHtml(query)}</strong>" keresésre.</div>`;
+                resultsEl.style.display = 'block';
+                return;
+            }
+
+            resultsEl.innerHTML = filtered.map(item => `
+                <div class="foxpost-item" onclick="selectFoxpostItem('${item.id}', '${escapeAttr(item.name)}', '${escapeAttr(item.zip + ' ' + item.city + ', ' + item.address)}', ${item.outdoor})">
+                    <div class="foxpost-item-name">
+                        <span>${escapeHtml(item.name)}</span>
+                        ${item.outdoor ? '<span class="badge-outdoor">0-24h Kültéri</span>' : '<span style="font-size:0.65rem;color:#94a3b8;">Beltéri</span>'}
+                    </div>
+                    <div class="foxpost-item-address">${escapeHtml(item.zip)} ${escapeHtml(item.city)}, ${escapeHtml(item.address)}</div>
+                </div>
+            `).join('');
+
+            resultsEl.style.display = 'block';
+        }
+
+        function selectFoxpostItem(id, name, address, outdoor) {
+            selectedFoxpost = { id, name, address, outdoor };
+            
+            document.getElementById('foxpost-results').style.display = 'none';
+            document.getElementById('foxpost-input').value = name;
+            
+            // Populate confirmed card
+            document.getElementById('conf-name').textContent = name;
+            document.getElementById('conf-addr').textContent = address;
+            document.getElementById('conf-open').textContent = outdoor ? '⏰ 0-24 órás hozzáférés • Kültéri automata' : '🕒 Nyitvatartási időben átvehető (Beltéri)';
+            
+            document.getElementById('foxpost-confirmed-card').style.display = 'block';
+            showToast(`Automata rögzítve: ${name.split('-')[0] || name}`);
+        }
+
+        function clearFoxpostSearch() {
+            document.getElementById('foxpost-input').value = '';
+            document.getElementById('foxpost-clear').style.display = 'none';
+            document.getElementById('foxpost-results').style.display = 'none';
+        }
+
+        function reopenFoxpostSearch() {
+            document.getElementById('foxpost-confirmed-card').style.display = 'none';
+            const input = document.getElementById('foxpost-input');
+            input.focus();
+            input.select();
+            if (input.value) handleFoxpostFilter(input.value);
+        }
+
+        // GPS locator
+        function findNearestFoxpostGPS() {
+            if (!navigator.geolocation) {
+                alert("A böngésződ nem támogatja a helymeghatározást.");
+                return;
+            }
+
+            showToast("📍 Pozíció meghatározása folyamatban...");
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+
+                    // Calculate nearest
+                    let nearest = null;
+                    let minDistance = Infinity;
+
+                    foxpostList.forEach(item => {
+                        if (item.lat && item.lng) {
+                            const d = Math.hypot(item.lat - userLat, item.lng - userLng);
+                            if (d < minDistance) {
+                                minDistance = d;
+                                nearest = item;
+                            }
+                        }
+                    });
+
+                    if (nearest) {
+                        selectFoxpostItem(nearest.id, nearest.name, `${nearest.zip} ${nearest.city}, ${nearest.address}`, nearest.outdoor);
+                        showToast(`📍 Legközelebbi automata megtalálva!`);
+                    } else {
+                        // Fallback to sample item 1
+                        const fallback = sampleFoxposts[0];
+                        selectFoxpostItem(fallback.id, fallback.name, `${fallback.zip} ${fallback.city}, ${fallback.address}`, fallback.outdoor);
+                    }
+                },
+                (err) => {
+                    // Fallback to closest mock near Budapest center
+                    showToast("GPS hozzáférés nem engedélyezett, legnépszerűbb pont betöltve.");
+                    const fallback = sampleFoxposts[0];
+                    selectFoxpostItem(fallback.id, fallback.name, `${fallback.zip} ${fallback.city}, ${fallback.address}`, fallback.outdoor);
+                },
+                { timeout: 7000 }
+            );
+        }
+
+        // Express checkout mockup
+        function triggerExpress(type) {
+            alert(`[DEMO EXPRESS CHECKOUT] ${type} gomb megnyomva!\n\nA valós rendszerben a böngésző Apple Pay / Google Pay fizetési lapja ugrana fel a Foxpost cím egyeztetésével.`);
+        }
+
+        // Submit Handler
+        function handleCheckoutSubmit() {
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const fullname = document.getElementById('fullname').value.trim();
+
+            if (!email || !phone || !fullname) {
+                alert("Kérjük, töltsd ki az összes kötelező mezőt!");
+                return;
+            }
+
+            if (!selectedFoxpost) {
+                alert("Kérjük, válassz ki egy Foxpost átvételi automatát a csomagodnak!");
+                document.getElementById('foxpost-input').focus();
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit');
+            btn.innerHTML = `<span>⏳ Átirányítás a biztonságos fizetéshez...</span>`;
+            btn.style.opacity = '0.8';
+            btn.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                alert(`✨ Rendelés adatai rögzítve:\n\n• Név: ${fullname}\n• E-mail: ${email}\n• Telefon: ${phone}\n• Választott táv: ${selectedDistanceKm} km\n• Átvétel: ${selectedFoxpost.name} (${selectedFoxpost.address})\n• Végösszeg: 7 990 Ft\n\n(A teszt környezetben most következne a Stripe Checkout fizetési oldal betöltése.)`);
+                btn.innerHTML = `<span>🔒 Tovább a biztonságos fizetéshez (7 990 Ft)</span>`;
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            }, 800);
+        }
+
+        // Toast Helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('visible');
+            setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 3000);
+        }
+
+        function escapeHtml(str) {
+            return (str || '').replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        function escapeAttr(str) {
+            return (str || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+    </script>
+</body>
+</html>
