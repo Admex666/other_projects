@@ -40,3 +40,9 @@ A VitaSteps növekedési korlátainak feloldására új digitális terméket vez
 * A meglévő `analytics.js` és `analytics_events` motor méri a specifikus eseményeket:
   `landing_view`, `scroll_25/50/75/90`, `prototype_start`, `prototype_screen_view`, `map_preview_open`, `audio_preview_play`, `pricing_view`, `cta_click`, `lead_submit`.
 * A napi 22:25-kor futó GitHub Actions Pushbullet riport bővült a Kitérő szekcióval (Látogatók, Prototípus indítások, Hangminta lejátszások, Leadek).
+
+### 2.5. Árhorgonyzás és Érték-Összehasonlító Blokk (Value Reframing)
+* A korábbi egyszerű árdoboz helyére egy kétoszlopos érték-összehasonlító szekció került:
+  1. **Kötött csoportos séta:** 10 000 – 13 000 Ft (5 000 – 6 500 Ft / fő), szigorú fejpénz, merev időbeosztás, 20–30 fős idegen tömeg, eső/lemondás esetén elúszó jegy.
+  2. **VitaSteps Kitérő:** 3 490 Ft vs 3 990 Ft / teljes séta (A/B tesztelve), nincs fejpénz (párban ~1 745 Ft – ~1 995 Ft / fő – még mindig olcsóbb, mint egy kávé és süti), 100% szabadság, bármikor megállítható egy kávéra/fagyira, kulcsrakész „adott az élmény” nulla szervezési stresszel, örökös hozzáférés.
+* Közvetlenül a blokk alatt helyezkedik el a korai hozzáférés Név + E-mail bekérő űrlapja.

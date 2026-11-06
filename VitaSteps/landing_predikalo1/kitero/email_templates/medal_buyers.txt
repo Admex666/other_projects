@@ -1,0 +1,31 @@
+Tárgy: Emlékszel még a VitaStepsre? Van egy új ötletünk...
+
+Szia {{first_name}}!
+
+Emlékszel még a VitaStepsre? Most valami egészen új ötleten dolgozunk.
+
+Bemutatjuk a VitaSteps Kitérőt.
+
+Mi lenne, ha a következő sétád során nemcsak új utcákat, hanem olyan történeteket és különleges helyeket is felfedeznél, amelyek mellett eddig talán észrevétlenül elsétáltál?
+
+Pontosan ezen dolgozunk.
+
+Készítettünk egy rövid bemutatót, ahol megnézheted, hogyan képzeljük el ezt az új élményt – és ki is próbálhatod az első terveket.
+
+Kíváncsiak vagyunk, mit gondolsz róla!
+
+Nézd meg a bemutatót az alábbi linken:
+https://vitastepsss.vercel.app/kitero?cid={{cid}}&utm_source=email&utm_campaign=kitero_medal_buyers
+
+A véleményed sokat segítene abban, hogy olyat alkossunk, amit valóban öröm lesz használni.
+
+Köszönjük, hogy velünk tartasz!
+
+A VitaSteps csapata
+https://vitastepsss.vercel.app
+
+---
+Ez az e-mail korábbi VitaSteps túraérem-vásárlásod vagy nevezésed alapján érkezett hozzád.
+Ügyfélszolgálat: vitasteps.team@gmail.com
+Leiratkozás: https://vitastepsss.vercel.app/api/unsubscribe?cid={{cid}}&utm_source=email&utm_campaign=kitero_medal_buyers
+Adatkezelési tájékoztató: https://vitastepsss.vercel.app/adatvedelem.html

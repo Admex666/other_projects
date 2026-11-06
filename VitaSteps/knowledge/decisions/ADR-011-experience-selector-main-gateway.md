@@ -55,7 +55,7 @@ A cél:
 ### 2.3. Közvetlen Termékválasztó (Direct Choice Grid)
 A főoldal alsó szekciójában a két termékvonal vizuálisan gazdag, egymás melletti kártyaként jelenik meg:
 * **VitaSteps Túraérmek:** Prédikálószék Vertical 100, Nagy-Kevély Csillagai, prémium fémérmek, GPX igazolás.
-* **VitaSteps Kitérő:** A Palotanegyed Titkai, Hegedűs D. Géza narrációja, interaktív GPS térkép, app-letöltés nélkül.
+* **VitaSteps Kitérő:** A Palotanegyed Titkai, hangos narráció, interaktív GPS térkép, app-letöltés nélkül.
 
 ### 2.4. Szigorú Névhasználati Szabály
 * A digitális városi séta termék neve kizárólag **VitaSteps Kitérő** vagy **Kitérő**.

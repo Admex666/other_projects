@@ -34,7 +34,7 @@ A VitaSteps Kitérő a márka digitális élményplatformja. A fizikai érmek me
   * Becsült időtartam: 1.5 – 2 óra
   * Megállók: 8 állomás
   * Narráció: Audio fejezetek korhű hangulatfestéssel.
-* **Árazási hipotézis:** 2 990 Ft vs 3 490 Ft (A/B tesztelve).
+* **Árazási hipotézis:** 3 490 Ft vs 3 990 Ft (A/B tesztelve).
 
 ---
 

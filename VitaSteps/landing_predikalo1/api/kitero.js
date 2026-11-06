@@ -121,7 +121,7 @@ module.exports = async (req, res) => {
                     event_name: 'lead_submit',
                     event_data: {
                         cid: cid || null,
-                        price_variant: price_variant || '2990',
+                        price_variant: price_variant || '3490',
                         hero_variant: hero_variant || 'A',
                         cta_variant: cta_variant || 'A',
                         feedback: feedback || null

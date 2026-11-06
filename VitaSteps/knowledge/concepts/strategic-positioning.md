@@ -60,7 +60,7 @@ graph TD
 * **Folyamat:** Regisztráció $\rightarrow$ kilométerek rögzítése $\rightarrow$ haladás virtuális térképen $\rightarrow$ digitális mérföldkövek és jelvények $\rightarrow$ opcionális fizikai érem.
 
 ### 3. VitaSteps Kitérő ([[kitero|VitaSteps Kitérő]])
-* **Jelleg:** Önvezetett, tematikus városi élményséták és színészi hangos narráció (pl. *A Palotanegyed Titkai* Hegedűs D. Gézával).
+* **Jelleg:** Önvezetett, tematikus városi élményséták és hangos narráció (pl. *A Palotanegyed Titkai*).
 * **Folyamat:** Séta + GPS pozíció alapú hangos történetmesélés + városi felfedezés a saját tempóban (lásd: [[ADR-010-kitero-validation-architecture|ADR-010]]).
 
 ### 3.1. Központi Élményválasztó Főoldal (`/main`)

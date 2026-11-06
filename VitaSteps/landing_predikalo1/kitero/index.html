@@ -22,7 +22,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         rel="stylesheet">
 
     <style>
@@ -43,20 +44,20 @@
             --border-subtle: #EBEAE4;
             --warning: #B77935;
             --warning-light: #FDF6EE;
-            
+
             --font-display: 'Playfair Display', Georgia, serif;
             --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
             --font-sans: 'Inter', system-ui, sans-serif;
-            
+
             --radius-sm: 8px;
             --radius-md: 14px;
             --radius-lg: 24px;
             --radius-full: 9999px;
-            
+
             --shadow-sm: 0 2px 8px rgba(36, 40, 32, 0.04);
             --shadow-md: 0 8px 24px rgba(36, 40, 32, 0.07);
             --shadow-lg: 0 16px 40px rgba(36, 40, 32, 0.10);
-            
+
             --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -406,7 +407,7 @@
         .app-img-gradient {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(17,20,22,0.85) 100%);
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(17, 20, 22, 0.85) 100%);
             pointer-events: none;
         }
 
@@ -790,8 +791,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Screen 1: Walk Detail (HTML Card) */
@@ -815,7 +823,7 @@
         .proto-hero-gradient {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(17,20,22,0.85) 100%);
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(17, 20, 22, 0.85) 100%);
             pointer-events: none;
         }
 
@@ -929,7 +937,7 @@
             margin-bottom: 0.85rem;
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             flex-shrink: 0;
         }
 
@@ -1007,7 +1015,9 @@
         }
 
         @keyframes pingRadar {
-            75%, 100% {
+
+            75%,
+            100% {
                 transform: scale(2);
                 opacity: 0;
             }
@@ -1033,8 +1043,17 @@
         }
 
         @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.3); opacity: 0.2; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 0.2;
+            }
         }
 
         .map-marker.stop-active .marker-circle-active {
@@ -1062,7 +1081,7 @@
             border-radius: 10px;
             margin-top: 3px;
             white-space: nowrap;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(189, 245, 0, 0.3);
             position: relative;
             z-index: 2;
@@ -1133,7 +1152,8 @@
             transition: var(--transition);
         }
 
-        .poi-stop-item:hover, .poi-stop-item.active {
+        .poi-stop-item:hover,
+        .poi-stop-item.active {
             border-color: #bdf500;
             background: #242A20;
         }
@@ -1181,7 +1201,7 @@
         .stop-img-gradient {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(17,20,22,0.7) 100%);
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(17, 20, 22, 0.7) 100%);
             pointer-events: none;
         }
 
@@ -1214,7 +1234,7 @@
             border-radius: 16px;
             padding: 0.85rem;
             margin: 0.5rem 0;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .audio-controls-row {
@@ -1358,7 +1378,7 @@
             display: flex;
             align-items: center;
             justify-content: space-around;
-            border-top: 1px solid rgba(255,255,255,0.06);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
             margin-top: auto;
         }
 
@@ -1398,12 +1418,13 @@
             background: #191C1E;
             border-radius: var(--radius-md);
             margin-bottom: 1rem;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             cursor: pointer;
             transition: var(--transition);
         }
 
-        .proto-step-pill:hover, .proto-step-pill.active {
+        .proto-step-pill:hover,
+        .proto-step-pill.active {
             border-color: #bdf500;
             background: #1D221A;
             transform: translateX(4px);
@@ -1472,7 +1493,7 @@
         .walk-cover-gradient {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(17,20,22,0.3) 0%, rgba(17,20,22,0.92) 100%);
+            background: linear-gradient(180deg, rgba(17, 20, 22, 0.3) 0%, rgba(17, 20, 22, 0.92) 100%);
             pointer-events: none;
         }
 
@@ -1657,96 +1678,162 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .pricing-card-wrap {
-            max-width: 620px;
-            margin: 0 auto;
-            background: var(--bg);
-            border: 2px solid var(--accent);
-            border-radius: var(--radius-lg);
-            padding: 3rem;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-            position: relative;
+        /* Comparison Grid & Re-anchoring */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            gap: 2rem;
+            max-width: 980px;
+            margin: 0 auto 3rem;
+            align-items: stretch;
         }
 
-        .pricing-badge-popular {
+        .compare-card {
+            background: var(--bg);
+            border-radius: var(--radius-lg);
+            padding: 2.4rem 2.2rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .compare-card.traditional {
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+            opacity: 0.92;
+        }
+
+        .compare-card.kitero-highlight {
+            border: 2px solid var(--accent);
+            background: linear-gradient(180deg, rgba(189, 245, 0, 0.04) 0%, var(--bg) 100%);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(189, 245, 0, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .compare-badge-flag {
             position: absolute;
             top: -14px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--accent);
-            color: #fff;
+            color: #111416;
             font-size: 0.75rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            padding: 4px 16px;
+            padding: 4px 18px;
             border-radius: var(--radius-full);
+            white-space: nowrap;
+            box-shadow: 0 4px 14px rgba(189, 245, 0, 0.4);
         }
 
-        .pricing-title {
+        .compare-card-title {
             font-family: var(--font-display);
-            font-size: 1.85rem;
+            font-size: 1.45rem;
             font-weight: 700;
             color: var(--text-high);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
 
-        .pricing-lead {
-            font-size: 0.95rem;
+        .compare-card-sub {
+            font-size: 0.85rem;
             color: var(--text-mid);
+            margin-bottom: 1.25rem;
+        }
+
+        .compare-price-box {
+            padding: 1.2rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
             margin-bottom: 1.5rem;
         }
 
-        .price-box {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 1.5rem;
-        }
-
-        .price-val {
+        .compare-price-val {
             font-family: var(--font-display);
-            font-size: 3.2rem;
-            font-weight: 700;
-            color: var(--text-high);
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1;
         }
 
-        .price-curr {
-            font-size: 1.25rem;
-            color: var(--text-mid);
-            font-weight: 600;
+        .compare-price-note {
+            font-size: 0.82rem;
+            margin-top: 6px;
+            line-height: 1.45;
         }
 
-        .price-original {
-            font-size: 1.2rem;
-            color: var(--text-low);
-            text-decoration: line-through;
-            margin-left: 8px;
-        }
-
-        .pricing-features-list {
-            text-align: left;
-            margin: 1.8rem auto 2.2rem;
-            max-width: 440px;
+        .compare-features-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+            flex: 1;
         }
 
-        .pricing-feature {
+        .compare-feature-row {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 10px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            line-height: 1.45;
+        }
+
+        .compare-feature-row.negative {
+            color: var(--text-mid);
+        }
+
+        .compare-feature-row.positive {
             color: var(--text-high);
         }
 
-        .pricing-feature span.check {
-            color: var(--accent);
+        .feature-icon-mark {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
             font-weight: 800;
-            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .feature-icon-mark.cross {
+            background: rgba(255, 100, 100, 0.15);
+            color: #ff6b6b;
+        }
+
+        .feature-icon-mark.tick {
+            background: rgba(189, 245, 0, 0.2);
+            color: var(--accent);
+        }
+
+        /* Lead Form Container underneath Comparison */
+        .compare-cta-wrap {
+            max-width: 640px;
+            margin: 0 auto;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .compare-cta-title {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-high);
+            margin-bottom: 0.4rem;
+        }
+
+        .compare-cta-desc {
+            font-size: 0.95rem;
+            color: var(--text-mid);
+            margin-bottom: 1.8rem;
+            line-height: 1.5;
         }
 
         /* Early Access Signup Form */
@@ -1911,23 +1998,37 @@
                 grid-template-columns: 1fr;
                 gap: 2.5rem;
             }
+
             .hero-visual {
                 order: -1;
                 max-width: 400px;
                 margin: 0 auto;
             }
+
             .proto-container {
                 grid-template-columns: 1fr;
                 gap: 2.5rem;
             }
+
             .walk-card-hero {
                 grid-template-columns: 1fr;
             }
+
             .contrast-grid {
                 grid-template-columns: 1fr;
             }
+
             .steps-grid {
                 grid-template-columns: 1fr 1fr;
+            }
+
+            .compare-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .compare-card.kitero-highlight {
+                transform: none;
             }
         }
 
@@ -1935,20 +2036,26 @@
             .hero {
                 padding: 2.5rem 0 2rem;
             }
+
             .steps-grid {
                 grid-template-columns: 1fr;
             }
+
             .walk-details-content {
                 padding: 1.8rem;
             }
+
             .pricing-card-wrap {
                 padding: 2rem 1.25rem;
             }
+
             .hero-actions {
                 flex-direction: column;
                 align-items: stretch;
             }
-            .btn-primary, .btn-secondary {
+
+            .btn-primary,
+            .btn-secondary {
                 justify-content: center;
             }
         }
@@ -1982,7 +2089,8 @@
                     </div>
                     <h1 id="hero-headline">Néha a legjobb élmények egy <em>kitérővel</em> kezdődnek.</h1>
                     <p class="hero-lead">
-                        Fedezd fel a várost új szemmel! Történetek, különleges helyek és meglepő érdekességek várnak rád –
+                        Fedezd fel a várost új szemmel! Történetek, különleges helyek és meglepő érdekességek várnak rád
+                        –
                         <strong>a saját tempódban</strong>, kötöttségek nélkül.
                     </p>
                     <div class="hero-actions">
@@ -2015,7 +2123,7 @@
                                     <span class="camera-lens"></span>
                                 </div>
                             </div>
-                            
+
                             <div class="hero-app-screen">
                                 <!-- Top App Bar -->
                                 <div class="app-top-bar">
@@ -2031,18 +2139,21 @@
 
                                 <!-- Walk Cover Card -->
                                 <div class="app-walk-card">
-                                    <div class="app-walk-img-box" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALOjt5GVAPKgBAkrRM19EntLT6zcXPmu4gpT-48vhuahgj-A7ZjO5hC_U_esnv7w_Muv6pN4y7SHSKa4RcqXd36BQ0HHvdyIM1Xq64NjMDzTRIlnn0QiMnjMLzA-OeyPGHv9BqWeExRMzDuE3cKBBjDtMmMv-p2RgFhmfJkwE6a0NdBk2ALLEztFRLIRQYS53VYz-qsmbVO0S7c5bMwDHExp1DVs75y02OBdECq1g');">
+                                    <div class="app-walk-img-box"
+                                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALOjt5GVAPKgBAkrRM19EntLT6zcXPmu4gpT-48vhuahgj-A7ZjO5hC_U_esnv7w_Muv6pN4y7SHSKa4RcqXd36BQ0HHvdyIM1Xq64NjMDzTRIlnn0QiMnjMLzA-OeyPGHv9BqWeExRMzDuE3cKBBjDtMmMv-p2RgFhmfJkwE6a0NdBk2ALLEztFRLIRQYS53VYz-qsmbVO0S7c5bMwDHExp1DVs75y02OBdECq1g');">
                                         <div class="app-img-gradient"></div>
                                         <div class="app-card-badges">
                                             <span class="app-pill">Prémium Séta</span>
-                                            <span class="app-pill rating"><span class="material-symbols-outlined" style="font-size:12px;">star</span> 4.9 (340+)</span>
+                                            <span class="app-pill rating"><span class="material-symbols-outlined"
+                                                    style="font-size:12px;">star</span> 4.9 (340+)</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="app-walk-content">
                                         <div class="app-loc-text">Budapest VIII. · Palotanegyed</div>
-                                        <h4 class="app-walk-heading">A Palotanegyed Titkai: Arisztokraták és Rejtélyek</h4>
-                                        
+                                        <h4 class="app-walk-heading">A Palotanegyed Titkai: Arisztokraták és Rejtélyek
+                                        </h4>
+
                                         <!-- Quick specs -->
                                         <div class="app-specs-row">
                                             <div class="app-spec-chip">
@@ -2065,7 +2176,7 @@
                                                 <span class="material-symbols-outlined">play_arrow</span>
                                             </div>
                                             <div class="mini-audio-info">
-                                                <span class="mini-audio-title">Hangos narráció · Hegedűs D. Géza</span>
+                                                <span class="mini-audio-title">Hangos narráció & történetmesélés</span>
                                                 <div class="mini-audio-wave">
                                                     <span style="height: 40%;"></span>
                                                     <span style="height: 80%;"></span>
@@ -2098,9 +2209,11 @@
             <div class="container">
                 <div class="section-header">
                     <span class="section-subtitle">Új Perspektíva</span>
-                    <h2 class="section-title">Hányszor sétáltál már el valami mellett úgy, hogy fogalmad sem volt róla?</h2>
+                    <h2 class="section-title">Hányszor sétáltál már el valami mellett úgy, hogy fogalmad sem volt róla?
+                    </h2>
                     <p class="section-desc">
-                        Nap mint nap ismerős utcákon sietünk végig. Falak, homlokzatok, kapualjak – amelyek mögött elfeledett
+                        Nap mint nap ismerős utcákon sietünk végig. Falak, homlokzatok, kapualjak – amelyek mögött
+                        elfeledett
                         párbajok, titkos találkozók és évszázados rejtélyek bújnak meg.
                     </p>
                 </div>
@@ -2149,32 +2262,37 @@
                 <div class="section-header">
                     <span class="section-subtitle">Egyszerű Menet</span>
                     <h2 class="section-title">Négy lépés. Egy felejthetetlen séta.</h2>
-                    <p class="section-desc">Nem szükséges technikai felkészülés. Csak egy feltöltött telefon és egy fülhallgató.</p>
+                    <p class="section-desc">Nem szükséges technikai felkészülés. Csak egy feltöltött telefon és egy
+                        fülhallgató.</p>
                 </div>
 
                 <div class="steps-grid">
                     <div class="step-card">
                         <div class="step-number">01</div>
                         <h3 class="step-title">Válassz egy sétát</h3>
-                        <p class="step-text">Böngéssz a kurált témák között: rejtett paloták, titkos kertek vagy bűnügyi rejtélyek.</p>
+                        <p class="step-text">Böngéssz a kurált témák között: rejtett paloták, titkos kertek vagy bűnügyi
+                            rejtélyek.</p>
                     </div>
 
                     <div class="step-card">
                         <div class="step-number">02</div>
                         <h3 class="step-title">Indulj el</h3>
-                        <p class="step-text">Nyisd meg a sétát a mobilod böngészőjében. A térkép azonnal a kezdőpontra navigál.</p>
+                        <p class="step-text">Nyisd meg a sétát a mobilod böngészőjében. A térkép azonnal a kezdőpontra
+                            navigál.</p>
                     </div>
 
                     <div class="step-card">
                         <div class="step-number">03</div>
                         <h3 class="step-title">Fedezd fel a megállókat</h3>
-                        <p class="step-text">GPS alapján érkezz a pontokra, olvasd el a titkokat és hallgasd meg az audio narrációkat.</p>
+                        <p class="step-text">GPS alapján érkezz a pontokra, olvasd el a titkokat és hallgasd meg az
+                            audio narrációkat.</p>
                     </div>
 
                     <div class="step-card">
                         <div class="step-number">04</div>
                         <h3 class="step-title">Éld át a ritmusodban</h3>
-                        <p class="step-text">Állj meg fotózni, pihenj egy padon vagy ülj be egy teraszra. A séta megvár.</p>
+                        <p class="step-text">Állj meg fotózni, pihenj egy padon vagy ülj be egy teraszra. A séta megvár.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -2187,7 +2305,7 @@
                 <div class="proto-header">
                     <div class="proto-badge">Interaktív Termékbemutató</div>
                     <h2>Próbáld ki a Kitérő élményt!</h2>
-                    <p>Kattints a megállókra, nézd meg a térképet, és hallgass bele az eredeti hanganyagba:</p>
+                    <p>Kattints a megállókra, nézd meg a térképet, és nyomd meg a lejátszást:</p>
                 </div>
 
                 <div class="proto-container">
@@ -2200,50 +2318,64 @@
 
                             <!-- Screen A: Walk Overview (Default - Crisp HTML) -->
                             <div class="proto-view active" id="view-walk">
-                                <div class="proto-walk-hero-card" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALOjt5GVAPKgBAkrRM19EntLT6zcXPmu4gpT-48vhuahgj-A7ZjO5hC_U_esnv7w_Muv6pN4y7SHSKa4RcqXd36BQ0HHvdyIM1Xq64NjMDzTRIlnn0QiMnjMLzA-OeyPGHv9BqWeExRMzDuE3cKBBjDtMmMv-p2RgFhmfJkwE6a0NdBk2ALLEztFRLIRQYS53VYz-qsmbVO0S7c5bMwDHExp1DVs75y02OBdECq1g');">
+                                <div class="proto-walk-hero-card"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALOjt5GVAPKgBAkrRM19EntLT6zcXPmu4gpT-48vhuahgj-A7ZjO5hC_U_esnv7w_Muv6pN4y7SHSKa4RcqXd36BQ0HHvdyIM1Xq64NjMDzTRIlnn0QiMnjMLzA-OeyPGHv9BqWeExRMzDuE3cKBBjDtMmMv-p2RgFhmfJkwE6a0NdBk2ALLEztFRLIRQYS53VYz-qsmbVO0S7c5bMwDHExp1DVs75y02OBdECq1g');">
                                     <div class="proto-hero-gradient"></div>
                                     <div class="proto-hero-top-badges">
                                         <span class="proto-badge-pill">Prémium Séta</span>
-                                        <span class="proto-badge-pill rating"><span class="material-symbols-outlined" style="font-size:12px;">star</span> 4.9 (342)</span>
+                                        <span class="proto-badge-pill rating"><span class="material-symbols-outlined"
+                                                style="font-size:12px;">star</span> 4.9 (342)</span>
                                     </div>
                                     <div class="proto-hero-bottom-tag">
-                                        <span class="material-symbols-outlined" style="font-size:13px;">directions_walk</span>
+                                        <span class="material-symbols-outlined"
+                                            style="font-size:13px;">directions_walk</span>
                                         <span>Gyalogos élmény</span>
                                     </div>
                                 </div>
-                                <div class="proto-loc-sub"><span class="proto-loc-dot"></span> BUDAPEST VIII. KERÜLET</div>
+                                <div class="proto-loc-sub"><span class="proto-loc-dot"></span> BUDAPEST VIII. KERÜLET
+                                </div>
                                 <div class="proto-walk-title">A Palotanegyed Titkai: Arisztokraták és Rejtélyek</div>
-                                <p class="proto-walk-synopsis">Fedezd fel a pesti arisztokrácia fényűző palotáit, titkos átjáróit és a könyvtárak rejtélyeit.</p>
-                                
+                                <p class="proto-walk-synopsis">Fedezd fel a pesti arisztokrácia fényűző palotáit, titkos
+                                    átjáróit és a könyvtárak rejtélyeit.</p>
+
                                 <div class="proto-meta-grid">
                                     <div class="proto-meta-item">
-                                        <span class="material-symbols-outlined" style="font-size:17px; color:#bdf500;">straighten</span>
+                                        <span class="material-symbols-outlined"
+                                            style="font-size:17px; color:#bdf500;">straighten</span>
                                         <div>Táv: <strong>2.8 km</strong></div>
                                     </div>
                                     <div class="proto-meta-item">
-                                        <span class="material-symbols-outlined" style="font-size:17px; color:#bdf500;">schedule</span>
+                                        <span class="material-symbols-outlined"
+                                            style="font-size:17px; color:#bdf500;">schedule</span>
                                         <div>Idő: <strong>1.5-2 óra</strong></div>
                                     </div>
                                     <div class="proto-meta-item">
-                                        <span class="material-symbols-outlined" style="font-size:17px; color:#bdf500;">place</span>
+                                        <span class="material-symbols-outlined"
+                                            style="font-size:17px; color:#bdf500;">place</span>
                                         <div>Megállók: <strong>8 állomás</strong></div>
                                     </div>
                                     <div class="proto-meta-item">
-                                        <span class="material-symbols-outlined" style="font-size:17px; color:#bdf500;">headphones</span>
+                                        <span class="material-symbols-outlined"
+                                            style="font-size:17px; color:#bdf500;">headphones</span>
                                         <div>Audio: <strong>Narrációval</strong></div>
                                     </div>
                                 </div>
 
-                                <button type="button" class="form-submit-btn" style="padding: 0.75rem; font-size: 0.92rem; margin-top: auto;" onclick="switchProtoView('map')">
+                                <button type="button" class="form-submit-btn"
+                                    style="padding: 0.75rem; font-size: 0.92rem; margin-top: auto;"
+                                    onclick="switchProtoView('map')">
                                     🗺️ Útvonal & Térkép megtekintése
                                 </button>
                             </div>
 
                             <!-- Screen B: Map & Stops View (Crisp SVG Vector Cartography) -->
                             <div class="proto-view" id="view-map">
-                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.4rem;">
-                                    <span style="font-weight:700; font-size:0.92rem; color:#fff;">Térképes Útvonal</span>
-                                    <span style="font-size:0.72rem; color:#00f1fe; font-weight:700;">GPS Aktív (45m)</span>
+                                <div
+                                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.4rem;">
+                                    <span style="font-weight:700; font-size:0.92rem; color:#fff;">Térképes
+                                        Útvonal</span>
+                                    <span style="font-size:0.72rem; color:#00f1fe; font-weight:700;">GPS Aktív
+                                        (45m)</span>
                                 </div>
 
                                 <div class="map-interactive-view">
@@ -2259,38 +2391,53 @@
                                             </filter>
                                             <pattern id="cityGrid" width="40" height="40" patternUnits="userSpaceOnUse">
                                                 <rect width="36" height="36" rx="4" fill="#14171a"></rect>
-                                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1d2022" stroke-width="2"></path>
+                                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1d2022"
+                                                    stroke-width="2"></path>
                                             </pattern>
                                         </defs>
                                         <rect width="100%" height="100%" fill="#0c0e11"></rect>
                                         <rect width="100%" height="100%" fill="url(#cityGrid)" opacity="0.6"></rect>
                                         <!-- Street grid paths -->
-                                        <path d="M-20,90 Q120,80 220,110 T420,130" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="12"></path>
-                                        <path d="M120,-20 L140,240 L160,380" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="14"></path>
-                                        <path d="M300,-10 L280,180 L290,380" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="10"></path>
-                                        <path d="M-10,240 C140,220 260,250 420,220" fill="none" stroke="#282a2d" stroke-linecap="round" stroke-width="10"></path>
+                                        <path d="M-20,90 Q120,80 220,110 T420,130" fill="none" stroke="#282a2d"
+                                            stroke-linecap="round" stroke-width="12"></path>
+                                        <path d="M120,-20 L140,240 L160,380" fill="none" stroke="#282a2d"
+                                            stroke-linecap="round" stroke-width="14"></path>
+                                        <path d="M300,-10 L280,180 L290,380" fill="none" stroke="#282a2d"
+                                            stroke-linecap="round" stroke-width="10"></path>
+                                        <path d="M-10,240 C140,220 260,250 420,220" fill="none" stroke="#282a2d"
+                                            stroke-linecap="round" stroke-width="10"></path>
                                         <!-- Visited leg (Volt Lime) -->
-                                        <path d="M55,230 L105,175 L165,135" fill="none" stroke="#a5d700" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" opacity="0.9"></path>
+                                        <path d="M55,230 L105,175 L165,135" fill="none" stroke="#a5d700"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="4"
+                                            opacity="0.9"></path>
                                         <!-- Active leg (Neon Cyan Glow) -->
-                                        <path d="M165,135 L225,95 L270,85" fill="none" stroke="#00f1fe" stroke-linecap="round" stroke-width="4" stroke-dasharray="6,4" filter="url(#routeGlow)"></path>
+                                        <path d="M165,135 L225,95 L270,85" fill="none" stroke="#00f1fe"
+                                            stroke-linecap="round" stroke-width="4" stroke-dasharray="6,4"
+                                            filter="url(#routeGlow)"></path>
                                         <!-- Future leg (Dotted) -->
-                                        <path d="M270,85 L320,115 L350,180" fill="none" stroke="#434933" stroke-linecap="round" stroke-width="3" stroke-dasharray="3,3"></path>
+                                        <path d="M270,85 L320,115 L350,180" fill="none" stroke="#434933"
+                                            stroke-linecap="round" stroke-width="3" stroke-dasharray="3,3"></path>
                                         <!-- Street Names -->
-                                        <text x="25" y="215" fill="#8d9479" font-family="Inter" font-size="8" letter-spacing="1">MÚZEUM UTCA</text>
-                                        <text x="150" y="155" fill="#8d9479" font-family="Inter" font-size="8" letter-spacing="1">POLLACK MIHÁLY TÉR</text>
-                                        <text x="255" y="72" fill="#8d9479" font-family="Inter" font-size="8" letter-spacing="1">BRÓDY SÁNDOR U.</text>
+                                        <text x="25" y="215" fill="#8d9479" font-family="Inter" font-size="8"
+                                            letter-spacing="1">MÚZEUM UTCA</text>
+                                        <text x="150" y="155" fill="#8d9479" font-family="Inter" font-size="8"
+                                            letter-spacing="1">POLLACK MIHÁLY TÉR</text>
+                                        <text x="255" y="72" fill="#8d9479" font-family="Inter" font-size="8"
+                                            letter-spacing="1">BRÓDY SÁNDOR U.</text>
                                     </svg>
 
                                     <!-- Interactive HTML Map Markers -->
                                     <div class="map-overlay-layer">
                                         <!-- Stop 1 (Completed) -->
                                         <div class="map-marker stop-completed" style="left: 14%; top: 76%;">
-                                            <div class="marker-circle"><span class="material-symbols-outlined">check</span></div>
+                                            <div class="marker-circle"><span
+                                                    class="material-symbols-outlined">check</span></div>
                                             <span class="marker-label">1. Károlyi</span>
                                         </div>
                                         <!-- Stop 2 (Completed) -->
                                         <div class="map-marker stop-completed" style="left: 27%; top: 57%;">
-                                            <div class="marker-circle"><span class="material-symbols-outlined">check</span></div>
+                                            <div class="marker-circle"><span
+                                                    class="material-symbols-outlined">check</span></div>
                                             <span class="marker-label">2. Esterházy</span>
                                         </div>
                                         <!-- Current GPS Blip -->
@@ -2299,7 +2446,8 @@
                                             <div class="gps-dot"></div>
                                         </div>
                                         <!-- Stop 3 (Active Target - Festetics) -->
-                                        <div class="map-marker stop-active" style="left: 68%; top: 28%;" onclick="switchProtoView('stop')">
+                                        <div class="map-marker stop-active" style="left: 68%; top: 28%;"
+                                            onclick="switchProtoView('stop')">
                                             <div class="marker-pulse-glow"></div>
                                             <div class="marker-circle-active">3</div>
                                             <span class="marker-label-active">Festetics-palota</span>
@@ -2312,76 +2460,100 @@
 
                                     <!-- Map HUD overlay -->
                                     <div class="map-hud-top">
-                                        <span class="map-hud-pill"><span class="material-symbols-outlined" style="font-size:12px; color:#00f1fe;">navigation</span> Észak felé</span>
-                                        <span class="map-hud-pill status"><span class="hud-live-dot"></span> ÉLŐ GPS</span>
+                                        <span class="map-hud-pill"><span class="material-symbols-outlined"
+                                                style="font-size:12px; color:#00f1fe;">navigation</span> Észak
+                                            felé</span>
+                                        <span class="map-hud-pill status"><span class="hud-live-dot"></span> ÉLŐ
+                                            GPS</span>
                                     </div>
                                 </div>
 
-                                <div style="font-size: 0.78rem; color:#C3CAAC; margin-bottom: 0.4rem;">Válassz egy megállót:</div>
-                                
+                                <div style="font-size: 0.78rem; color:#C3CAAC; margin-bottom: 0.4rem;">Válassz egy
+                                    megállót:</div>
+
                                 <div class="poi-stop-item active" onclick="switchProtoView('stop')">
                                     <div class="poi-stop-info">
                                         <div class="poi-number">3</div>
                                         <div>
-                                            <div style="font-weight:700; font-size:0.82rem; color:#fff;">Festetics-palota</div>
-                                            <div style="font-size:0.7rem; color:#bdf500;">A grófi báltermek világa (350m)</div>
+                                            <div style="font-weight:700; font-size:0.82rem; color:#fff;">
+                                                Festetics-palota</div>
+                                            <div style="font-size:0.7rem; color:#bdf500;">A grófi báltermek világa
+                                                (350m)</div>
                                         </div>
                                     </div>
-                                    <span class="material-symbols-outlined" style="color:#bdf500; font-size:18px;">chevron_right</span>
+                                    <span class="material-symbols-outlined"
+                                        style="color:#bdf500; font-size:18px;">chevron_right</span>
                                 </div>
 
                                 <div class="poi-stop-item" onclick="switchProtoView('stop')">
                                     <div class="poi-stop-info">
                                         <div class="poi-number">1</div>
                                         <div>
-                                            <div style="font-weight:700; font-size:0.82rem; color:#fff;">Károlyi-palota & Kert</div>
-                                            <div style="font-size:0.7rem; color:#A3A899;">A titkos találkozók helyszíne</div>
+                                            <div style="font-weight:700; font-size:0.82rem; color:#fff;">Károlyi-palota
+                                                & Kert</div>
+                                            <div style="font-size:0.7rem; color:#A3A899;">A titkos találkozók helyszíne
+                                            </div>
                                         </div>
                                     </div>
-                                    <span class="material-symbols-outlined" style="color:#8D9479; font-size:18px;">chevron_right</span>
+                                    <span class="material-symbols-outlined"
+                                        style="color:#8D9479; font-size:18px;">chevron_right</span>
                                 </div>
 
                                 <div class="poi-stop-item" onclick="switchProtoView('stop')">
                                     <div class="poi-stop-info">
                                         <div class="poi-number">2</div>
                                         <div>
-                                            <div style="font-weight:700; font-size:0.82rem; color:#fff;">Esterházy-rezidencia</div>
-                                            <div style="font-size:0.7rem; color:#A3A899;">Párbajok és politikai sakkhúzások</div>
+                                            <div style="font-weight:700; font-size:0.82rem; color:#fff;">
+                                                Esterházy-rezidencia</div>
+                                            <div style="font-size:0.7rem; color:#A3A899;">Párbajok és politikai
+                                                sakkhúzások</div>
                                         </div>
                                     </div>
-                                    <span class="material-symbols-outlined" style="color:#8D9479; font-size:18px;">chevron_right</span>
+                                    <span class="material-symbols-outlined"
+                                        style="color:#8D9479; font-size:18px;">chevron_right</span>
                                 </div>
                             </div>
 
                             <!-- Screen C: Stop Detail & Audio Track (Crisp Native HTML) -->
                             <div class="proto-view" id="view-stop">
-                                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 0.5rem;">
-                                    <button type="button" onclick="switchProtoView('map')" style="background:none; border:none; color:#bdf500; cursor:pointer; display:flex; align-items:center; gap:4px; font-size:0.78rem; font-weight:700; padding:0;">
-                                        <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+                                <div
+                                    style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 0.5rem;">
+                                    <button type="button" onclick="switchProtoView('map')"
+                                        style="background:none; border:none; color:#bdf500; cursor:pointer; display:flex; align-items:center; gap:4px; font-size:0.78rem; font-weight:700; padding:0;">
+                                        <span class="material-symbols-outlined"
+                                            style="font-size:18px;">arrow_back</span>
                                         <span>Térképhez</span>
                                     </button>
-                                    <span style="font-weight:700; font-size:0.75rem; color:#00f1fe; background:rgba(0,241,254,0.12); padding:2px 8px; border-radius:12px;">03 / 08 Megálló</span>
+                                    <span
+                                        style="font-weight:700; font-size:0.75rem; color:#00f1fe; background:rgba(0,241,254,0.12); padding:2px 8px; border-radius:12px;">03
+                                        / 08 Megálló</span>
                                 </div>
 
-                                <div class="stop-img-editorial-card" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD75Mw1mLZdqFHz6gu6pjFJqErvDem9B8bNqWxZFsuvY4z8PWwfJ2saenNeyDs7lM7pwZdV7D9SrwYk_HQbanLA5Xyhvl6ONE6tOp89eEWhS5bz-HqxqmYWZoE8BBIa8KM3v9V19MoV7fmKYuuHvUTIXm-O84LngGn4slwroAtA58Cxw9OZl1dXnSHdrOJjApr74iu_7O_tSPa50e5o1vUC229YFfr-xcxkwNHa1lA');">
+                                <div class="stop-img-editorial-card"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD75Mw1mLZdqFHz6gu6pjFJqErvDem9B8bNqWxZFsuvY4z8PWwfJ2saenNeyDs7lM7pwZdV7D9SrwYk_HQbanLA5Xyhvl6ONE6tOp89eEWhS5bz-HqxqmYWZoE8BBIa8KM3v9V19MoV7fmKYuuHvUTIXm-O84LngGn4slwroAtA58Cxw9OZl1dXnSHdrOJjApr74iu_7O_tSPa50e5o1vUC229YFfr-xcxkwNHa1lA');">
                                     <div class="stop-img-gradient"></div>
                                     <div class="stop-camera-badge">
-                                        <span class="material-symbols-outlined" style="font-size:13px; color:#ffe088;">photo_camera</span>
+                                        <span class="material-symbols-outlined"
+                                            style="font-size:13px; color:#ffe088;">photo_camera</span>
                                         <span>Archív & Jelenkor</span>
                                     </div>
                                 </div>
-                                <div class="stop-caption-text">Festetics-palota márvány bálterme – az 1880-as évek legfényesebb társasági helyszíne.</div>
+                                <div class="stop-caption-text">Festetics-palota márvány bálterme – az 1880-as évek
+                                    legfényesebb társasági helyszíne.</div>
 
                                 <!-- Audio Player Box -->
                                 <div class="audio-player-card">
                                     <div class="audio-controls-row">
-                                        <button type="button" class="play-btn-circle" id="proto-audio-btn" onclick="toggleAudioPreview()">
-                                            <span class="material-symbols-outlined" id="proto-play-icon">play_arrow</span>
+                                        <button type="button" class="play-btn-circle" id="proto-audio-btn"
+                                            onclick="toggleAudioPreview()">
+                                            <span class="material-symbols-outlined"
+                                                id="proto-play-icon">play_arrow</span>
                                         </button>
                                         <div class="audio-meta-text">
-                                            <div class="audio-narrator-pill">HD Narráció · Hegedűs D. Géza</div>
+                                            <div class="audio-narrator-pill">HD Hangos Narráció</div>
                                             <div class="audio-track-name">1. Fejezet: A Bálterem Titkai</div>
-                                            <div class="audio-duration" id="audio-timer-display">Kattints a meghallgatáshoz (0:48)</div>
+                                            <div class="audio-duration" id="audio-timer-display">Nyomd meg a lejátszást
+                                                (0:48)</div>
                                         </div>
                                     </div>
                                     <div class="audio-waveform-bars" id="audio-waveform-container">
@@ -2406,7 +2578,8 @@
 
                                 <div class="stop-quote-card">
                                     <p class="quote-p">
-                                        Amikor gróf Festetics Tasziló megbízta a bécsi építészeket: <span class="quote-hl">„Legyen fényűzőbb, mint a bécsi rokonaimé!”</span>
+                                        Amikor gróf Festetics Tasziló megbízta a bécsi építészeket: <span
+                                            class="quote-hl">„Legyen fényűzőbb, mint a bécsi rokonaimé!”</span>
                                     </p>
                                 </div>
 
@@ -2416,22 +2589,26 @@
                                     </div>
                                     <div class="fact-text-wrap">
                                         <div class="fact-title">Tudtad a palotáról?</div>
-                                        <p class="fact-desc">A pince szellőzőrendszere jéghideg dunai levegőt keringetett – Pest legelső klímája!</p>
+                                        <p class="fact-desc">A pince szellőzőrendszere jéghideg dunai levegőt
+                                            keringetett – Pest legelső klímája!</p>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Bottom Device Nav -->
                             <div class="proto-tab-bar">
-                                <button type="button" class="proto-tab-item active" id="tab-walk" onclick="switchProtoView('walk')">
+                                <button type="button" class="proto-tab-item active" id="tab-walk"
+                                    onclick="switchProtoView('walk')">
                                     <span class="material-symbols-outlined">description</span>
                                     <span>Adatlap</span>
                                 </button>
-                                <button type="button" class="proto-tab-item" id="tab-map" onclick="switchProtoView('map')">
+                                <button type="button" class="proto-tab-item" id="tab-map"
+                                    onclick="switchProtoView('map')">
                                     <span class="material-symbols-outlined">map</span>
                                     <span>Térkép</span>
                                 </button>
-                                <button type="button" class="proto-tab-item" id="tab-stop" onclick="switchProtoView('stop')">
+                                <button type="button" class="proto-tab-item" id="tab-stop"
+                                    onclick="switchProtoView('stop')">
                                     <span class="material-symbols-outlined">headphones</span>
                                     <span>Megálló</span>
                                 </button>
@@ -2445,7 +2622,8 @@
                             <span class="material-symbols-outlined proto-step-icon">menu_book</span>
                             <div>
                                 <div class="proto-step-title">1. Séta Adatlap és Áttekintés</div>
-                                <div class="proto-step-desc">Távolság, becsült idő, szint és megállók száma – minden kulcsfontosságú adat egy pillantásra.</div>
+                                <div class="proto-step-desc">Távolság, becsült idő, szint és megállók száma – minden
+                                    kulcsfontosságú adat egy pillantásra.</div>
                             </div>
                         </div>
 
@@ -2453,7 +2631,8 @@
                             <span class="material-symbols-outlined proto-step-icon">near_me</span>
                             <div>
                                 <div class="proto-step-title">2. Interaktív GPS Térkép</div>
-                                <div class="proto-step-desc">A telefonod helymeghatározásával mutatja a következő megállót, nem enged eltévedni az utcák labirintusában.</div>
+                                <div class="proto-step-desc">A telefonod helymeghatározásával mutatja a következő
+                                    megállót, nem enged eltévedni az utcák labirintusában.</div>
                             </div>
                         </div>
 
@@ -2461,7 +2640,8 @@
                             <span class="material-symbols-outlined proto-step-icon">volume_up</span>
                             <div>
                                 <div class="proto-step-title">3. Történetmesélés & Hanganyag</div>
-                                <div class="proto-step-desc">Professzionális hangos narráció korhű zenei aláfestéssel. Hallgasd fülhallgatóval, miközben az épület előtt állsz.</div>
+                                <div class="proto-step-desc">Professzionális hangos narráció korhű zenei aláfestéssel.
+                                    Hallgasd fülhallgatóval, miközben az épület előtt állsz.</div>
                             </div>
                         </div>
                     </div>
@@ -2476,7 +2656,9 @@
                 <div class="walk-card-hero">
                     <!-- Left Column: Rich HTML Editorial Cover & Floating Itinerary Card -->
                     <div class="walk-cover-showcase">
-                        <div class="walk-cover-bg" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALOjt5GVAPKgBAkrRM19EntLT6zcXPmu4gpT-48vhuahgj-A7ZjO5hC_U_esnv7w_Muv6pN4y7SHSKa4RcqXd36BQ0HHvdyIM1Xq64NjMDzTRIlnn0QiMnjMLzA-OeyPGHv9BqWeExRMzDuE3cKBBjDtMmMv-p2RgFhmfJkwE6a0NdBk2ALLEztFRLIRQYS53VYz-qsmbVO0S7c5bMwDHExp1DVs75y02OBdECq1g');"></div>
+                        <div class="walk-cover-bg"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALOjt5GVAPKgBAkrRM19EntLT6zcXPmu4gpT-48vhuahgj-A7ZjO5hC_U_esnv7w_Muv6pN4y7SHSKa4RcqXd36BQ0HHvdyIM1Xq64NjMDzTRIlnn0QiMnjMLzA-OeyPGHv9BqWeExRMzDuE3cKBBjDtMmMv-p2RgFhmfJkwE6a0NdBk2ALLEztFRLIRQYS53VYz-qsmbVO0S7c5bMwDHExp1DVs75y02OBdECq1g');">
+                        </div>
                         <div class="walk-cover-gradient"></div>
 
                         <!-- Top floating badge pills -->
@@ -2486,12 +2668,13 @@
                                 <span>Budapest VIII. · Palotanegyed</span>
                             </span>
                             <span class="walk-pill-badge">
-                                <span class="material-symbols-outlined" style="font-size:14px; color:#ffe088;">star</span>
+                                <span class="material-symbols-outlined"
+                                    style="font-size:14px; color:#ffe088;">star</span>
                                 <span>4.9 (340+ értékelés)</span>
                             </span>
                             <span class="walk-pill-badge cyan">
                                 <span class="material-symbols-outlined" style="font-size:14px;">headphones</span>
-                                <span>Hegedűs D. Géza narráció</span>
+                                <span>Hangos narrációval</span>
                             </span>
                         </div>
 
@@ -2521,7 +2704,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Right Column: Walk Details & Editorial Value Points -->
                     <div class="walk-details-content">
                         <div class="walk-location-tag">
@@ -2530,7 +2713,8 @@
                         </div>
                         <h3>A Palotanegyed Titkai: Arisztokraták és Rejtélyek</h3>
                         <p class="walk-desc-text">
-                            Lépj be a 19. századi mágnások kulisszái mögé. Fedezd fel a pesti arisztokrácia fényűző palotáit,
+                            Lépj be a 19. századi mágnások kulisszái mögé. Fedezd fel a pesti arisztokrácia fényűző
+                            palotáit,
                             elfeledett párbajait, titkos átjáróit és a könyvtárak csendjében megbúvó botrányokat.
                         </p>
 
@@ -2538,37 +2722,45 @@
                         <div class="walk-discover-highlights">
                             <div class="walk-hl-row">
                                 <span class="walk-hl-icon">✓</span>
-                                <div><strong>Festetics-palota rejtett világa:</strong> A titkos lépcsőház és a grófi bálterem, ahová ma is alig juthat be a nagyközönség.</div>
+                                <div><strong>Festetics-palota rejtett világa:</strong> A titkos lépcsőház és a grófi
+                                    bálterem, ahová ma is alig juthat be a nagyközönség.</div>
                             </div>
                             <div class="walk-hl-row">
                                 <span class="walk-hl-icon">✓</span>
-                                <div><strong>Századfordulós párbajok:</strong> Hol vívtak becsületbeli párviadalt a legnevesebb politikusok, és mi robbantotta ki a botrányokat.</div>
+                                <div><strong>Századfordulós párbajok:</strong> Hol vívtak becsületbeli párviadalt a
+                                    legnevesebb politikusok, és mi robbantotta ki a botrányokat.</div>
                             </div>
                             <div class="walk-hl-row">
                                 <span class="walk-hl-icon">✓</span>
-                                <div><strong>Arisztokrata szalonok:</strong> A Magyar Nemzeti Múzeum mögötti eldugott paloták intim, intrikákkal teli történetei.</div>
+                                <div><strong>Arisztokrata szalonok:</strong> A Magyar Nemzeti Múzeum mögötti eldugott
+                                    paloták intim, intrikákkal teli történetei.</div>
                             </div>
                             <div class="walk-hl-row">
                                 <span class="walk-hl-icon">✓</span>
-                                <div><strong>A mágnásnegyed születése:</strong> Hogyan vált a belső Józsefváros a budapesti arisztokrácia fényűző epicentrumává néhány évtized alatt.</div>
+                                <div><strong>A mágnásnegyed születése:</strong> Hogyan vált a belső Józsefváros a
+                                    budapesti arisztokrácia fényűző epicentrumává néhány évtized alatt.</div>
                             </div>
                         </div>
 
                         <div class="walk-badges-row">
                             <div class="walk-stat-badge">
-                                <span class="material-symbols-outlined" style="font-size:16px; color:#bdf500;">straighten</span>
+                                <span class="material-symbols-outlined"
+                                    style="font-size:16px; color:#bdf500;">straighten</span>
                                 <span>2.8 km séta</span>
                             </div>
                             <div class="walk-stat-badge">
-                                <span class="material-symbols-outlined" style="font-size:16px; color:#bdf500;">schedule</span>
+                                <span class="material-symbols-outlined"
+                                    style="font-size:16px; color:#bdf500;">schedule</span>
                                 <span>1.5 - 2 óra</span>
                             </div>
                             <div class="walk-stat-badge">
-                                <span class="material-symbols-outlined" style="font-size:16px; color:#bdf500;">flag</span>
+                                <span class="material-symbols-outlined"
+                                    style="font-size:16px; color:#bdf500;">flag</span>
                                 <span>8 különleges megálló</span>
                             </div>
                             <div class="walk-stat-badge">
-                                <span class="material-symbols-outlined" style="font-size:16px; color:#bdf500;">accessible</span>
+                                <span class="material-symbols-outlined"
+                                    style="font-size:16px; color:#bdf500;">accessible</span>
                                 <span>Akadálymentes útvonal</span>
                             </div>
                         </div>
@@ -2587,48 +2779,121 @@
         <section class="pricing-section" id="elojelentkezes">
             <div class="container">
                 <div class="section-header">
-                    <span class="section-subtitle">Exkluzív Ajánlat</span>
-                    <h2 class="section-title">Légy az elsők között a Kitérőn!</h2>
+                    <span class="section-subtitle">Érték & Összehasonlítás</span>
+                    <h2 class="section-title">Miért jobb választás a Kitérő?</h2>
                     <p class="section-desc">
-                        A VitaSteps korábbi résztvevőjeként kiemelt kedvezménnyel és elsőként próbálhatod ki a digitális sétát.
+                        Nem kell 20 fős csoporthoz igazodnod vagy méregdrága fejpénzt fizetned. A Kitérővel a teljes
+                        élmény a tiétek – kötöttségek nélkül, két szelet torta áráért.
                     </p>
                 </div>
 
-                <div class="pricing-card-wrap">
-                    <div class="pricing-badge-popular">Early Bird Kedvezmény</div>
-                    <div class="pricing-title">Palotanegyed Titkai Sétacsomag</div>
-                    <p class="pricing-lead">Örökös hozzáférés a teljes interaktív sétához és az audio narrációhoz.</p>
+                <!-- Comparison Grid -->
+                <div class="compare-grid">
+                    <!-- Column 1: Traditional Guided Walk -->
+                    <div class="compare-card traditional">
+                        <div class="compare-card-title">Kötött csoportos séta</div>
+                        <div class="compare-card-sub">Hagyományos idegenvezetős program</div>
 
-                    <div class="price-box">
-                        <span class="price-val" id="dynamic-price-val">2 990</span>
-                        <span class="price-curr">Ft</span>
-                        <span class="price-original">4 990 Ft</span>
+                        <div class="compare-price-box">
+                            <div class="compare-price-val" style="color: var(--text-mid);">10 000 – 13 000 Ft</div>
+                            <div class="compare-price-note" style="color: var(--text-muted);">
+                                5 000 – 6 500 Ft <strong>/ fő</strong> (két fő esetén)
+                            </div>
+                        </div>
+
+                        <div class="compare-features-list">
+                            <div class="compare-feature-row negative">
+                                <span class="feature-icon-mark cross">✕</span>
+                                <span><strong>Szigorú fejpénz:</strong> Minden résztvevőnek külön, teljes jegyárat kell
+                                    fizetni.</span>
+                            </div>
+                            <div class="compare-feature-row negative">
+                                <span class="feature-icon-mark cross">✕</span>
+                                <span><strong>Kötött időpont & tempó:</strong> Nincs megállás, nincs szünet, a
+                                    csoporthoz kell igazodni.</span>
+                            </div>
+                            <div class="compare-feature-row negative">
+                                <span class="feature-icon-mark cross">✕</span>
+                                <span><strong>20–30 fős idegen tömeg:</strong> Háttérzaj, tolakodás az idegenvezető
+                                    körül, elvesző mondatok.</span>
+                            </div>
+                            <div class="compare-feature-row negative">
+                                <span class="feature-icon-mark cross">✕</span>
+                                <span><strong>Egyszeri és elveszhet:</strong> Ha esik az eső vagy közbejön valami,
+                                    elúszott a jegy ára.</span>
+                            </div>
+                            <div class="compare-feature-row negative">
+                                <span class="feature-icon-mark cross">✕</span>
+                                <span><strong>Saját szervezésnél:</strong> Órákig kell böngészni a blogokat és
+                                    térképeket.</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="pricing-features-list">
-                        <div class="pricing-feature">
-                            <span class="check">✓</span>
-                            <span>Teljes 2.8 km-es kurált útvonal GPS navigációval</span>
+                    <!-- Column 2: VitaSteps Kitérő Highlight -->
+                    <div class="compare-card kitero-highlight">
+                        <div class="compare-badge-flag">⭐ Maximális Szabadság</div>
+                        <div class="compare-card-title">VitaSteps Kitérő</div>
+                        <div class="compare-card-sub">Prémium önálló digitális városi sétaélmény</div>
+
+                        <div class="compare-price-box">
+                            <div class="compare-price-val" style="color: var(--accent);">
+                                <span id="dynamic-price-val">3 490</span> Ft <span
+                                    style="font-size: 1rem; font-weight: 500; color: var(--text-mid);">/ teljes
+                                    séta</span>
+                            </div>
+                            <div class="compare-price-note" style="color: var(--accent);">
+                                Nem fejpénz! Párban mindössze <strong id="dynamic-per-person">~1 745 Ft / fő</strong> —
+                                kevesebb, mint egy kávé és süti!
+                            </div>
                         </div>
-                        <div class="pricing-feature">
-                            <span class="check">✓</span>
-                            <span>8 megálló prémium hangos történetmeséléssel</span>
-                        </div>
-                        <div class="pricing-feature">
-                            <span class="check">✓</span>
-                            <span>Közvetlenül a mobil böngésződből fut (app letöltés nélkül)</span>
-                        </div>
-                        <div class="pricing-feature">
-                            <span class="check">✓</span>
-                            <span>Bármikor indítható, megállítható és újrajárható</span>
+
+                        <div class="compare-features-list">
+                            <div class="compare-feature-row positive">
+                                <span class="feature-icon-mark tick">✓</span>
+                                <span><strong>Egyetlen ár az egész társaságnak:</strong> Nem számolunk fejpénzt, az ár
+                                    ugyanannyi, akár
+                                    kettesben, akár családdal mész.</span>
+                            </div>
+                            <div class="compare-feature-row positive">
+                                <span class="feature-icon-mark tick">✓</span>
+                                <span><strong>100% szabadság és saját tempó:</strong> Bármikor megállhattok egy kávéra,
+                                    fagyira vagy kilátásra – a séta megvár!</span>
+                            </div>
+                            <div class="compare-feature-row positive">
+                                <span class="feature-icon-mark tick">✓</span>
+                                <span><strong>Intim, privát élmény:</strong> Csak ti ketten vagytok, idegen tömeg és
+                                    feszengés nélkül.</span>
+                            </div>
+                            <div class="compare-feature-row positive">
+                                <span class="feature-icon-mark tick">✓</span>
+                                <span><strong>"Kulcsrakész":</strong> Kurált útvonal, GPS térkép,
+                                    prémium narráció a telefonodon. Nulla tervezési stressz!</span>
+                            </div>
+                            <div class="compare-feature-row positive">
+                                <span class="feature-icon-mark tick">✓</span>
+                                <span><strong>Örökös hozzáférés:</strong> Bármikor újrajárhatod, félbehagyhatod és
+                                    napokkal később folytathatod.</span>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- CTA & Lead Form Container -->
+                <div class="compare-cta-wrap">
+                    <div class="pricing-badge-popular" style="margin-bottom: 1rem;">Early Bird Korai Hozzáférés</div>
+                    <h3 class="compare-cta-title">Légy az elsők között a Kitérőn!</h3>
+                    <p class="compare-cta-desc">
+                        A VitaSteps közösség tagjaként kiemelt bevezető áron és elsőként próbálhatod ki a digitális
+                        sétát. Iratkozz fel, és azonnal értesítünk az induláskor!
+                    </p>
 
                     <!-- Early Access Form -->
                     <form class="early-access-form" id="kitero-lead-form" onsubmit="handleLeadSubmit(event)">
-                        <input type="text" class="form-input" id="lead-name" placeholder="Neved (pl. Kovács Péter)" required>
+                        <input type="text" class="form-input" id="lead-name" placeholder="Neved (pl. Kovács Péter)"
+                            required>
                         <input type="email" class="form-input" id="lead-email" placeholder="E-mail címed" required>
-                        
+
                         <button type="submit" class="form-submit-btn" id="lead-submit-btn">
                             🔒 Érdekel, kérem a korai hozzáférést!
                         </button>
@@ -2639,7 +2904,8 @@
                         </div>
 
                         <div class="form-alert-success" id="form-success-alert">
-                            🎉 Köszönjük a jelentkezést! Sikeresen rögzítettük az érdeklődésedet. Hamarosan küldjük az első hozzáférési linket!
+                            🎉 Köszönjük a jelentkezést! Sikeresen rögzítettük az érdeklődésedet. Hamarosan küldjük az
+                            első hozzáférési linket!
                         </div>
                     </form>
                 </div>
@@ -2662,7 +2928,8 @@
                             <span class="material-symbols-outlined arrow">expand_more</span>
                         </div>
                         <div class="faq-answer">
-                            Nem! A VitaSteps Kitérő közvetlenül a mobiltelefonod böngészőjében (Safari, Chrome stb.) fut. Nincs szükség App Store vagy Google Play letöltésre, nem foglal felesleges helyet.
+                            Nem! A VitaSteps Kitérő közvetlenül a mobiltelefonod böngészőjében (Safari, Chrome stb.)
+                            fut. Nincs szükség App Store vagy Google Play letöltésre, nem foglal felesleges helyet.
                         </div>
                     </div>
 
@@ -2672,7 +2939,8 @@
                             <span class="material-symbols-outlined arrow">expand_more</span>
                         </div>
                         <div class="faq-answer">
-                            Igen, pontosan ez a Kitérő lényege. Bármikor megállhatsz ebédelni, kávézni, vagy akár napokkal később is folytathatod a sétát onnan, ahol abbahagytad.
+                            Igen, pontosan ez a Kitérő lényege. Bármikor megállhatsz ebédelni, kávézni, vagy akár
+                            napokkal később is folytathatod a sétát onnan, ahol abbahagytad.
                         </div>
                     </div>
 
@@ -2682,7 +2950,8 @@
                             <span class="material-symbols-outlined arrow">expand_more</span>
                         </div>
                         <div class="faq-answer">
-                            A felület a telefonod beépített GPS-ét használja. Pontosan látod a saját pozíciódat a térképen és az ajánlott útvonalat a következő titkos megállóig.
+                            A felület a telefonod beépített GPS-ét használja. Pontosan látod a saját pozíciódat a
+                            térképen és az ajánlott útvonalat a következő titkos megállóig.
                         </div>
                     </div>
 
@@ -2692,7 +2961,8 @@
                             <span class="material-symbols-outlined arrow">expand_more</span>
                         </div>
                         <div class="faq-answer">
-                            Mindkettő nagyszerű élmény! Egyedül igazi befelé figyelős, elmélyült kulturális feltöltődés fülhallgatóval, de pároknak vagy barátoknak is tökéletes hétvégi közös élmény.
+                            Mindkettő nagyszerű élmény! Egyedül igazi befelé figyelős, elmélyült kulturális feltöltődés
+                            fülhallgatóval, de pároknak vagy barátoknak is tökéletes hétvégi közös élmény.
                         </div>
                     </div>
 
@@ -2702,7 +2972,8 @@
                             <span class="material-symbols-outlined arrow">expand_more</span>
                         </div>
                         <div class="faq-answer">
-                            A korai hozzáférésre feliratkozóknak az indulás napján küldjük el a személyes hozzáférési linket e-mailben, amit egy kattintással bármikor megnyithatnak.
+                            A korai hozzáférésre feliratkozóknak az indulás napján küldjük el a személyes hozzáférési
+                            linket e-mailben, amit egy kattintással bármikor megnyithatnak.
                         </div>
                     </div>
                 </div>
@@ -2732,11 +3003,11 @@
         // ── A/B TESTING & URL PARAMETERS ─────────────────────────────────
         const urlParams = new URLSearchParams(window.location.search);
         const cidParam = urlParams.get('cid') || '';
-        
-        // Price Variant: 2990 Ft (A) vs 3490 Ft (B)
+
+        // Price Variant: 3490 Ft (A) vs 3990 Ft (B)
         let priceVariant = urlParams.get('p') || localStorage.getItem('kitero_price_variant');
-        if (!priceVariant || (priceVariant !== '2990' && priceVariant !== '3490')) {
-            priceVariant = Math.random() < 0.5 ? '2990' : '3490';
+        if (!priceVariant || (priceVariant !== '3490' && priceVariant !== '3990')) {
+            priceVariant = Math.random() < 0.5 ? '3490' : '3990';
             localStorage.setItem('kitero_price_variant', priceVariant);
         }
 
@@ -2751,8 +3022,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Price update
             const priceEl = document.getElementById('dynamic-price-val');
+            const perPersonEl = document.getElementById('dynamic-per-person');
             if (priceEl) {
-                priceEl.textContent = priceVariant === '3490' ? '3 490' : '2 990';
+                priceEl.textContent = priceVariant === '3990' ? '3 990' : '3 490';
+            }
+            if (perPersonEl) {
+                perPersonEl.textContent = priceVariant === '3990' ? '~1 995 Ft / fő' : '~1 745 Ft / fő';
             }
 
             // Headline update
@@ -2867,7 +3142,7 @@
                         icon.textContent = 'replay';
                         btn.style.background = '#bdf500';
                         audioProgress = 0;
-                        timer.textContent = 'Hangminta véget ért (0:48)';
+                        timer.textContent = 'Lejátszás véget ért (0:48)';
                         trackEvent('audio_preview_complete', { track: 'festetics_chapter_1' });
                     }
                 }, 100);
