@@ -3002,7 +3002,12 @@
     <script>
         // ── A/B TESTING & URL PARAMETERS ─────────────────────────────────
         const urlParams = new URLSearchParams(window.location.search);
-        const cidParam = urlParams.get('cid') || '';
+        let cidParam = urlParams.get('cid') || '';
+        if (cidParam) {
+            try { sessionStorage.setItem('kitero_cid', cidParam); } catch (e) {}
+        } else {
+            try { cidParam = sessionStorage.getItem('kitero_cid') || ''; } catch (e) {}
+        }
 
         // Price Variant: 3490 Ft (A) vs 3990 Ft (B)
         let priceVariant = urlParams.get('p') || localStorage.getItem('kitero_price_variant');
@@ -3061,7 +3066,10 @@
             scrollThresholds.forEach(thresh => {
                 if (scrollPercent >= thresh && !firedScrolls.has(thresh)) {
                     firedScrolls.add(thresh);
-                    trackEvent(`scroll_${thresh}`, { scroll_depth: thresh });
+                    trackEvent(`scroll_${thresh}`, {
+                        scroll_depth: thresh,
+                        cid: cidParam || null
+                    });
                 }
             });
 
@@ -3071,7 +3079,10 @@
                 const rect = pricingSec.getBoundingClientRect();
                 if (rect.top <= window.innerHeight * 0.75) {
                     firedScrolls.add('pricing_view');
-                    trackEvent('pricing_view', { price_variant: priceVariant });
+                    trackEvent('pricing_view', {
+                        price_variant: priceVariant,
+                        cid: cidParam || null
+                    });
                 }
             }
         }, { passive: true });

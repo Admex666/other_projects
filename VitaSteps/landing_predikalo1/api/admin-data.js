@@ -9,6 +9,7 @@ const { handleGetLeadsData, handleSendLeadsEmail } = require('../lib/admin/leads
 const { handleFinanceData, handleRevolutUpload, getCreativeCsvData } = require('../lib/admin/finance');
 const { handleAiAssistant } = require('../lib/admin/ai-assistant');
 const { fetchFacebookOrganicPosts, CACHE_FILE_PATH } = require('../scripts/fetch_facebook_organic');
+const { getKiteroFunnelData } = require('../lib/admin/kitero-funnel');
 
 const supabase = createClient(
     process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co',
@@ -89,6 +90,12 @@ module.exports = async (req, res) => {
                 result = await fetchFacebookOrganicPosts({ forceRefresh: force });
             }
             return res.status(200).json(result);
+        }
+
+        // ── 4.6. VITASTEPS KITÉRŐ FUNNEL TRACKING DATA ─────────────────────────
+        if (type === 'kitero_funnel' || action === 'kitero_funnel') {
+            const funnelData = await getKiteroFunnelData();
+            return res.status(200).json(funnelData);
         }
 
         // ── 5. MARKETING & ANALYTICS DATA ────────────────────────────────────

@@ -7,8 +7,14 @@ require('dotenv').config();
 
 const { createClient } = require('@supabase/supabase-js');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { ImapFlow } = require('imapflow');
-const { simpleParser } = require('mailparser');
+let ImapFlow = null;
+let simpleParser = null;
+try {
+    ImapFlow = require('imapflow').ImapFlow;
+    simpleParser = require('mailparser').simpleParser;
+} catch (e) {
+    // Optional dependency for IMAP mailbox reading
+}
 const { getCreativeCsvData } = require('./finance');
 
 const supabase = createClient(
@@ -1014,6 +1020,10 @@ async function toolSearchAndReadEmails(args = {}) {
     const fromFilter = (args.from || '').trim();
     const subjectFilter = (args.subject || '').trim();
     const unreadOnly = Boolean(args.unread_only);
+
+    if (!ImapFlow || !simpleParser) {
+        return { error: 'Az imapflow vagy mailparser modul nincs telepítve a környezetben.' };
+    }
 
     const client = new ImapFlow({
         host: 'imap.gmail.com',

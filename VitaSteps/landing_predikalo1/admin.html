@@ -234,6 +234,7 @@
             <button class="filter-tab" onclick="setFilter('marketing')" id="tab-marketing" style="border: 1px solid rgba(196, 255, 0, 0.4); color: #c4ff00;">📊 Marketing</button>
             <button class="filter-tab" onclick="setFilter('facebook_organic')" id="tab-facebook_organic" style="border: 1px solid rgba(59, 130, 246, 0.5); color: #60a5fa;">📱 FB Organikus</button>
             <button class="filter-tab" onclick="setFilter('analytics')" id="tab-analytics" style="border: 1px solid rgba(14, 165, 233, 0.4); color: #0ea5e9;">🎯 Analytics</button>
+            <button class="filter-tab" onclick="setFilter('kitero')" id="tab-kitero" style="border: 1px solid rgba(52, 211, 153, 0.5); color: #34d399; background: rgba(52, 211, 153, 0.08);">🚶 Kitérő Funnel</button>
             <button class="filter-tab" onclick="setFilter('finance')" id="tab-finance" style="border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8;">💳 Pénzügy & Cashflow</button>
             <button class="filter-tab" onclick="setFilter('emails')" id="tab-emails" style="border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc;">📧 Hírlevelek & Leadek</button>
             <button class="filter-tab" onclick="setFilter('ai')" id="tab-ai" style="border: 1px solid rgba(250, 204, 21, 0.5); color: #facc15; background: rgba(250, 204, 21, 0.08);">🤖 AI Asszisztens</button>
@@ -357,6 +358,27 @@
                 </div>
             </div>
 
+            <!-- Kitérő Funnel Kiemelt Kártya -->
+            <div style="background: linear-gradient(135deg, rgba(52, 211, 153, 0.12) 0%, rgba(16, 185, 129, 0.05) 100%); border: 1px solid rgba(52, 211, 153, 0.35); border-radius: var(--radius-md); padding: 1.1rem 1.4rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.06);">
+                <div style="display: flex; align-items: center; gap: 0.9rem;">
+                    <div style="background: rgba(52, 211, 153, 0.2); width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                        🚶
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; color: #fff; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>VitaSteps Kitérő – NPS=10 Kampány Funnel</span>
+                            <span style="background: rgba(52, 211, 153, 0.2); color: #34d399; font-size: 0.7rem; padding: 2px 8px; border-radius: 9999px; font-weight: 700;">Új Validációs Mérés</span>
+                        </div>
+                        <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.2rem;">
+                            Élő pixelmegnyitás, 50% görgetés, értékajánlat elérés és korai hozzáférés leadek egyedi személyenkénti tölcsére.
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="setFilter('kitero')" style="width: auto; padding: 0.55rem 1.25rem; font-size: 0.85rem; font-weight: 800; background: #34d399; color: #022c22; border: none; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 2px 8px rgba(52, 211, 153, 0.3);">
+                    <span>Kitérő Tölcsér Megtekintése</span> <span>→</span>
+                </button>
+            </div>
+
             <!-- Kampány & Időablak Szűrősáv -->
             <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem; display: flex; gap: 1.25rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
                 <div>
@@ -386,6 +408,13 @@
             <div id="an-last-updated" style="font-size: 0.75rem; color: var(--text-mid); margin-bottom: 1rem;"></div>
             <div id="an-content-container">
                 <div class="empty-state"><span class="loading-spinner"></span><div style="margin-top:0.5rem">Analitikai adatok betöltése...</div></div>
+            </div>
+        </div>
+
+        <!-- VITASTEPS KITÉRŐ KAMPÁNY FUNNEL SCREEN -->
+        <div id="section-kitero" style="display: none;">
+            <div id="kitero-content">
+                <div class="empty-state"><span class="loading-spinner"></span><div style="margin-top:0.5rem">Kitérő kampány funnel adatok betöltése...</div></div>
             </div>
         </div>
 
@@ -555,6 +584,7 @@
 <script src="js/admin-marketing.js"></script>
 <script src="js/admin-facebook-organic.js"></script>
 <script src="js/admin-analytics.js"></script>
+<script src="js/admin-kitero.js"></script>
 <script src="js/admin-finance.js"></script>
 <script src="js/admin-emails.js"></script>
 <script src="js/admin-ai.js"></script>

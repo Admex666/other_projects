@@ -137,6 +137,7 @@ function setFilter(filter) {
     const isEmails = filter === 'emails';
     const isAi = filter === 'ai';
     const isFbOrganic = filter === 'facebook_organic';
+    const isKitero = filter === 'kitero';
     const proofListEl = document.getElementById('proof-list');
     const mktEl = document.getElementById('section-marketing');
     const anEl = document.getElementById('section-analytics');
@@ -145,8 +146,9 @@ function setFilter(filter) {
     const emailsEl = document.getElementById('section-emails');
     const aiEl = document.getElementById('section-ai');
     const fbOrganicEl = document.getElementById('section-facebook_organic');
+    const kiteroEl = document.getElementById('section-kitero');
 
-    if (proofListEl) proofListEl.style.display = (isMkt || isAn || isFin || isFb || isEmails || isAi || isFbOrganic) ? 'none' : '';
+    if (proofListEl) proofListEl.style.display = (isMkt || isAn || isFin || isFb || isEmails || isAi || isFbOrganic || isKitero) ? 'none' : '';
     if (mktEl) mktEl.style.display = isMkt ? 'block' : 'none';
     if (anEl) anEl.style.display = isAn ? 'block' : 'none';
     if (finEl) finEl.style.display = isFin ? 'block' : 'none';
@@ -154,6 +156,7 @@ function setFilter(filter) {
     if (emailsEl) emailsEl.style.display = isEmails ? 'block' : 'none';
     if (aiEl) aiEl.style.display = isAi ? 'block' : 'none';
     if (fbOrganicEl) fbOrganicEl.style.display = isFbOrganic ? 'block' : 'none';
+    if (kiteroEl) kiteroEl.style.display = isKitero ? 'block' : 'none';
 
     if (isFin) {
         loadFinance();
@@ -169,6 +172,8 @@ function setFilter(filter) {
         if (typeof loadAiAssistantTab === 'function') loadAiAssistantTab();
     } else if (isFbOrganic) {
         if (typeof loadFacebookOrganic === 'function') loadFacebookOrganic();
+    } else if (isKitero) {
+        if (typeof loadKiteroFunnel === 'function') loadKiteroFunnel();
     } else {
         renderList();
     }
