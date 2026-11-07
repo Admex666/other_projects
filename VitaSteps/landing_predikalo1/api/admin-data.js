@@ -10,6 +10,7 @@ const { handleFinanceData, handleRevolutUpload, getCreativeCsvData } = require('
 const { handleAiAssistant } = require('../lib/admin/ai-assistant');
 const { fetchFacebookOrganicPosts, CACHE_FILE_PATH } = require('../scripts/fetch_facebook_organic');
 const { getKiteroFunnelData } = require('../lib/admin/kitero-funnel');
+const { handleKpiDigest } = require('../lib/admin/kpi-digest');
 
 const supabase = createClient(
     process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co',
@@ -39,6 +40,11 @@ module.exports = async (req, res) => {
         // ── 0. AI ASSISTANT (GEMINI) ─────────────────────────────────────────
         if (type === 'ai_chat' || action === 'ai_chat' || type === 'ai_status' || action === 'ai_status') {
             return await handleAiAssistant(req, res);
+        }
+
+        // ── 0.5. KPI MONITORING & BUSINESS DIGEST ────────────────────────────
+        if (type === 'kpi_digest' || action === 'kpi_digest' || action === 'send_kpi_push' || action === 'send_push') {
+            return await handleKpiDigest(req, res);
         }
 
         // ── 1. LEADS EMAIL ACTIONS ───────────────────────────────────────────

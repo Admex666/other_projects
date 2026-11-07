@@ -51,6 +51,7 @@ Core end-to-end operational and lifecycle workflows.
 * [[proof-verification|Proof Verification]]: Felhasználói GPX/fotó feltöltés $\rightarrow$ Admin jóváhagyás $\rightarrow$ Diploma + Gratuláló Email.
 * [[order-fulfillment|Order Fulfillment]]: Többérmes és kampányközi csomagösszevonás $\rightarrow$ Csomagolási segédlet $\rightarrow$ Foxpost feladás.
 * [[meta-sync-pipeline|Meta Sync Pipeline]]: Automatikus napi GitHub Action szinkronizáció a Meta Ads Marketing API-ból.
+* [[weekly-kpi-digest|Weekly KPI Digest]]: Heti vezetői KPI-monitoring, adatfrissességi kapu, fedezetszámítás és Pushbullet értesítő.
 
 ---
 
