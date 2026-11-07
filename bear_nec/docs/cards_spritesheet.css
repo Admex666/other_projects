@@ -1,0 +1,123 @@
+/* ========================================================================= */
+/* Bear Necessities - Card Spritesheet CSS Utilities                        */
+/* Generated automatically by scripts/slice_cards.py                        */
+/* ========================================================================= */
+
+:root {
+  --bn-card-aspect-ratio: 1.5594;
+  --bn-card-sprite-url: url('../sources/cards.jpg');
+}
+
+/* Base Card Face using Spritesheet */
+.bn-card-face {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: var(--bn-card-sprite-url);
+  background-size: 1000% 1000%;
+  background-repeat: no-repeat;
+  border-radius: 4px;
+}
+
+/* --- Game Cards (1-94) --- */
+.bn-card-face[data-card-id="1"], .bn-card-01, .bn-slot-00 { background-position: 0.0000% 0.0000%; } /* Water #1 */
+.bn-card-face[data-card-id="2"], .bn-card-02, .bn-slot-01 { background-position: 11.1111% 0.0000%; } /* Water #2 */
+.bn-card-face[data-card-id="3"], .bn-card-03, .bn-slot-02 { background-position: 22.2222% 0.0000%; } /* Water #3 */
+.bn-card-face[data-card-id="4"], .bn-card-04, .bn-slot-03 { background-position: 33.3333% 0.0000%; } /* Water #4 */
+.bn-card-face[data-card-id="5"], .bn-card-05, .bn-slot-04 { background-position: 44.4444% 0.0000%; } /* Water #5 */
+.bn-card-face[data-card-id="6"], .bn-card-06, .bn-slot-05 { background-position: 55.5556% 0.0000%; } /* Water #6 */
+.bn-card-face[data-card-id="7"], .bn-card-07, .bn-slot-06 { background-position: 66.6667% 0.0000%; } /* Water #7 */
+.bn-card-face[data-card-id="8"], .bn-card-08, .bn-slot-07 { background-position: 77.7778% 0.0000%; } /* Water #8 */
+.bn-card-face[data-card-id="9"], .bn-card-09, .bn-slot-08 { background-position: 88.8889% 0.0000%; } /* Water #9 */
+.bn-card-face[data-card-id="10"], .bn-card-10, .bn-slot-09 { background-position: 100.0000% 0.0000%; } /* Water #10 */
+.bn-card-face[data-card-id="11"], .bn-card-11, .bn-slot-10 { background-position: 0.0000% 11.1111%; } /* Water #11 */
+.bn-card-face[data-card-id="12"], .bn-card-12, .bn-slot-11 { background-position: 11.1111% 11.1111%; } /* Water #12 */
+.bn-card-face[data-card-id="13"], .bn-card-13, .bn-slot-12 { background-position: 22.2222% 11.1111%; } /* Water #13 */
+.bn-card-face[data-card-id="14"], .bn-card-14, .bn-slot-13 { background-position: 33.3333% 11.1111%; } /* Water #14 */
+.bn-card-face[data-card-id="15"], .bn-card-15, .bn-slot-14 { background-position: 44.4444% 11.1111%; } /* Water #15 */
+.bn-card-face[data-card-id="16"], .bn-card-16, .bn-slot-15 { background-position: 55.5556% 11.1111%; } /* Water #16 */
+.bn-card-face[data-card-id="17"], .bn-card-17, .bn-slot-16 { background-position: 66.6667% 11.1111%; } /* Water #17 */
+.bn-card-face[data-card-id="18"], .bn-card-18, .bn-slot-17 { background-position: 77.7778% 11.1111%; } /* Water #18 */
+.bn-card-face[data-card-id="19"], .bn-card-19, .bn-slot-18 { background-position: 88.8889% 11.1111%; } /* Water #19 */
+.bn-card-face[data-card-id="20"], .bn-card-20, .bn-slot-19 { background-position: 100.0000% 11.1111%; } /* Water #20 */
+.bn-card-face[data-card-id="21"], .bn-card-21, .bn-slot-20 { background-position: 0.0000% 22.2222%; } /* Water #21 */
+.bn-card-face[data-card-id="22"], .bn-card-22, .bn-slot-21 { background-position: 11.1111% 22.2222%; } /* Water #22 */
+.bn-card-face[data-card-id="23"], .bn-card-23, .bn-slot-22 { background-position: 22.2222% 22.2222%; } /* Water #23 */
+.bn-card-face[data-card-id="24"], .bn-card-24, .bn-slot-24 { background-position: 44.4444% 22.2222%; } /* Desert #1 */
+.bn-card-face[data-card-id="25"], .bn-card-25, .bn-slot-25 { background-position: 55.5556% 22.2222%; } /* Desert #2 */
+.bn-card-face[data-card-id="26"], .bn-card-26, .bn-slot-26 { background-position: 66.6667% 22.2222%; } /* Desert #3 */
+.bn-card-face[data-card-id="27"], .bn-card-27, .bn-slot-27 { background-position: 77.7778% 22.2222%; } /* Desert #4 */
+.bn-card-face[data-card-id="28"], .bn-card-28, .bn-slot-28 { background-position: 88.8889% 22.2222%; } /* Desert #5 */
+.bn-card-face[data-card-id="29"], .bn-card-29, .bn-slot-29 { background-position: 100.0000% 22.2222%; } /* Desert #6 */
+.bn-card-face[data-card-id="30"], .bn-card-30, .bn-slot-30 { background-position: 0.0000% 33.3333%; } /* Desert #7 */
+.bn-card-face[data-card-id="31"], .bn-card-31, .bn-slot-31 { background-position: 11.1111% 33.3333%; } /* Desert #8 */
+.bn-card-face[data-card-id="32"], .bn-card-32, .bn-slot-32 { background-position: 22.2222% 33.3333%; } /* Desert #9 */
+.bn-card-face[data-card-id="33"], .bn-card-33, .bn-slot-33 { background-position: 33.3333% 33.3333%; } /* Desert #10 */
+.bn-card-face[data-card-id="34"], .bn-card-34, .bn-slot-34 { background-position: 44.4444% 33.3333%; } /* Desert #11 */
+.bn-card-face[data-card-id="35"], .bn-card-35, .bn-slot-35 { background-position: 55.5556% 33.3333%; } /* Desert #12 */
+.bn-card-face[data-card-id="36"], .bn-card-36, .bn-slot-36 { background-position: 66.6667% 33.3333%; } /* Desert #13 */
+.bn-card-face[data-card-id="37"], .bn-card-37, .bn-slot-37 { background-position: 77.7778% 33.3333%; } /* Desert #14 */
+.bn-card-face[data-card-id="38"], .bn-card-38, .bn-slot-38 { background-position: 88.8889% 33.3333%; } /* Desert #15 */
+.bn-card-face[data-card-id="39"], .bn-card-39, .bn-slot-39 { background-position: 100.0000% 33.3333%; } /* Desert #16 */
+.bn-card-face[data-card-id="40"], .bn-card-40, .bn-slot-40 { background-position: 0.0000% 44.4444%; } /* Desert #17 */
+.bn-card-face[data-card-id="41"], .bn-card-41, .bn-slot-41 { background-position: 11.1111% 44.4444%; } /* Desert #18 */
+.bn-card-face[data-card-id="42"], .bn-card-42, .bn-slot-42 { background-position: 22.2222% 44.4444%; } /* Desert #19 */
+.bn-card-face[data-card-id="43"], .bn-card-43, .bn-slot-43 { background-position: 33.3333% 44.4444%; } /* Desert #20 */
+.bn-card-face[data-card-id="44"], .bn-card-44, .bn-slot-44 { background-position: 44.4444% 44.4444%; } /* Desert #21 */
+.bn-card-face[data-card-id="45"], .bn-card-45, .bn-slot-46 { background-position: 66.6667% 44.4444%; } /* City #1 */
+.bn-card-face[data-card-id="46"], .bn-card-46, .bn-slot-47 { background-position: 77.7778% 44.4444%; } /* City #2 */
+.bn-card-face[data-card-id="47"], .bn-card-47, .bn-slot-48 { background-position: 88.8889% 44.4444%; } /* City #3 */
+.bn-card-face[data-card-id="48"], .bn-card-48, .bn-slot-49 { background-position: 100.0000% 44.4444%; } /* City #4 */
+.bn-card-face[data-card-id="49"], .bn-card-49, .bn-slot-50 { background-position: 0.0000% 55.5556%; } /* City #5 */
+.bn-card-face[data-card-id="50"], .bn-card-50, .bn-slot-51 { background-position: 11.1111% 55.5556%; } /* City #6 */
+.bn-card-face[data-card-id="51"], .bn-card-51, .bn-slot-52 { background-position: 22.2222% 55.5556%; } /* City #7 */
+.bn-card-face[data-card-id="52"], .bn-card-52, .bn-slot-53 { background-position: 33.3333% 55.5556%; } /* City #8 */
+.bn-card-face[data-card-id="53"], .bn-card-53, .bn-slot-54 { background-position: 44.4444% 55.5556%; } /* City #9 */
+.bn-card-face[data-card-id="54"], .bn-card-54, .bn-slot-55 { background-position: 55.5556% 55.5556%; } /* City #10 */
+.bn-card-face[data-card-id="55"], .bn-card-55, .bn-slot-56 { background-position: 66.6667% 55.5556%; } /* City #11 */
+.bn-card-face[data-card-id="56"], .bn-card-56, .bn-slot-57 { background-position: 77.7778% 55.5556%; } /* City #12 */
+.bn-card-face[data-card-id="57"], .bn-card-57, .bn-slot-58 { background-position: 88.8889% 55.5556%; } /* City #13 */
+.bn-card-face[data-card-id="58"], .bn-card-58, .bn-slot-59 { background-position: 100.0000% 55.5556%; } /* City #14 */
+.bn-card-face[data-card-id="59"], .bn-card-59, .bn-slot-60 { background-position: 0.0000% 66.6667%; } /* City #15 */
+.bn-card-face[data-card-id="60"], .bn-card-60, .bn-slot-61 { background-position: 11.1111% 66.6667%; } /* City #16 */
+.bn-card-face[data-card-id="61"], .bn-card-61, .bn-slot-62 { background-position: 22.2222% 66.6667%; } /* City #17 */
+.bn-card-face[data-card-id="62"], .bn-card-62, .bn-slot-63 { background-position: 33.3333% 66.6667%; } /* City #18 */
+.bn-card-face[data-card-id="63"], .bn-card-63, .bn-slot-64 { background-position: 44.4444% 66.6667%; } /* City #19 */
+.bn-card-face[data-card-id="64"], .bn-card-64, .bn-slot-65 { background-position: 55.5556% 66.6667%; } /* City #20 */
+.bn-card-face[data-card-id="65"], .bn-card-65, .bn-slot-66 { background-position: 66.6667% 66.6667%; } /* City #21 */
+.bn-card-face[data-card-id="66"], .bn-card-66, .bn-slot-67 { background-position: 77.7778% 66.6667%; } /* City #22 */
+.bn-card-face[data-card-id="67"], .bn-card-67, .bn-slot-68 { background-position: 88.8889% 66.6667%; } /* City #23 */
+.bn-card-face[data-card-id="68"], .bn-card-68, .bn-slot-69 { background-position: 100.0000% 66.6667%; } /* City #24 */
+.bn-card-face[data-card-id="69"], .bn-card-69, .bn-slot-71 { background-position: 11.1111% 77.7778%; } /* Mountain #1 */
+.bn-card-face[data-card-id="70"], .bn-card-70, .bn-slot-72 { background-position: 22.2222% 77.7778%; } /* Mountain #2 */
+.bn-card-face[data-card-id="71"], .bn-card-71, .bn-slot-73 { background-position: 33.3333% 77.7778%; } /* Mountain #3 */
+.bn-card-face[data-card-id="72"], .bn-card-72, .bn-slot-74 { background-position: 44.4444% 77.7778%; } /* Mountain #4 */
+.bn-card-face[data-card-id="73"], .bn-card-73, .bn-slot-75 { background-position: 55.5556% 77.7778%; } /* Mountain #5 */
+.bn-card-face[data-card-id="74"], .bn-card-74, .bn-slot-76 { background-position: 66.6667% 77.7778%; } /* Mountain #6 */
+.bn-card-face[data-card-id="75"], .bn-card-75, .bn-slot-77 { background-position: 77.7778% 77.7778%; } /* Mountain #7 */
+.bn-card-face[data-card-id="76"], .bn-card-76, .bn-slot-78 { background-position: 88.8889% 77.7778%; } /* Mountain #8 */
+.bn-card-face[data-card-id="77"], .bn-card-77, .bn-slot-79 { background-position: 100.0000% 77.7778%; } /* Mountain #9 */
+.bn-card-face[data-card-id="78"], .bn-card-78, .bn-slot-80 { background-position: 0.0000% 88.8889%; } /* Mountain #10 */
+.bn-card-face[data-card-id="79"], .bn-card-79, .bn-slot-81 { background-position: 11.1111% 88.8889%; } /* Mountain #11 */
+.bn-card-face[data-card-id="80"], .bn-card-80, .bn-slot-82 { background-position: 22.2222% 88.8889%; } /* Mountain #12 */
+.bn-card-face[data-card-id="81"], .bn-card-81, .bn-slot-83 { background-position: 33.3333% 88.8889%; } /* Mountain #13 */
+.bn-card-face[data-card-id="82"], .bn-card-82, .bn-slot-84 { background-position: 44.4444% 88.8889%; } /* Mountain #14 */
+.bn-card-face[data-card-id="83"], .bn-card-83, .bn-slot-85 { background-position: 55.5556% 88.8889%; } /* Mountain #15 */
+.bn-card-face[data-card-id="84"], .bn-card-84, .bn-slot-86 { background-position: 66.6667% 88.8889%; } /* Mountain #16 */
+.bn-card-face[data-card-id="85"], .bn-card-85, .bn-slot-87 { background-position: 77.7778% 88.8889%; } /* Mountain #17 */
+.bn-card-face[data-card-id="86"], .bn-card-86, .bn-slot-88 { background-position: 88.8889% 88.8889%; } /* Mountain #18 */
+.bn-card-face[data-card-id="87"], .bn-card-87, .bn-slot-89 { background-position: 100.0000% 88.8889%; } /* Mountain #19 */
+.bn-card-face[data-card-id="88"], .bn-card-88, .bn-slot-90 { background-position: 0.0000% 100.0000%; } /* Mountain #20 */
+.bn-card-face[data-card-id="89"], .bn-card-89, .bn-slot-91 { background-position: 11.1111% 100.0000%; } /* Mountain #21 */
+.bn-card-face[data-card-id="90"], .bn-card-90, .bn-slot-92 { background-position: 22.2222% 100.0000%; } /* Mountain #22 */
+.bn-card-face[data-card-id="91"], .bn-card-91, .bn-slot-93 { background-position: 33.3333% 100.0000%; } /* Mountain #23 */
+.bn-card-face[data-card-id="92"], .bn-card-92, .bn-slot-94 { background-position: 44.4444% 100.0000%; } /* Mountain #24 */
+.bn-card-face[data-card-id="93"], .bn-card-93, .bn-slot-95 { background-position: 55.5556% 100.0000%; } /* Mountain #25 */
+.bn-card-face[data-card-id="94"], .bn-card-94, .bn-slot-96 { background-position: 66.6667% 100.0000%; } /* Mountain #26 */
+
+/* --- Card Backs (4 Suits) --- */
+.bn-card-back-water, .bn-card-face[data-card-back="water"], .bn-slot-23 { background-position: 33.3333% 22.2222%; } /* Water Back */
+.bn-card-back-desert, .bn-card-face[data-card-back="desert"], .bn-slot-45 { background-position: 55.5556% 44.4444%; } /* Desert Back */
+.bn-card-back-city, .bn-card-face[data-card-back="city"], .bn-slot-70 { background-position: 0.0000% 77.7778%; } /* City Back */
+.bn-card-back-mountain, .bn-card-face[data-card-back="mountain"], .bn-slot-97 { background-position: 77.7778% 100.0000%; } /* Mountain Back */
+

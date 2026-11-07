@@ -1,0 +1,347 @@
+--- PAGE 1 ---
+Example of a 3-player 
+game setup.
+2
+3
+ 4
+1
+ and 
+  
+reserve
+ and 
+  
+reserve
+ and 
+  
+reserve
+1
+Content
+Introduction
+Setup
+Johan Benvenuto 
+Gricha German Kerri Aitken
+• 94 Cards
+• 100 Victory Point tokens
+ (in various 
+denominations)  
+• 20 Bee tokens
+• This rulebook
+1. Place the 
+  and 
+  tokens into a 
+nearby shared supply, within easy reach. 
+The token supply is considered infinite. 
+In the unlikely event that you need more 
+tokens, use a suitable replacement. 
+We do not recommend using real bees.
+2. Shuffle the cards into a face-down deck.
+3. Pick a random player to be the dealer: 
+they will cut the deck and give each 
+player 5 cards in clockwise order, 
+starting from the player at their left.  
+This is your starting hand.
+4. Make sure everyone has enough space 
+in front of them to create their personal 
+4x3 cards tableau and some more space 
+where to keep their 
+  and 
+  tokens. 
+This is your reserve. 
+Bears need very few things. 
+Bearfolk, however, do not! 
+They live in bustling cities, love to explore 
+their surroundings, meet other animals, and 
+collect all sorts of little everyday things. 
+Discover a world inhabited by the Bearfolk 
+and collect photographs of the sights you 
+come across, laying them out one by one 
+into a beautiful composition.
+
+
+--- PAGE 2 ---
+Lighthouse
+22 per 
+  in this
+and in this
+ . 
+Count this 
+  only once when 
+you activate its eff  ect.
+Fisherbear
+44 if adjacent to 
+at least 1 
+ .
+Eagle
+22 per 
+  
+in your tableau.
+Berries
+44 per 
+  in this 
+ .
+Dog
+33 per adjacent 
+ .
+In this example, the player places the 
+Berries in their tableau and activates a total 
+of 3 cards to gain 11 
+ :
+1. Berries = 4 
+2. Eagle = 4 
+3. Dog = 3 
+Note that the Berries card must 
+be activated first, 
+as it is the one being 
+placed in the tableau. 
+The order in which 
+the Eagle and the 
+Dog are activated is 
+decided by the player.
+1
+2
+3
+2
+Game overview
+Round Sequence Placing a card
+Over 12 rounds, you will draft cards and place them in your 4-column by 3-row grid.  
+When you place a card in your tableau, it first activates itself and then activates all 
+orthogonally adjacent cards. 
+Activating cards triggers abilities and/or scores you 
+ . 
+At the end of each round, the player who scored the least amount of 
+  in that round takes  
+1 
+  token from the shared supply.  Don’t be afraid! Bees can get you a fair amount of points 
+at the end! 
+After the 12th round, the player with the most 
+  wins the game.
+1. Choose 2 cards 
+Secretly select 2 cards from your hand, 
+one for your tableau and one for your 
+reserve. Keep them hidden from the other 
+players, who will do the same.
+2. Reveal, Place and Score 
+Reveal and place the first chosen card 
+face up in your tableau (see Placing a card, 
+on the right) and keep the second face 
+down in your  reserve. Count the 
+  you 
+gained, and take the corresponding tokens 
+from the shared supply, adding them to 
+your reserve.  
+Everyone does this simultaneously.
+3. Bee time 
+The player who gained the fewest 
+  
+this round, takes 1 
+  token from the 
+shared supply and adds it to their personal 
+reserve. If more players are tied last, each 
+of them takes 1 
+ .
+4. Pass the cards 
+Pass your remaining cards to the player on 
+your left, then add the card you previously 
+placed in your reserve (2) to the new hand 
+you received from the player on your right.
+5. Deal new cards when needed 
+After placing 4 cards (i.e. at the end of 
+the 4th and 8th rounds), you will have no 
+cards left in your hand.  
+At the end of that round, decide whether to 
+keep in hand or discard the card currently 
+in your reserve.  
+Once everyone has made their decision, 
+the dealer cuts the deck and deals cards 
+until everyone has 5 cards in hand again.
+Placement rules
+1. Each card after the first must be placed 
+orthogonally adjacent to at least one 
+other card.
+2. At the end of the game, after the 12th 
+round, your tableau must be a grid of 
+4x3 cards and you may never add a 5th 
+column or a 4th row.
+Activations
+When placing a card in your tableau, you 
+first activate that card, then activate each 
+orthogonally adjacent card in the order of 
+your choice.
+
+--- PAGE 3 ---
+Small Trading Post
+22
+: 
+88 if adjacent to 
+exactly 2 diff  erent 
+.
+Binoculars
+Activate a 
+in your tableau.
+Queen Bee
+44 per adjacent 
+  
+symbol.
+Sequoia
+33
+Dog
+33 per adjacent 
+ .
+Wild Carrot
+55 if adjacent to 
+at least 1 
+ .
+Rubber Duck
+22
+Dandelion
+77 when placed.
+11 when activated
+by another 
+ .
+Bee Hive symbols
+In this example, the player scored 121 
+  and collected 6 
+  tokens throughout the game. 
+In their tableau there are 4 
+  symbols (the Rubber Duck has 2!), so they multiply those 
+by the 6 
+  tokens, earning an additional 24 
+  that they take from the shared supply.
+The player’s final score is 145 (121+24). 
+3
+End of the game
+After 12 rounds, when all players have completed their 4x3 tableau, 
+the game ends.
+Turn your 
+  tokens into 
+Some cards show a Bee Hive multiplier symbol 
+ : count how 
+many of them are in your tableau and multiply that number by the 
+amount of 
+  tokens you have in your reserve. Take that many 
+  
+tokens from the shared supply.
+Count now your 
+ : the player with the most of them is the winner.  
+If there is a tie, the tied players share the victory.
+Colors and types of cards
+Each card comes in one of 4 colors: red, blue, green, and yellow. This color is shown on both 
+the front and back, and each card also has a matching icon to help colorblind players:
+In addition to their color, cards also have one, or even two, of the following 5 types, which are 
+used in various effects:
+Bearfolk Building Item Plant Animal
+Bear tip:
+Later in the game, 
+if you have trouble 
+keeping track of 
+your score, you may 
+place the 
+  tokens 
+on each card after 
+counting them.
+City / Red
+ Desert / Yellow
+Mountain / Green
+Water / Blue
+
+
+--- PAGE 4 ---
+Bearlet
+22
+:
+1010 if you have at 
+least 
+66  tokens.  
+Bearlet
+22
+:
+1010 if you have at 
+least 
+66  tokens.  
+Bearlet
+22
+:
+1010 if you have at 
+least 
+66  tokens.  
+Scoring a non-
+complete Goal.
+Scoring a 
+complete Goal.
+Bearlet
+22
+:
+1010 if you have at 
+least 
+66  tokens.  
+ Bearlet
+22
+:
+1010 if you have at 
+least 
+66  tokens.  
+4
+Designers: Gricha German 
+& Johan Benvenuto 
+Illustrator: Kerri Aitken
+Publisher: Mojito Studios.
+© 2026, Mojito Studios., LLC
+1760 N Jog Road, Suite 150,
+West Palm Beach, FL 33411, USA
+www.mojitostudios.com
+Effects Clarifications
+Card anatomy
+Some cards show a Goal symbol 
+ . 
+Every time you activate a card showing this symbol (including 
+the first time you place it in your tableau), check if you meet 
+its requirements next to the 
+ : 
+• If you don’t meet the requirements, only apply the effect 
+above the line.  
+• If you do meet the requirements, only apply the effect  
+under the line, ignoring the 
+  above it.
+Important: A completed 
+  scores you points only when 
+you activate its card. If by placing a card in your tableau you 
+complete a specific 
+  but do not activate the card showing 
+it, you do not score it.
+• Cards are considered to be adjacent only if they are orthogonally adjacent.
+• A card activates its adjacent neighbors only when it is placed in your tableau.
+• Cards like the Eagle, Backpack, Collector, etc... count for their own effects. 
+• Cards like the Banker, Treasure Hunter, etc... score you 
+  for cards showing a 
+  that 
+can be completed, even if you have not completed those 
+ .
+• Weather Forecast cards refer to the card you keep in your reserve for the next round.
+Card 
+effect
+Color 
+symbol
+Card 
+type(s)
+Goal
+symbol
+Bee Hive 
+Symbol(s) Card name
+Other Symbols
+ 
+  = Card
+ 
+  = Victory Point
+ 
+  = Bee Hive 
+  = Goal (card)
+ 
+ = Row  
+  = Right 
+ = Column
+ 
+  = Color
+ 
+  = Bee token
+Goal Cards
+

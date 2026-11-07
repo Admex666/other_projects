@@ -1,0 +1,4848 @@
+{
+  "metadata": {
+    "spritesheet_image": "assets/sources/cards.jpg",
+    "spritesheet_width": 3200,
+    "spritesheet_height": 4990,
+    "grid_columns": 10,
+    "grid_rows": 10,
+    "total_slots": 100,
+    "card_width_px": 320,
+    "card_height_px": 499,
+    "card_aspect_ratio": 1.5594,
+    "counts": {
+      "game_cards": 94,
+      "card_backs": 4,
+      "blank_slots": 2,
+      "by_suit": {
+        "Water (Blue)": 23,
+        "Desert (Yellow)": 21,
+        "City (Red)": 24,
+        "Mountain (Green)": 26
+      }
+    },
+    "card_back_slots": {
+      "23": {
+        "suit": "Water",
+        "color": "Blue"
+      },
+      "45": {
+        "suit": "Desert",
+        "color": "Yellow"
+      },
+      "70": {
+        "suit": "City",
+        "color": "Red"
+      },
+      "97": {
+        "suit": "Mountain",
+        "color": "Green"
+      }
+    },
+    "blank_slots": [
+      98,
+      99
+    ]
+  },
+  "slots": [
+    {
+      "slot_index": 0,
+      "column": 0,
+      "row": 0,
+      "slot_type": "game_card",
+      "game_card_id": 1,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 1,
+      "pixel_coords": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "0.0000%",
+      "css_bg_percent_y": "0.0000%",
+      "css_background_position": "0.0000% 0.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          145.88,
+          164.05,
+          151.07
+        ],
+        "overall_hex": "#92a497",
+        "border_rgb": [
+          105.09,
+          187.22,
+          192.33
+        ],
+        "border_hex": "#69bbc0",
+        "art_rgb": [
+          91.29,
+          83.01,
+          75.8
+        ],
+        "art_hex": "#5b534c",
+        "text_box_rgb": [
+          205.75,
+          192.99,
+          152.03
+        ],
+        "text_box_hex": "#cec198"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 1,
+      "column": 1,
+      "row": 0,
+      "slot_type": "game_card",
+      "game_card_id": 2,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 2,
+      "pixel_coords": {
+        "x": 320,
+        "y": 0,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "11.1111%",
+      "css_bg_percent_y": "0.0000%",
+      "css_background_position": "11.1111% 0.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          150.23,
+          162.15,
+          145.73
+        ],
+        "overall_hex": "#96a292",
+        "border_rgb": [
+          103.06,
+          187.52,
+          192.25
+        ],
+        "border_hex": "#67bcc0",
+        "art_rgb": [
+          102.82,
+          82.24,
+          65.55
+        ],
+        "art_hex": "#675242",
+        "text_box_rgb": [
+          228.95,
+          214.95,
+          167.86
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 2,
+      "column": 2,
+      "row": 0,
+      "slot_type": "game_card",
+      "game_card_id": 3,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 3,
+      "pixel_coords": {
+        "x": 640,
+        "y": 0,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "22.2222%",
+      "css_bg_percent_y": "0.0000%",
+      "css_background_position": "22.2222% 0.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          150.8,
+          164.59,
+          148.92
+        ],
+        "overall_hex": "#97a595",
+        "border_rgb": [
+          103.06,
+          187.52,
+          192.25
+        ],
+        "border_hex": "#67bcc0",
+        "art_rgb": [
+          102.46,
+          77.21,
+          59.74
+        ],
+        "art_hex": "#664d3c",
+        "text_box_rgb": [
+          228.92,
+          214.99,
+          167.8
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 3,
+      "column": 3,
+      "row": 0,
+      "slot_type": "game_card",
+      "game_card_id": 4,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 4,
+      "pixel_coords": {
+        "x": 960,
+        "y": 0,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "33.3333%",
+      "css_bg_percent_y": "0.0000%",
+      "css_background_position": "33.3333% 0.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          150.27,
+          180.2,
+          170.33
+        ],
+        "overall_hex": "#96b4aa",
+        "border_rgb": [
+          103.06,
+          187.52,
+          192.25
+        ],
+        "border_hex": "#67bcc0",
+        "art_rgb": [
+          106.56,
+          153.05,
+          160.63
+        ],
+        "art_hex": "#6b99a1",
+        "text_box_rgb": [
+          196.93,
+          192.85,
+          159.69
+        ],
+        "text_box_hex": "#c5c1a0"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 4,
+      "column": 4,
+      "row": 0,
+      "slot_type": "game_card",
+      "game_card_id": 5,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 5,
+      "pixel_coords": {
+        "x": 1280,
+        "y": 0,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "44.4444%",
+      "css_bg_percent_y": "0.0000%",
+      "css_background_position": "44.4444% 0.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          150.29,
+          180.19,
+          170.33
+        ],
+        "overall_hex": "#96b4aa",
+        "border_rgb": [
+          103.06,
+          187.52,
+          192.19
+        ],
+        "border_hex": "#67bcc0",
+        "art_rgb": [
+          106.57,
+          153.08,
+          160.66
+        ],
+        "art_hex": "#6b99a1",
+        "text_box_rgb": [
+          196.92,
+          192.9,
+          159.65
+        ],
+        "text_box_hex": "#c5c1a0"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 5,
+      "column": 5,
+      "row": 0,
+      "slot_type": "game_card",
+      "game_card_id": 6,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 6,
+      "pixel_coords": {
+        "x": 1600,
+        "y": 0,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "55.5556%",
+      "css_bg_percent_y": "0.0000%",
+      "css_background_position": "55.5556% 0.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          150.27,
+          180.19,
+          170.34
+        ],
+        "overall_hex": "#96b4aa",
+        "border_rgb": [
+          103.06,
+          187.52,
+          192.19
+        ],
+        "border_hex": "#67bcc0",
+        "art_rgb": [
+          106.51,
+          153.13,
+          160.64
+        ],
+        "art_hex": "#6b99a1",
+        "text_box_rgb": [
+          196.94,
+          192.86,
+          159.71
+        ],
+        "text_box_hex": "#c5c1a0"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 6,
+      "column": 6,
+      "row": 0,
+      "slot_type": "game_card",
+      "game_card_id": 7,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 7,
+      "pixel_coords": {
+        "x": 1920,
+        "y": 0,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "66.6667%",
+      "css_bg_percent_y": "0.0000%",
+      "css_background_position": "66.6667% 0.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          150.27,
+          180.19,
+          170.32
+        ],
+        "overall_hex": "#96b4aa",
+        "border_rgb": [
+          103.06,
+          187.52,
+          192.19
+        ],
+        "border_hex": "#67bcc0",
+        "art_rgb": [
+          106.51,
+          153.13,
+          160.64
+        ],
+        "art_hex": "#6b99a1",
+        "text_box_rgb": [
+          196.91,
+          192.84,
+          159.69
+        ],
+        "text_box_hex": "#c5c1a0"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 7,
+      "column": 7,
+      "row": 0,
+      "slot_type": "game_card",
+      "game_card_id": 8,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 8,
+      "pixel_coords": {
+        "x": 2240,
+        "y": 0,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "77.7778%",
+      "css_bg_percent_y": "0.0000%",
+      "css_background_position": "77.7778% 0.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          149.09,
+          180.31,
+          170.92
+        ],
+        "overall_hex": "#95b4ab",
+        "border_rgb": [
+          103.06,
+          187.52,
+          192.19
+        ],
+        "border_hex": "#67bcc0",
+        "art_rgb": [
+          106.51,
+          153.13,
+          160.64
+        ],
+        "art_hex": "#6b99a1",
+        "text_box_rgb": [
+          196.94,
+          192.86,
+          159.71
+        ],
+        "text_box_hex": "#c5c1a0"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 8,
+      "column": 8,
+      "row": 0,
+      "slot_type": "game_card",
+      "game_card_id": 9,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 9,
+      "pixel_coords": {
+        "x": 2560,
+        "y": 0,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "88.8889%",
+      "css_bg_percent_y": "0.0000%",
+      "css_background_position": "88.8889% 0.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          149.1,
+          180.31,
+          170.92
+        ],
+        "overall_hex": "#95b4ab",
+        "border_rgb": [
+          103.06,
+          187.52,
+          192.19
+        ],
+        "border_hex": "#67bcc0",
+        "art_rgb": [
+          106.51,
+          153.13,
+          160.64
+        ],
+        "art_hex": "#6b99a1",
+        "text_box_rgb": [
+          196.98,
+          192.81,
+          159.7
+        ],
+        "text_box_hex": "#c5c1a0"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 9,
+      "column": 9,
+      "row": 0,
+      "slot_type": "game_card",
+      "game_card_id": 10,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 10,
+      "pixel_coords": {
+        "x": 2880,
+        "y": 0,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "100.0000%",
+      "css_bg_percent_y": "0.0000%",
+      "css_background_position": "100.0000% 0.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          149.14,
+          180.29,
+          170.9
+        ],
+        "overall_hex": "#95b4ab",
+        "border_rgb": [
+          103.06,
+          187.52,
+          192.19
+        ],
+        "border_hex": "#67bcc0",
+        "art_rgb": [
+          106.51,
+          153.13,
+          160.64
+        ],
+        "art_hex": "#6b99a1",
+        "text_box_rgb": [
+          196.97,
+          192.82,
+          159.68
+        ],
+        "text_box_hex": "#c5c1a0"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 10,
+      "column": 0,
+      "row": 1,
+      "slot_type": "game_card",
+      "game_card_id": 11,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 11,
+      "pixel_coords": {
+        "x": 0,
+        "y": 499,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "0.0000%",
+      "css_bg_percent_y": "11.1111%",
+      "css_background_position": "0.0000% 11.1111%",
+      "color_stats": {
+        "overall_rgb": [
+          149.21,
+          180.3,
+          170.78
+        ],
+        "overall_hex": "#95b4ab",
+        "border_rgb": [
+          105.41,
+          187.47,
+          193.95
+        ],
+        "border_hex": "#69bbc2",
+        "art_rgb": [
+          106.59,
+          153.15,
+          160.67
+        ],
+        "art_hex": "#6b99a1",
+        "text_box_rgb": [
+          196.79,
+          192.88,
+          159.4
+        ],
+        "text_box_hex": "#c5c19f"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 11,
+      "column": 1,
+      "row": 1,
+      "slot_type": "game_card",
+      "game_card_id": 12,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 12,
+      "pixel_coords": {
+        "x": 320,
+        "y": 499,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "11.1111%",
+      "css_bg_percent_y": "11.1111%",
+      "css_background_position": "11.1111% 11.1111%",
+      "color_stats": {
+        "overall_rgb": [
+          153.37,
+          156.84,
+          135.49
+        ],
+        "overall_hex": "#999d87",
+        "border_rgb": [
+          104.22,
+          188.25,
+          191.48
+        ],
+        "border_hex": "#68bcbf",
+        "art_rgb": [
+          85.92,
+          85.31,
+          78.31
+        ],
+        "art_hex": "#56554e",
+        "text_box_rgb": [
+          228.84,
+          214.99,
+          167.86
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 12,
+      "column": 2,
+      "row": 1,
+      "slot_type": "game_card",
+      "game_card_id": 13,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 13,
+      "pixel_coords": {
+        "x": 640,
+        "y": 499,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "22.2222%",
+      "css_bg_percent_y": "11.1111%",
+      "css_background_position": "22.2222% 11.1111%",
+      "color_stats": {
+        "overall_rgb": [
+          152.14,
+          161.13,
+          143.44
+        ],
+        "overall_hex": "#98a18f",
+        "border_rgb": [
+          105.09,
+          188.41,
+          191.77
+        ],
+        "border_hex": "#69bcc0",
+        "art_rgb": [
+          97.93,
+          100.5,
+          91.14
+        ],
+        "art_hex": "#62655b",
+        "text_box_rgb": [
+          198.65,
+          193.95,
+          159.59
+        ],
+        "text_box_hex": "#c7c2a0"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 13,
+      "column": 3,
+      "row": 1,
+      "slot_type": "game_card",
+      "game_card_id": 14,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 14,
+      "pixel_coords": {
+        "x": 960,
+        "y": 499,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "33.3333%",
+      "css_bg_percent_y": "11.1111%",
+      "css_background_position": "33.3333% 11.1111%",
+      "color_stats": {
+        "overall_rgb": [
+          141.56,
+          168.82,
+          158.08
+        ],
+        "overall_hex": "#8ea99e",
+        "border_rgb": [
+          105.55,
+          187.94,
+          192.67
+        ],
+        "border_hex": "#6abcc1",
+        "art_rgb": [
+          98.16,
+          106.05,
+          84.37
+        ],
+        "art_hex": "#626a54",
+        "text_box_rgb": [
+          195.6,
+          183.82,
+          145.88
+        ],
+        "text_box_hex": "#c4b892"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 14,
+      "column": 4,
+      "row": 1,
+      "slot_type": "game_card",
+      "game_card_id": 15,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 15,
+      "pixel_coords": {
+        "x": 1280,
+        "y": 499,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "44.4444%",
+      "css_bg_percent_y": "11.1111%",
+      "css_background_position": "44.4444% 11.1111%",
+      "color_stats": {
+        "overall_rgb": [
+          157.23,
+          166.65,
+          144.76
+        ],
+        "overall_hex": "#9da791",
+        "border_rgb": [
+          105.5,
+          188.73,
+          192.22
+        ],
+        "border_hex": "#6abdc0",
+        "art_rgb": [
+          141.17,
+          116.74,
+          78.73
+        ],
+        "art_hex": "#8d754f",
+        "text_box_rgb": [
+          228.88,
+          214.95,
+          167.9
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 15,
+      "column": 5,
+      "row": 1,
+      "slot_type": "game_card",
+      "game_card_id": 16,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 16,
+      "pixel_coords": {
+        "x": 1600,
+        "y": 499,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "55.5556%",
+      "css_bg_percent_y": "11.1111%",
+      "css_background_position": "55.5556% 11.1111%",
+      "color_stats": {
+        "overall_rgb": [
+          160.49,
+          163.4,
+          138.23
+        ],
+        "overall_hex": "#a0a38a",
+        "border_rgb": [
+          105.05,
+          187.97,
+          192.52
+        ],
+        "border_hex": "#69bcc1",
+        "art_rgb": [
+          150.56,
+          118.26,
+          69.24
+        ],
+        "art_hex": "#977645",
+        "text_box_rgb": [
+          228.87,
+          214.96,
+          167.92
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 16,
+      "column": 6,
+      "row": 1,
+      "slot_type": "game_card",
+      "game_card_id": 17,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 17,
+      "pixel_coords": {
+        "x": 1920,
+        "y": 499,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "66.6667%",
+      "css_bg_percent_y": "11.1111%",
+      "css_background_position": "66.6667% 11.1111%",
+      "color_stats": {
+        "overall_rgb": [
+          148.1,
+          158.9,
+          144.65
+        ],
+        "overall_hex": "#949f91",
+        "border_rgb": [
+          103.64,
+          188.94,
+          191.61
+        ],
+        "border_hex": "#68bdc0",
+        "art_rgb": [
+          99.2,
+          94.22,
+          84.93
+        ],
+        "art_hex": "#635e55",
+        "text_box_rgb": [
+          200.2,
+          188.1,
+          149.16
+        ],
+        "text_box_hex": "#c8bc95"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 17,
+      "column": 7,
+      "row": 1,
+      "slot_type": "game_card",
+      "game_card_id": 18,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 18,
+      "pixel_coords": {
+        "x": 2240,
+        "y": 499,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "77.7778%",
+      "css_bg_percent_y": "11.1111%",
+      "css_background_position": "77.7778% 11.1111%",
+      "color_stats": {
+        "overall_rgb": [
+          131.22,
+          166.35,
+          166.31
+        ],
+        "overall_hex": "#83a6a6",
+        "border_rgb": [
+          105.28,
+          187.7,
+          191.94
+        ],
+        "border_hex": "#69bcc0",
+        "art_rgb": [
+          37.42,
+          98.85,
+          138.24
+        ],
+        "art_hex": "#25638a",
+        "text_box_rgb": [
+          228.83,
+          214.96,
+          167.83
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 18,
+      "column": 8,
+      "row": 1,
+      "slot_type": "game_card",
+      "game_card_id": 19,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 19,
+      "pixel_coords": {
+        "x": 2560,
+        "y": 499,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "88.8889%",
+      "css_bg_percent_y": "11.1111%",
+      "css_background_position": "88.8889% 11.1111%",
+      "color_stats": {
+        "overall_rgb": [
+          144.23,
+          164.86,
+          152.22
+        ],
+        "overall_hex": "#90a598",
+        "border_rgb": [
+          105.28,
+          187.78,
+          191.44
+        ],
+        "border_hex": "#69bcbf",
+        "art_rgb": [
+          80.13,
+          73.65,
+          64.23
+        ],
+        "art_hex": "#504a40",
+        "text_box_rgb": [
+          228.94,
+          214.99,
+          167.87
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 19,
+      "column": 9,
+      "row": 1,
+      "slot_type": "game_card",
+      "game_card_id": 20,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 20,
+      "pixel_coords": {
+        "x": 2880,
+        "y": 499,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "100.0000%",
+      "css_bg_percent_y": "11.1111%",
+      "css_background_position": "100.0000% 11.1111%",
+      "color_stats": {
+        "overall_rgb": [
+          141.1,
+          168.8,
+          158.1
+        ],
+        "overall_hex": "#8da99e",
+        "border_rgb": [
+          104.83,
+          188.03,
+          191.44
+        ],
+        "border_hex": "#69bcbf",
+        "art_rgb": [
+          64.36,
+          105.09,
+          109.49
+        ],
+        "art_hex": "#40696d",
+        "text_box_rgb": [
+          228.92,
+          214.92,
+          167.97
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 20,
+      "column": 0,
+      "row": 2,
+      "slot_type": "game_card",
+      "game_card_id": 21,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 21,
+      "pixel_coords": {
+        "x": 0,
+        "y": 998,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "0.0000%",
+      "css_bg_percent_y": "22.2222%",
+      "css_background_position": "0.0000% 22.2222%",
+      "color_stats": {
+        "overall_rgb": [
+          140.29,
+          170.04,
+          156.85
+        ],
+        "overall_hex": "#8caa9d",
+        "border_rgb": [
+          104.23,
+          188.39,
+          191.83
+        ],
+        "border_hex": "#68bcc0",
+        "art_rgb": [
+          64.93,
+          97.48,
+          82.13
+        ],
+        "art_hex": "#416152",
+        "text_box_rgb": [
+          228.74,
+          214.89,
+          167.52
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 21,
+      "column": 1,
+      "row": 2,
+      "slot_type": "game_card",
+      "game_card_id": 22,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 22,
+      "pixel_coords": {
+        "x": 320,
+        "y": 998,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "11.1111%",
+      "css_bg_percent_y": "22.2222%",
+      "css_background_position": "11.1111% 22.2222%",
+      "color_stats": {
+        "overall_rgb": [
+          140.31,
+          170.08,
+          156.9
+        ],
+        "overall_hex": "#8caa9d",
+        "border_rgb": [
+          104.56,
+          187.22,
+          191.09
+        ],
+        "border_hex": "#69bbbf",
+        "art_rgb": [
+          65.07,
+          97.8,
+          82.17
+        ],
+        "art_hex": "#416252",
+        "text_box_rgb": [
+          228.75,
+          214.91,
+          167.55
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 22,
+      "column": 2,
+      "row": 2,
+      "slot_type": "game_card",
+      "game_card_id": 23,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": 23,
+      "pixel_coords": {
+        "x": 640,
+        "y": 998,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "22.2222%",
+      "css_bg_percent_y": "22.2222%",
+      "css_background_position": "22.2222% 22.2222%",
+      "color_stats": {
+        "overall_rgb": [
+          145.94,
+          168.46,
+          149.5
+        ],
+        "overall_hex": "#92a896",
+        "border_rgb": [
+          105.3,
+          186.56,
+          193.67
+        ],
+        "border_hex": "#69bbc2",
+        "art_rgb": [
+          80.17,
+          115.65,
+          90.45
+        ],
+        "art_hex": "#50745a",
+        "text_box_rgb": [
+          228.7,
+          214.85,
+          167.42
+        ],
+        "text_box_hex": "#e5d7a7"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 23,
+      "column": 3,
+      "row": 2,
+      "slot_type": "card_back",
+      "game_card_id": null,
+      "suit": "Water",
+      "suit_key": "water_blue",
+      "suit_color": "Blue",
+      "suit_index": null,
+      "pixel_coords": {
+        "x": 960,
+        "y": 998,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "33.3333%",
+      "css_bg_percent_y": "22.2222%",
+      "css_background_position": "33.3333% 22.2222%",
+      "color_stats": {
+        "overall_rgb": [
+          100.83,
+          188.04,
+          201.65
+        ],
+        "overall_hex": "#65bcca",
+        "border_rgb": [
+          254.88,
+          254.88,
+          254.12
+        ],
+        "border_hex": "#fffffe",
+        "art_rgb": [
+          83.09,
+          171.33,
+          188.29
+        ],
+        "art_hex": "#53abbc",
+        "text_box_rgb": [
+          45.62,
+          170.23,
+          189.49
+        ],
+        "text_box_hex": "#2eaabd"
+      },
+      "is_blank": false,
+      "is_card_back": true
+    },
+    {
+      "slot_index": 24,
+      "column": 4,
+      "row": 2,
+      "slot_type": "game_card",
+      "game_card_id": 24,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 1,
+      "pixel_coords": {
+        "x": 1280,
+        "y": 998,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "44.4444%",
+      "css_bg_percent_y": "22.2222%",
+      "css_background_position": "44.4444% 22.2222%",
+      "color_stats": {
+        "overall_rgb": [
+          208.39,
+          182.79,
+          132.66
+        ],
+        "overall_hex": "#d0b785",
+        "border_rgb": [
+          234.92,
+          200.34,
+          126.36
+        ],
+        "border_hex": "#ebc87e",
+        "art_rgb": [
+          169.01,
+          131.3,
+          75.24
+        ],
+        "art_hex": "#a9834b",
+        "text_box_rgb": [
+          228.73,
+          214.92,
+          167.47
+        ],
+        "text_box_hex": "#e5d7a7"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 25,
+      "column": 5,
+      "row": 2,
+      "slot_type": "game_card",
+      "game_card_id": 25,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 2,
+      "pixel_coords": {
+        "x": 1600,
+        "y": 998,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "55.5556%",
+      "css_bg_percent_y": "22.2222%",
+      "css_background_position": "55.5556% 22.2222%",
+      "color_stats": {
+        "overall_rgb": [
+          210.33,
+          179.82,
+          123.69
+        ],
+        "overall_hex": "#d2b47c",
+        "border_rgb": [
+          234.34,
+          199.88,
+          126.05
+        ],
+        "border_hex": "#eac87e",
+        "art_rgb": [
+          194.1,
+          142.57,
+          66.32
+        ],
+        "art_hex": "#c28f42",
+        "text_box_rgb": [
+          228.69,
+          214.91,
+          167.4
+        ],
+        "text_box_hex": "#e5d7a7"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 26,
+      "column": 6,
+      "row": 2,
+      "slot_type": "game_card",
+      "game_card_id": 26,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 3,
+      "pixel_coords": {
+        "x": 1920,
+        "y": 998,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "66.6667%",
+      "css_bg_percent_y": "22.2222%",
+      "css_background_position": "66.6667% 22.2222%",
+      "color_stats": {
+        "overall_rgb": [
+          188.04,
+          155.57,
+          115.72
+        ],
+        "overall_hex": "#bc9c74",
+        "border_rgb": [
+          234.77,
+          199.62,
+          126.05
+        ],
+        "border_hex": "#ebc87e",
+        "art_rgb": [
+          108.95,
+          81.93,
+          60.49
+        ],
+        "art_hex": "#6d523c",
+        "text_box_rgb": [
+          209.13,
+          197.85,
+          152.68
+        ],
+        "text_box_hex": "#d1c699"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 27,
+      "column": 7,
+      "row": 2,
+      "slot_type": "game_card",
+      "game_card_id": 27,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 4,
+      "pixel_coords": {
+        "x": 2240,
+        "y": 998,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "77.7778%",
+      "css_bg_percent_y": "22.2222%",
+      "css_background_position": "77.7778% 22.2222%",
+      "color_stats": {
+        "overall_rgb": [
+          187.43,
+          164.3,
+          123.48
+        ],
+        "overall_hex": "#bba47b",
+        "border_rgb": [
+          235.59,
+          199.77,
+          127.7
+        ],
+        "border_hex": "#ecc880",
+        "art_rgb": [
+          130.97,
+          98.73,
+          66.01
+        ],
+        "art_hex": "#836342",
+        "text_box_rgb": [
+          228.8,
+          214.88,
+          167.47
+        ],
+        "text_box_hex": "#e5d7a7"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 28,
+      "column": 8,
+      "row": 2,
+      "slot_type": "game_card",
+      "game_card_id": 28,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 5,
+      "pixel_coords": {
+        "x": 2560,
+        "y": 998,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "88.8889%",
+      "css_bg_percent_y": "22.2222%",
+      "css_background_position": "88.8889% 22.2222%",
+      "color_stats": {
+        "overall_rgb": [
+          199.32,
+          177.32,
+          134.79
+        ],
+        "overall_hex": "#c7b187",
+        "border_rgb": [
+          235.03,
+          199.58,
+          125.92
+        ],
+        "border_hex": "#ebc87e",
+        "art_rgb": [
+          137.44,
+          106.02,
+          67.6
+        ],
+        "art_hex": "#896a44",
+        "text_box_rgb": [
+          228.63,
+          214.86,
+          167.41
+        ],
+        "text_box_hex": "#e5d7a7"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 29,
+      "column": 9,
+      "row": 2,
+      "slot_type": "game_card",
+      "game_card_id": 29,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 6,
+      "pixel_coords": {
+        "x": 2880,
+        "y": 998,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "100.0000%",
+      "css_bg_percent_y": "22.2222%",
+      "css_background_position": "100.0000% 22.2222%",
+      "color_stats": {
+        "overall_rgb": [
+          200.7,
+          174.37,
+          125.64
+        ],
+        "overall_hex": "#c9ae7e",
+        "border_rgb": [
+          233.19,
+          200.2,
+          127.19
+        ],
+        "border_hex": "#e9c87f",
+        "art_rgb": [
+          137.53,
+          101.64,
+          60.33
+        ],
+        "art_hex": "#8a663c",
+        "text_box_rgb": [
+          202.18,
+          191.21,
+          149.05
+        ],
+        "text_box_hex": "#cabf95"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 30,
+      "column": 0,
+      "row": 3,
+      "slot_type": "game_card",
+      "game_card_id": 30,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 7,
+      "pixel_coords": {
+        "x": 0,
+        "y": 1497,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "0.0000%",
+      "css_bg_percent_y": "33.3333%",
+      "css_background_position": "0.0000% 33.3333%",
+      "color_stats": {
+        "overall_rgb": [
+          190.05,
+          164.64,
+          120.96
+        ],
+        "overall_hex": "#bea579",
+        "border_rgb": [
+          234.22,
+          200.58,
+          124.45
+        ],
+        "border_hex": "#eac97c",
+        "art_rgb": [
+          121.8,
+          88.89,
+          47.27
+        ],
+        "art_hex": "#7a592f",
+        "text_box_rgb": [
+          202.11,
+          191.05,
+          148.89
+        ],
+        "text_box_hex": "#cabf95"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 31,
+      "column": 1,
+      "row": 3,
+      "slot_type": "game_card",
+      "game_card_id": 31,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 8,
+      "pixel_coords": {
+        "x": 320,
+        "y": 1497,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "11.1111%",
+      "css_bg_percent_y": "33.3333%",
+      "css_background_position": "11.1111% 33.3333%",
+      "color_stats": {
+        "overall_rgb": [
+          195.42,
+          171.63,
+          129.99
+        ],
+        "overall_hex": "#c3ac82",
+        "border_rgb": [
+          234.34,
+          200.2,
+          124.27
+        ],
+        "border_hex": "#eac87c",
+        "art_rgb": [
+          147.12,
+          125.87,
+          104.99
+        ],
+        "art_hex": "#937e69",
+        "text_box_rgb": [
+          228.89,
+          214.84,
+          167.64
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 32,
+      "column": 2,
+      "row": 3,
+      "slot_type": "game_card",
+      "game_card_id": 32,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 9,
+      "pixel_coords": {
+        "x": 640,
+        "y": 1497,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "22.2222%",
+      "css_bg_percent_y": "33.3333%",
+      "css_background_position": "22.2222% 33.3333%",
+      "color_stats": {
+        "overall_rgb": [
+          200.57,
+          173.69,
+          124.34
+        ],
+        "overall_hex": "#c9ae7c",
+        "border_rgb": [
+          233.61,
+          200.89,
+          122.88
+        ],
+        "border_hex": "#eac97b",
+        "art_rgb": [
+          160.31,
+          120.47,
+          69.6
+        ],
+        "art_hex": "#a07846",
+        "text_box_rgb": [
+          228.74,
+          214.91,
+          167.64
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 33,
+      "column": 3,
+      "row": 3,
+      "slot_type": "game_card",
+      "game_card_id": 33,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 10,
+      "pixel_coords": {
+        "x": 960,
+        "y": 1497,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "33.3333%",
+      "css_bg_percent_y": "33.3333%",
+      "css_background_position": "33.3333% 33.3333%",
+      "color_stats": {
+        "overall_rgb": [
+          206.92,
+          182.31,
+          136.55
+        ],
+        "overall_hex": "#cfb689",
+        "border_rgb": [
+          233.83,
+          201.52,
+          124.56
+        ],
+        "border_hex": "#eaca7d",
+        "art_rgb": [
+          171.0,
+          133.54,
+          88.07
+        ],
+        "art_hex": "#ab8658",
+        "text_box_rgb": [
+          228.86,
+          214.88,
+          167.62
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 34,
+      "column": 4,
+      "row": 3,
+      "slot_type": "game_card",
+      "game_card_id": 34,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 11,
+      "pixel_coords": {
+        "x": 1280,
+        "y": 1497,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "44.4444%",
+      "css_bg_percent_y": "33.3333%",
+      "css_background_position": "44.4444% 33.3333%",
+      "color_stats": {
+        "overall_rgb": [
+          184.04,
+          156.53,
+          116.23
+        ],
+        "overall_hex": "#b89d74",
+        "border_rgb": [
+          233.64,
+          201.28,
+          123.94
+        ],
+        "border_hex": "#eac97c",
+        "art_rgb": [
+          179.95,
+          135.8,
+          94.16
+        ],
+        "art_hex": "#b4885e",
+        "text_box_rgb": [
+          223.09,
+          209.29,
+          163.85
+        ],
+        "text_box_hex": "#dfd1a4"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 35,
+      "column": 5,
+      "row": 3,
+      "slot_type": "game_card",
+      "game_card_id": 35,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 12,
+      "pixel_coords": {
+        "x": 1600,
+        "y": 1497,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "55.5556%",
+      "css_bg_percent_y": "33.3333%",
+      "css_background_position": "55.5556% 33.3333%",
+      "color_stats": {
+        "overall_rgb": [
+          219.71,
+          189.29,
+          130.55
+        ],
+        "overall_hex": "#dcbd83",
+        "border_rgb": [
+          232.03,
+          201.56,
+          123.5
+        ],
+        "border_hex": "#e8ca7c",
+        "art_rgb": [
+          210.12,
+          162.83,
+          83.15
+        ],
+        "art_hex": "#d2a353",
+        "text_box_rgb": [
+          228.84,
+          214.91,
+          167.66
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 36,
+      "column": 6,
+      "row": 3,
+      "slot_type": "game_card",
+      "game_card_id": 36,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 13,
+      "pixel_coords": {
+        "x": 1920,
+        "y": 1497,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "66.6667%",
+      "css_bg_percent_y": "33.3333%",
+      "css_background_position": "66.6667% 33.3333%",
+      "color_stats": {
+        "overall_rgb": [
+          193.02,
+          170.42,
+          119.94
+        ],
+        "overall_hex": "#c1aa78",
+        "border_rgb": [
+          232.52,
+          201.22,
+          123.5
+        ],
+        "border_hex": "#e9c97c",
+        "art_rgb": [
+          136.13,
+          109.99,
+          56.86
+        ],
+        "art_hex": "#886e39",
+        "text_box_rgb": [
+          228.9,
+          214.86,
+          167.61
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 37,
+      "column": 7,
+      "row": 3,
+      "slot_type": "game_card",
+      "game_card_id": 37,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 14,
+      "pixel_coords": {
+        "x": 2240,
+        "y": 1497,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "77.7778%",
+      "css_bg_percent_y": "33.3333%",
+      "css_background_position": "77.7778% 33.3333%",
+      "color_stats": {
+        "overall_rgb": [
+          168.35,
+          146.35,
+          111.08
+        ],
+        "overall_hex": "#a8926f",
+        "border_rgb": [
+          232.66,
+          201.36,
+          123.89
+        ],
+        "border_hex": "#e9c97c",
+        "art_rgb": [
+          127.65,
+          102.82,
+          68.43
+        ],
+        "art_hex": "#806744",
+        "text_box_rgb": [
+          228.89,
+          214.88,
+          167.7
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 38,
+      "column": 8,
+      "row": 3,
+      "slot_type": "game_card",
+      "game_card_id": 38,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 15,
+      "pixel_coords": {
+        "x": 2560,
+        "y": 1497,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "88.8889%",
+      "css_bg_percent_y": "33.3333%",
+      "css_background_position": "88.8889% 33.3333%",
+      "color_stats": {
+        "overall_rgb": [
+          195.58,
+          168.59,
+          122.2
+        ],
+        "overall_hex": "#c4a97a",
+        "border_rgb": [
+          231.84,
+          201.52,
+          123.41
+        ],
+        "border_hex": "#e8ca7b",
+        "art_rgb": [
+          113.47,
+          88.33,
+          61.18
+        ],
+        "art_hex": "#71583d",
+        "text_box_rgb": [
+          202.41,
+          189.88,
+          149.99
+        ],
+        "text_box_hex": "#cabe96"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 39,
+      "column": 9,
+      "row": 3,
+      "slot_type": "game_card",
+      "game_card_id": 39,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 16,
+      "pixel_coords": {
+        "x": 2880,
+        "y": 1497,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "100.0000%",
+      "css_bg_percent_y": "33.3333%",
+      "css_background_position": "100.0000% 33.3333%",
+      "color_stats": {
+        "overall_rgb": [
+          205.58,
+          178.16,
+          126.31
+        ],
+        "overall_hex": "#ceb27e",
+        "border_rgb": [
+          233.23,
+          201.42,
+          122.3
+        ],
+        "border_hex": "#e9c97a",
+        "art_rgb": [
+          156.01,
+          120.32,
+          67.67
+        ],
+        "art_hex": "#9c7844",
+        "text_box_rgb": [
+          202.17,
+          189.79,
+          149.79
+        ],
+        "text_box_hex": "#cabe96"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 40,
+      "column": 0,
+      "row": 4,
+      "slot_type": "game_card",
+      "game_card_id": 40,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 17,
+      "pixel_coords": {
+        "x": 0,
+        "y": 1996,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "0.0000%",
+      "css_bg_percent_y": "44.4444%",
+      "css_background_position": "0.0000% 44.4444%",
+      "color_stats": {
+        "overall_rgb": [
+          207.53,
+          179.91,
+          127.55
+        ],
+        "overall_hex": "#d0b480",
+        "border_rgb": [
+          233.31,
+          200.97,
+          124.34
+        ],
+        "border_hex": "#e9c97c",
+        "art_rgb": [
+          155.91,
+          120.33,
+          67.72
+        ],
+        "art_hex": "#9c7844",
+        "text_box_rgb": [
+          228.72,
+          214.92,
+          167.64
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 41,
+      "column": 1,
+      "row": 4,
+      "slot_type": "game_card",
+      "game_card_id": 41,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 18,
+      "pixel_coords": {
+        "x": 320,
+        "y": 1996,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "11.1111%",
+      "css_bg_percent_y": "44.4444%",
+      "css_background_position": "11.1111% 44.4444%",
+      "color_stats": {
+        "overall_rgb": [
+          187.23,
+          164.03,
+          124.31
+        ],
+        "overall_hex": "#bba47c",
+        "border_rgb": [
+          233.73,
+          201.22,
+          124.84
+        ],
+        "border_hex": "#eac97d",
+        "art_rgb": [
+          93.68,
+          79.39,
+          69.98
+        ],
+        "art_hex": "#5e4f46",
+        "text_box_rgb": [
+          215.65,
+          196.05,
+          152.69
+        ],
+        "text_box_hex": "#d8c499"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 42,
+      "column": 2,
+      "row": 4,
+      "slot_type": "game_card",
+      "game_card_id": 42,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 19,
+      "pixel_coords": {
+        "x": 640,
+        "y": 1996,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "22.2222%",
+      "css_bg_percent_y": "44.4444%",
+      "css_background_position": "22.2222% 44.4444%",
+      "color_stats": {
+        "overall_rgb": [
+          210.46,
+          189.15,
+          132.42
+        ],
+        "overall_hex": "#d2bd84",
+        "border_rgb": [
+          233.12,
+          200.91,
+          125.3
+        ],
+        "border_hex": "#e9c97d",
+        "art_rgb": [
+          140.53,
+          148.34,
+          85.95
+        ],
+        "art_hex": "#8d9456",
+        "text_box_rgb": [
+          228.75,
+          214.88,
+          167.62
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 43,
+      "column": 3,
+      "row": 4,
+      "slot_type": "game_card",
+      "game_card_id": 43,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 20,
+      "pixel_coords": {
+        "x": 960,
+        "y": 1996,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "33.3333%",
+      "css_bg_percent_y": "44.4444%",
+      "css_background_position": "33.3333% 44.4444%",
+      "color_stats": {
+        "overall_rgb": [
+          215.01,
+          185.98,
+          124.72
+        ],
+        "overall_hex": "#d7ba7d",
+        "border_rgb": [
+          233.8,
+          201.33,
+          125.34
+        ],
+        "border_hex": "#eac97d",
+        "art_rgb": [
+          178.65,
+          145.17,
+          65.34
+        ],
+        "art_hex": "#b39141",
+        "text_box_rgb": [
+          228.71,
+          214.88,
+          167.6
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 44,
+      "column": 4,
+      "row": 4,
+      "slot_type": "game_card",
+      "game_card_id": 44,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": 21,
+      "pixel_coords": {
+        "x": 1280,
+        "y": 1996,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "44.4444%",
+      "css_bg_percent_y": "44.4444%",
+      "css_background_position": "44.4444% 44.4444%",
+      "color_stats": {
+        "overall_rgb": [
+          214.13,
+          189.43,
+          131.22
+        ],
+        "overall_hex": "#d6bd83",
+        "border_rgb": [
+          233.77,
+          201.2,
+          125.19
+        ],
+        "border_hex": "#eac97d",
+        "art_rgb": [
+          122.8,
+          124.66,
+          67.31
+        ],
+        "art_hex": "#7b7d43",
+        "text_box_rgb": [
+          228.66,
+          214.83,
+          167.6
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 45,
+      "column": 5,
+      "row": 4,
+      "slot_type": "card_back",
+      "game_card_id": null,
+      "suit": "Desert",
+      "suit_key": "desert_yellow",
+      "suit_color": "Yellow",
+      "suit_index": null,
+      "pixel_coords": {
+        "x": 1600,
+        "y": 1996,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "55.5556%",
+      "css_bg_percent_y": "44.4444%",
+      "css_background_position": "55.5556% 44.4444%",
+      "color_stats": {
+        "overall_rgb": [
+          250.23,
+          207.78,
+          127.9
+        ],
+        "overall_hex": "#fad080",
+        "border_rgb": [
+          254.25,
+          254.78,
+          254.62
+        ],
+        "border_hex": "#feffff",
+        "art_rgb": [
+          247.76,
+          202.2,
+          114.6
+        ],
+        "art_hex": "#f8ca73",
+        "text_box_rgb": [
+          248.98,
+          186.3,
+          76.35
+        ],
+        "text_box_hex": "#f9ba4c"
+      },
+      "is_blank": false,
+      "is_card_back": true
+    },
+    {
+      "slot_index": 46,
+      "column": 6,
+      "row": 4,
+      "slot_type": "game_card",
+      "game_card_id": 45,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 1,
+      "pixel_coords": {
+        "x": 1920,
+        "y": 1996,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "66.6667%",
+      "css_bg_percent_y": "44.4444%",
+      "css_background_position": "66.6667% 44.4444%",
+      "color_stats": {
+        "overall_rgb": [
+          195.66,
+          142.07,
+          119.15
+        ],
+        "overall_hex": "#c48e77",
+        "border_rgb": [
+          226.06,
+          122.23,
+          100.31
+        ],
+        "border_hex": "#e27a64",
+        "art_rgb": [
+          116.18,
+          69.95,
+          71.02
+        ],
+        "art_hex": "#744647",
+        "text_box_rgb": [
+          228.79,
+          214.89,
+          167.64
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 47,
+      "column": 7,
+      "row": 4,
+      "slot_type": "game_card",
+      "game_card_id": 46,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 2,
+      "pixel_coords": {
+        "x": 2240,
+        "y": 1996,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "77.7778%",
+      "css_bg_percent_y": "44.4444%",
+      "css_background_position": "77.7778% 44.4444%",
+      "color_stats": {
+        "overall_rgb": [
+          200.43,
+          145.63,
+          118.89
+        ],
+        "overall_hex": "#c89277",
+        "border_rgb": [
+          226.52,
+          123.59,
+          101.81
+        ],
+        "border_hex": "#e37c66",
+        "art_rgb": [
+          169.61,
+          107.54,
+          84.07
+        ],
+        "art_hex": "#aa6c54",
+        "text_box_rgb": [
+          228.76,
+          214.88,
+          167.69
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 48,
+      "column": 8,
+      "row": 4,
+      "slot_type": "game_card",
+      "game_card_id": 47,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 3,
+      "pixel_coords": {
+        "x": 2560,
+        "y": 1996,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "88.8889%",
+      "css_bg_percent_y": "44.4444%",
+      "css_background_position": "88.8889% 44.4444%",
+      "color_stats": {
+        "overall_rgb": [
+          194.19,
+          143.98,
+          122.65
+        ],
+        "overall_hex": "#c2907b",
+        "border_rgb": [
+          226.83,
+          123.22,
+          102.56
+        ],
+        "border_hex": "#e37b67",
+        "art_rgb": [
+          142.39,
+          89.86,
+          85.69
+        ],
+        "art_hex": "#8e5a56",
+        "text_box_rgb": [
+          228.69,
+          214.88,
+          167.54
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 49,
+      "column": 9,
+      "row": 4,
+      "slot_type": "game_card",
+      "game_card_id": 48,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 4,
+      "pixel_coords": {
+        "x": 2880,
+        "y": 1996,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "100.0000%",
+      "css_bg_percent_y": "44.4444%",
+      "css_background_position": "100.0000% 44.4444%",
+      "color_stats": {
+        "overall_rgb": [
+          180.63,
+          154.52,
+          117.68
+        ],
+        "overall_hex": "#b59b76",
+        "border_rgb": [
+          226.64,
+          123.62,
+          101.28
+        ],
+        "border_hex": "#e37c65",
+        "art_rgb": [
+          124.14,
+          95.73,
+          61.0
+        ],
+        "art_hex": "#7c603d",
+        "text_box_rgb": [
+          228.71,
+          214.9,
+          167.66
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 50,
+      "column": 0,
+      "row": 5,
+      "slot_type": "game_card",
+      "game_card_id": 49,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 5,
+      "pixel_coords": {
+        "x": 0,
+        "y": 2495,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "0.0000%",
+      "css_bg_percent_y": "55.5556%",
+      "css_background_position": "0.0000% 55.5556%",
+      "color_stats": {
+        "overall_rgb": [
+          201.18,
+          159.22,
+          128.43
+        ],
+        "overall_hex": "#c99f80",
+        "border_rgb": [
+          224.42,
+          123.47,
+          104.23
+        ],
+        "border_hex": "#e07b68",
+        "art_rgb": [
+          169.56,
+          138.64,
+          103.39
+        ],
+        "art_hex": "#aa8b67",
+        "text_box_rgb": [
+          228.91,
+          214.82,
+          167.79
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 51,
+      "column": 1,
+      "row": 5,
+      "slot_type": "game_card",
+      "game_card_id": 50,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 6,
+      "pixel_coords": {
+        "x": 320,
+        "y": 2495,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "11.1111%",
+      "css_bg_percent_y": "55.5556%",
+      "css_background_position": "11.1111% 55.5556%",
+      "color_stats": {
+        "overall_rgb": [
+          185.41,
+          137.79,
+          108.38
+        ],
+        "overall_hex": "#b98a6c",
+        "border_rgb": [
+          224.25,
+          123.44,
+          101.55
+        ],
+        "border_hex": "#e07b66",
+        "art_rgb": [
+          102.95,
+          72.19,
+          37.09
+        ],
+        "art_hex": "#674825",
+        "text_box_rgb": [
+          228.88,
+          214.88,
+          167.77
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 52,
+      "column": 2,
+      "row": 5,
+      "slot_type": "game_card",
+      "game_card_id": 51,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 7,
+      "pixel_coords": {
+        "x": 640,
+        "y": 2495,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "22.2222%",
+      "css_bg_percent_y": "55.5556%",
+      "css_background_position": "22.2222% 55.5556%",
+      "color_stats": {
+        "overall_rgb": [
+          181.56,
+          150.05,
+          117.26
+        ],
+        "overall_hex": "#b69675",
+        "border_rgb": [
+          224.12,
+          123.31,
+          101.38
+        ],
+        "border_hex": "#e07b65",
+        "art_rgb": [
+          122.95,
+          106.72,
+          69.38
+        ],
+        "art_hex": "#7b6b45",
+        "text_box_rgb": [
+          228.81,
+          214.83,
+          167.73
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 53,
+      "column": 3,
+      "row": 5,
+      "slot_type": "game_card",
+      "game_card_id": 52,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 8,
+      "pixel_coords": {
+        "x": 960,
+        "y": 2495,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "33.3333%",
+      "css_bg_percent_y": "55.5556%",
+      "css_background_position": "33.3333% 55.5556%",
+      "color_stats": {
+        "overall_rgb": [
+          171.04,
+          141.72,
+          112.01
+        ],
+        "overall_hex": "#ab8e70",
+        "border_rgb": [
+          224.52,
+          123.38,
+          101.62
+        ],
+        "border_hex": "#e17b66",
+        "art_rgb": [
+          97.63,
+          75.83,
+          52.45
+        ],
+        "art_hex": "#624c34",
+        "text_box_rgb": [
+          228.78,
+          214.88,
+          167.61
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 54,
+      "column": 4,
+      "row": 5,
+      "slot_type": "game_card",
+      "game_card_id": 53,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 9,
+      "pixel_coords": {
+        "x": 1280,
+        "y": 2495,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "44.4444%",
+      "css_bg_percent_y": "55.5556%",
+      "css_background_position": "44.4444% 55.5556%",
+      "color_stats": {
+        "overall_rgb": [
+          180.26,
+          144.17,
+          108.04
+        ],
+        "overall_hex": "#b4906c",
+        "border_rgb": [
+          224.28,
+          123.41,
+          101.55
+        ],
+        "border_hex": "#e07b66",
+        "art_rgb": [
+          120.87,
+          92.15,
+          45.92
+        ],
+        "art_hex": "#795c2e",
+        "text_box_rgb": [
+          195.64,
+          183.62,
+          145.85
+        ],
+        "text_box_hex": "#c4b892"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 55,
+      "column": 5,
+      "row": 5,
+      "slot_type": "game_card",
+      "game_card_id": 54,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 10,
+      "pixel_coords": {
+        "x": 1600,
+        "y": 2495,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "55.5556%",
+      "css_bg_percent_y": "55.5556%",
+      "css_background_position": "55.5556% 55.5556%",
+      "color_stats": {
+        "overall_rgb": [
+          206.58,
+          162.71,
+          116.55
+        ],
+        "overall_hex": "#cfa375",
+        "border_rgb": [
+          224.8,
+          122.8,
+          102.48
+        ],
+        "border_hex": "#e17b66",
+        "art_rgb": [
+          211.62,
+          163.41,
+          51.11
+        ],
+        "art_hex": "#d4a333",
+        "text_box_rgb": [
+          228.81,
+          214.84,
+          167.76
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 56,
+      "column": 6,
+      "row": 5,
+      "slot_type": "game_card",
+      "game_card_id": 55,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 11,
+      "pixel_coords": {
+        "x": 1920,
+        "y": 2495,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "66.6667%",
+      "css_bg_percent_y": "55.5556%",
+      "css_background_position": "66.6667% 55.5556%",
+      "color_stats": {
+        "overall_rgb": [
+          192.76,
+          145.29,
+          114.42
+        ],
+        "overall_hex": "#c19172",
+        "border_rgb": [
+          225.0,
+          122.91,
+          104.61
+        ],
+        "border_hex": "#e17b69",
+        "art_rgb": [
+          154.77,
+          108.27,
+          66.28
+        ],
+        "art_hex": "#9b6c42",
+        "text_box_rgb": [
+          228.86,
+          214.86,
+          167.64
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 57,
+      "column": 7,
+      "row": 5,
+      "slot_type": "game_card",
+      "game_card_id": 56,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 12,
+      "pixel_coords": {
+        "x": 2240,
+        "y": 2495,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "77.7778%",
+      "css_bg_percent_y": "55.5556%",
+      "css_background_position": "77.7778% 55.5556%",
+      "color_stats": {
+        "overall_rgb": [
+          200.02,
+          138.22,
+          111.43
+        ],
+        "overall_hex": "#c88a6f",
+        "border_rgb": [
+          223.5,
+          123.58,
+          101.92
+        ],
+        "border_hex": "#e07c66",
+        "art_rgb": [
+          136.38,
+          64.94,
+          41.99
+        ],
+        "art_hex": "#88412a",
+        "text_box_rgb": [
+          212.32,
+          197.65,
+          154.87
+        ],
+        "text_box_hex": "#d4c69b"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 58,
+      "column": 8,
+      "row": 5,
+      "slot_type": "game_card",
+      "game_card_id": 57,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 13,
+      "pixel_coords": {
+        "x": 2560,
+        "y": 2495,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "88.8889%",
+      "css_bg_percent_y": "55.5556%",
+      "css_background_position": "88.8889% 55.5556%",
+      "color_stats": {
+        "overall_rgb": [
+          201.58,
+          145.16,
+          117.23
+        ],
+        "overall_hex": "#ca9175",
+        "border_rgb": [
+          223.62,
+          123.72,
+          102.02
+        ],
+        "border_hex": "#e07c66",
+        "art_rgb": [
+          154.26,
+          86.68,
+          60.7
+        ],
+        "art_hex": "#9a573d",
+        "text_box_rgb": [
+          228.9,
+          214.88,
+          167.66
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 59,
+      "column": 9,
+      "row": 5,
+      "slot_type": "game_card",
+      "game_card_id": 58,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 14,
+      "pixel_coords": {
+        "x": 2880,
+        "y": 2495,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "100.0000%",
+      "css_bg_percent_y": "55.5556%",
+      "css_background_position": "100.0000% 55.5556%",
+      "color_stats": {
+        "overall_rgb": [
+          200.76,
+          154.6,
+          120.06
+        ],
+        "overall_hex": "#c99b78",
+        "border_rgb": [
+          223.45,
+          123.55,
+          102.06
+        ],
+        "border_hex": "#df7c66",
+        "art_rgb": [
+          174.19,
+          135.5,
+          80.62
+        ],
+        "art_hex": "#ae8751",
+        "text_box_rgb": [
+          228.75,
+          214.9,
+          167.7
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 60,
+      "column": 0,
+      "row": 6,
+      "slot_type": "game_card",
+      "game_card_id": 59,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 15,
+      "pixel_coords": {
+        "x": 0,
+        "y": 2994,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "0.0000%",
+      "css_bg_percent_y": "66.6667%",
+      "css_background_position": "0.0000% 66.6667%",
+      "color_stats": {
+        "overall_rgb": [
+          197.1,
+          144.75,
+          119.97
+        ],
+        "overall_hex": "#c59178",
+        "border_rgb": [
+          224.73,
+          125.17,
+          99.73
+        ],
+        "border_hex": "#e17d64",
+        "art_rgb": [
+          141.14,
+          87.54,
+          75.74
+        ],
+        "art_hex": "#8d584c",
+        "text_box_rgb": [
+          228.99,
+          214.88,
+          167.7
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 61,
+      "column": 1,
+      "row": 6,
+      "slot_type": "game_card",
+      "game_card_id": 60,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 16,
+      "pixel_coords": {
+        "x": 320,
+        "y": 2994,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "11.1111%",
+      "css_bg_percent_y": "66.6667%",
+      "css_background_position": "11.1111% 66.6667%",
+      "color_stats": {
+        "overall_rgb": [
+          193.51,
+          143.57,
+          114.53
+        ],
+        "overall_hex": "#c29073",
+        "border_rgb": [
+          225.55,
+          124.67,
+          100.14
+        ],
+        "border_hex": "#e27d64",
+        "art_rgb": [
+          127.23,
+          85.73,
+          50.67
+        ],
+        "art_hex": "#7f5633",
+        "text_box_rgb": [
+          228.93,
+          214.86,
+          167.68
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 62,
+      "column": 2,
+      "row": 6,
+      "slot_type": "game_card",
+      "game_card_id": 61,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 17,
+      "pixel_coords": {
+        "x": 640,
+        "y": 2994,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "22.2222%",
+      "css_bg_percent_y": "66.6667%",
+      "css_background_position": "22.2222% 66.6667%",
+      "color_stats": {
+        "overall_rgb": [
+          185.86,
+          141.29,
+          116.05
+        ],
+        "overall_hex": "#ba8d74",
+        "border_rgb": [
+          225.44,
+          124.75,
+          100.14
+        ],
+        "border_hex": "#e17d64",
+        "art_rgb": [
+          158.29,
+          75.82,
+          58.14
+        ],
+        "art_hex": "#9e4c3a",
+        "text_box_rgb": [
+          212.98,
+          200.0,
+          156.68
+        ],
+        "text_box_hex": "#d5c89d"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 63,
+      "column": 3,
+      "row": 6,
+      "slot_type": "game_card",
+      "game_card_id": 62,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 18,
+      "pixel_coords": {
+        "x": 960,
+        "y": 2994,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "33.3333%",
+      "css_bg_percent_y": "66.6667%",
+      "css_background_position": "33.3333% 66.6667%",
+      "color_stats": {
+        "overall_rgb": [
+          196.08,
+          139.58,
+          111.79
+        ],
+        "overall_hex": "#c48c70",
+        "border_rgb": [
+          224.97,
+          124.3,
+          99.75
+        ],
+        "border_hex": "#e17c64",
+        "art_rgb": [
+          142.77,
+          70.26,
+          45.58
+        ],
+        "art_hex": "#8f462e",
+        "text_box_rgb": [
+          203.53,
+          190.56,
+          150.52
+        ],
+        "text_box_hex": "#ccbf97"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 64,
+      "column": 4,
+      "row": 6,
+      "slot_type": "game_card",
+      "game_card_id": 63,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 19,
+      "pixel_coords": {
+        "x": 1280,
+        "y": 2994,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "44.4444%",
+      "css_bg_percent_y": "66.6667%",
+      "css_background_position": "44.4444% 66.6667%",
+      "color_stats": {
+        "overall_rgb": [
+          195.47,
+          165.12,
+          141.7
+        ],
+        "overall_hex": "#c3a58e",
+        "border_rgb": [
+          224.38,
+          124.59,
+          99.75
+        ],
+        "border_hex": "#e07d64",
+        "art_rgb": [
+          173.56,
+          155.39,
+          145.29
+        ],
+        "art_hex": "#ae9b91",
+        "text_box_rgb": [
+          228.92,
+          214.93,
+          167.71
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 65,
+      "column": 5,
+      "row": 6,
+      "slot_type": "game_card",
+      "game_card_id": 64,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 20,
+      "pixel_coords": {
+        "x": 1600,
+        "y": 2994,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "55.5556%",
+      "css_bg_percent_y": "66.6667%",
+      "css_background_position": "55.5556% 66.6667%",
+      "color_stats": {
+        "overall_rgb": [
+          197.46,
+          145.12,
+          116.54
+        ],
+        "overall_hex": "#c59175",
+        "border_rgb": [
+          225.64,
+          124.8,
+          100.23
+        ],
+        "border_hex": "#e27d64",
+        "art_rgb": [
+          174.2,
+          91.39,
+          65.3
+        ],
+        "art_hex": "#ae5b41",
+        "text_box_rgb": [
+          228.75,
+          214.87,
+          167.58
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 66,
+      "column": 6,
+      "row": 6,
+      "slot_type": "game_card",
+      "game_card_id": 65,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 21,
+      "pixel_coords": {
+        "x": 1920,
+        "y": 2994,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "66.6667%",
+      "css_bg_percent_y": "66.6667%",
+      "css_background_position": "66.6667% 66.6667%",
+      "color_stats": {
+        "overall_rgb": [
+          194.14,
+          138.5,
+          113.92
+        ],
+        "overall_hex": "#c28b72",
+        "border_rgb": [
+          226.3,
+          124.42,
+          100.14
+        ],
+        "border_hex": "#e27c64",
+        "art_rgb": [
+          130.84,
+          65.25,
+          54.18
+        ],
+        "art_hex": "#834136",
+        "text_box_rgb": [
+          228.81,
+          214.93,
+          167.77
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 67,
+      "column": 7,
+      "row": 6,
+      "slot_type": "game_card",
+      "game_card_id": 66,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 22,
+      "pixel_coords": {
+        "x": 2240,
+        "y": 2994,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "77.7778%",
+      "css_bg_percent_y": "66.6667%",
+      "css_background_position": "77.7778% 66.6667%",
+      "color_stats": {
+        "overall_rgb": [
+          175.23,
+          134.77,
+          110.91
+        ],
+        "overall_hex": "#af876f",
+        "border_rgb": [
+          225.73,
+          124.92,
+          100.27
+        ],
+        "border_hex": "#e27d64",
+        "art_rgb": [
+          131.8,
+          76.49,
+          48.58
+        ],
+        "art_hex": "#844c31",
+        "text_box_rgb": [
+          212.58,
+          199.45,
+          156.69
+        ],
+        "text_box_hex": "#d5c79d"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 68,
+      "column": 8,
+      "row": 6,
+      "slot_type": "game_card",
+      "game_card_id": 67,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 23,
+      "pixel_coords": {
+        "x": 2560,
+        "y": 2994,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "88.8889%",
+      "css_bg_percent_y": "66.6667%",
+      "css_background_position": "88.8889% 66.6667%",
+      "color_stats": {
+        "overall_rgb": [
+          186.06,
+          145.18,
+          116.74
+        ],
+        "overall_hex": "#ba9175",
+        "border_rgb": [
+          225.5,
+          124.44,
+          101.14
+        ],
+        "border_hex": "#e27c65",
+        "art_rgb": [
+          139.17,
+          102.29,
+          74.97
+        ],
+        "art_hex": "#8b664b",
+        "text_box_rgb": [
+          228.96,
+          214.8,
+          167.6
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 69,
+      "column": 9,
+      "row": 6,
+      "slot_type": "game_card",
+      "game_card_id": 68,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": 24,
+      "pixel_coords": {
+        "x": 2880,
+        "y": 2994,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "100.0000%",
+      "css_bg_percent_y": "66.6667%",
+      "css_background_position": "100.0000% 66.6667%",
+      "color_stats": {
+        "overall_rgb": [
+          194.24,
+          140.78,
+          116.5
+        ],
+        "overall_hex": "#c28d75",
+        "border_rgb": [
+          224.94,
+          124.8,
+          100.27
+        ],
+        "border_hex": "#e17d64",
+        "art_rgb": [
+          121.24,
+          93.39,
+          83.45
+        ],
+        "art_hex": "#795d53",
+        "text_box_rgb": [
+          211.56,
+          197.29,
+          154.53
+        ],
+        "text_box_hex": "#d4c59b"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 70,
+      "column": 0,
+      "row": 7,
+      "slot_type": "card_back",
+      "game_card_id": null,
+      "suit": "City",
+      "suit_key": "city_red",
+      "suit_color": "Red",
+      "suit_index": null,
+      "pixel_coords": {
+        "x": 0,
+        "y": 3493,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "0.0000%",
+      "css_bg_percent_y": "77.7778%",
+      "css_background_position": "0.0000% 77.7778%",
+      "color_stats": {
+        "overall_rgb": [
+          220.25,
+          121.0,
+          107.37
+        ],
+        "overall_hex": "#dc796b",
+        "border_rgb": [
+          254.81,
+          254.81,
+          254.81
+        ],
+        "border_hex": "#ffffff",
+        "art_rgb": [
+          204.86,
+          103.47,
+          90.95
+        ],
+        "art_hex": "#cd675b",
+        "text_box_rgb": [
+          201.46,
+          75.37,
+          62.04
+        ],
+        "text_box_hex": "#c94b3e"
+      },
+      "is_blank": false,
+      "is_card_back": true
+    },
+    {
+      "slot_index": 71,
+      "column": 1,
+      "row": 7,
+      "slot_type": "game_card",
+      "game_card_id": 69,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 1,
+      "pixel_coords": {
+        "x": 320,
+        "y": 3493,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "11.1111%",
+      "css_bg_percent_y": "77.7778%",
+      "css_background_position": "11.1111% 77.7778%",
+      "color_stats": {
+        "overall_rgb": [
+          173.36,
+          172.26,
+          118.72
+        ],
+        "overall_hex": "#adac77",
+        "border_rgb": [
+          205.11,
+          213.12,
+          149.17
+        ],
+        "border_hex": "#cdd595",
+        "art_rgb": [
+          121.06,
+          122.84,
+          62.11
+        ],
+        "art_hex": "#797b3e",
+        "text_box_rgb": [
+          228.85,
+          214.89,
+          167.7
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 72,
+      "column": 2,
+      "row": 7,
+      "slot_type": "game_card",
+      "game_card_id": 70,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 2,
+      "pixel_coords": {
+        "x": 640,
+        "y": 3493,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "22.2222%",
+      "css_bg_percent_y": "77.7778%",
+      "css_background_position": "22.2222% 77.7778%",
+      "color_stats": {
+        "overall_rgb": [
+          183.64,
+          183.39,
+          136.52
+        ],
+        "overall_hex": "#b8b789",
+        "border_rgb": [
+          205.23,
+          213.19,
+          149.59
+        ],
+        "border_hex": "#cdd596",
+        "art_rgb": [
+          128.68,
+          130.41,
+          89.46
+        ],
+        "art_hex": "#818259",
+        "text_box_rgb": [
+          228.77,
+          214.89,
+          167.59
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 73,
+      "column": 3,
+      "row": 7,
+      "slot_type": "game_card",
+      "game_card_id": 71,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 3,
+      "pixel_coords": {
+        "x": 960,
+        "y": 3493,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "33.3333%",
+      "css_bg_percent_y": "77.7778%",
+      "css_background_position": "33.3333% 77.7778%",
+      "color_stats": {
+        "overall_rgb": [
+          180.6,
+          174.42,
+          127.63
+        ],
+        "overall_hex": "#b5ae80",
+        "border_rgb": [
+          204.88,
+          212.77,
+          149.2
+        ],
+        "border_hex": "#cdd595",
+        "art_rgb": [
+          159.5,
+          135.47,
+          102.19
+        ],
+        "art_hex": "#a08766",
+        "text_box_rgb": [
+          221.07,
+          207.34,
+          162.54
+        ],
+        "text_box_hex": "#ddcfa3"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 74,
+      "column": 4,
+      "row": 7,
+      "slot_type": "game_card",
+      "game_card_id": 72,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 4,
+      "pixel_coords": {
+        "x": 1280,
+        "y": 3493,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "44.4444%",
+      "css_bg_percent_y": "77.7778%",
+      "css_background_position": "44.4444% 77.7778%",
+      "color_stats": {
+        "overall_rgb": [
+          161.51,
+          160.7,
+          109.38
+        ],
+        "overall_hex": "#a2a16d",
+        "border_rgb": [
+          204.42,
+          213.73,
+          147.89
+        ],
+        "border_hex": "#ccd694",
+        "art_rgb": [
+          91.08,
+          78.25,
+          38.99
+        ],
+        "art_hex": "#5b4e27",
+        "text_box_rgb": [
+          221.78,
+          208.56,
+          163.32
+        ],
+        "text_box_hex": "#ded1a3"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 75,
+      "column": 5,
+      "row": 7,
+      "slot_type": "game_card",
+      "game_card_id": 73,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 5,
+      "pixel_coords": {
+        "x": 1600,
+        "y": 3493,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "55.5556%",
+      "css_bg_percent_y": "77.7778%",
+      "css_background_position": "55.5556% 77.7778%",
+      "color_stats": {
+        "overall_rgb": [
+          168.45,
+          163.52,
+          120.43
+        ],
+        "overall_hex": "#a8a478",
+        "border_rgb": [
+          204.86,
+          212.75,
+          149.22
+        ],
+        "border_hex": "#cdd595",
+        "art_rgb": [
+          124.93,
+          116.02,
+          65.76
+        ],
+        "art_hex": "#7d7442",
+        "text_box_rgb": [
+          195.88,
+          186.81,
+          147.27
+        ],
+        "text_box_hex": "#c4bb93"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 76,
+      "column": 6,
+      "row": 7,
+      "slot_type": "game_card",
+      "game_card_id": 74,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 6,
+      "pixel_coords": {
+        "x": 1920,
+        "y": 3493,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "66.6667%",
+      "css_bg_percent_y": "77.7778%",
+      "css_background_position": "66.6667% 77.7778%",
+      "color_stats": {
+        "overall_rgb": [
+          164.68,
+          161.0,
+          114.63
+        ],
+        "overall_hex": "#a5a173",
+        "border_rgb": [
+          204.55,
+          213.8,
+          148.41
+        ],
+        "border_hex": "#cdd694",
+        "art_rgb": [
+          96.78,
+          76.89,
+          51.95
+        ],
+        "art_hex": "#614d34",
+        "text_box_rgb": [
+          211.05,
+          198.06,
+          155.66
+        ],
+        "text_box_hex": "#d3c69c"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 77,
+      "column": 7,
+      "row": 7,
+      "slot_type": "game_card",
+      "game_card_id": 75,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 7,
+      "pixel_coords": {
+        "x": 2240,
+        "y": 3493,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "77.7778%",
+      "css_bg_percent_y": "77.7778%",
+      "css_background_position": "77.7778% 77.7778%",
+      "color_stats": {
+        "overall_rgb": [
+          176.82,
+          157.31,
+          114.14
+        ],
+        "overall_hex": "#b19d72",
+        "border_rgb": [
+          203.69,
+          212.33,
+          148.92
+        ],
+        "border_hex": "#ccd495",
+        "art_rgb": [
+          155.29,
+          73.77,
+          54.47
+        ],
+        "art_hex": "#9b4a36",
+        "text_box_rgb": [
+          200.63,
+          187.26,
+          147.96
+        ],
+        "text_box_hex": "#c9bb94"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 78,
+      "column": 8,
+      "row": 7,
+      "slot_type": "game_card",
+      "game_card_id": 76,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 8,
+      "pixel_coords": {
+        "x": 2560,
+        "y": 3493,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "88.8889%",
+      "css_bg_percent_y": "77.7778%",
+      "css_background_position": "88.8889% 77.7778%",
+      "color_stats": {
+        "overall_rgb": [
+          176.41,
+          168.14,
+          116.79
+        ],
+        "overall_hex": "#b0a875",
+        "border_rgb": [
+          203.88,
+          213.58,
+          147.77
+        ],
+        "border_hex": "#ccd694",
+        "art_rgb": [
+          149.88,
+          118.81,
+          67.58
+        ],
+        "art_hex": "#967744",
+        "text_box_rgb": [
+          228.73,
+          214.8,
+          167.52
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 79,
+      "column": 9,
+      "row": 7,
+      "slot_type": "game_card",
+      "game_card_id": 77,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 9,
+      "pixel_coords": {
+        "x": 2880,
+        "y": 3493,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "100.0000%",
+      "css_bg_percent_y": "77.7778%",
+      "css_background_position": "100.0000% 77.7778%",
+      "color_stats": {
+        "overall_rgb": [
+          173.09,
+          167.98,
+          115.44
+        ],
+        "overall_hex": "#ada873",
+        "border_rgb": [
+          204.02,
+          213.34,
+          148.77
+        ],
+        "border_hex": "#ccd595",
+        "art_rgb": [
+          133.76,
+          104.17,
+          54.09
+        ],
+        "art_hex": "#866836",
+        "text_box_rgb": [
+          228.84,
+          214.85,
+          167.66
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 80,
+      "column": 0,
+      "row": 8,
+      "slot_type": "game_card",
+      "game_card_id": 78,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 10,
+      "pixel_coords": {
+        "x": 0,
+        "y": 3992,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "0.0000%",
+      "css_bg_percent_y": "88.8889%",
+      "css_background_position": "0.0000% 88.8889%",
+      "color_stats": {
+        "overall_rgb": [
+          176.36,
+          165.35,
+          117.75
+        ],
+        "overall_hex": "#b0a576",
+        "border_rgb": [
+          204.91,
+          213.97,
+          145.62
+        ],
+        "border_hex": "#cdd692",
+        "art_rgb": [
+          137.36,
+          93.66,
+          60.94
+        ],
+        "art_hex": "#895e3d",
+        "text_box_rgb": [
+          228.87,
+          214.88,
+          167.67
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 81,
+      "column": 1,
+      "row": 8,
+      "slot_type": "game_card",
+      "game_card_id": 79,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 11,
+      "pixel_coords": {
+        "x": 320,
+        "y": 3992,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "11.1111%",
+      "css_bg_percent_y": "88.8889%",
+      "css_background_position": "11.1111% 88.8889%",
+      "color_stats": {
+        "overall_rgb": [
+          182.55,
+          172.33,
+          127.88
+        ],
+        "overall_hex": "#b7ac80",
+        "border_rgb": [
+          206.34,
+          214.25,
+          144.8
+        ],
+        "border_hex": "#ced691",
+        "art_rgb": [
+          165.52,
+          152.31,
+          130.7
+        ],
+        "art_hex": "#a69883",
+        "text_box_rgb": [
+          228.84,
+          214.91,
+          167.72
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 82,
+      "column": 2,
+      "row": 8,
+      "slot_type": "game_card",
+      "game_card_id": 80,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 12,
+      "pixel_coords": {
+        "x": 640,
+        "y": 3992,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "22.2222%",
+      "css_bg_percent_y": "88.8889%",
+      "css_background_position": "22.2222% 88.8889%",
+      "color_stats": {
+        "overall_rgb": [
+          181.92,
+          172.81,
+          128.63
+        ],
+        "overall_hex": "#b6ad81",
+        "border_rgb": [
+          204.89,
+          214.83,
+          146.88
+        ],
+        "border_hex": "#cdd793",
+        "art_rgb": [
+          165.59,
+          152.34,
+          130.78
+        ],
+        "art_hex": "#a69883",
+        "text_box_rgb": [
+          228.75,
+          214.97,
+          167.65
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 83,
+      "column": 3,
+      "row": 8,
+      "slot_type": "game_card",
+      "game_card_id": 81,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 13,
+      "pixel_coords": {
+        "x": 960,
+        "y": 3992,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "33.3333%",
+      "css_bg_percent_y": "88.8889%",
+      "css_background_position": "33.3333% 88.8889%",
+      "color_stats": {
+        "overall_rgb": [
+          182.3,
+          173.26,
+          128.49
+        ],
+        "overall_hex": "#b6ad80",
+        "border_rgb": [
+          205.36,
+          215.23,
+          147.09
+        ],
+        "border_hex": "#cdd793",
+        "art_rgb": [
+          165.56,
+          152.39,
+          130.77
+        ],
+        "art_hex": "#a69883",
+        "text_box_rgb": [
+          228.87,
+          214.94,
+          167.77
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 84,
+      "column": 4,
+      "row": 8,
+      "slot_type": "game_card",
+      "game_card_id": 82,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 14,
+      "pixel_coords": {
+        "x": 1280,
+        "y": 3992,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "44.4444%",
+      "css_bg_percent_y": "88.8889%",
+      "css_background_position": "44.4444% 88.8889%",
+      "color_stats": {
+        "overall_rgb": [
+          182.74,
+          173.07,
+          128.02
+        ],
+        "overall_hex": "#b7ad80",
+        "border_rgb": [
+          205.52,
+          214.45,
+          146.75
+        ],
+        "border_hex": "#ced693",
+        "art_rgb": [
+          165.57,
+          152.32,
+          130.75
+        ],
+        "art_hex": "#a69883",
+        "text_box_rgb": [
+          228.84,
+          214.93,
+          167.71
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 85,
+      "column": 5,
+      "row": 8,
+      "slot_type": "game_card",
+      "game_card_id": 83,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 15,
+      "pixel_coords": {
+        "x": 1600,
+        "y": 3992,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "55.5556%",
+      "css_bg_percent_y": "88.8889%",
+      "css_background_position": "55.5556% 88.8889%",
+      "color_stats": {
+        "overall_rgb": [
+          166.73,
+          165.66,
+          115.38
+        ],
+        "overall_hex": "#a7a673",
+        "border_rgb": [
+          204.88,
+          214.08,
+          145.98
+        ],
+        "border_hex": "#cdd692",
+        "art_rgb": [
+          115.94,
+          99.75,
+          57.53
+        ],
+        "art_hex": "#74643a",
+        "text_box_rgb": [
+          228.78,
+          214.97,
+          167.68
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 86,
+      "column": 6,
+      "row": 8,
+      "slot_type": "game_card",
+      "game_card_id": 84,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 16,
+      "pixel_coords": {
+        "x": 1920,
+        "y": 3992,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "66.6667%",
+      "css_bg_percent_y": "88.8889%",
+      "css_background_position": "66.6667% 88.8889%",
+      "color_stats": {
+        "overall_rgb": [
+          169.96,
+          170.76,
+          117.04
+        ],
+        "overall_hex": "#aaab75",
+        "border_rgb": [
+          206.5,
+          215.14,
+          143.5
+        ],
+        "border_hex": "#ced790",
+        "art_rgb": [
+          120.86,
+          124.35,
+          62.35
+        ],
+        "art_hex": "#797c3e",
+        "text_box_rgb": [
+          228.89,
+          215.01,
+          167.76
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 87,
+      "column": 7,
+      "row": 8,
+      "slot_type": "game_card",
+      "game_card_id": 85,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 17,
+      "pixel_coords": {
+        "x": 2240,
+        "y": 3992,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "77.7778%",
+      "css_bg_percent_y": "88.8889%",
+      "css_background_position": "77.7778% 88.8889%",
+      "color_stats": {
+        "overall_rgb": [
+          173.77,
+          172.63,
+          117.09
+        ],
+        "overall_hex": "#aead75",
+        "border_rgb": [
+          207.17,
+          215.06,
+          143.58
+        ],
+        "border_hex": "#cfd790",
+        "art_rgb": [
+          132.59,
+          118.42,
+          57.14
+        ],
+        "art_hex": "#857639",
+        "text_box_rgb": [
+          228.81,
+          215.03,
+          167.71
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 88,
+      "column": 8,
+      "row": 8,
+      "slot_type": "game_card",
+      "game_card_id": 86,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 18,
+      "pixel_coords": {
+        "x": 2560,
+        "y": 3992,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "88.8889%",
+      "css_bg_percent_y": "88.8889%",
+      "css_background_position": "88.8889% 88.8889%",
+      "color_stats": {
+        "overall_rgb": [
+          167.39,
+          169.43,
+          115.1
+        ],
+        "overall_hex": "#a7a973",
+        "border_rgb": [
+          206.06,
+          215.17,
+          145.38
+        ],
+        "border_hex": "#ced791",
+        "art_rgb": [
+          111.7,
+          115.4,
+          60.55
+        ],
+        "art_hex": "#70733d",
+        "text_box_rgb": [
+          202.34,
+          189.83,
+          149.96
+        ],
+        "text_box_hex": "#cabe96"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 89,
+      "column": 9,
+      "row": 8,
+      "slot_type": "game_card",
+      "game_card_id": 87,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 19,
+      "pixel_coords": {
+        "x": 2880,
+        "y": 3992,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "100.0000%",
+      "css_bg_percent_y": "88.8889%",
+      "css_background_position": "100.0000% 88.8889%",
+      "color_stats": {
+        "overall_rgb": [
+          166.95,
+          168.49,
+          115.38
+        ],
+        "overall_hex": "#a7a873",
+        "border_rgb": [
+          205.47,
+          215.88,
+          143.58
+        ],
+        "border_hex": "#cdd890",
+        "art_rgb": [
+          111.7,
+          115.41,
+          60.61
+        ],
+        "art_hex": "#70733d",
+        "text_box_rgb": [
+          202.27,
+          189.83,
+          149.91
+        ],
+        "text_box_hex": "#cabe96"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 90,
+      "column": 0,
+      "row": 9,
+      "slot_type": "game_card",
+      "game_card_id": 88,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 20,
+      "pixel_coords": {
+        "x": 0,
+        "y": 4491,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "0.0000%",
+      "css_bg_percent_y": "100.0000%",
+      "css_background_position": "0.0000% 100.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          168.98,
+          170.76,
+          116.5
+        ],
+        "overall_hex": "#a9ab75",
+        "border_rgb": [
+          203.09,
+          214.67,
+          144.98
+        ],
+        "border_hex": "#cbd791",
+        "art_rgb": [
+          111.54,
+          115.45,
+          60.6
+        ],
+        "art_hex": "#70733d",
+        "text_box_rgb": [
+          228.76,
+          214.92,
+          167.52
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 91,
+      "column": 1,
+      "row": 9,
+      "slot_type": "game_card",
+      "game_card_id": 89,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 21,
+      "pixel_coords": {
+        "x": 320,
+        "y": 4491,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "11.1111%",
+      "css_bg_percent_y": "100.0000%",
+      "css_background_position": "11.1111% 100.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          170.68,
+          169.6,
+          114.9
+        ],
+        "overall_hex": "#abaa73",
+        "border_rgb": [
+          204.53,
+          213.5,
+          146.89
+        ],
+        "border_hex": "#cdd693",
+        "art_rgb": [
+          128.51,
+          113.88,
+          59.99
+        ],
+        "art_hex": "#81723c",
+        "text_box_rgb": [
+          228.67,
+          214.89,
+          167.57
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 92,
+      "column": 2,
+      "row": 9,
+      "slot_type": "game_card",
+      "game_card_id": 90,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 22,
+      "pixel_coords": {
+        "x": 640,
+        "y": 4491,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "22.2222%",
+      "css_bg_percent_y": "100.0000%",
+      "css_background_position": "22.2222% 100.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          159.44,
+          158.66,
+          115.1
+        ],
+        "overall_hex": "#9f9f73",
+        "border_rgb": [
+          203.41,
+          213.88,
+          146.83
+        ],
+        "border_hex": "#cbd693",
+        "art_rgb": [
+          123.4,
+          92.52,
+          54.6
+        ],
+        "art_hex": "#7b5d37",
+        "text_box_rgb": [
+          228.76,
+          214.83,
+          167.48
+        ],
+        "text_box_hex": "#e5d7a7"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 93,
+      "column": 3,
+      "row": 9,
+      "slot_type": "game_card",
+      "game_card_id": 91,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 23,
+      "pixel_coords": {
+        "x": 960,
+        "y": 4491,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "33.3333%",
+      "css_bg_percent_y": "100.0000%",
+      "css_background_position": "33.3333% 100.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          172.51,
+          176.68,
+          115.68
+        ],
+        "overall_hex": "#adb174",
+        "border_rgb": [
+          202.97,
+          213.48,
+          146.39
+        ],
+        "border_hex": "#cbd592",
+        "art_rgb": [
+          132.75,
+          141.8,
+          54.4
+        ],
+        "art_hex": "#858e36",
+        "text_box_rgb": [
+          210.51,
+          197.62,
+          155.75
+        ],
+        "text_box_hex": "#d3c69c"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 94,
+      "column": 4,
+      "row": 9,
+      "slot_type": "game_card",
+      "game_card_id": 92,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 24,
+      "pixel_coords": {
+        "x": 1280,
+        "y": 4491,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "44.4444%",
+      "css_bg_percent_y": "100.0000%",
+      "css_background_position": "44.4444% 100.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          171.44,
+          162.3,
+          113.07
+        ],
+        "overall_hex": "#aba271",
+        "border_rgb": [
+          204.44,
+          213.92,
+          145.42
+        ],
+        "border_hex": "#ccd691",
+        "art_rgb": [
+          119.17,
+          106.45,
+          52.31
+        ],
+        "art_hex": "#776a34",
+        "text_box_rgb": [
+          228.75,
+          214.83,
+          167.58
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 95,
+      "column": 5,
+      "row": 9,
+      "slot_type": "game_card",
+      "game_card_id": 93,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 25,
+      "pixel_coords": {
+        "x": 1600,
+        "y": 4491,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "55.5556%",
+      "css_bg_percent_y": "100.0000%",
+      "css_background_position": "55.5556% 100.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          173.21,
+          175.24,
+          115.32
+        ],
+        "overall_hex": "#adaf73",
+        "border_rgb": [
+          203.42,
+          213.75,
+          146.64
+        ],
+        "border_hex": "#cbd693",
+        "art_rgb": [
+          134.0,
+          119.05,
+          51.47
+        ],
+        "art_hex": "#867733",
+        "text_box_rgb": [
+          228.79,
+          214.87,
+          167.57
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 96,
+      "column": 6,
+      "row": 9,
+      "slot_type": "game_card",
+      "game_card_id": 94,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": 26,
+      "pixel_coords": {
+        "x": 1920,
+        "y": 4491,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "66.6667%",
+      "css_bg_percent_y": "100.0000%",
+      "css_background_position": "66.6667% 100.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          170.14,
+          175.51,
+          118.51
+        ],
+        "overall_hex": "#aab077",
+        "border_rgb": [
+          204.22,
+          214.2,
+          146.86
+        ],
+        "border_hex": "#ccd693",
+        "art_rgb": [
+          109.77,
+          130.21,
+          53.47
+        ],
+        "art_hex": "#6e8235",
+        "text_box_rgb": [
+          228.71,
+          214.86,
+          167.53
+        ],
+        "text_box_hex": "#e5d7a8"
+      },
+      "is_blank": false,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 97,
+      "column": 7,
+      "row": 9,
+      "slot_type": "card_back",
+      "game_card_id": null,
+      "suit": "Mountain",
+      "suit_key": "mountain_green",
+      "suit_color": "Green",
+      "suit_index": null,
+      "pixel_coords": {
+        "x": 2240,
+        "y": 4491,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "77.7778%",
+      "css_bg_percent_y": "100.0000%",
+      "css_background_position": "77.7778% 100.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          173.96,
+          196.99,
+          115.32
+        ],
+        "overall_hex": "#aec573",
+        "border_rgb": [
+          255.0,
+          254.97,
+          254.5
+        ],
+        "border_hex": "#fffffe",
+        "art_rgb": [
+          163.98,
+          188.84,
+          99.77
+        ],
+        "art_hex": "#a4bd64",
+        "text_box_rgb": [
+          160.68,
+          189.36,
+          81.75
+        ],
+        "text_box_hex": "#a1bd52"
+      },
+      "is_blank": false,
+      "is_card_back": true
+    },
+    {
+      "slot_index": 98,
+      "column": 8,
+      "row": 9,
+      "slot_type": "blank",
+      "game_card_id": null,
+      "suit": null,
+      "suit_key": null,
+      "suit_color": null,
+      "suit_index": null,
+      "pixel_coords": {
+        "x": 2560,
+        "y": 4491,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "88.8889%",
+      "css_bg_percent_y": "100.0000%",
+      "css_background_position": "88.8889% 100.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          255.57,
+          255.58,
+          255.5
+        ],
+        "overall_hex": "#ffffff",
+        "border_rgb": [
+          254.94,
+          254.97,
+          255.0
+        ],
+        "border_hex": "#ffffff",
+        "art_rgb": [
+          255.0,
+          255.0,
+          255.0
+        ],
+        "art_hex": "#ffffff",
+        "text_box_rgb": [
+          255.0,
+          255.0,
+          255.0
+        ],
+        "text_box_hex": "#ffffff"
+      },
+      "is_blank": true,
+      "is_card_back": false
+    },
+    {
+      "slot_index": 99,
+      "column": 9,
+      "row": 9,
+      "slot_type": "blank",
+      "game_card_id": null,
+      "suit": null,
+      "suit_key": null,
+      "suit_color": null,
+      "suit_index": null,
+      "pixel_coords": {
+        "x": 2880,
+        "y": 4491,
+        "width": 320,
+        "height": 499
+      },
+      "css_bg_percent_x": "100.0000%",
+      "css_bg_percent_y": "100.0000%",
+      "css_background_position": "100.0000% 100.0000%",
+      "color_stats": {
+        "overall_rgb": [
+          255.58,
+          255.58,
+          255.5
+        ],
+        "overall_hex": "#ffffff",
+        "border_rgb": [
+          254.94,
+          254.97,
+          255.0
+        ],
+        "border_hex": "#ffffff",
+        "art_rgb": [
+          255.0,
+          255.0,
+          255.0
+        ],
+        "art_hex": "#ffffff",
+        "text_box_rgb": [
+          255.0,
+          255.0,
+          255.0
+        ],
+        "text_box_hex": "#ffffff"
+      },
+      "is_blank": true,
+      "is_card_back": false
+    }
+  ]
+}

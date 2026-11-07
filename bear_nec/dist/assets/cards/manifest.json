@@ -1,0 +1,887 @@
+{
+  "card_count": 98,
+  "cards": [
+    {
+      "slot_index": 0,
+      "slot_type": "game_card",
+      "game_card_id": 1,
+      "suit": "Water",
+      "file": "card_01.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 1,
+      "slot_type": "game_card",
+      "game_card_id": 2,
+      "suit": "Water",
+      "file": "card_02.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 2,
+      "slot_type": "game_card",
+      "game_card_id": 3,
+      "suit": "Water",
+      "file": "card_03.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 3,
+      "slot_type": "game_card",
+      "game_card_id": 4,
+      "suit": "Water",
+      "file": "card_04.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 4,
+      "slot_type": "game_card",
+      "game_card_id": 5,
+      "suit": "Water",
+      "file": "card_05.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 5,
+      "slot_type": "game_card",
+      "game_card_id": 6,
+      "suit": "Water",
+      "file": "card_06.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 6,
+      "slot_type": "game_card",
+      "game_card_id": 7,
+      "suit": "Water",
+      "file": "card_07.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 7,
+      "slot_type": "game_card",
+      "game_card_id": 8,
+      "suit": "Water",
+      "file": "card_08.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 8,
+      "slot_type": "game_card",
+      "game_card_id": 9,
+      "suit": "Water",
+      "file": "card_09.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 9,
+      "slot_type": "game_card",
+      "game_card_id": 10,
+      "suit": "Water",
+      "file": "card_10.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 10,
+      "slot_type": "game_card",
+      "game_card_id": 11,
+      "suit": "Water",
+      "file": "card_11.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 11,
+      "slot_type": "game_card",
+      "game_card_id": 12,
+      "suit": "Water",
+      "file": "card_12.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 12,
+      "slot_type": "game_card",
+      "game_card_id": 13,
+      "suit": "Water",
+      "file": "card_13.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 13,
+      "slot_type": "game_card",
+      "game_card_id": 14,
+      "suit": "Water",
+      "file": "card_14.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 14,
+      "slot_type": "game_card",
+      "game_card_id": 15,
+      "suit": "Water",
+      "file": "card_15.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 15,
+      "slot_type": "game_card",
+      "game_card_id": 16,
+      "suit": "Water",
+      "file": "card_16.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 16,
+      "slot_type": "game_card",
+      "game_card_id": 17,
+      "suit": "Water",
+      "file": "card_17.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 17,
+      "slot_type": "game_card",
+      "game_card_id": 18,
+      "suit": "Water",
+      "file": "card_18.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 18,
+      "slot_type": "game_card",
+      "game_card_id": 19,
+      "suit": "Water",
+      "file": "card_19.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 19,
+      "slot_type": "game_card",
+      "game_card_id": 20,
+      "suit": "Water",
+      "file": "card_20.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 20,
+      "slot_type": "game_card",
+      "game_card_id": 21,
+      "suit": "Water",
+      "file": "card_21.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 21,
+      "slot_type": "game_card",
+      "game_card_id": 22,
+      "suit": "Water",
+      "file": "card_22.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 22,
+      "slot_type": "game_card",
+      "game_card_id": 23,
+      "suit": "Water",
+      "file": "card_23.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 23,
+      "slot_type": "card_back",
+      "game_card_id": null,
+      "suit": "Water",
+      "file": "back_water.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 24,
+      "slot_type": "game_card",
+      "game_card_id": 24,
+      "suit": "Desert",
+      "file": "card_24.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 25,
+      "slot_type": "game_card",
+      "game_card_id": 25,
+      "suit": "Desert",
+      "file": "card_25.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 26,
+      "slot_type": "game_card",
+      "game_card_id": 26,
+      "suit": "Desert",
+      "file": "card_26.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 27,
+      "slot_type": "game_card",
+      "game_card_id": 27,
+      "suit": "Desert",
+      "file": "card_27.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 28,
+      "slot_type": "game_card",
+      "game_card_id": 28,
+      "suit": "Desert",
+      "file": "card_28.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 29,
+      "slot_type": "game_card",
+      "game_card_id": 29,
+      "suit": "Desert",
+      "file": "card_29.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 30,
+      "slot_type": "game_card",
+      "game_card_id": 30,
+      "suit": "Desert",
+      "file": "card_30.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 31,
+      "slot_type": "game_card",
+      "game_card_id": 31,
+      "suit": "Desert",
+      "file": "card_31.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 32,
+      "slot_type": "game_card",
+      "game_card_id": 32,
+      "suit": "Desert",
+      "file": "card_32.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 33,
+      "slot_type": "game_card",
+      "game_card_id": 33,
+      "suit": "Desert",
+      "file": "card_33.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 34,
+      "slot_type": "game_card",
+      "game_card_id": 34,
+      "suit": "Desert",
+      "file": "card_34.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 35,
+      "slot_type": "game_card",
+      "game_card_id": 35,
+      "suit": "Desert",
+      "file": "card_35.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 36,
+      "slot_type": "game_card",
+      "game_card_id": 36,
+      "suit": "Desert",
+      "file": "card_36.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 37,
+      "slot_type": "game_card",
+      "game_card_id": 37,
+      "suit": "Desert",
+      "file": "card_37.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 38,
+      "slot_type": "game_card",
+      "game_card_id": 38,
+      "suit": "Desert",
+      "file": "card_38.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 39,
+      "slot_type": "game_card",
+      "game_card_id": 39,
+      "suit": "Desert",
+      "file": "card_39.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 40,
+      "slot_type": "game_card",
+      "game_card_id": 40,
+      "suit": "Desert",
+      "file": "card_40.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 41,
+      "slot_type": "game_card",
+      "game_card_id": 41,
+      "suit": "Desert",
+      "file": "card_41.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 42,
+      "slot_type": "game_card",
+      "game_card_id": 42,
+      "suit": "Desert",
+      "file": "card_42.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 43,
+      "slot_type": "game_card",
+      "game_card_id": 43,
+      "suit": "Desert",
+      "file": "card_43.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 44,
+      "slot_type": "game_card",
+      "game_card_id": 44,
+      "suit": "Desert",
+      "file": "card_44.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 45,
+      "slot_type": "card_back",
+      "game_card_id": null,
+      "suit": "Desert",
+      "file": "back_desert.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 46,
+      "slot_type": "game_card",
+      "game_card_id": 45,
+      "suit": "City",
+      "file": "card_45.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 47,
+      "slot_type": "game_card",
+      "game_card_id": 46,
+      "suit": "City",
+      "file": "card_46.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 48,
+      "slot_type": "game_card",
+      "game_card_id": 47,
+      "suit": "City",
+      "file": "card_47.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 49,
+      "slot_type": "game_card",
+      "game_card_id": 48,
+      "suit": "City",
+      "file": "card_48.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 50,
+      "slot_type": "game_card",
+      "game_card_id": 49,
+      "suit": "City",
+      "file": "card_49.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 51,
+      "slot_type": "game_card",
+      "game_card_id": 50,
+      "suit": "City",
+      "file": "card_50.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 52,
+      "slot_type": "game_card",
+      "game_card_id": 51,
+      "suit": "City",
+      "file": "card_51.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 53,
+      "slot_type": "game_card",
+      "game_card_id": 52,
+      "suit": "City",
+      "file": "card_52.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 54,
+      "slot_type": "game_card",
+      "game_card_id": 53,
+      "suit": "City",
+      "file": "card_53.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 55,
+      "slot_type": "game_card",
+      "game_card_id": 54,
+      "suit": "City",
+      "file": "card_54.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 56,
+      "slot_type": "game_card",
+      "game_card_id": 55,
+      "suit": "City",
+      "file": "card_55.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 57,
+      "slot_type": "game_card",
+      "game_card_id": 56,
+      "suit": "City",
+      "file": "card_56.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 58,
+      "slot_type": "game_card",
+      "game_card_id": 57,
+      "suit": "City",
+      "file": "card_57.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 59,
+      "slot_type": "game_card",
+      "game_card_id": 58,
+      "suit": "City",
+      "file": "card_58.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 60,
+      "slot_type": "game_card",
+      "game_card_id": 59,
+      "suit": "City",
+      "file": "card_59.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 61,
+      "slot_type": "game_card",
+      "game_card_id": 60,
+      "suit": "City",
+      "file": "card_60.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 62,
+      "slot_type": "game_card",
+      "game_card_id": 61,
+      "suit": "City",
+      "file": "card_61.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 63,
+      "slot_type": "game_card",
+      "game_card_id": 62,
+      "suit": "City",
+      "file": "card_62.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 64,
+      "slot_type": "game_card",
+      "game_card_id": 63,
+      "suit": "City",
+      "file": "card_63.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 65,
+      "slot_type": "game_card",
+      "game_card_id": 64,
+      "suit": "City",
+      "file": "card_64.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 66,
+      "slot_type": "game_card",
+      "game_card_id": 65,
+      "suit": "City",
+      "file": "card_65.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 67,
+      "slot_type": "game_card",
+      "game_card_id": 66,
+      "suit": "City",
+      "file": "card_66.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 68,
+      "slot_type": "game_card",
+      "game_card_id": 67,
+      "suit": "City",
+      "file": "card_67.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 69,
+      "slot_type": "game_card",
+      "game_card_id": 68,
+      "suit": "City",
+      "file": "card_68.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 70,
+      "slot_type": "card_back",
+      "game_card_id": null,
+      "suit": "City",
+      "file": "back_city.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 71,
+      "slot_type": "game_card",
+      "game_card_id": 69,
+      "suit": "Mountain",
+      "file": "card_69.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 72,
+      "slot_type": "game_card",
+      "game_card_id": 70,
+      "suit": "Mountain",
+      "file": "card_70.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 73,
+      "slot_type": "game_card",
+      "game_card_id": 71,
+      "suit": "Mountain",
+      "file": "card_71.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 74,
+      "slot_type": "game_card",
+      "game_card_id": 72,
+      "suit": "Mountain",
+      "file": "card_72.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 75,
+      "slot_type": "game_card",
+      "game_card_id": 73,
+      "suit": "Mountain",
+      "file": "card_73.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 76,
+      "slot_type": "game_card",
+      "game_card_id": 74,
+      "suit": "Mountain",
+      "file": "card_74.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 77,
+      "slot_type": "game_card",
+      "game_card_id": 75,
+      "suit": "Mountain",
+      "file": "card_75.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 78,
+      "slot_type": "game_card",
+      "game_card_id": 76,
+      "suit": "Mountain",
+      "file": "card_76.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 79,
+      "slot_type": "game_card",
+      "game_card_id": 77,
+      "suit": "Mountain",
+      "file": "card_77.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 80,
+      "slot_type": "game_card",
+      "game_card_id": 78,
+      "suit": "Mountain",
+      "file": "card_78.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 81,
+      "slot_type": "game_card",
+      "game_card_id": 79,
+      "suit": "Mountain",
+      "file": "card_79.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 82,
+      "slot_type": "game_card",
+      "game_card_id": 80,
+      "suit": "Mountain",
+      "file": "card_80.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 83,
+      "slot_type": "game_card",
+      "game_card_id": 81,
+      "suit": "Mountain",
+      "file": "card_81.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 84,
+      "slot_type": "game_card",
+      "game_card_id": 82,
+      "suit": "Mountain",
+      "file": "card_82.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 85,
+      "slot_type": "game_card",
+      "game_card_id": 83,
+      "suit": "Mountain",
+      "file": "card_83.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 86,
+      "slot_type": "game_card",
+      "game_card_id": 84,
+      "suit": "Mountain",
+      "file": "card_84.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 87,
+      "slot_type": "game_card",
+      "game_card_id": 85,
+      "suit": "Mountain",
+      "file": "card_85.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 88,
+      "slot_type": "game_card",
+      "game_card_id": 86,
+      "suit": "Mountain",
+      "file": "card_86.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 89,
+      "slot_type": "game_card",
+      "game_card_id": 87,
+      "suit": "Mountain",
+      "file": "card_87.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 90,
+      "slot_type": "game_card",
+      "game_card_id": 88,
+      "suit": "Mountain",
+      "file": "card_88.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 91,
+      "slot_type": "game_card",
+      "game_card_id": 89,
+      "suit": "Mountain",
+      "file": "card_89.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 92,
+      "slot_type": "game_card",
+      "game_card_id": 90,
+      "suit": "Mountain",
+      "file": "card_90.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 93,
+      "slot_type": "game_card",
+      "game_card_id": 91,
+      "suit": "Mountain",
+      "file": "card_91.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 94,
+      "slot_type": "game_card",
+      "game_card_id": 92,
+      "suit": "Mountain",
+      "file": "card_92.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 95,
+      "slot_type": "game_card",
+      "game_card_id": 93,
+      "suit": "Mountain",
+      "file": "card_93.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 96,
+      "slot_type": "game_card",
+      "game_card_id": 94,
+      "suit": "Mountain",
+      "file": "card_94.webp",
+      "width": 320,
+      "height": 499
+    },
+    {
+      "slot_index": 97,
+      "slot_type": "card_back",
+      "game_card_id": null,
+      "suit": "Mountain",
+      "file": "back_mountain.webp",
+      "width": 320,
+      "height": 499
+    }
+  ]
+}

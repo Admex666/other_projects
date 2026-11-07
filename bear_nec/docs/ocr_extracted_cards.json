@@ -1,0 +1,890 @@
+﻿[
+    {
+        "slot":  0,
+        "text":  "gab Beaver n : 3 if adjacent to any of its parents.",
+        "lines":  [
+                      "gab Beaver",
+                      "n : 3 if adjacent to",
+                      "any of its parents."
+                  ]
+    },
+    {
+        "slot":  1,
+        "text":  "Beaver Dad",
+        "lines":  [
+                      "Beaver Dad"
+                  ]
+    },
+    {
+        "slot":  2,
+        "text":  "Beaver ,Öf0ht",
+        "lines":  [
+                      "Beaver ,Öf0ht"
+                  ]
+    },
+    {
+        "slot":  3,
+        "text":  "Fick 2 per in your largest group of adjacent",
+        "lines":  [
+                      "Fick",
+                      "2 per in your",
+                      "largest group of",
+                      "adjacent"
+                  ]
+    },
+    {
+        "slot":  4,
+        "text":  "Fick 2 per in your largest group of adjacent",
+        "lines":  [
+                      "Fick",
+                      "2 per in your",
+                      "largest group of",
+                      "adjacent"
+                  ]
+    },
+    {
+        "slot":  5,
+        "text":  "0 Fick 2 per in your largest group of adjacent",
+        "lines":  [
+                      "0",
+                      "Fick",
+                      "2 per in your",
+                      "largest group of",
+                      "adjacent"
+                  ]
+    },
+    {
+        "slot":  6,
+        "text":  "0 Fick 2 per in your largest group of adjacent",
+        "lines":  [
+                      "0",
+                      "Fick",
+                      "2 per in your",
+                      "largest group of",
+                      "adjacent"
+                  ]
+    },
+    {
+        "slot":  7,
+        "text":  "0 Fick 2 0 per in your largest group of adjacent",
+        "lines":  [
+                      "0",
+                      "Fick",
+                      "2 0 per in your",
+                      "largest group of",
+                      "adjacent"
+                  ]
+    },
+    {
+        "slot":  8,
+        "text":  "0 Fick 2 per in your largest group of adjacent",
+        "lines":  [
+                      "0",
+                      "Fick",
+                      "2 per in your",
+                      "largest group of",
+                      "adjacent"
+                  ]
+    },
+    {
+        "slot":  9,
+        "text":  "0 Fick 2 per in your largest group of adjacent",
+        "lines":  [
+                      "0",
+                      "Fick",
+                      "2 per in your",
+                      "largest group of",
+                      "adjacent"
+                  ]
+    },
+    {
+        "slot":  10,
+        "text":  "Fick 2 0 per in your largest group of adjacent",
+        "lines":  [
+                      "Fick",
+                      "2 0 per in your",
+                      "largest group of",
+                      "adjacent"
+                  ]
+    },
+    {
+        "slot":  11,
+        "text":  "Cabih q if adjacent to exactly 1 U.",
+        "lines":  [
+                      "Cabih",
+                      "q if adjacent to",
+                      "exactly 1 U."
+                  ]
+    },
+    {
+        "slot":  12,
+        "text":  "Harbor n: if adjacent to at least 2",
+        "lines":  [
+                      "Harbor",
+                      "n: if adjacent to",
+                      "at least 2"
+                  ]
+    },
+    {
+        "slot":  13,
+        "text":  "Li94,tAavce e in this 4+ 2 per and in this -Count this only once when you activate its effect.",
+        "lines":  [
+                      "Li94,tAavce",
+                      "e in this 4+",
+                      "2 per",
+                      "and in this",
+                      "-Count this only once when",
+                      "you activate its effect."
+                  ]
+    },
+    {
+        "slot":  14,
+        "text":  "inocv/arc Activate a e in your tableau.",
+        "lines":  [
+                      "inocv/arc",
+                      "Activate a e",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  15,
+        "text":  "00 Ckect 3 per in your tableau.",
+        "lines":  [
+                      "00",
+                      "Ckect",
+                      "3 per",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  16,
+        "text":  "o Collector : 26 if you have at _least 5 of the same",
+        "lines":  [
+                      "o",
+                      "Collector",
+                      ": 26 if you have at",
+                      "_least 5 of the same"
+                  ]
+    },
+    {
+        "slot":  17,
+        "text":  "Activate a in your tableau.",
+        "lines":  [
+                      "Activate a",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  18,
+        "text":  "Ficherbear q o if adjacent to at least I e",
+        "lines":  [
+                      "Ficherbear",
+                      "q o if adjacent to",
+                      "at least I e"
+                  ]
+    },
+    {
+        "slot":  19,
+        "text":  "Cpy -2 per e in any one opponent\u0027s tableau.",
+        "lines":  [
+                      "Cpy",
+                      "-2 per e in any one",
+                      "opponent\u0027s tableau."
+                  ]
+    },
+    {
+        "slot":  20,
+        "text":  "Reed 5 if adjacent to exactly I e",
+        "lines":  [
+                      "Reed",
+                      "5 if adjacent to",
+                      "exactly I e"
+                  ]
+    },
+    {
+        "slot":  21,
+        "text":  "Reed 5 if adjacent to exactly I e",
+        "lines":  [
+                      "Reed",
+                      "5 if adjacent to",
+                      "exactly I e"
+                  ]
+    },
+    {
+        "slot":  22,
+        "text":  "Water Lily 3 per adjacent e",
+        "lines":  [
+                      "Water Lily",
+                      "3 per adjacent e"
+                  ]
+    },
+    {
+        "slot":  23,
+        "text":  "Bear Teessi.tiees",
+        "lines":  [
+                      "Bear",
+                      "Teessi.tiees"
+                  ]
+    },
+    {
+        "slot":  24,
+        "text":  "Coyote o per adjacent",
+        "lines":  [
+                      "Coyote",
+                      "o per adjacent"
+                  ]
+    },
+    {
+        "slot":  25,
+        "text":  "Queen Bee q per adjacent symbol.",
+        "lines":  [
+                      "Queen Bee",
+                      "q per adjacent",
+                      "symbol."
+                  ]
+    },
+    {
+        "slot":  26,
+        "text":  "Trad;et9 poet : 169 if adjacent to 4 different •",
+        "lines":  [
+                      "Trad;et9 poet",
+                      ": 169 if adjacent to",
+                      "4 different •"
+                  ]
+    },
+    {
+        "slot":  27,
+        "text":  "NEwssrkMD CIA Headquarters\u0027 519 per Spy in your tableau.",
+        "lines":  [
+                      "NEwssrkMD",
+                      "CIA Headquarters\u0027",
+                      "519 per Spy",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  28,
+        "text":  "Rock Shelter",
+        "lines":  [
+                      "Rock Shelter"
+                  ]
+    },
+    {
+        "slot":  29,
+        "text":  "hta// Trad;h9 port n : if adjacent to exactly 2 different E.",
+        "lines":  [
+                      "hta// Trad;h9 port",
+                      "n : if adjacent to",
+                      "exactly 2 different E."
+                  ]
+    },
+    {
+        "slot":  30,
+        "text":  "Tradih9 poct : 3 if adjacent to _exactly 3 different .",
+        "lines":  [
+                      "Tradih9 poct",
+                      ": 3 if adjacent to",
+                      "_exactly 3 different ."
+                  ]
+    },
+    {
+        "slot":  31,
+        "text":  "6 Bearbecue per adjacent Fish.",
+        "lines":  [
+                      "6",
+                      "Bearbecue",
+                      "per adjacent Fish."
+                  ]
+    },
+    {
+        "slot":  32,
+        "text":  ";mocv/arc Activate a in your tableau.",
+        "lines":  [
+                      ";mocv/arc",
+                      "Activate a",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  33,
+        "text":  "Cowtpace 2 \" per adjacent .",
+        "lines":  [
+                      "Cowtpace",
+                      "2 \" per adjacent ."
+                  ]
+    },
+    {
+        "slot":  34,
+        "text":  "HONEY Cecret Homey Stack 2 tokens when placed. I when activated by another •",
+        "lines":  [
+                      "HONEY",
+                      "Cecret Homey Stack",
+                      "2 tokens when placed.",
+                      "I when activated by",
+                      "another •"
+                  ]
+    },
+    {
+        "slot":  35,
+        "text":  "q WAY C;gnpoct per adjacent",
+        "lines":  [
+                      "q",
+                      "WAY",
+                      "C;gnpoct",
+                      "per adjacent"
+                  ]
+    },
+    {
+        "slot":  36,
+        "text":  "Water Cahteen q \" per adjacent",
+        "lines":  [
+                      "Water Cahteen",
+                      "q \" per adjacent"
+                  ]
+    },
+    {
+        "slot":  37,
+        "text":  "Explorer 36 per different adjacent.",
+        "lines":  [
+                      "Explorer",
+                      "36 per different",
+                      "adjacent."
+                  ]
+    },
+    {
+        "slot":  38,
+        "text":  "PA otü9rapAer n: if there is a adjacent to its right +.",
+        "lines":  [
+                      "PA otü9rapAer",
+                      "n: if there is a",
+                      "adjacent to its right +."
+                  ]
+    },
+    {
+        "slot":  39,
+        "text":  "Cpy 1 0 per and 1 per in any one opponent\u0027s tableau.",
+        "lines":  [
+                      "Cpy",
+                      "1 0 per and",
+                      "1 per in any one",
+                      "opponent\u0027s tableau."
+                  ]
+    },
+    {
+        "slot":  40,
+        "text":  "Cpy in any one per opponent\u0027s tableau.",
+        "lines":  [
+                      "Cpy",
+                      "in any one",
+                      "per",
+                      "opponent\u0027s tableau."
+                  ]
+    },
+    {
+        "slot":  41,
+        "text":  "Treacvre Huhter n : if adjacent to at least 1 n.",
+        "lines":  [
+                      "Treacvre Huhter",
+                      "n : if adjacent to",
+                      "at least 1 n."
+                  ]
+    },
+    {
+        "slot":  42,
+        "text":  "Cactus q o if not adjacent to a",
+        "lines":  [
+                      "Cactus",
+                      "q o if not adjacent",
+                      "to a"
+                  ]
+    },
+    {
+        "slot":  43,
+        "text":  "Cumf/cwer 5 0 if adjacent to exactly 1",
+        "lines":  [
+                      "Cumf/cwer",
+                      "5 0 if adjacent to",
+                      "exactly 1"
+                  ]
+    },
+    {
+        "slot":  44,
+        "text":  "Yucca per in your tableau.",
+        "lines":  [
+                      "Yucca",
+                      "per",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  45,
+        "text":  "Bear \u0027 Ttzcessit.ie$",
+        "lines":  [
+                      "Bear",
+                      "\u0027 Ttzcessit.ie$"
+                  ]
+    },
+    {
+        "slot":  46,
+        "text":  "Cat q o per adjacent O.",
+        "lines":  [
+                      "Cat",
+                      "q o per adjacent O."
+                  ]
+    },
+    {
+        "slot":  47,
+        "text":  "3 0 per adjacent",
+        "lines":  [
+                      "3 0 per adjacent"
+                  ]
+    },
+    {
+        "slot":  48,
+        "text":  "Pigeon q per in all the below this •",
+        "lines":  [
+                      "Pigeon",
+                      "q per",
+                      "in all the",
+                      "below this •"
+                  ]
+    },
+    {
+        "slot":  49,
+        "text":  "Cellar q per in all the above this",
+        "lines":  [
+                      "Cellar",
+                      "q per in all the",
+                      "above this"
+                  ]
+    },
+    {
+        "slot":  50,
+        "text":  "Factory q o if not adjacent toa • .",
+        "lines":  [
+                      "Factory",
+                      "q o if not adjacent",
+                      "toa • ."
+                  ]
+    },
+    {
+        "slot":  51,
+        "text":  "Cuburbah Apartmehtc 2 per complete $",
+        "lines":  [
+                      "Cuburbah Apartmehtc",
+                      "2",
+                      "per complete $"
+                  ]
+    },
+    {
+        "slot":  52,
+        "text":  "Ctati0h 3 0 per complete ++.",
+        "lines":  [
+                      "Ctati0h",
+                      "3 0 per complete ++."
+                  ]
+    },
+    {
+        "slot":  53,
+        "text":  "Tour;ct Office 1 per in your tableau.",
+        "lines":  [
+                      "Tour;ct Office",
+                      "1 per",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  54,
+        "text":  "Town Hal/ 2 per in this ++ and in this Count this only once when you activate its effect.",
+        "lines":  [
+                      "Town Hal/",
+                      "2 per in this ++",
+                      "and in this",
+                      "Count this only once when",
+                      "you activate its effect."
+                  ]
+    },
+    {
+        "slot":  55,
+        "text":  "Rubber Duck",
+        "lines":  [
+                      "Rubber Duck"
+                  ]
+    },
+    {
+        "slot":  56,
+        "text":  ";mocv/arc Activate a in your tableau.",
+        "lines":  [
+                      ";mocv/arc",
+                      "Activate a",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  57,
+        "text":  "Ctreetå9At n: 29 if adjacent to at least 2 e.",
+        "lines":  [
+                      "Ctreetå9At",
+                      "n: 29 if adjacent to",
+                      "at least 2 e."
+                  ]
+    },
+    {
+        "slot":  58,
+        "text":  "Ctatue 2 per with at least I • .",
+        "lines":  [
+                      "Ctatue",
+                      "2 per with",
+                      "at least I • ."
+                  ]
+    },
+    {
+        "slot":  59,
+        "text":  "Actor 2 per every other in your tableau.",
+        "lines":  [
+                      "Actor",
+                      "2 per every other",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  60,
+        "text":  "Architect q per in your tableau.",
+        "lines":  [
+                      "Architect",
+                      "q per",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  61,
+        "text":  "Bamkep 5 per in your tableau.",
+        "lines":  [
+                      "Bamkep",
+                      "5 per",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  62,
+        "text":  "Football Player is complete.",
+        "lines":  [
+                      "Football Player",
+                      "is complete."
+                  ]
+    },
+    {
+        "slot":  63,
+        "text":  "Bearlet : 106 if you have at ¯ least 6 tokens.",
+        "lines":  [
+                      "Bearlet",
+                      ": 106 if you have at ¯",
+                      "least 6 tokens."
+                  ]
+    },
+    {
+        "slot":  64,
+        "text":  "rope o • Optician q per without glasses in your tableau.",
+        "lines":  [
+                      "rope o •",
+                      "Optician",
+                      "q per",
+                      "without",
+                      "glasses in your tableau."
+                  ]
+    },
+    {
+        "slot":  65,
+        "text":  "Cergeaht 3 per in this ++.",
+        "lines":  [
+                      "Cergeaht",
+                      "3 per in this ++."
+                  ]
+    },
+    {
+        "slot":  66,
+        "text":  "Cpy 2 per in any one opponent\u0027s tableau.",
+        "lines":  [
+                      "Cpy",
+                      "2 per",
+                      "in any one",
+                      "opponent\u0027s tableau."
+                  ]
+    },
+    {
+        "slot":  67,
+        "text":  "Wihdcw C/eaher is complete.",
+        "lines":  [
+                      "Wihdcw C/eaher",
+                      "is complete."
+                  ]
+    },
+    {
+        "slot":  68,
+        "text":  "P/ahter Box 2 per e with at least 1",
+        "lines":  [
+                      "P/ahter Box",
+                      "2 per e with",
+                      "at least 1"
+                  ]
+    },
+    {
+        "slot":  69,
+        "text":  "Roce : 10? if adjacent to exactly 2",
+        "lines":  [
+                      "Roce",
+                      ": 10? if adjacent to",
+                      "exactly 2"
+                  ]
+    },
+    {
+        "slot":  70,
+        "text":  "Bear 121.esslties",
+        "lines":  [
+                      "Bear",
+                      "121.esslties"
+                  ]
+    },
+    {
+        "slot":  71,
+        "text":  "Eagle 2 per in your tableau.",
+        "lines":  [
+                      "Eagle",
+                      "2 per",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  72,
+        "text":  "mountaih Goat q o per adjacent Z.",
+        "lines":  [
+                      "mountaih Goat",
+                      "q o per adjacent Z."
+                  ]
+    },
+    {
+        "slot":  73,
+        "text":  "Cmake 2 per in your tableau whose name starts with S.",
+        "lines":  [
+                      "Cmake",
+                      "2 per in your",
+                      "tableau whose name",
+                      "starts with S."
+                  ]
+    },
+    {
+        "slot":  74,
+        "text":  "Lockout Tawer I per in your tableau not adjacent to this",
+        "lines":  [
+                      "Lockout Tawer",
+                      "I per in",
+                      "your tableau not",
+                      "adjacent to this"
+                  ]
+    },
+    {
+        "slot":  75,
+        "text":  "RecearcA Lab : if adjacent to at- leastl and 1",
+        "lines":  [
+                      "RecearcA Lab",
+                      ": if adjacent to at-",
+                      "leastl and 1"
+                  ]
+    },
+    {
+        "slot":  76,
+        "text":  "Vicitor Cotter all are in your tableau.",
+        "lines":  [
+                      "Vicitor Cotter",
+                      "all are in",
+                      "your tableau."
+                  ]
+    },
+    {
+        "slot":  77,
+        "text":  "3 Backpack if you have at least in your tableau.",
+        "lines":  [
+                      "3",
+                      "Backpack",
+                      "if you have at least",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  78,
+        "text":  "8;etocv/arc Activate a in your tableau.",
+        "lines":  [
+                      "8;etocv/arc",
+                      "Activate a",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  79,
+        "text":  "Water Trough q o per adjacent",
+        "lines":  [
+                      "Water Trough",
+                      "q o per adjacent"
+                  ]
+    },
+    {
+        "slot":  80,
+        "text":  "Chack Bag 2 0 per token you have.",
+        "lines":  [
+                      "Chack Bag",
+                      "2 0 per token",
+                      "you have."
+                  ]
+    },
+    {
+        "slot":  81,
+        "text":  "Weather Forecact 7 if you have a in your reserve.",
+        "lines":  [
+                      "Weather Forecact",
+                      "7 if you have a",
+                      "in your reserve."
+                  ]
+    },
+    {
+        "slot":  82,
+        "text":  "Weather Forecact 7 if you have a e in your reserve.",
+        "lines":  [
+                      "Weather Forecact",
+                      "7 if you have a e",
+                      "in your reserve."
+                  ]
+    },
+    {
+        "slot":  83,
+        "text":  "Weather Forecact 7 if you have a in your reserve.",
+        "lines":  [
+                      "Weather Forecact",
+                      "7 if you have a",
+                      "in your reserve."
+                  ]
+    },
+    {
+        "slot":  84,
+        "text":  "Weather Forecast 7 if you have a in your reserve.",
+        "lines":  [
+                      "Weather Forecast",
+                      "7 if you have a",
+                      "in your reserve."
+                  ]
+    },
+    {
+        "slot":  85,
+        "text":  "Botanist in your tableau.",
+        "lines":  [
+                      "Botanist",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  86,
+        "text":  "Guide Activate a in your tableau.",
+        "lines":  [
+                      "Guide",
+                      "Activate a",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  87,
+        "text":  "Hiker 2 per in your tableau.",
+        "lines":  [
+                      "Hiker",
+                      "2 per",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  88,
+        "text":  "Cpy 1 0 per and 1 per in any one opponent\u0027s tableau.",
+        "lines":  [
+                      "Cpy",
+                      "1 0 per",
+                      "and",
+                      "1 per in any one",
+                      "opponent\u0027s tableau."
+                  ]
+    },
+    {
+        "slot":  89,
+        "text":  "Cpy 1 per Sand 1 per in any one opponent\u0027s tableau.",
+        "lines":  [
+                      "Cpy",
+                      "1 per Sand",
+                      "1 per in any one",
+                      "opponent\u0027s tableau."
+                  ]
+    },
+    {
+        "slot":  90,
+        "text":  "Cpy 2 0 per token any one opponent has.",
+        "lines":  [
+                      "Cpy",
+                      "2 0 per token",
+                      "any one opponent has."
+                  ]
+    },
+    {
+        "slot":  91,
+        "text":  "Wildlife Rah9er per in your tableau.",
+        "lines":  [
+                      "Wildlife Rah9er",
+                      "per",
+                      "in your tableau."
+                  ]
+    },
+    {
+        "slot":  92,
+        "text":  "Berries in this ++ . q per",
+        "lines":  [
+                      "Berries",
+                      "in this ++ .",
+                      "q per"
+                  ]
+    },
+    {
+        "slot":  93,
+        "text":  "Dandelion 7 when placed. 1 when activated by another •",
+        "lines":  [
+                      "Dandelion",
+                      "7 when placed.",
+                      "1 when activated",
+                      "by another •"
+                  ]
+    },
+    {
+        "slot":  94,
+        "text":  "per adjacent",
+        "lines":  [
+                      "per adjacent"
+                  ]
+    },
+    {
+        "slot":  95,
+        "text":  "Cequo;a",
+        "lines":  [
+                      "Cequo;a"
+                  ]
+    },
+    {
+        "slot":  96,
+        "text":  "Wild Carrot 5 0 if adjacent to at least 1",
+        "lines":  [
+                      "Wild Carrot",
+                      "5 0 if adjacent to",
+                      "at least 1"
+                  ]
+    },
+    {
+        "slot":  97,
+        "text":  "Bear necessiQ:",
+        "lines":  [
+                      "Bear",
+                      "necessiQ:"
+                  ]
+    }
+]
