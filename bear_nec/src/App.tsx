@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GameState, GridPosition } from './game/types';
 import { getValidPlacements } from './game/validation';
 import { createInitialGameState, resolveHotseatRound, PlayerTurnSelection } from './game/hotseat';
+import { chooseBotMove, BotDifficulty } from './game/ai/bot';
 import {
   TableauGrid,
   HandView,
@@ -13,8 +14,9 @@ import {
 import { Info, ArrowRight, X } from 'lucide-react';
 
 export const App: React.FC = () => {
-  // Screen mode: 'lobby' | 'hotseat' | 'multiplayer'
-  const [mode, setMode] = useState<'lobby' | 'hotseat' | 'multiplayer'>('lobby');
+  // Screen mode: 'lobby' | 'hotseat' | 'multiplayer' | 'bot'
+  const [mode, setMode] = useState<'lobby' | 'hotseat' | 'multiplayer' | 'bot'>('lobby');
+  const [botDifficulty, setBotDifficulty] = useState<BotDifficulty>('medium');
 
   // Player Names
   const [playerName, setPlayerName] = useState<string>('Player 1');
@@ -48,6 +50,12 @@ export const App: React.FC = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
 
+  // Current active player object in hotseat or multiplayer
+  const activePid = mode === 'multiplayer' && multiplayerPlayerId ? multiplayerPlayerId : activeHotseatPlayer;
+  const currentP = gameState?.players[activePid];
+  const opponentPid = gameState ? Object.keys(gameState.players).find((id) => id !== activePid) : undefined;
+  const opponentP = opponentPid ? gameState?.players[opponentPid] : (gameState && activeHotseatPlayer === 'p1' ? gameState.players.p2 : gameState?.players.p1);
+
   // Initialize Hotseat Game
   const handleStartHotseat = () => {
     const initialState = createInitialGameState(playerName || 'Player 1', player2Name || 'Player 2');
@@ -63,10 +71,29 @@ export const App: React.FC = () => {
     setMode('hotseat');
   };
 
+  // Initialize Game vs Bot
+  const handleStartBotGame = (difficulty: BotDifficulty = 'medium') => {
+    const botName = `BearBot (${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)})`;
+    const initialState = createInitialGameState(playerName || 'Explorer', botName);
+    setGameState(initialState);
+    setBotDifficulty(difficulty);
+    setActiveHotseatPlayer('p1');
+    setP1Selection(null);
+    setSelectedTableauCardId(null);
+    setSelectedReserveCardId(null);
+    setSelectedPlacement(null);
+    setShowPassScreen(false);
+    setRoundNotification(`Game started against ${botName}!`);
+    setLastBeeWinnerName(null);
+    setMode('bot');
+  };
+
   // Reset / Rematch
   const handleRematch = () => {
     if (mode === 'hotseat') {
       handleStartHotseat();
+    } else if (mode === 'bot') {
+      handleStartBotGame(botDifficulty);
     } else if (socket && roomId) {
       socket.send(JSON.stringify({ type: 'REMATCH' }));
     }
@@ -137,11 +164,6 @@ export const App: React.FC = () => {
     }
   };
 
-  // Current active player object in hotseat
-  const currentP = gameState?.players[activeHotseatPlayer];
-  const opponentP =
-    gameState && activeHotseatPlayer === 'p1' ? gameState.players.p2 : gameState?.players.p1;
-
   // Valid placements for current active player
   const validPlacements = currentP ? getValidPlacements(currentP.tableau) : [];
 
@@ -153,9 +175,27 @@ export const App: React.FC = () => {
     selectedPlacement !== null &&
     validPlacements.some((p) => p.row === selectedPlacement.row && p.col === selectedPlacement.col);
 
-  // Handle Confirm Move in Hotseat
-  const handleConfirmHotseatMove = () => {
+  // Handle Confirm Move (Hotseat or Multiplayer)
+  const handleConfirmMove = () => {
     if (!canConfirmMove || !selectedPlacement || !selectedTableauCardId || !selectedReserveCardId) {
+      return;
+    }
+
+    if (mode === 'multiplayer' && socket && multiplayerPlayerId && roomId) {
+      socket.send(
+        JSON.stringify({
+          type: 'SUBMIT_SELECTION',
+          roomId,
+          playerId: multiplayerPlayerId,
+          tableauCardId: selectedTableauCardId,
+          reserveCardId: selectedReserveCardId,
+          position: selectedPlacement,
+        })
+      );
+      setSelectedTableauCardId(null);
+      setSelectedReserveCardId(null);
+      setSelectedPlacement(null);
+      setRoundNotification('Move submitted! Waiting for opponent to draft...');
       return;
     }
 
@@ -164,6 +204,40 @@ export const App: React.FC = () => {
       reserveCardId: selectedReserveCardId,
       position: selectedPlacement,
     };
+
+    if (mode === 'bot') {
+      if (!gameState) return;
+      const botP = gameState.players.p2;
+      const humanP = gameState.players.p1;
+      const botMove = chooseBotMove(botP, humanP, gameState.round, botDifficulty);
+
+      const botSelection: PlayerTurnSelection = {
+        tableauCardId: botMove.tableauCardId,
+        reserveCardId: botMove.reserveCardId,
+        position: botMove.position,
+      };
+
+      const resolution = resolveHotseatRound(gameState, currentSelection, botSelection);
+      setGameState(resolution.nextState);
+      setSelectedTableauCardId(null);
+      setSelectedReserveCardId(null);
+      setSelectedPlacement(null);
+
+      // Bee winner names
+      if (resolution.beeTokenRecipients.length === 2) {
+        setLastBeeWinnerName('Both Players (Tied)');
+      } else if (resolution.beeTokenRecipients.includes('p1')) {
+        setLastBeeWinnerName(gameState.players.p1.name);
+      } else if (resolution.beeTokenRecipients.includes('p2')) {
+        setLastBeeWinnerName(gameState.players.p2.name);
+      }
+
+      setRoundNotification(resolution.logMessage);
+      setTimeout(() => {
+        setRoundNotification(null);
+      }, 5000);
+      return;
+    }
 
     if (activeHotseatPlayer === 'p1') {
       setP1Selection(currentSelection);
@@ -214,6 +288,7 @@ export const App: React.FC = () => {
           onCreateRoom={handleCreateRoom}
           onJoinRoom={handleJoinRoom}
           onStartLocalHotseat={handleStartHotseat}
+          onStartBotGame={handleStartBotGame}
           currentRoomId={roomId}
           error={serverError}
         />
@@ -267,7 +342,7 @@ export const App: React.FC = () => {
             Bear Necessities
           </span>
           <span className="text-[10px] font-mono uppercase bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded border border-amber-400/40 ml-1">
-            {mode === 'hotseat' ? 'Hotseat Mode' : `Room: ${roomId}`}
+            {mode === 'hotseat' ? 'Hotseat Mode' : mode === 'bot' ? `Vs Bot (${botDifficulty})` : `Room: ${roomId}`}
           </span>
         </div>
 
@@ -363,7 +438,7 @@ export const App: React.FC = () => {
           selectedReserveCardId={selectedReserveCardId}
           onSelectTableauCard={(id) => setSelectedTableauCardId(id === -1 ? null : id)}
           onSelectReserveCard={(id) => setSelectedReserveCardId(id === -1 ? null : id)}
-          onConfirmMove={handleConfirmHotseatMove}
+          onConfirmMove={handleConfirmMove}
           canConfirm={canConfirmMove}
           hasPlacementSelected={selectedPlacement !== null}
           currentReserveCard={currentP.reserveCard}

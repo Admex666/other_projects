@@ -7,3 +7,4 @@ export {
   calculateFinalScore,
 } from './scoring';
 export * from './engine';
+export * from './ai/bot';

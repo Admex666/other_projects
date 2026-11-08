@@ -1,6 +1,7 @@
 import React from 'react';
 import { PlayerState } from '../game/types';
 import { Clock, Info } from 'lucide-react';
+import GameIcon from './GameIcon';
 
 export interface ScoreBoardProps {
   round: number; // 1 to 12
@@ -92,19 +93,19 @@ export const ScoreBoard: React.FC<ScoreBoardProps> = ({
             <div className="flex items-center gap-1.5">
               {/* VP Tokens */}
               <div
-                className="flex items-center gap-1 bg-gradient-to-b from-amber-400 to-amber-500 text-amber-950 font-black px-2.5 py-1 rounded-full shadow-md text-xs sm:text-sm"
+                className="flex items-center gap-1.5 bg-gradient-to-b from-amber-400 to-amber-500 text-amber-950 font-black px-2.5 py-1 rounded-full shadow-md text-xs sm:text-sm"
                 title="Current Victory Point Tokens"
               >
-                <span>🏆</span>
+                <GameIcon type="vp" size="sm" />
                 <span>{player.vpTokens} VP</span>
               </div>
 
               {/* Bee Tokens */}
               <div
-                className="flex items-center gap-1 bg-gradient-to-b from-amber-100 to-amber-200 text-amber-950 font-black px-2.5 py-1 rounded-full shadow-md text-xs sm:text-sm border border-amber-400/80"
+                className="flex items-center gap-1.5 bg-gradient-to-b from-amber-100 to-amber-200 text-amber-950 font-black px-2.5 py-1 rounded-full shadow-md text-xs sm:text-sm border border-amber-400/80"
                 title="Collected Bee Tokens (Multiplies Hive symbols at game end)"
               >
-                <span>🐝</span>
+                <GameIcon type="beetoken" size="sm" />
                 <span>{player.beeTokens}</span>
               </div>
             </div>
@@ -119,19 +120,19 @@ export const ScoreBoard: React.FC<ScoreBoardProps> = ({
               <div className="flex items-center gap-1.5">
                 {/* VP Tokens */}
                 <div
-                  className="flex items-center gap-1 bg-gradient-to-b from-stone-200 to-stone-300 text-stone-900 font-black px-2.5 py-1 rounded-full shadow-md text-xs sm:text-sm"
+                  className="flex items-center gap-1.5 bg-gradient-to-b from-stone-200 to-stone-300 text-stone-900 font-black px-2.5 py-1 rounded-full shadow-md text-xs sm:text-sm"
                   title="Opponent's VP Tokens"
                 >
-                  <span>🏆</span>
+                  <GameIcon type="vp" size="sm" />
                   <span>{opponent.vpTokens} VP</span>
                 </div>
 
                 {/* Bee Tokens */}
                 <div
-                  className="flex items-center gap-1 bg-gradient-to-b from-amber-100 to-amber-200 text-amber-950 font-black px-2.5 py-1 rounded-full shadow-md text-xs sm:text-sm border border-amber-400/80"
+                  className="flex items-center gap-1.5 bg-gradient-to-b from-amber-100 to-amber-200 text-amber-950 font-black px-2.5 py-1 rounded-full shadow-md text-xs sm:text-sm border border-amber-400/80"
                   title="Opponent's Bee Tokens"
                 >
-                  <span>🐝</span>
+                  <GameIcon type="beetoken" size="sm" />
                   <span>{opponent.beeTokens}</span>
                 </div>
               </div>
@@ -152,13 +153,13 @@ export const ScoreBoard: React.FC<ScoreBoardProps> = ({
         <div className="flex items-center gap-2">
           {lastBeeWinnerName ? (
             <div className="flex items-center gap-1.5 bg-amber-400/20 border border-amber-400/40 px-3 py-1.5 rounded-full text-xs text-amber-200">
-              <span>🐝</span>
+              <GameIcon type="beetoken" size="xs" />
               <span className="font-serif font-bold">Bee Time:</span>
               <span className="text-white">{lastBeeWinnerName} won 1 Bee token</span>
             </div>
           ) : (
             <div className="flex items-center gap-1.5 bg-black/20 border border-white/10 px-3 py-1.5 rounded-full text-xs text-stone-300">
-              <span>🐝</span>
+              <GameIcon type="beetoken" size="xs" />
               <span className="font-serif">Bee Time: Awarded to lowest round scorer</span>
             </div>
           )}

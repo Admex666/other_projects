@@ -1,6 +1,7 @@
 import React from 'react';
 import { PlayerState } from '../game/types';
 import { Trophy, RotateCcw, Award, Sparkles } from 'lucide-react';
+import GameIcon from './GameIcon';
 
 export interface GameOverModalProps {
   players: Record<string, PlayerState>;
@@ -129,21 +130,27 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
                 {/* Formula Breakdown Details */}
                 <div className="grid grid-cols-3 gap-2 text-center text-xs font-serif bg-stone-100/70 p-2 rounded-xl border border-stone-200">
                   <div>
-                    <span className="block text-stone-500 text-[10px]">In-Game VP</span>
+                    <span className="block text-stone-500 text-[10px] flex items-center justify-center gap-1">
+                      <GameIcon type="vp" size="xs" /> In-Game VP
+                    </span>
                     <span className="font-bold text-stone-800 text-sm">
                       {item.inGameVp}
                     </span>
                   </div>
 
                   <div>
-                    <span className="block text-stone-500 text-[10px]">Hives × Bees</span>
+                    <span className="block text-stone-500 text-[10px] flex items-center justify-center gap-1">
+                      <GameIcon type="beehive" size="xs" /> Hives × <GameIcon type="beetoken" size="xs" /> Bees
+                    </span>
                     <span className="font-bold text-stone-800 text-sm">
                       {item.hives} × {item.beeTokens}
                     </span>
                   </div>
 
                   <div>
-                    <span className="block text-amber-700 text-[10px] font-bold">Bee Bonus</span>
+                    <span className="block text-amber-700 text-[10px] font-bold flex items-center justify-center gap-1">
+                      <GameIcon type="beetoken" size="xs" /> Bee Bonus
+                    </span>
                     <span className="font-bold text-amber-700 text-sm">
                       +{item.beeBonus} VP
                     </span>

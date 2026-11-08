@@ -1,6 +1,8 @@
 import React from 'react';
 import { PlayerState } from '../game/types';
 import TableauGrid from './TableauGrid';
+import CardView from './CardView';
+import GameIcon from './GameIcon';
 
 export interface OpponentBoardProps {
   opponent: PlayerState;
@@ -33,11 +35,11 @@ export const OpponentBoard: React.FC<OpponentBoardProps> = ({
         </div>
 
         <div className="flex items-center gap-2 text-xs font-serif">
-          <span className="px-2 py-0.5 rounded-full bg-stone-200 text-stone-800 font-bold border border-stone-300">
-            🏆 {opponent.vpTokens} VP
+          <span className="px-2 py-0.5 rounded-full bg-stone-200 text-stone-800 font-bold border border-stone-300 flex items-center gap-1">
+            <GameIcon type="vp" size="xs" /> {opponent.vpTokens} VP
           </span>
-          <span className="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 font-bold border border-amber-300">
-            🐝 {opponent.beeTokens} Bees ({opponentHives} Hives)
+          <span className="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 font-bold border border-amber-300 flex items-center gap-1">
+            <GameIcon type="beetoken" size="xs" /> {opponent.beeTokens} Bees ({opponentHives} Hives)
           </span>
         </div>
       </div>
@@ -52,19 +54,27 @@ export const OpponentBoard: React.FC<OpponentBoardProps> = ({
         />
       </div>
 
-      {/* Opponent's Hand Size (Shown as Face-down Cards) */}
+      {/* Opponent's Hand Size (Shown with colored Card Backs based on suit) */}
       <div className="flex items-center justify-between mt-3 pt-2 border-t border-[#6b4a2c]/15 text-xs text-stone-600 font-serif">
         <span>Cards in Hand ({opponent.hand.length}):</span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5 flex-wrap justify-end">
           {opponent.hand.length === 0 ? (
             <span className="italic text-stone-400">Empty</span>
           ) : (
-            opponent.hand.map((_, idx) => (
+            opponent.hand.map((card, idx) => (
               <div
                 key={idx}
-                className="w-5 h-8 rounded border border-stone-600 bg-stone-800 shadow-sm"
-                title="Secret Card"
-              />
+                className="w-7 h-11 transform hover:-translate-y-1 transition duration-150"
+                title={`Opponent Card (${card.color || 'hidden'})`}
+              >
+                <CardView
+                  isBack={true}
+                  backColor={card.color}
+                  size="compact"
+                  interactive={false}
+                  className="w-full h-full shadow-md rounded pointer-events-none"
+                />
+              </div>
             ))
           )}
         </div>

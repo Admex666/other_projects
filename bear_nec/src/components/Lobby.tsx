@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Copy, Check, Play, Globe, Sparkles } from 'lucide-react';
+import { Copy, Check, Play, Globe, Sparkles, Bot } from 'lucide-react';
 
 export interface LobbyProps {
   playerName: string;
@@ -7,6 +7,7 @@ export interface LobbyProps {
   onCreateRoom: () => void;
   onJoinRoom: (roomId: string) => void;
   onStartLocalHotseat: () => void;
+  onStartBotGame?: (difficulty: 'easy' | 'medium' | 'hard') => void;
   currentRoomId?: string | null;
   isConnecting?: boolean;
   error?: string | null;
@@ -18,12 +19,14 @@ export const Lobby: React.FC<LobbyProps> = ({
   onCreateRoom,
   onJoinRoom,
   onStartLocalHotseat,
+  onStartBotGame,
   currentRoomId,
   isConnecting = false,
   error = null,
 }) => {
   const [joinCode, setJoinCode] = useState('');
   const [copied, setCopied] = useState(false);
+  const [botDifficulty, setBotDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
 
   // Check URL query parameters for ?room=CODE
   useEffect(() => {
@@ -110,6 +113,53 @@ export const Lobby: React.FC<LobbyProps> = ({
               <span>Start Local Hotseat Game</span>
             </button>
           </div>
+
+          {/* 1.5. Play vs AI Bot */}
+          {onStartBotGame && (
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-500/80 shadow-md">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold font-mono uppercase bg-amber-600 text-white mb-1 shadow-sm">
+                    Solo Practice
+                  </span>
+                  <h3 className="font-serif font-black text-lg text-amber-950 flex items-center gap-1.5">
+                    <Bot className="w-4 h-4 text-amber-600" />
+                    Play vs AI Bot
+                  </h3>
+                  <p className="font-serif text-xs text-amber-900/80 mt-0.5">
+                    Test your woodland strategy against a smart automated Bearfolk explorer!
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3 flex items-center gap-2">
+                <span className="text-xs font-serif font-bold text-amber-950">Difficulty:</span>
+                {(['easy', 'medium', 'hard'] as const).map((diff) => (
+                  <button
+                    key={diff}
+                    type="button"
+                    onClick={() => setBotDifficulty(diff)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-serif font-bold capitalize transition ${
+                      botDifficulty === diff
+                        ? 'bg-amber-600 text-white shadow-sm'
+                        : 'bg-white/80 text-amber-900 border border-amber-300 hover:bg-amber-100'
+                    }`}
+                  >
+                    {diff}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => onStartBotGame(botDifficulty)}
+                className="mt-3 w-full py-3 rounded-xl font-serif font-black text-sm uppercase tracking-wider bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white shadow-md hover:shadow-amber-600/30 transform active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Bot className="w-4 h-4 text-amber-200" />
+                <span>Play vs Bot ({botDifficulty})</span>
+              </button>
+            </div>
+          )}
 
           <div className="relative flex py-2 items-center">
             <div className="flex-grow border-t border-[#6b4a2c]/30"></div>
