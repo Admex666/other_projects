@@ -60,7 +60,8 @@ async function getKiteroFunnelData() {
     }
 
     // 1. Fetch relevant events from analytics_events
-    // We fetch events where event_name is one of the funnel stages
+    // PostgREST default limit is 1000 rows. Since there are thousands of general scroll events,
+    // we query with a high limit and order desc to get the latest campaign events.
     let events = [];
     try {
         const { data, error } = await supabase
@@ -78,7 +79,8 @@ async function getKiteroFunnelData() {
                 'cta_click',
                 'lead_submit'
             ])
-            .order('created_at', { ascending: true });
+            .order('created_at', { ascending: false })
+            .limit(10000);
 
         if (!error && data) {
             events = data;

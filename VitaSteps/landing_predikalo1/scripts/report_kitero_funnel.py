@@ -131,7 +131,7 @@ def analyze_funnel(include_unsent: bool = False):
         "lead_submit"
     ]
     query_str = urllib.parse.quote(f"in.({','.join(event_names)})")
-    events = supabase_get(f"analytics_events?event_name={query_str}&select=id,session_id,visitor_id,event_name,event_data,created_at&order=created_at.asc")
+    events = supabase_get(f"analytics_events?event_name={query_str}&select=id,session_id,visitor_id,event_name,event_data,created_at&order=created_at.desc&limit=10000")
 
     # Kitérő leadek lekérése
     leads = supabase_get("leads?campaign=eq.kitero_val_1&select=id,email,name,campaign,source,created_at")
