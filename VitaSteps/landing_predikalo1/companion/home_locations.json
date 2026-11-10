@@ -1,0 +1,122 @@
+[
+  {
+    "id": "nyugati",
+    "name": "Nyugati pályaudvar (VI. / XIII. kerület)",
+    "to_szentlelek": {
+      "line": "4-es / 6-os villamos (Margit híd felé) ➔ H5 HÉV",
+      "duration_min": 18
+    },
+    "to_batthyany": {
+      "line": "4-es / 6-os villamos (Margit híd) ➔ H5 HÉV (1 megálló) vagy M3 + M2",
+      "duration_min": 14
+    }
+  },
+  {
+    "id": "keleti",
+    "name": "Keleti pályaudvar (VII. / VIII. kerület)",
+    "to_szentlelek": {
+      "line": "M2 metró (Batthyány térig) ➔ H5 HÉV Szentlélek térig",
+      "duration_min": 24
+    },
+    "to_batthyany": {
+      "line": "M2 metró (Batthyány tér felé, közvetlen)",
+      "duration_min": 10
+    }
+  },
+  {
+    "id": "deak",
+    "name": "Deák Ferenc tér (Belváros, V. kerület)",
+    "to_szentlelek": {
+      "line": "M2 metró (Batthyány térig) ➔ H5 HÉV Szentlélek térig",
+      "duration_min": 19
+    },
+    "to_batthyany": {
+      "line": "M2 metró (Déli pu. felé, közvetlen 1 megálló)",
+      "duration_min": 5
+    }
+  },
+  {
+    "id": "szell_kalman",
+    "name": "Széll Kálmán tér (Buda, II. / XII. kerület)",
+    "to_szentlelek": {
+      "line": "4-es / 6-os villamos (Margit híd) ➔ H5 HÉV vagy 17/19/41 villamos",
+      "duration_min": 20
+    },
+    "to_batthyany": {
+      "line": "M2 metró (Örs vezér tere felé, közvetlen 1 megálló)",
+      "duration_min": 4
+    }
+  },
+  {
+    "id": "blaha",
+    "name": "Blaha Lujza tér (VII. / VIII. kerület)",
+    "to_szentlelek": {
+      "line": "4-es / 6-os villamos ➔ H5 HÉV",
+      "duration_min": 22
+    },
+    "to_batthyany": {
+      "line": "M2 metró (Batthyány tér felé, közvetlen)",
+      "duration_min": 8
+    }
+  },
+  {
+    "id": "kelenfold",
+    "name": "Kelenföld vasútállomás (XI. kerület)",
+    "to_szentlelek": {
+      "line": "1-es villamos (Bécsi út felé, Szentlélek tér H közvetlen)",
+      "duration_min": 32
+    },
+    "to_batthyany": {
+      "line": "19-es / 41-es villamos vagy M4 ➔ M2",
+      "duration_min": 22
+    }
+  },
+  {
+    "id": "moricz",
+    "name": "Móricz Zsigmond körtér (XI. kerület)",
+    "to_szentlelek": {
+      "line": "56-os villamos / M4 + 1-es villamos",
+      "duration_min": 28
+    },
+    "to_batthyany": {
+      "line": "19-es vagy 41-es villamos (közvetlen Duna-parti vonal)",
+      "duration_min": 14
+    }
+  },
+  {
+    "id": "ors_vezer",
+    "name": "Örs vezér tere (Zugló / Kőbánya, XIV. / X. kerület)",
+    "to_szentlelek": {
+      "line": "1-es villamos (Bécsi út felé, közvetlen átszállás nélkül)",
+      "duration_min": 34
+    },
+    "to_batthyany": {
+      "line": "M2 metró (Batthyány tér felé, közvetlen)",
+      "duration_min": 18
+    }
+  },
+  {
+    "id": "ujpest",
+    "name": "Újpest-központ (IV. kerület)",
+    "to_szentlelek": {
+      "line": "121-es busz vagy M3 Gyöngyösi utca ➔ 1-es villamos Árpád híd / Szentlélek tér",
+      "duration_min": 22
+    },
+    "to_batthyany": {
+      "line": "M3 metró (Deák tér) ➔ M2 metró Batthyány tér",
+      "duration_min": 25
+    }
+  },
+  {
+    "id": "obuda",
+    "name": "Óbuda / Flórián tér (III. kerület)",
+    "to_szentlelek": {
+      "line": "Gyalog 5 perc vagy 1-es villamos 1 megálló",
+      "duration_min": 6
+    },
+    "to_batthyany": {
+      "line": "H5 HÉV (Batthyány tér felé, 8 perc)",
+      "duration_min": 10
+    }
+  }
+]
