@@ -4,6 +4,8 @@ import { Copy, Check, Play, Globe, Sparkles, Bot } from 'lucide-react';
 export interface LobbyProps {
   playerName: string;
   onPlayerNameChange: (name: string) => void;
+  player2Name?: string;
+  onPlayer2NameChange?: (name: string) => void;
   onCreateRoom: () => void;
   onJoinRoom: (roomId: string) => void;
   onStartLocalHotseat: () => void;
@@ -16,6 +18,8 @@ export interface LobbyProps {
 export const Lobby: React.FC<LobbyProps> = ({
   playerName,
   onPlayerNameChange,
+  player2Name = 'Player 2',
+  onPlayer2NameChange,
   onCreateRoom,
   onJoinRoom,
   onStartLocalHotseat,
@@ -103,6 +107,23 @@ export const Lobby: React.FC<LobbyProps> = ({
                 </p>
               </div>
             </div>
+
+            {/* Player 2 Name Input for Hotseat */}
+            {onPlayer2NameChange && (
+              <div className="mt-3">
+                <label className="block text-[11px] font-bold font-serif uppercase tracking-wider text-emerald-900 mb-1">
+                  Player 2 Name
+                </label>
+                <input
+                  type="text"
+                  value={player2Name}
+                  onChange={(e) => onPlayer2NameChange(e.target.value)}
+                  placeholder="Enter Player 2 name..."
+                  maxLength={18}
+                  className="w-full px-3 py-2 rounded-lg bg-white/90 border border-emerald-600/40 focus:border-emerald-600 focus:outline-none font-serif text-sm text-[#3c2a18] shadow-inner"
+                />
+              </div>
+            )}
 
             <button
               type="button"

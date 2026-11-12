@@ -11,7 +11,7 @@ import {
   GameOverModal,
   Lobby,
 } from './components';
-import { Info, ArrowRight, X } from 'lucide-react';
+import { Info, ArrowRight, X, Copy, Check, Loader2 } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Screen mode: 'lobby' | 'hotseat' | 'multiplayer' | 'bot'
@@ -20,7 +20,7 @@ export const App: React.FC = () => {
 
   // Player Names
   const [playerName, setPlayerName] = useState<string>('Player 1');
-  const [player2Name] = useState<string>('Player 2');
+  const [player2Name, setPlayer2Name] = useState<string>('Player 2');
 
   // Hotseat Game State
   const [gameState, setGameState] = useState<GameState | null>(null);
@@ -46,9 +46,11 @@ export const App: React.FC = () => {
 
   // Multiplayer room state
   const [roomId, setRoomId] = useState<string | null>(null);
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
   const [multiplayerPlayerId, setMultiplayerPlayerId] = useState<string | null>(null);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
   // Current active player object in hotseat or multiplayer
   const activePid = mode === 'multiplayer' && multiplayerPlayerId ? multiplayerPlayerId : activeHotseatPlayer;
@@ -101,15 +103,14 @@ export const App: React.FC = () => {
 
   // Handle Online Room Creation
   const handleCreateRoom = () => {
-    const code = 'BEAR' + Math.floor(10 + Math.random() * 89);
-    setRoomId(code);
-    connectWebSocket(code, playerName || 'Player 1', true);
+    connectWebSocket('', playerName || 'Player 1', true);
   };
 
   // Handle Join Online Room
   const handleJoinRoom = (code: string) => {
-    setRoomId(code);
-    connectWebSocket(code, playerName || 'Player 2', false);
+    const cleanCode = code.trim().toUpperCase();
+    setRoomId(cleanCode);
+    connectWebSocket(cleanCode, playerName || 'Player 2', false);
   };
 
   const connectWebSocket = (roomCode: string, name: string, isHost: boolean) => {
@@ -117,7 +118,7 @@ export const App: React.FC = () => {
     try {
       const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsHost = window.location.hostname || 'localhost';
-      const wsPort = '3001';
+      const wsPort = window.location.port ? window.location.port : '3001';
       const wsUrl = `${wsProtocol}//${wsHost}:${wsPort}`;
 
       const ws = new WebSocket(wsUrl);
@@ -126,7 +127,7 @@ export const App: React.FC = () => {
         setSocket(ws);
         setMode('multiplayer');
         if (isHost) {
-          ws.send(JSON.stringify({ type: 'CREATE_ROOM', hostName: name, roomId: roomCode }));
+          ws.send(JSON.stringify({ type: 'CREATE_ROOM', playerName: name }));
         } else {
           ws.send(JSON.stringify({ type: 'JOIN_ROOM', playerName: name, roomId: roomCode }));
         }
@@ -137,13 +138,21 @@ export const App: React.FC = () => {
           const msg = JSON.parse(event.data);
           if (msg.type === 'ROOM_CREATED') {
             setMultiplayerPlayerId(msg.playerId);
+            setRoomId(msg.roomId);
+            if (msg.inviteUrl) {
+              setInviteUrl(msg.inviteUrl);
+            }
           } else if (msg.type === 'ROOM_JOINED') {
             setMultiplayerPlayerId(msg.playerId);
+            setRoomId(msg.roomId);
             if (msg.gameState) setGameState(msg.gameState);
+          } else if (msg.type === 'GAME_STARTED') {
+            if (msg.state) setGameState(msg.state);
+            setRoundNotification('Game started! Both players connected.');
           } else if (msg.type === 'STATE_UPDATE') {
             setGameState(msg.state);
           } else if (msg.type === 'ROUND_RESOLVED') {
-            setGameState(msg.nextState);
+            setGameState(msg.state || msg.nextState);
             setRoundNotification(`Round ${msg.round} complete!`);
           } else if (msg.type === 'ERROR') {
             setServerError(msg.message);
@@ -154,10 +163,7 @@ export const App: React.FC = () => {
       };
 
       ws.onerror = () => {
-        setServerError('Could not connect to online server. Switching to Local Hotseat Mode...');
-        setTimeout(() => {
-          handleStartHotseat();
-        }, 1500);
+        setServerError('Could not connect to online server. Check if server is running on port 3001.');
       };
     } catch {
       handleStartHotseat();
@@ -285,6 +291,8 @@ export const App: React.FC = () => {
         <Lobby
           playerName={playerName}
           onPlayerNameChange={setPlayerName}
+          player2Name={player2Name}
+          onPlayer2NameChange={setPlayer2Name}
           onCreateRoom={handleCreateRoom}
           onJoinRoom={handleJoinRoom}
           onStartLocalHotseat={handleStartHotseat}
@@ -319,6 +327,87 @@ export const App: React.FC = () => {
             <span>I'm Ready — Start Turn</span>
             <ArrowRight className="w-4 h-4" />
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Waiting for opponent screen in multiplayer
+  if (mode === 'multiplayer' && (!gameState || !currentP)) {
+    const shareableUrl =
+      inviteUrl ||
+      (roomId
+        ? `${window.location.origin}${window.location.pathname}?room=${roomId}`
+        : `${window.location.origin}${window.location.pathname}`);
+
+    const handleCopyWaitingLink = () => {
+      navigator.clipboard.writeText(shareableUrl).then(() => {
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2500);
+      });
+    };
+
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="wood-panel rounded-3xl p-8 max-w-md w-full text-center shadow-2xl text-[#3c2a18]">
+          <div className="w-16 h-16 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg">
+            🌐
+          </div>
+          <h2 className="font-serif font-black text-2xl sm:text-3xl text-[#4e3218]">
+            Room Created!
+          </h2>
+          <p className="font-serif text-sm text-stone-600 mt-1">
+            Waiting for Player 2 to join...
+          </p>
+
+          {roomId && (
+            <div className="mt-5 p-4 rounded-2xl bg-amber-100/70 border-2 border-amber-300">
+              <span className="block text-[11px] font-mono uppercase tracking-wider text-amber-800 font-bold mb-1">
+                Room Code
+              </span>
+              <span className="font-mono font-black text-3xl text-amber-950 tracking-widest">
+                {roomId}
+              </span>
+            </div>
+          )}
+
+          <div className="mt-5 flex flex-col gap-3">
+            <button
+              type="button"
+              onClick={handleCopyWaitingLink}
+              className="w-full py-3 rounded-xl font-serif font-black text-sm uppercase tracking-wider bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white shadow-md flex items-center justify-center gap-2 cursor-pointer transition active:scale-95"
+            >
+              {copiedLink ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
+              <span>{copiedLink ? 'Link Copied!' : 'Copy Invite Link'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (socket) {
+                  try {
+                    socket.close();
+                  } catch {}
+                }
+                setSocket(null);
+                setMode('lobby');
+              }}
+              className="w-full py-2.5 rounded-xl font-serif text-xs font-bold text-stone-600 hover:bg-stone-200/60 transition cursor-pointer"
+            >
+              Cancel & Back to Lobby
+            </button>
+          </div>
+
+          <div className="mt-6 flex items-center justify-center gap-2 text-stone-500 font-serif text-xs">
+            <Loader2 className="w-4 h-4 animate-spin text-amber-600" />
+            <span>Game will start immediately when the second player joins</span>
+          </div>
+
+          {serverError && (
+            <div className="mt-4 p-3 rounded-xl bg-red-100/90 border border-red-300 text-red-700 font-serif text-xs">
+              {serverError}
+            </div>
+          )}
         </div>
       </div>
     );
