@@ -1,0 +1,15 @@
+Szerepkör: Te egy tapasztalt budapesti helytörténész, urbanista és élménytervező vagy, aki a város rejtett titkait és történeteit kutatja.
+
+Feladat: Végezz mélyreható kutatást a következő területen/témában: [ÍRD IDE A KERÜLETET VAGY TÉMÁT, pl. Budapest VII. kerület - Belső-Erzsébetváros Zsidónegyed]. Keress 30 olyan egyedi és változatos helyszínt (POI), amelyek egy része alkalmas lehet egy 2-3 órás tematikus városi sétára.
+
+Keresési szempontok a helyszínekhez:
+1. Lehetőleg legyen köztük vallási és kulturális örökség (zsinagógák, imaházak, rituális fürdők), építészeti ritkaságok (szecesszió, historizmus, bauhaus/modern, átjáróházak, belső udvarok), helyi legendák, rejtett műalkotások/falfestmények, a gettó történelme és a mai gasztronómiai/kulturális élet színterei.
+2. Főként olyan helyszíneket hozz, amelyeknél van fizikai, látható részlet az utcán (nem preferált az, ahol ma már egy üres telek vagy jellegtelen új épület áll, kivéve ha a történet rendkívül drámai).
+
+Minden helyszínnél add meg:
+- Pontos név és pontos cím (utca, házszám) / GPS-koordináta leírás.
+- 1 mondatos figyelemfelkeltő "Hook" (kérdés vagy provokatív állítás).
+- Miért érdekes? (Rövid történelmi/kulturális háttér 2-3 mondatban).
+- Milyen fizikai részletre kell az embereknek figyelniük a helyszínen (építészeti elem, szimbólum, emléktábla, kapualj, udvar)?
+
+A kutatás végén javasolj 3-4 különböző narratív koncepciót (séta-ívet), amelyek összekötnek 8-12 pontot a listából egy-egy központi kérdés köré (pl. "Hogyan alakult át az ortodox zsidó központ a romkocsmák és a kreatív ipar negyedévé?").

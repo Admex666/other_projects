@@ -1,0 +1,238 @@
+{
+  "title": "A Kisföldalatti Nyomában",
+  "subtitle": "9 történelmi állomás a Mexikói úttól a Vörösmarty térig",
+  "district": "Budapest VI. és XIV. kerület (Városliget és Andrássy út)",
+  "bounding_box": {
+    "min_lat": 47.49,
+    "max_lat": 47.53,
+    "min_lng": 19.04,
+    "max_lng": 19.1
+  },
+  "map_center": [
+    47.5085,
+    19.07
+  ],
+  "default_zoom": 14,
+  "speed_kmh": 4.0,
+  "stop_minutes_per_poi": 6,
+  "detour_factor": 1.25,
+  "pois": [
+    {
+      "id": 1,
+      "name": "Mexikói úti járműtelep",
+      "coords": [
+        47.5200439,
+        19.0900355
+      ],
+      "category": "ipar",
+      "hook": "Képzeld el, hogy a föld alatti vasút egykor a szabad ég alatt futott idáig...",
+      "desc": "A kisföldalatti északi végállomása és járműtelepe Zuglóban, ahol a szerelvényeket tárolják és karbantartják az 1973-as vonalhosszabbítás óta.",
+      "address": "1144 Budapest, Mexikói út 67.",
+      "detail": "A felszíni járműtelep vágányhálózata és a metrókocsik garázsa a Mexikói út felől.",
+      "audio_hook": "Képzeld el, hogy a föld alatti vasút, amit ma magától értetődőnek gondolsz, egykor a szabad ég alatt futott idáig, és pontosan itt bújt vissza a mélybe.",
+      "audio_story": "Amikor 1896-ban megnyílt Budapest első földalattija, a vonal messze nem ért idáig. Az Állatkert magasságában bukkant elő a föld alól, és a Széchenyi fürdő mellett ért véget, a szabad ég alatt futva a Városliget peremén. Kocsiszín akkor még nem is épült ide, a szerelvények éjszakára egészen a mai Dózsa György útig utaztak vissza pihenni. Csaknem nyolcvan évet kellett várni, hogy a vonal ide, a Mexikói útig érjen. A hetvenes évek elején Budapest úgy döntött, végleg eltünteti a felszíni szakaszt. Két évig tartó munka után, 1973 december harmincadikán nyílt meg a meghosszabbított vonal, és ezzel a régi, nyílt vágányú szakasz egyetlen éjszaka alatt vált emlékké. Az új végállomás mellett pedig felépült ez a járműtelep, ahol azóta is tárolják, javítják és fényezik a metrókocsikat. Az itt forgalomba állított csuklós szerelvények máig ugyanazok, amiket akkor gyártottak, és a vonal ekkor tért át a jobb oldali közlekedésre is, amit a felszínen már évtizedek óta megszoktak. Van ebben a történetben egy csendes dráma is. A régi kocsiszín, ahonnan a szerelvények egykor idejártak, nem tűnt el nyomtalanul, ma egy kórház parkolójaként éli tovább az életét, teljesen elfeledve eredeti szerepét. És miközben itt, Zuglóban egy vadonatúj, modern telep született, néhány kilométerrel arrébb, a Városligetben egy csendes kis híd egyik napról a másikra vesztette el minden értelmét, hiszen alatta többé nem futott vonat. Ez a telep tehát nem csupán egy technikai létesítmény, hanem egy egész korszak lezárásának a helyszíne. Ma is ugyanúgy működik, ahogy fél évszázada, a metrósok mindennapjainak háttere, amit az utasok szinte soha nem látnak, csak a szerelvényeket, amik innen indulnak minden reggel.",
+      "photo": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80",
+      "matrix": {
+        "year": "1973 (Vonalhosszabbítás)",
+        "style": "Késő modern ipar",
+        "function_change": "Felszíni szakasz → Földalatti járműtelep",
+        "historical_weight": "A Millenniumi vonal modernizációja"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Széchenyi Gyógyfürdő és Zsigmondy-kút",
+      "coords": [
+        47.5182839,
+        19.0809193
+      ],
+      "category": "kultura",
+      "hook": "Alattad, majdnem egy kilométer mélyen, egy tíz évig tartó küzdelem emléke rejtőzik...",
+      "desc": "Európa egyik legnagyobb fürdőkomplexuma, amelyet Zsigmondy Vilmos 970 méter mélyről feltörő termálforrása keltett életre.",
+      "address": "1146 Budapest, Állatkerti krt. 9-11.",
+      "detail": "A neobarokk és neoreneszánsz kupolák, szobrok és a termálvíz gőzölgése a Városliget szívében.",
+      "audio_hook": "Alattad, majdnem egy kilométer mélyen, egy tíz évig tartó, embert próbáló küzdelem emléke rejtőzik, ami végül forró vízzel jutalmazta a várost.",
+      "audio_story": "Ennek a fürdőnek a története nem egy építésszel, hanem egy makacs bányamérnökkel kezdődik. Zsigmondy Vilmos Selmecbányán tanult, és korábban már bebizonyította, hogy a mélyben forró víz rejtőzik, előbb Harkányban, majd a Margitszigeten. Meggyőződése volt, hogy Pest alatt is találhatók hasonló rétegek, és 1868 novemberében, itt, a mai Hősök tere táján, a kiépülő Sugárút tengelyében nekilátott a fúrásnak. Ez a munka messze nem volt egyszerű. Tíz éven át küzdött, miközben a fúrólyuk beomlott, a hajtókerék eltört, egyszer még villám is csapott a fúrótoronyba. Végül 1878 januárjában, kilencszázhetven méter mélyről feltört egy hetvenhárom fokos, gyógyhatású víz, ami akkoriban Európa egyik legmélyebb fúrásának számított. A siker nyomán néhány évvel később a tó szigetén megnyílt az első ideiglenes fürdő, ami a mai Széchenyi Gyógyfürdő közvetlen elődje volt. Van ebben a történetben egy keserű mellékíz is. Zsigmondy soha nem kapott engedélyt arra, hogy saját fürdőt üzemeltessen, pusztán megbízást kapott a fúrásra, az üzleti haszon jórészt máshová került. A kút fölé eleinte csak egy egyszerű faépítmény, egy úgynevezett fúróház került, amit később Ybl Miklós tervei alapján egy díszes kőteraszra cseréltek. Amikor pedig felépült a millenniumi emlékmű, ezt a díszkutat el kellett költöztetni, ma a Széchenyi hegyen áll kilátóként. A Hősök terén ma egy apró emléktábla emlékezteti az arra sétálókat, hogy ott, a talpuk alatt kezdődött a Városliget termál korszaka. A mai napig ez a majdnem egy kilométeres fúrás táplálja részben a fürdő vizét, ami mára Európa egyik legnagyobb és legnépszerűbb termálfürdőjévé nőtte ki magát.",
+      "photo": "https://images.unsplash.com/photo-1584448141569-69f342da535c?auto=format&fit=crop&w=800&q=80",
+      "matrix": {
+        "year": "1878 (Kút) / 1913 (Fürdő)",
+        "style": "Neobarokk és neoreneszánsz",
+        "function_change": "Zsigmondy fúróház → Európa legnagyobb fürdője",
+        "historical_weight": "Pest első 970 méteres termálforrása"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Wünsch-híd",
+      "coords": [
+        47.516558,
+        19.0766977
+      ],
+      "category": "epiteszet",
+      "hook": "Állj meg egy pillanatra ennél a hídnál, mert bár sehova nem vezet, valaha élet-halál kérdése volt, hogy átkelj rajta...",
+      "desc": "Magyarország első vasbeton gyalogoshídja, amely a régi, felszínen futó Millenniumi Földalatti vágányai felett ívelt át.",
+      "address": "1146 Budapest, Városliget, Kós Károly sétány",
+      "detail": "A zöld gyep felett ívelő T alakú betonhíd és az előregyártott korlátok a Városligeti-tó szomszédságában.",
+      "audio_hook": "Állj meg egy pillanatra ennél a hídnál, mert bár sehova nem vezet, valaha élet-halál kérdése volt, hogy valaki átkeljen rajta.",
+      "audio_story": "Ez a kis híd az egyik legkülönösebb emléke Budapest közlekedéstörténetének. Amikor 1896-ban megépült a földalatti vasút, itt, a Hősök tere mögött jött elő a szerelvény a föld alól, és onnantól a szabad ég alatt haladt tovább egészen a Széchenyi fürdőig. A síneken átkelni azonban életveszélyes volt, ezért gyalogos felüljárót építettek, hogy az utasok biztonságban juthassanak át a peronokhoz. A kivitelezést egy Wünsch Róbert nevű vállalkozóra bízták, aki a saját, néhány évvel korábban szabadalmaztatott vasbeton technológiáját alkalmazta, méghozzá annyira korán, hogy ez a híd az egyik legelső vasbeton szerkezet volt egész Magyarországon. Érdekes, hogy bár a köznyelv máig az ő nevét őrzi, az építmény formáját valójában egy másik mérnök, Brüggemann György rajzolta meg, Wünsch inkább a technológiát és a kivitelezést adta hozzá. A híd T alakú, mert a Városliget felé a lépcsők oldalra vezetnek le, és még a korlátjai is előre gyártott betonelemekből készültek, ami a korban szinte hallatlan megoldásnak számított. Aztán 1973-ban minden megváltozott. A vonalat végleg a föld alá vitték, a talajt feltöltötték, és ez a híd egyik napról a másikra elvesztette minden funkcióját. A szomszédos, hasonló hidat egyszerűen lebontották, ezt viszont műemlékké nyilvánították, így ma is áll, immár egy sima gyepen ívelve át, ahol régen vonatok robogtak. Kétezerhatban teljesen felújították, azóta viseli mai világos színét, korábban ugyanis sárgás árnyalatú volt. Ha most ránézel, próbáld elképzelni, hogy alattad valaha egy föld alatti vasút bukkant elő a napvilágra, és emberek siettek át rajta, nehogy elüsse őket az induló szerelvény.",
+      "photo": "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&w=800&q=80",
+      "matrix": {
+        "year": "1896 (Brüggemann & Wünsch)",
+        "style": "Korai vasbeton mérnöki mű",
+        "function_change": "Földalatti felüljáró → Ligeti műemlék híd",
+        "historical_weight": "Hazánk legelső vasbeton gyalogoshídja"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Babocsay-villa",
+      "coords": [
+        47.513968,
+        19.077115
+      ],
+      "category": "tarsadalom",
+      "hook": "Ez a ma csendesnek tűnő villa egy este, 1956 novemberében, csapdává vált egy egész kormány számára...",
+      "desc": "Árkay Aladár szecessziós, majd Kozma Lajos által átalakított villája a Hősök terénél, amely 1956-ban Nagy Imre és kormánya menedéke, majd elhurcolásának helyszíne volt.",
+      "address": "1068 Budapest, Dózsa György út 92/b.",
+      "detail": "A Szerb Nagykövetség homlokzata és a kerítésnél elhelyezett 1956-os emléktábla.",
+      "audio_hook": "Ez a ma csendesnek tűnő épület egy este, 1956 novemberében, csapdává vált egy egész kormány számára.",
+      "audio_story": "Ez az épület eredetileg egy fiatal építész, Árkay Aladár első önálló munkája volt, aki ezerkilencszázhat körül magyaros szecessziós stílusban tervezte meg, tele díszítéssel, aszimmetrikus ablakokkal. A megrendelő, Babocsay Hermann annyira megunta a kritikákat, amivel a formabontó házat illették, hogy néhány évvel később egy másik építésszel, Kozma Lajossal teljesen átalakíttatta, letisztult, szinte szigorú formára cserélve az egykor burjánzó homlokzatot. Ezerkilencszázharminckettő óta Jugoszlávia, ma pedig Szerbia nagykövetsége működik benne. A legdrámaibb fejezete azonban 1956 őszéhez köthető. Amikor a szovjet csapatok bevonultak, Nagy Imre és kormányának tagjai ide menekültek, összesen negyvenkét ember családtagjaikkal együtt. Napokon át itt bujkáltak, miközben a nagyhatalmak alkudoztak a sorsukról. November huszonkettedikén este a jugoszláv nagykövetség biztosítékot kapott arra, hogy Nagy Imréék bántódás nélkül hazatérhetnek, egy autóbusz is várt rájuk az épület előtt. Ám amint felszálltak, szovjet katonák vették körül a járművet, a jugoszláv diplomatákat eltávolították, és a csoportot a mátyásföldi szovjet parancsnokságra, majd repülővel Romániába hurcolták. A jugoszláv kormány ezt hivatalos jegyzékben nyíltan emberrablásnak nevezte. Ma az épület falán egy emléktábla emlékeztet erre a napra, amit kétezerhatban helyeztek el a nagykövetség és a Nagy Imre Társaság kezdeményezésére. A ház ma is aktív diplomáciai épület, tehát belülről nem látogatható, de amikor elhaladsz mellette, érdemes megállni egy pillanatra, mert kevés budapesti épület falai láttak ennyire feszült és sorsdöntő órákat, mint ez a viszonylag szerény, mára letisztult homlokzatú villa az Andrássy út és a Hősök tere sarkán.",
+      "photo": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80",
+      "matrix": {
+        "year": "1906 (Árkay) / 1932 (Kozma)",
+        "style": "Szecesszió és art deco",
+        "function_change": "Polgári magánvilla → Nagykövetség",
+        "historical_weight": "Nagy Imre és kormánya 1956-os menedéke"
+      }
+    },
+    {
+      "id": 5,
+      "name": "MÁV Nyugdíjintézet Bérháza",
+      "coords": [
+        47.509256,
+        19.068903
+      ],
+      "category": "epiteszet",
+      "hook": "Ez a palota egy vasúti nyugdíjalap befektetése volt, és a falain egy híres festő keze nyoma díszeleg...",
+      "desc": "A Kodály körönd pompás reneszánsz ihletésű palotája, melynek homlokzati sgraffito díszeit Székely Bertalan készítette.",
+      "address": "1062 Budapest, Andrássy út 88-90.",
+      "detail": "A Kodály köröndi palota homlokzatát beborító sgraffito figurák és Jungfer Gyula kovácsoltvas kerítése.",
+      "audio_hook": "Ez a palota egy vasúti nyugdíjalap befektetése volt, és a falain egy híres festő keze nyoma díszeleg, aki éppen szemben lakott.",
+      "audio_story": "Amikor a tizenkilencedik század végén kialakították a Kodály körönd elődjét, egy pályázatot írtak ki, hogy négy egyforma szellemű bérházcsoport vegye körbe a teret. Az elsőként megvalósult épület ez volt itt, amit a MÁV nyugdíjintézete építtetett, ezerkilencszáznyolcvan és nyolcvanegy között. Ez önmagában is érdekes, hiszen egy állami vasúttársaság nyugdíjalapja fektetett be egy akkor még kockázatosnak számító, frissen kiépülő sugárúti ingatlanba, a bérleti bevételekből finanszírozva a nyugdíjasok ellátását. Az épület homlokzatát teljes egészében beborítja egy különleges díszítés, amit sgraffitónak hívnak. A kompozíciót Rauscher Lajos tervezte, de az emberalakokat, a figurális részeket a kor egyik legjelentősebb történelmi festője, Székely Bertalan festette meg. Van ebben egy szinte költői részlet is. Néhány évvel később éppen a szemközti palotában, a Körönd másik oldalán lakott maga Székely Bertalan, minden nap ránézhetett a saját munkájára a hazafelé vagy a műterme felé menet. A bérházat gyönyörű, Jungfer Gyula műhelyében készült kovácsoltvas kerítés zárja le az előkert felől, ami mára szintén eredeti pompájában látható. Bár az épület a mai napig állami tulajdonban van, és ma is lakott, több mint száz lakással, hosszú évtizedeken át várt a felújításra, a homlokzat állapota egészen a közelmúltig erősen leromlott. Fontos tudni, hogy a MÁV nyugdíjintézete nem csak ezt az egy palotát építtette az Andrássy úton, van egy másik is, közelebb az Operaházhoz, amit viszont teljesen más építészek terveztek, egészen más stílusban. Ha tehát valaki a MÁV bérházáról hall, mindig érdemes megnézni, melyik épületről is van szó valójában.",
+      "photo": "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80",
+      "matrix": {
+        "year": "1880–1881 (Rauscher Lajos)",
+        "style": "Olasz neoreneszánsz",
+        "function_change": "Nyugdíjalap befektetés → Köröndi lakópalota",
+        "historical_weight": "Székely Bertalan monumentális sgraffitói"
+      }
+    },
+    {
+      "id": 6,
+      "name": "Terror Háza",
+      "coords": [
+        47.506745,
+        19.065244
+      ],
+      "category": "tarsadalom",
+      "hook": "Ez a ház rendszerváltás nélkül szolgálta ki két egymást követő diktatúra rémtetteit...",
+      "desc": "Az egykori nyilas Hűség Háza, majd az ÁVH központi börtöne és kínzókamrája az Andrássy úton, ma a diktatúrák áldozatainak emlékhelye.",
+      "address": "1062 Budapest, Andrássy út 60.",
+      "detail": "A fekete pengefal a felirattal és az Andrássy úti homlokzaton elhelyezett áldozatok fényképei.",
+      "audio_hook": "Ez a ház egyfolytában, rendszerváltás nélkül szolgálta ki két egymást követő diktatúra rémtetteit.",
+      "audio_story": "Ez a neoreneszánsz palota eredetileg egy festő, Perlmutter Izsák tulajdona volt, aki halálakor teljes vagyonát a zsidó hitközségre hagyta. Az irónia, hogy éppen ebben, a hitközség tulajdonában maradt épületben bérelt helyiségeket 1937-től a Szálasi Ferenc vezette nyilaskeresztes mozgalom, amely később a magyar zsidóság elpusztítására törekedett. Innen szervezték sikeres választási kampányukat, majd 1944 végén, a hatalomátvétel után az épület, amit ekkor már Hűség Házának neveztek, kínzóközponttá és fogolytartó hellyé vált. Ide hurcolták az ellenállókat, itt vallatták őket, és innen indultak a nyilas fegyveresek a Duna partjára, ahol sokakat kegyetlenül megöltek. A háború végén a helyzet nem javult, sőt. A kommunista politikai rendőrség vezetője kifejezetten ezt az épületet kérte főhadiszállásul, és hamarosan az Államvédelmi Hatóság rendezte be itt saját kínzókamráit. Ahogy nőtt a foglyok száma, a szomszédos házak pincéit is bevonták, valóságos földalatti börtönlabirintust alakítva ki a felszín alatt. Egy régóta terjedő városi legenda szerint sem a nyilasok, sem az ávósok nem fizettek soha bérleti díjat ezért az épületért, bár ezt a kutatók inkább félig igaz mendemondaként kezelik, mint tényként. Az épület ma múzeumként működik, kétezerkettő februárja óta, és azóta Magyarország egyik leglátogatottabb intézménye. A falán elhelyezett fényképek az áldozatok emlékét őrzik, a pincébe vezető lépcsőn lemenve pedig szó szerint a kínzások egykori tereibe lép be a látogató. Amikor most elhaladsz előtte, gondolj arra, hogy ugyanaz a kapu, amin te most átsétálsz mellette, egykor foglyokat nyelt el, akik gyakran soha többé nem jöttek ki rajta élve.",
+      "photo": "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?auto=format&fit=crop&w=800&q=80",
+      "matrix": {
+        "year": "1880 k. (Feszl) / 2002 (Múzeum)",
+        "style": "Neoreneszánsz emlékhely",
+        "function_change": "Polgári palota → Hűség Háza / ÁVH → Múzeum",
+        "historical_weight": "Két diktatúra áldozatainak emlékhelye"
+      }
+    },
+    {
+      "id": 7,
+      "name": "Magyar Állami Operaház",
+      "coords": [
+        47.502389,
+        19.058756
+      ],
+      "category": "kultura",
+      "hook": "Ez a palota majdnem sosem épült fel, mert a császár szigorú méretkorlátot szabott neki...",
+      "desc": "Ybl Miklós monumentális neoreneszánsz mesterműve, a magyar zenés színjátszás és kultúra világhírű szentélye.",
+      "address": "1061 Budapest, Andrássy út 22.",
+      "detail": "A főhomlokzat szobrai, az erkélyek kőfaragványai és a fenséges kocsifelhajtó árkádjai.",
+      "audio_hook": "Ez a palota majdnem sosem épült fel, mert a császár szigorú méretkorlátot szabott neki.",
+      "audio_story": "Az önálló magyar operaház gondolata ezernyolcszázhetvenkettőben született meg, amikor kiderült, hogy a Nemzeti Színház egyszerűen szűk a zenés drámai előadásokhoz. Egy évvel később kiírt pályázatot Ybl Miklós nyerte meg, ám Ferenc József csak azzal a feltétellel engedélyezte az építkezést, hogy a pesti operaház nem lehet nagyobb a bécsinél. Ybl ezért lemondott a legfelső páholyemeletről, és kisebbre vette az előcsarnokot, így alakult ki az az arányos, szinte tökéletesen szimmetrikus forma, amit ma is látni. Az építkezés kilenc éven át tartott, közben állandó pénzhiánnyal küszködve, egyszer a felelős politikus egyenesen az építkezés leállításával fenyegetőzött. Végül a megnyitóra 1884 szeptember huszonhetedikén került sor, maga a király is jelen volt, Erkel Ferenc vezényelt, és a tömeg annyira be akart jutni, hogy a rendezvény kis híján botrányba fulladt. Van egy kevéssé ismert részlete is a történetnek. Az épület acél tetőszerkezetét egy Feketeházy János nevű mérnök tervezte, aki később a Szabadság híd megalkotója lett, tehát az Operaház egyszerre híd és színház építészeti tudását ötvözi. Ybl a legapróbb részletekig, a kilincsekig és a csillárokig mindent maga tervezett. A belső tereket olyan festők díszítették, mint Lotz Károly, Than Mór és Székely Bertalan, akinek a nevével egyébként ezen a sétán már korábban is találkoztál. Az épület ma is aktívan működő, világszínvonalú operaház, ami néhány évvel ezelőtt egy nagyszabású felújításon esett át, és Budapestre látogatók egyik kötelező programja lett, napi vezetett túrákkal a főszezonban.",
+      "photo": "https://images.unsplash.com/photo-1520645521318-f03a712f0e67?auto=format&fit=crop&w=800&q=80",
+      "matrix": {
+        "year": "1875–1884 (Ybl Miklós)",
+        "style": "Monumentális neoreneszánsz",
+        "function_change": "Királyi Operaház → Nemzeti színházpalota",
+        "historical_weight": "A magyar zeneművészet és Ybl főműve"
+      }
+    },
+    {
+      "id": 8,
+      "name": "Saxlehner-palota",
+      "coords": [
+        47.49981,
+        19.05546
+      ],
+      "category": "ipar",
+      "hook": "Ez a palota egy hashajtó ásványvíz világméretű vagyonából épült...",
+      "desc": "A Hunyadi János keserűvíz megalkotójának fényűző palotája az Andrássy út elején, melynek freskóit Lotz Károly festette.",
+      "address": "1061 Budapest, Andrássy út 3.",
+      "detail": "A főbejárat feletti fáklyás szoboralakok és a gazdagon díszített neoreneszánsz homlokzat.",
+      "audio_hook": "Ez a palota egy hashajtó ásványvízből lett vagyonból épült, és a család marketingje már a tizenkilencedik században is világszínvonalú volt.",
+      "audio_story": "Saxlehner András eredetileg posztókereskedő volt, amikor 1862-ben megvásárolt egy kelenföldi telket, ahol valaki keserű ízű vizet talált. Ahelyett, hogy elutasította volna a kellemetlen felfedezést, felismerte benne az üzleti lehetőséget, és Hunyadi János néven jegyeztette be a forrást, a híres hadvezér nevét kölcsönözve neki. Már az első évben negyvenegyezer palackot adott el, majd a siker exponenciálisan nőtt, egy bizonyos ponton évi hatmillió, a csúcson pedig tizenötmillió palackot exportáltak világszerte, egészen Brazíliáig és az Egyesült Államokig. Ebből a keserűvízből felhalmozott vagyonból építtette meg Saxlehner ezt a palotát a nyolcvanas évek közepén, közvetlenül a belváros kapujában. Az épület kétarcú volt, az Andrássy útra néző oldalán a család luxuslakása kapott helyet, öt méteres belmagassággal, míg a hátsó fronton az irodák működtek, a felsőbb emeleteken pedig bérlakásokat alakítottak ki. Saxlehner rendkívül komolyan vette a márkavédelmet, állítólag főállású ügyvédeket alkalmazott, hogy világszerte felkutassák és perbe fogják a hamisított palackokat, ami a korban szinte egyedülálló, modern üzleti gondolkodásra vall. A lépcsőházat és két termet Lotz Károly freskói díszítik, aki egyébként az Operaház festője is volt, így a két épület díszítése rokon szellemben készült. A család 1938-ig birtokolta a palotát, akkor a legtöbben elhagyták az országot, az épületet eladták, és később hosszú évtizedeken át, egészen kétezertizenkettőig itt működött a Postamúzeum. Azóta a hasznosítása bizonytalanná vált, több sajtóhír is beszámolt tulajdonosi vitákról körülötte. A homlokzat és a lépcsőház azonban továbbra is kiemelten védett műemlék, és a kaput őrző fáklyás szoboralakok a mai napig az egyik legkedveltebb fotótéma az Andrássy úton sétálók körében.",
+      "photo": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80",
+      "matrix": {
+        "year": "1884–1886 (Czigler Győző)",
+        "style": "Fényűző neoreneszánsz",
+        "function_change": "Keserűvíz-birodalom → Postamúzeum → Műemlék",
+        "historical_weight": "Lotz Károly freskók és világmárka"
+      }
+    },
+    {
+      "id": 9,
+      "name": "Vörösmarty tér",
+      "coords": [
+        47.496505,
+        19.050738
+      ],
+      "category": "kultura",
+      "hook": "Ez a tér valaha a föld alatti vasút legdíszesebb Zsolnay-kapuja volt...",
+      "desc": "A Kisföldalatti belvárosi végállomása, Budapest szívének ikonikus tere a Gerbeaud cukrászdával és a Vörösmarty-szoborral.",
+      "address": "1051 Budapest, Vörösmarty tér",
+      "detail": "A Vörösmarty-szoborcsoport carrarai márványa és az M1 metró műemléki állomáslejáratai.",
+      "audio_hook": "Ez a tér valaha a föld alatti vasút legdíszesebb kapuja volt, mielőtt egy szoborért feláldozták volna a szépségét.",
+      "audio_story": "Amikor 1896-ban megnyílt Budapest első földalattija, a belvárosi végállomás pontosan itt volt, akkor még Gizella térnek hívták, Habsburg Gizella főhercegnőről elnevezve. A lejáratok fölé rendkívül díszes, Zsolnay pirogránit kerámiával borított pavilonokat építettek, antik motívumokkal, babérkoszorús díszekkel, ezek voltak a vonal legszebb, legreprezentatívabb építményei. Ez a szépség azonban rövid életűnek bizonyult. Alig tizenöt évvel az átadás után, 1911-ben lebontották ezeket a pavilonokat, hivatalosan azért, mert túl díszesnek és korszerűtlennek találták őket, valójában azonban a Vörösmarty emlékmű felépítése miatt kellett eltűnniük. Így ez a tér volt az első a vonal mentén, amely elvesztette eredeti szecessziós arcát, jóval megelőzve az Oktogont és a többi állomást. A térnek eközben a neve is megváltozott, a Habsburg hercegnőt a nemzeti irodalom egyik legnagyobb alakja, Vörösmarty Mihály váltotta fel, akinek szobrát 1908-ban avatták fel, carrarai márványból faragva. Amikor később megépült a második metróvonal, az ötvenes években ezt az állomást is átépítették, néhány méterrel arrébb helyezve, úgyhogy a mai lejárat már nem pontosan azon a helyen található, ahol az eredeti, díszes pavilonok álltak. Ha szeretnéd elképzelni, milyenek voltak ezek a régi csarnokok, a Deák téri állomás egykori formájának makettjét ma is megnézheted a Földalatti Vasúti Múzeumban. A tér ma Budapest egyik legforgalmasabb pontja, itt található a híres Gerbeaud cukrászda, itt tartják évente a karácsonyi vásárt és a könyvhetet, és a föld alatt továbbra is ugyanaz a vonal fut, amely ezerkilencszázkilencvenhat óta köti össze a belvárost a Városligettel, immár több mint egy évszázados folytonossággal.",
+      "photo": "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=800&q=80",
+      "matrix": {
+        "year": "1896 (Végállomás) / 1908 (Szobor)",
+        "style": "Századfordulós szecesszió",
+        "function_change": "Zsolnay-pavilonos végállomás → Irodalmi tér",
+        "historical_weight": "A kontinens első földalattijának belvárosi kapuja"
+      }
+    }
+  ],
+  "tours": [
+    {
+      "id": "A",
+      "name": "A Kisföldalatti teljes vonala",
+      "question": "Hogyan épült meg a kontinens első földalatti vasútja a Városligettől a Belvárosig?",
+      "pois": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "color": "#f59e0b"
+    }
+  ]
+}

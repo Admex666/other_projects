@@ -1,0 +1,24 @@
+Feladat: A csatolt mélykutatási anyagból hozz létre egy professzionális, mobilbarát Sétakönyvet (.md formátumban).
+
+Követelmények:
+- Minden helyszín terjedelme legyen pontosan 300–500 szó.
+- A stílus legyen élvezetes, történetmesélő, a felesleges évszámhalmozást kerülve (Hosszúlépés-stílus).
+- Minden megállónál szigorúan tartsd be az alábbi sablont:
+
+## [Sorszám]. [Megálló Hivatalos Neve]
+*[Rövid, hangulatos alcím]*
+
+### 👀 „Mit mutassak meg?” (Checklist)
+- [ ] 3-4 db konkrét vizuális elem, amire a túravezető rá tud mutatni az utcán.
+
+### ❓ Hook / Felütés
+*Egy dőlt betűs, figyelemfelkeltő kérdés vagy provokatív felvetés a csapattal való indításhoz.*
+
+### 📖 A Sztori
+2-3 feszes bekezdés az épület/helyszín emberi és történelmi hátteréről.
+
+### 💡 Anekdota / Érdekesség
+Egy könnyen megjegyezhető, poénos vagy drámai háttértörténet.
+
+### 🏛️ Tényellenőrzés és Jelenkor
+Rövid összefoglaló a forrásbeli ellentmondásokról és az épület mai funkciójáról.

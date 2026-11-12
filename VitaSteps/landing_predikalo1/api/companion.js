@@ -1,4 +1,5 @@
 const { getTrails, planTripFromLocation } = require('../lib/companion-service');
+const { getLiveRoutes } = require('../lib/menetrendek-client');
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -7,7 +8,7 @@ module.exports = async (req, res) => {
 
     if (req.method === 'OPTIONS') return res.status(200).end();
 
-    const action = req.query.action || req.body?.action || 'plan';
+    const action = req.query?.action || req.body?.action || 'plan';
 
     try {
         if (action === 'trails') {
@@ -24,18 +25,30 @@ module.exports = async (req, res) => {
             return res.status(200).json({ success: true, trails });
         }
 
+        if (action === 'live_transit' || action === 'menetrendek') {
+            const fromText = req.body?.from || req.query.from || 'Pomáz';
+            const toText = req.body?.to || req.query.to || 'Pilisborosjenő';
+            const dateStr = req.body?.date || req.query.date || new Date().toISOString().split('T')[0];
+            const timeStr = req.body?.time || req.query.time || '08:00';
+
+            const result = await getLiveRoutes(fromText, toText, dateStr, timeStr);
+            return res.status(200).json({ success: true, ...result });
+        }
+
         const params = {
-            homeLat: parseFloat(req.body?.homeLat || req.query.homeLat || 47.4979),
-            homeLon: parseFloat(req.body?.homeLon || req.query.homeLon || 19.0402),
-            homeAddress: req.body?.homeAddress || req.query.homeAddress || 'Budapest belváros',
-            trailId: req.body?.trailId || req.query.trailId || 'kevely_klasszik',
-            homeDeparture: req.body?.homeDeparture || req.query.homeDeparture || '08:00',
-            paceKmh: parseFloat(req.body?.paceKmh || req.query.paceKmh || 4.0),
-            breaksCount: parseInt(req.body?.breaksCount || req.query.breaksCount || 2, 10),
-            breakDurationMin: parseInt(req.body?.breakDurationMin || req.query.breakDurationMin || 15, 10)
+            homeLat: parseFloat(req.body?.homeLat || req.query?.homeLat || 47.4979),
+            homeLon: parseFloat(req.body?.homeLon || req.query?.homeLon || 19.0402),
+            homeAddress: req.body?.homeAddress || req.query?.homeAddress || 'Budapest belváros',
+            trailId: req.body?.trailId || req.query?.trailId || 'kevely_klasszik',
+            homeDeparture: req.body?.homeDeparture || req.query?.homeDeparture || '08:00',
+            paceKmh: parseFloat(req.body?.paceKmh || req.query?.paceKmh || 4.0),
+            breaksCount: parseInt(req.body?.breaksCount || req.query?.breaksCount || 2, 10),
+            breakDurationMin: parseInt(req.body?.breakDurationMin || req.query?.breakDurationMin || 15, 10),
+            useLiveTransit: req.body?.useLiveTransit === true || req.query?.useLiveTransit === 'true',
+            date: req.body?.date || req.query?.date
         };
 
-        const result = planTripFromLocation(params);
+        const result = await planTripFromLocation(params);
         return res.status(200).json({ success: true, plan: result });
     } catch (err) {
         console.error('Companion API error:', err);

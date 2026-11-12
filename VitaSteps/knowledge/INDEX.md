@@ -97,12 +97,21 @@ Durable architectural, product, and strategic decisions.
 * [[ADR-009-strategic-ecosystem-pivot|ADR-009 Strategic Ecosystem Pivot]]: Átállás az egytermékes modellről a mozgás- és felfedezésközpontú 5-pilléres ökoszisztémára.
 * [[ADR-010-kitero-validation-architecture|ADR-010 Kitérő Validáció]]: VitaSteps Kitérő validációs és analitikai architektúra döntések.
 * [[ADR-011-experience-selector-main-gateway|ADR-011 Élményválasztó Főoldal]]: Élményközpontú interaktív választóoldal (/main) és ökoszisztéma kapu.
+* [[ADR-012-menetrendek-live-transit-integration|ADR-012 Menetrendek.hu Élő Hálózati Integráció]]: Élő multi-modális útvonaltervezés (MÁV vonatok, HÉV, Volánbusz) és időrendi rendezés.
+
+---
+
+## 📋 Plans & Roadmaps (`knowledge/plans/`)
+System plans, implementation roadmaps, and execution specs.
+
+* [[kitero-master-system-plan|VitaSteps Kitérő Master Rendszerterv]]: Részletes PWA webapp, fizetési flow, Supabase adatmodell, tartalom workflow és RACI mátrix.
 
 ---
 
 ## 🧠 Learnings (`knowledge/learnings/`)
 Validated empirical insights and troubleshooting findings.
 
+* [[menetrendek-api-routing-behavior|Menetrendek.hu API Viselkedés]]: Belső JSON protokoll mezőstruktúra, rendezési paraméter (`rendezes: 1`) és átszállási kapcsolatok.
 * [[lead-magnet-intent|Lead Magnet Intent]]: Az ingyenes anyagok a magas vásárlási szándékú érdeklődőket szűrik ki, downstream követés szükséges.
 * [[meta-ad-creatives|Meta Ad Creatives]]: Konvertáló vizuális és szöveges horgok (hiker vs érem fókusz).
 * [[leaflet-print-rendering|Leaflet Print Rendering]]: Földrajzi kitöltés és konténer-magasság szinkron a nyomtatási nézetben.

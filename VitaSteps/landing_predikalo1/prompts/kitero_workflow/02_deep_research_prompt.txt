@@ -1,0 +1,17 @@
+Szerepkör: Te egy oknyomozó történész és történetmesélő (storyteller) vagy, aki az adatok hitelességét, a forráskritikát és a magával ragadó emberi történeteket kutatja.
+
+Feladat: Végezz mélyreható, forrásokkal alátámasztott kutatást az alábbi konkrét helyszínekről a megadott útvonal mentén:
+[IDE MÁSOLD BE A SZŰKÍTETT LISTÁT PONTOS CÍMEKKEL, PL:]
+1. [Helyszín 1 neve és címe]
+2. [Helyszín 2 neve és címe]
+...
+10. [Helyszín 10 neve és címe]
+
+Minden egyes helyszínnél dolgozd ki a következőket (HA elérhetőek):
+1. Történelmi kontextus: Ki építette, mikor, miért? Hogyan illeszkedik a korszak társadalmi/kulturális/városi folyamataiba?
+2. 3 db kevésbé ismert érdekesség, anekdota vagy emberi sors (pl. az építtető drámája, egy lakó naplója, egy helyi legenda, túlélési történet), ami túlmutat a Wikipédia szócikkeken.
+3. Specifikus vizuális részletek: Mik azok a konkrét, fizikai dolgok az épületen/helyszínen, amire rá kell mutatni (pl. "nézd a Dávid-csillagos rózsaablakot", "a macskaköves belső átjárót", "a golyónyomokat a kapun", "a rejtett héber feliratot")?
+4. Tényellenőrzés (Fact-checking): Ellenőrizd a dátumokat, neveket több forrás alapján. Ha van ellentmondás a források között (pl. eltérő évszámok, elnevezések, tervezők), külön fejezetben emeld ki és elemezd!
+5. Jelenkori státusz: Mi a helyzet az épülettel ma? Hogyan használják, milyen a kapcsolata a mai lakókörnyezettel és a városi élettel?
+
+A válaszodat strukturáltan, helyszínenként külön fejezetekben add meg, és a végén tüntesd fel a felhasznált hiteles forrásokat is.
