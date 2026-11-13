@@ -8,171 +8,174 @@ datasource db {
 }
 
 model Organization {
-  id           String    @id @default(uuid())
-  name         String
-  industry     String?
-  orgStructure Json?
-  
-  users        User[]
-  sessions     Session[]
+  id        String    @id @default(uuid())
+  name      String
+  industry  String?
+  createdAt DateTime  @default(now())
+
+  users     User[]
+  sessions  Session[]
 }
 
 model User {
   id             String       @id @default(uuid())
+  email          String       @unique
   name           String
-  role           String?
+  role           String?      // e.g. "Senior Developer", "HR Lead"
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
-  teamMembership String? // Deprecated, use SessionParticipant.teamId instead
-  
-  sessions             SessionParticipant[]
-  sentInteractions     Interaction[]        @relation("SentInteractions")
-  receivedInteractions Interaction[]        @relation("ReceivedInteractions")
-  surveyResponses      SurveyResponse[]     @relation("SurveyResponder")
-  surveyTargets        SurveyResponse[]     @relation("SurveyTarget")
-  sentTrades           TradeRequest[]       @relation("SentTrades")
-  receivedTrades       TradeRequest[]       @relation("ReceivedTrades")
-}
+  createdAt      DateTime     @default(now())
 
-model Scenario {
-  id              String    @id @default(uuid())
-  name            String
-  behavioralFocus String?
-  config          Json
-  version         String
-  
-  sessions        Session[]
+  teamMemberships  TeamParticipant[]
+  surveyResponses  SurveyResponse[]
+  onaInvitations   OnaInvitation[]
 }
 
 model Session {
-  id             String       @id @default(uuid())
-  joinCode       String       @unique
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  scenarioId     String
-  scenario       Scenario     @relation(fields: [scenarioId], references: [id])
-  status         String       @default("draft") // draft, active, closed
-  createdAt      DateTime     @default(now())
+  id                   String       @id @default(uuid())
+  name                 String?
+  joinCode             String       @unique
+  organizationId       String
+  organization         Organization @relation(fields: [organizationId], references: [id])
+  status               String       @default("DRAFT") // DRAFT | ACTIVE | COMPLETED | ARCHIVED
   
-  currentRound   Int          @default(1)
-  isRoundActive  Boolean      @default(false)
-  globalState    String       @default("{}") // JSON string for dynamic pricing modifiers, events, etc.
-  
-  participants    SessionParticipant[]
-  rounds          Round[]
-  interactions    Interaction[]
-  surveyResponses SurveyResponse[]
-  teams           Team[]
-  tradeRequests   TradeRequest[]
-  bankInventories BankInventory[]
+  // Fázis Állapotgép Mezők
+  currentPhase         String       @default("PHASE_0_SETUP")
+  phaseStartedAt       DateTime     @default(now())
+  phaseDurationSeconds Int          @default(300)
+  isTimerPaused        Boolean      @default(false)
+  timerRemainingSeconds Int         @default(300)
+
+  createdAt            DateTime     @default(now())
+  closedAt             DateTime?
+
+  teams                SessionTeam[]
+  tradeTransactions    TradeTransaction[]
+  bankSales            BankSale[]
+  marketEvents         MarketEvent[]
+  surveyResponses      SurveyResponse[]
+  onaInvitations       OnaInvitation[]
 }
 
-model BankInventory {
-  id           String   @id @default(uuid())
-  sessionId    String
-  session      Session  @relation(fields: [sessionId], references: [id])
-  productKey   String   // e.g., 'wheat', 'wine'
-  quantity     Int      @default(0) // Tracks how many the bank has bought from players
+model SessionTeam {
+  id             String    @id @default(uuid())
+  sessionId      String
+  session        Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  name           String    // e.g. "Alpha Vállalat"
+  profileCode    String    // CAPITAL | RESOURCE | TECH | EMERGING
   
-  @@unique([sessionId, productKey])
+  // Valós idejű Készletállomány
+  cashBalance    Int       @default(0)
+  paperSheets    Int       @default(0)
+  scissorsCount  Int       @default(0)
+  rulersCount    Int       @default(0)
+  templatesCount Int       @default(0)
+
+  createdAt      DateTime  @default(now())
+
+  participants   TeamParticipant[]
+  sentTrades     TradeTransaction[] @relation("SentTrades")
+  receivedTrades TradeTransaction[] @relation("ReceivedTrades")
+  bankSales      BankSale[]
+
+  @@unique([sessionId, name])
 }
 
-model SessionParticipant {
-  id        String   @id @default(uuid())
-  sessionId String
-  session   Session  @relation(fields: [sessionId], references: [id])
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  
-  teamId    String?
-  team      Team?    @relation(fields: [teamId], references: [id])
-  
-  // Dynamic Game State per Participant
-  capital        Float    @default(0)
-  rawMaterial    Int      @default(0)
-  techLevel      Int      @default(1)
-  productionEff  Float    @default(1.0) // 1.0 = normal
-  inventory      String   @default("{}") // JSON string mapped to objects
-  
-  joinedAt  DateTime @default(now())
-  
+model TeamParticipant {
+  id          String      @id @default(uuid())
+  sessionId   String
+  teamId      String
+  team        SessionTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt    DateTime    @default(now())
+
   @@unique([sessionId, userId])
 }
 
-model Round {
-  id        String   @id @default(uuid())
-  sessionId String
-  session   Session  @relation(fields: [sessionId], references: [id])
-  number    Int
-  state     String   @default("open") // open, closed
+model TradeTransaction {
+  id                 String      @id @default(uuid())
+  sessionId          String
+  session            Session     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   
-  interactions Interaction[]
+  senderTeamId       String
+  senderTeam         SessionTeam @relation("SentTrades", fields: [senderTeamId], references: [id])
+  receiverTeamId     String
+  receiverTeam       SessionTeam @relation("ReceivedTrades", fields: [receiverTeamId], references: [id])
+
+  offeredItems       String      // JSON: ResourceBundle
+  requestedItems     String      // JSON: ResourceBundle
+  escrowedItems      String      // JSON: ResourceBundle zárolt tételei
+
+  status             String      @default("PENDING") // PENDING | ACCEPTED | REJECTED | CANCELLED | EXPIRED
+  notes              String?
+  createdAt          DateTime    @default(now())
+  resolvedAt         DateTime?
 }
 
-model Interaction {
-  id           String   @id @default(uuid())
-  sessionId    String
-  session      Session  @relation(fields: [sessionId], references: [id])
-  roundId      String
-  round        Round    @relation(fields: [roundId], references: [id])
-  
-  fromUserId   String
-  fromUser     User     @relation("SentInteractions", fields: [fromUserId], references: [id])
-  toUserId     String?
-  toUser       User?    @relation("ReceivedInteractions", fields: [toUserId], references: [id])
-  toTeam       String?  // nullable if target is a specific user instead of a team
-  
-  type         String   // e.g., trade, info-share
-  resourceType String?
-  quantity     Int?
-  timestamp    DateTime @default(now())
+model BankSale {
+  id             String      @id @default(uuid())
+  sessionId      String
+  session        Session     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  teamId         String
+  team           SessionTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  shapeType      String      // SQUARE | TRIANGLE | CIRCLE | RECTANGLE | PREMIUM_PACK
+  quantity       Int         @default(1)
+  unitBasePrice  Int
+  multiplier     Float       @default(1.0)
+  finalUnitPrice Int
+  totalPayout    Int
+  qualityNotes   String?
+  soldAt         DateTime    @default(now())
+}
+
+model MarketEvent {
+  id               String    @id @default(uuid())
+  sessionId        String
+  session          Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  title            String
+  description      String
+  code             String    // e.g. "PAPER_FAMINE", "TECH_BOOM"
+  priceMultipliers String    @default("{}") // JSON pl: {"CIRCLE": 1.5}
+  durationSeconds  Int       @default(180)
+  isActive         Boolean   @default(false)
+  triggeredAt      DateTime  @default(now())
 }
 
 model SurveyResponse {
-  id           String   @id @default(uuid())
-  sessionId    String
-  session      Session  @relation(fields: [sessionId], references: [id])
+  id            String    @id @default(uuid())
+  sessionId     String
+  session       Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  userId       String
-  user         User     @relation("SurveyResponder", fields: [userId], references: [id])
-  
-  questionId   String
-  
-  targetUserId String?
-  targetUser   User?    @relation("SurveyTarget", fields: [targetUserId], references: [id])
-  
-  answer       Int      // e.g., Likert scale value
+  phaseType     String    // PRE_GAME | POST_GAME
+  payloadJson   String    // JSON: PreGamePayload vagy PostGamePayload
+  submittedAt   DateTime  @default(now())
+
+  @@unique([sessionId, userId, phaseType])
 }
 
-// --- GLOBAL EXCHANGE SPECIFIC MODELS ---
-
-model Team {
-  id             String   @id @default(uuid())
+model OnaInvitation {
+  id             String       @id @default(uuid())
   sessionId      String
-  session        Session  @relation(fields: [sessionId], references: [id])
-  
-  name           String   // e.g., "Team Alpha"
-  teamType       String   // e.g., "Alpha", "Beta", "Gamma"
-  
-  participants   SessionParticipant[]
+  session        Session      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  uniqueToken    String       @unique
+  expiresAt      DateTime
+  isCompleted    Boolean      @default(false)
+  completedAt    DateTime?
+  responses      OnaResponse[]
 }
 
-model TradeRequest {
-  id                 String   @id @default(uuid())
-  sessionId          String
-  session            Session  @relation(fields: [sessionId], references: [id])
-  
-  fromUserId         String
-  fromUser           User     @relation("SentTrades", fields: [fromUserId], references: [id])
-  toUserId           String
-  toUser             User     @relation("ReceivedTrades", fields: [toUserId], references: [id])
-  
-  // JSON strings: { capital: 0, rawMaterial: 0, wheat: 0, ... }
-  offeredResources   String   @default("{}")
-  requestedResources String   @default("{}")
-  
-  message            String?  // Optional note from the sender
-  status             String   @default("pending") // pending, accepted, rejected, cancelled
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+model OnaResponse {
+  id             String        @id @default(uuid())
+  invitationId   String
+  invitation     OnaInvitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  targetUserId   String
+  relationType   String        // ADVICE | INFORMATION | COLLABORATION | TRUST
+  frequencyScore Int           // 1 to 5
+  createdAt      DateTime      @default(now())
 }

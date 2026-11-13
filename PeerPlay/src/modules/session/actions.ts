@@ -1,258 +1,354 @@
 'use server'
 
 import prisma from '@/lib/prisma'
-import { revalidatePath } from 'next/cache'
+import { safeRevalidatePath } from '@/lib/safeRevalidate'
 import { randomBytes } from 'crypto'
-import { TEAM_PROFILES } from './teamProfiles'
+import { TEAM_ARCHETYPES } from './teamProfiles'
+import { autoRefundOnPhaseEnd } from '@/modules/trade/actions'
+import { WORKSHOP_PHASES, PHASE_DEFAULT_DURATIONS } from './constants'
+import type { WorkshopPhase } from './constants'
 
-export async function createSession(organizationId: string, scenarioId: string) {
-    const joinCode = randomBytes(2).toString('hex').toUpperCase();
 
-    const session = await prisma.session.create({
+
+/**
+ * 1. Workshop Session létrehozása a megadott szervezethez
+ */
+export async function createWorkshopSession(
+  orgId?: string,
+  joinCode?: string,
+  sessionName?: string
+) {
+  let organizationId = orgId
+
+  if (!organizationId) {
+    let defaultOrg = await prisma.organization.findFirst()
+    if (!defaultOrg) {
+      defaultOrg = await prisma.organization.create({
         data: {
-            organizationId,
-            scenarioId,
-            joinCode,
-            status: 'draft',
+          name: 'Demo Vállalat',
+          industry: 'Enterprise Tech',
         },
-    })
-
-    revalidatePath('/dashboard')
-    return session
-}
-
-export async function startSession(sessionId: string) {
-    // Check if session has participants
-    const session = await prisma.session.findUnique({
-        where: { id: sessionId },
-        include: { _count: { select: { participants: true } } }
-    })
-
-    if (!session) throw new Error('Session not found')
-    if (session._count.participants === 0) {
-        throw new Error('Cannot start session without participants')
+      })
     }
+    organizationId = defaultOrg.id
+  }
 
-    // Update session to active and create Round 1
-    const updatedSession = await prisma.$transaction(async (tx) => {
-        const activeSession = await tx.session.update({
-            where: { id: sessionId },
-            data: { status: 'active', currentRound: 1, isRoundActive: true },
-        })
+  const finalJoinCode = (joinCode || randomBytes(2).toString('hex')).toUpperCase()
 
-        await tx.round.create({
-            data: {
-                sessionId,
-                number: 1,
-                state: 'open',
-            }
-        })
+  const session = await prisma.session.create({
+    data: {
+      organizationId,
+      name: sessionName || 'The Trading Game Workshop',
+      joinCode: finalJoinCode,
+      status: 'DRAFT',
+      currentPhase: 'PHASE_0_SETUP',
+      phaseStartedAt: new Date(),
+      phaseDurationSeconds: PHASE_DEFAULT_DURATIONS.PHASE_0_SETUP,
+      isTimerPaused: false,
+      timerRemainingSeconds: PHASE_DEFAULT_DURATIONS.PHASE_0_SETUP,
+    },
+  })
 
-        // --- GLOBAL EXCHANGE TEAM ALLOCATION ---
-        // Check if teams have already been manually created
-        const existingTeams = await tx.team.findMany({ where: { sessionId } })
+  // Automatikusan inicializáljuk a 4 aszimmetrikus csapatot
+  await initializeTeamArchetypes(session.id)
 
-        // Define the 5 farm profiles
-        const teamProfiles = [
-            { type: 'Alpha', name: 'Farm Alpha', raw: 3, tech: 5, cap: 800, eff: 1.4 },
-            { type: 'Beta', name: 'Farm Beta', raw: 15, tech: 1, cap: 200, eff: 0.8 },
-            { type: 'Gamma', name: 'Farm Gamma', raw: 8, tech: 3, cap: 500, eff: 1.0 },
-            { type: 'Delta', name: 'Farm Delta', raw: 5, tech: 2, cap: 1200, eff: 1.0 },
-            { type: 'Epsilon', name: 'Farm Epsilon', raw: 10, tech: 4, cap: 400, eff: 1.2 },
-        ]
-
-        // Map team type -> profile for quick lookup
-        const profileByType: Record<string, typeof teamProfiles[0]> = {}
-        teamProfiles.forEach(p => { profileByType[p.type] = p })
-
-        let teamMap: Record<string, { team: { id: string; teamType: string }, profile: typeof teamProfiles[0] }> = {}
-
-        if (existingTeams.length === 0) {
-            // No manual assignment yet: create teams and round-robin
-            const participants = await tx.sessionParticipant.findMany({ where: { sessionId } })
-            const createdTeams: typeof teamMap[string][] = []
-
-            for (let i = 0; i < Math.min(participants.length, 5); i++) {
-                const profile = teamProfiles[i]
-                const team = await tx.team.create({ data: { sessionId, name: profile.name, teamType: profile.type } })
-                createdTeams.push({ team, profile })
-                teamMap[team.id] = { team, profile }
-            }
-
-            const shuffled = [...participants].sort(() => 0.5 - Math.random())
-            for (let i = 0; i < shuffled.length; i++) {
-                const assignment = createdTeams[i % createdTeams.length]
-                await tx.sessionParticipant.update({
-                    where: { id: shuffled[i].id },
-                    data: { teamId: assignment.team.id, capital: assignment.profile.cap, rawMaterial: assignment.profile.raw, techLevel: assignment.profile.tech, productionEff: assignment.profile.eff, inventory: "{}" }
-                })
-            }
-        } else {
-            // Manual assignment: just initialize resources for each participant based on their team
-            existingTeams.forEach(t => {
-                const profile = profileByType[t.teamType]
-                if (profile) teamMap[t.id] = { team: t, profile }
-            })
-
-            const participants = await tx.sessionParticipant.findMany({ where: { sessionId } })
-            for (const p of participants) {
-                const assignment = p.teamId ? teamMap[p.teamId] : null
-                if (assignment) {
-                    await tx.sessionParticipant.update({
-                        where: { id: p.id },
-                        data: { capital: assignment.profile.cap, rawMaterial: assignment.profile.raw, techLevel: assignment.profile.tech, productionEff: assignment.profile.eff, inventory: "{}" }
-                    })
-                }
-            }
-        }
-
-        return activeSession
-    })
-
-    revalidatePath(`/sessions/${sessionId}`)
-    return updatedSession
+  safeRevalidatePath('/dashboard')
+  safeRevalidatePath('/sessions')
+  return session
 }
 
-export async function closeSession(sessionId: string) {
-    const session = await prisma.session.update({
-        where: { id: sessionId },
-        data: { status: 'closed' }
-    })
-
-    // Close any open rounds
-    await prisma.round.updateMany({
-        where: { sessionId, state: 'open' },
-        data: { state: 'closed' }
-    })
-
-    revalidatePath(`/sessions/${sessionId}`)
-    return session
-}
-
-export async function joinSession(joinCodeParam: string, username: string) {
-    const joinCode = joinCodeParam.toUpperCase()
-    const session = await prisma.session.findUnique({
-        where: { joinCode },
-        include: { organization: true }
-    })
-
-    if (!session) throw new Error('Session not found by this code')
-    if (session.status !== 'draft') throw new Error('Cannot join active or closed session')
-
-    // Find or create user
-    let user = await prisma.user.findFirst({
-        where: { name: username, organizationId: session.organizationId }
-    })
-
-    if (!user) {
-        user = await prisma.user.create({
-            data: {
-                name: username,
-                organizationId: session.organizationId,
-                role: 'Participant'
-            }
-        })
+/**
+ * 2. Aszimmetrikus csapatok inicializálása (Capital, Resource, Tech, Emerging)
+ */
+export async function initializeTeamArchetypes(sessionId: string) {
+  const createdTeams = await prisma.$transaction(async (tx) => {
+    const teams = []
+    for (const archetype of TEAM_ARCHETYPES) {
+      const team = await tx.sessionTeam.upsert({
+        where: {
+          sessionId_name: {
+            sessionId,
+            name: archetype.name,
+          },
+        },
+        create: {
+          sessionId,
+          name: archetype.name,
+          profileCode: archetype.profileCode,
+          cashBalance: archetype.cashBalance,
+          paperSheets: archetype.paperSheets,
+          scissorsCount: archetype.scissorsCount,
+          rulersCount: archetype.rulersCount,
+          templatesCount: archetype.templatesCount,
+        },
+        update: {
+          profileCode: archetype.profileCode,
+          cashBalance: archetype.cashBalance,
+          paperSheets: archetype.paperSheets,
+          scissorsCount: archetype.scissorsCount,
+          rulersCount: archetype.rulersCount,
+          templatesCount: archetype.templatesCount,
+        },
+      })
+      teams.push(team)
     }
+    return teams
+  })
 
-    // Upsert participant
-    await prisma.sessionParticipant.upsert({
-        where: { sessionId_userId: { sessionId: session.id, userId: user.id } },
-        create: { sessionId: session.id, userId: user.id },
-        update: {}
-    })
-
-    return { session, user }
+  safeRevalidatePath(`/sessions/${sessionId}`)
+  safeRevalidatePath(`/play/${sessionId}`)
+  return createdTeams
 }
 
+/**
+ * 3. Fázis léptetése a 11 fázisú állapotgép mentén
+ * Kereskedési kör zárásakor automatikus Escrow refund fut!
+ */
+export async function advanceSessionPhase(sessionId: string, nextPhase: string) {
+  const session = await prisma.session.findUnique({
+    where: { id: sessionId },
+  })
+
+  if (!session) {
+    throw new Error('A keresett szimulációs munkamenet nem található.')
+  }
+
+  // Ha aktív kereskedési körből lépünk ki, visszatérítjük az összes nyitott ajánlatot
+  const tradingPhases = ['PHASE_4_ROUND_1', 'PHASE_6_ROUND_2', 'PHASE_8_ROUND_3']
+  if (tradingPhases.includes(session.currentPhase)) {
+    await autoRefundOnPhaseEnd(sessionId)
+  }
+
+  const duration =
+    PHASE_DEFAULT_DURATIONS[nextPhase as WorkshopPhase] ?? 300
+
+  const nextStatus =
+    nextPhase === 'PHASE_11_DEBRIEF'
+      ? 'COMPLETED'
+      : session.status === 'DRAFT'
+      ? 'ACTIVE'
+      : session.status
+
+  const updatedSession = await prisma.session.update({
+    where: { id: sessionId },
+    data: {
+      currentPhase: nextPhase,
+      status: nextStatus,
+      phaseStartedAt: new Date(),
+      phaseDurationSeconds: duration,
+      isTimerPaused: false,
+      timerRemainingSeconds: duration,
+      closedAt: nextPhase === 'PHASE_11_DEBRIEF' ? new Date() : undefined,
+    },
+  })
+
+  safeRevalidatePath(`/sessions/${sessionId}`)
+  safeRevalidatePath(`/play/${sessionId}`)
+  return updatedSession
+}
+
+/**
+ * 4. Időzítő módosítása (+2 perc hozzáadása vagy szüneteltetés/újraindítás)
+ */
+export async function adjustPhaseTimer(
+  sessionId: string,
+  additionalSeconds: number = 0,
+  isPaused?: boolean
+) {
+  const session = await prisma.session.findUnique({
+    where: { id: sessionId },
+  })
+
+  if (!session) {
+    throw new Error('A munkamenet nem található.')
+  }
+
+  const now = Date.now()
+
+  let newIsPaused = session.isTimerPaused
+  let newDuration = session.phaseDurationSeconds
+  let newRemaining = session.timerRemainingSeconds
+  let newStartedAt = session.phaseStartedAt
+
+  // 1. Szünet / Folytatás kezelése
+  if (typeof isPaused === 'boolean') {
+    if (isPaused && !session.isTimerPaused) {
+      // Szüneteltetés: kiszámoljuk a hátralévő másodperceket és elmentjük
+      const elapsedMs = now - new Date(session.phaseStartedAt).getTime()
+      const elapsedSec = Math.floor(elapsedMs / 1000)
+      newRemaining = Math.max(0, session.phaseDurationSeconds - elapsedSec)
+      newIsPaused = true
+    } else if (!isPaused && session.isTimerPaused) {
+      // Újraindítás: a hátralévő idő lesz az új időtartam
+      newIsPaused = false
+      newStartedAt = new Date()
+      newDuration = session.timerRemainingSeconds
+    }
+  }
+
+  // 2. További másodpercek hozzáadása (+120s stb.)
+  if (additionalSeconds !== 0) {
+    if (newIsPaused) {
+      newRemaining = Math.max(0, newRemaining + additionalSeconds)
+      newDuration = Math.max(0, newDuration + additionalSeconds)
+    } else {
+      newDuration = Math.max(0, newDuration + additionalSeconds)
+    }
+  }
+
+  const updated = await prisma.session.update({
+    where: { id: sessionId },
+    data: {
+      isTimerPaused: newIsPaused,
+      phaseDurationSeconds: newDuration,
+      timerRemainingSeconds: newRemaining,
+      phaseStartedAt: newStartedAt,
+    },
+  })
+
+  safeRevalidatePath(`/sessions/${sessionId}`)
+  safeRevalidatePath(`/play/${sessionId}`)
+  return updated
+}
+
+/**
+ * 5. Résztvevő csatlakozása csapathoz (mobil vagy játékos nézet)
+ */
+export async function joinWorkshopSession(
+  joinCode: string,
+  userName: string,
+  userEmail: string,
+  teamId?: string
+) {
+  const session = await prisma.session.findUnique({
+    where: { joinCode: joinCode.toUpperCase() },
+    include: { teams: true },
+  })
+
+  if (!session) {
+    throw new Error('Érvénytelen workshop kód!')
+  }
+
+  let user = await prisma.user.findUnique({
+    where: { email: userEmail },
+  })
+
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        email: userEmail,
+        name: userName,
+        organizationId: session.organizationId,
+      },
+    })
+  }
+
+  // Csapat kiválasztása vagy hozzárendelés
+  let targetTeamId = teamId
+  if (!targetTeamId) {
+    if (session.teams.length === 0) {
+      const initialized = await initializeTeamArchetypes(session.id)
+      targetTeamId = initialized[0].id
+    } else {
+      // Legkisebb létszámú csapathoz rendelés
+      const teamCounts = await prisma.teamParticipant.groupBy({
+        by: ['teamId'],
+        where: { sessionId: session.id },
+        _count: { userId: true },
+      })
+      const countMap = new Map<string, number>(teamCounts.map((tc) => [tc.teamId, tc._count.userId]))
+      const sortedTeams = [...session.teams].sort(
+        (a, b) => Number(countMap.get(a.id) || 0) - Number(countMap.get(b.id) || 0)
+      )
+      targetTeamId = sortedTeams[0].id
+    }
+  }
+
+  const participant = await prisma.teamParticipant.upsert({
+    where: {
+      sessionId_userId: {
+        sessionId: session.id,
+        userId: user.id,
+      },
+    },
+    create: {
+      sessionId: session.id,
+      userId: user.id,
+      teamId: targetTeamId,
+    },
+    update: {
+      teamId: targetTeamId,
+    },
+  })
+
+  return { session, user, participant }
+}
+
+/**
+ * 6. Session részletes adatainak lekérése (ID vagy Join Code alapján)
+ */
 export async function getSessionDetails(idOrCode: string) {
-    return prisma.session.findFirst({
-        where: { OR: [{ id: idOrCode }, { joinCode: idOrCode }] },
-        include: {
-            organization: true,
-            scenario: true,
-            participants: {
-                include: { user: true, team: true }
-            },
-            rounds: {
-                orderBy: { number: 'desc' },
-                take: 1
-            },
-            teams: true,
-            interactions: true,
-            surveyResponses: true,
-        }
+  const includeQuery = {
+    organization: true,
+    teams: {
+      include: {
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    },
+    tradeTransactions: {
+      orderBy: { createdAt: 'desc' as const },
+    },
+    bankSales: {
+      orderBy: { soldAt: 'desc' as const },
+    },
+    marketEvents: {
+      orderBy: { triggeredAt: 'desc' as const },
+    },
+    surveyResponses: true,
+  }
+
+  let session = await prisma.session.findUnique({
+    where: { id: idOrCode },
+    include: includeQuery,
+  })
+
+  if (!session) {
+    session = await prisma.session.findUnique({
+      where: { joinCode: idOrCode.toUpperCase() },
+      include: includeQuery,
     })
+  }
+
+  return session
 }
 
+/**
+ * 7. Összes session listázása a dashboard számára
+ */
 export async function getSessions() {
-    return prisma.session.findMany({
-        orderBy: { createdAt: 'desc' },
-        include: {
-            organization: true,
-            scenario: true,
-            _count: {
-                select: { participants: true, rounds: true }
-            }
-        }
-    })
+  return await prisma.session.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: {
+      organization: true,
+      teams: true,
+      _count: {
+        select: {
+          teams: true,
+          tradeTransactions: true,
+          bankSales: true,
+          surveyResponses: true,
+        },
+      },
+    },
+  })
 }
 
+// Backward-compatible aliases
+export const createSession = createWorkshopSession
+export const joinSession = joinWorkshopSession
 
-/** Creates the 5 fixed farm team slots for a session (HR step before start) */
-export async function createTeamsForSession(sessionId: string) {
-    const existing = await prisma.team.count({ where: { sessionId } })
-    if (existing > 0) return
 
-    for (const p of TEAM_PROFILES) {
-        await prisma.team.create({
-            data: { sessionId, name: p.name, teamType: p.type }
-        })
-    }
-    revalidatePath(`/sessions/${sessionId}`)
-}
-
-/** HR manually assigns a participant to a specific team */
-export async function assignParticipantToTeam(participantId: string, teamId: string | null, sessionId: string) {
-    await prisma.sessionParticipant.update({
-        where: { id: participantId },
-        data: { teamId }
-    })
-    revalidatePath(`/sessions/${sessionId}`)
-}
-
-export async function startRound(sessionId: string, roundNumber: number) {
-    const session = await prisma.$transaction(async (tx) => {
-        await tx.round.create({
-            data: { sessionId, number: roundNumber, state: 'open' }
-        })
-        return tx.session.update({
-            where: { id: sessionId },
-            data: { currentRound: roundNumber, isRoundActive: true }
-        })
-    })
-    revalidatePath(`/sessions/${sessionId}`)
-    return session
-}
-
-export async function closeRound(sessionId: string) {
-    const session = await prisma.$transaction(async (tx) => {
-        // Close any open rounds
-        await tx.round.updateMany({
-            where: { sessionId, state: 'open' },
-            data: { state: 'closed' }
-        })
-        
-        // Invalidate pending trades when a round closes
-        await tx.tradeRequest.updateMany({
-            where: { sessionId, status: 'pending' },
-            data: { status: 'cancelled' }
-        })
-        
-        return tx.session.update({
-            where: { id: sessionId },
-            data: { isRoundActive: false }
-        })
-    })
-    revalidatePath(`/sessions/${sessionId}`)
-    return session
-}

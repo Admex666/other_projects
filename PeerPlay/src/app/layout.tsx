@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { Toaster } from 'react-hot-toast';
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: "PeerPlay",
-  description: "Behavioral Simulation-Based Organizational Diagnostics Platform",
+  title: "PeerPlay · The Trading Game & Organizational Diagnostics",
+  description: "Behavioral Simulation-Based Organizational Diagnostics Platform (Stripe Enterprise Standard)",
 };
 
 export default function RootLayout({
@@ -24,12 +26,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="hu" className={`${plusJakartaSans.variable} ${jetbrainsMono.variable}`}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="font-sans bg-slate-50 text-slate-900 antialiased min-h-screen selection:bg-blue-100 selection:text-blue-900"
         suppressHydrationWarning
       >
-        <Toaster position="top-center" />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            className: 'text-sm font-medium border border-slate-200 bg-white shadow-md text-slate-800 rounded-lg',
+            duration: 3500,
+          }}
+        />
         {children}
       </body>
     </html>

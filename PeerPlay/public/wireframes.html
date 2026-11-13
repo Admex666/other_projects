@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PeerPlay · 3 Enterprise SaaS Stílusvariáció (Stripe / Vercel / Mercury)</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts for the 3 Enterprise Alternatives -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ================================================================= */
+    /* VARIÁCIÓ 1A: STRIPE ENTERPRISE (Clean Slate & Cobalt Blue)       */
+    /* Benchmark: Stripe Dashboard, Apple B2B, Pitch                     */
+    /* ================================================================= */
+    body.theme-stripe {
+      --bg-canvas: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F1F5F9;
+      --border-color: #E2E8F0;
+      --border-strong: #CBD5E1;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --text-soft: #94A3B8;
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --primary-text: #FFFFFF;
+      --accent-green: #059669;
+      --accent-green-bg: #ECFDF5;
+      --accent-amber: #D97706;
+      --accent-amber-bg: #FFFBEB;
+      --card-radius: 12px;
+      --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+    }
+    body.theme-stripe, body.theme-stripe * {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+    body.theme-stripe .theme-font-mono, body.theme-stripe .tnum {
+      font-family: 'JetBrains Mono', monospace !important;
+    }
+    body.theme-stripe h1, body.theme-stripe h2 {
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    /* ================================================================= */
+    /* VARIÁCIÓ 1B: VERCEL MONOCHROME (Pure Black, Crisp Gray, Geist)   */
+    /* Benchmark: Vercel, Supabase, Next.js Developer Console            */
+    /* ================================================================= */
+    body.theme-vercel {
+      --bg-canvas: #FAFAFA;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F4F4F5;
+      --border-color: #E4E4E7;
+      --border-strong: #D4D4D8;
+      --text-main: #09090B;
+      --text-muted: #71717A;
+      --text-soft: #A1A1AA;
+      --primary: #000000;
+      --primary-hover: #27272A;
+      --primary-text: #FFFFFF;
+      --accent-green: #16A34A;
+      --accent-green-bg: #F0FDF4;
+      --accent-amber: #CA8A04;
+      --accent-amber-bg: #FEFCE8;
+      --card-radius: 8px;
+      --card-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    }
+    body.theme-vercel, body.theme-vercel * {
+      font-family: 'Geist', -apple-system, sans-serif;
+    }
+    body.theme-vercel .theme-font-mono, body.theme-vercel .tnum {
+      font-family: 'Geist Mono', monospace !important;
+    }
+    body.theme-vercel h1, body.theme-vercel h2 {
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    /* ================================================================= */
+    /* VARIÁCIÓ 1C: MERCURY EXECUTIVE (Warm Pearl & Deep Forest Emerald) */
+    /* Benchmark: Mercury Bank, Ramp, Carta, High-End FinTech            */
+    /* ================================================================= */
+    body.theme-mercury {
+      --bg-canvas: #FBFBFA;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F4F4F0;
+      --border-color: #E6E6DF;
+      --border-strong: #D3D3C8;
+      --text-main: #191816;
+      --text-muted: #6B6963;
+      --text-soft: #9E9C94;
+      --primary: #0F3D2E; /* Deep Forest Emerald */
+      --primary-hover: #0A2B20;
+      --primary-text: #FFFFFF;
+      --accent-green: #15803D;
+      --accent-green-bg: #F0FDF4;
+      --accent-amber: #B45309;
+      --accent-amber-bg: #FFFBEB;
+      --card-radius: 14px;
+      --card-shadow: 0 2px 6px rgba(25, 24, 22, 0.04);
+    }
+    body.theme-mercury, body.theme-mercury * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    body.theme-mercury h1, body.theme-mercury h2, body.theme-mercury .font-title {
+      font-family: 'Space Grotesk', sans-serif !important;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    body.theme-mercury .theme-font-mono, body.theme-mercury .tnum {
+      font-family: 'JetBrains Mono', monospace !important;
+    }
+
+    /* COMMON UTILITIES */
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .theme-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      box-shadow: var(--card-shadow);
+      transition: all 0.2s ease;
+    }
+    .theme-border { border-color: var(--border-color); }
+    .theme-border-strong { border-color: var(--border-strong); }
+    .theme-subtle { background-color: var(--bg-subtle); }
+    .theme-text-main { color: var(--text-main); }
+    .theme-text-muted { color: var(--text-muted); }
+    .theme-text-soft { color: var(--text-soft); }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--primary-text);
+      transition: all 0.15s ease;
+    }
+    .btn-primary:hover { background-color: var(--primary-hover); }
+    
+    .badge-green {
+      background-color: var(--accent-green-bg);
+      color: var(--accent-green);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+    .badge-amber {
+      background-color: var(--accent-amber-bg);
+      color: var(--accent-amber);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+    .tnum { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body class="theme-stripe min-h-screen flex flex-col antialiased">
+
+  <!-- TOP HEADER WITH BOTH STYLE SWITCHER AND SCREEN SWITCHER -->
+  <header class="border-b theme-border bg-white/95 backdrop-blur sticky top-0 z-50 px-4 md:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 theme-card rounded-none !border-x-0 !border-t-0 shadow-sm">
+    
+    <!-- BRAND LOGO & TITLE -->
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-stone-900 text-white flex items-center justify-center font-bold text-sm tracking-tight shadow-sm">
+        PP
+      </div>
+      <div>
+        <div class="font-bold text-base tracking-tight leading-none theme-text-main">PeerPlay</div>
+        <div class="text-[11px] theme-font-mono theme-text-muted leading-tight mt-0.5">The Trading Game · Enterprise Design Explorer</div>
+      </div>
+    </div>
+
+    <!-- 1. STYLE ALTERNATIVE SELECTOR (3 REFINED VARIATIONS OF STYLE 1) -->
+    <div class="flex items-center gap-1.5 bg-stone-200/60 p-1 rounded-xl border theme-border">
+      <span class="text-[11px] font-bold px-2 theme-text-muted hidden sm:inline">Stílusvariáció:</span>
+      
+      <!-- Option 1: Stripe -->
+      <button onclick="switchTheme('stripe')" id="btn-theme-stripe" class="theme-btn px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-stone-900 shadow-sm border border-stone-300">
+        1A. Stripe (Cobalt & Slate)
+      </button>
+      
+      <!-- Option 2: Vercel -->
+      <button onclick="switchTheme('vercel')" id="btn-theme-vercel" class="theme-btn px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-stone-600 hover:text-stone-900">
+        1B. Vercel (Monochrome Geist)
+      </button>
+      
+      <!-- Option 3: Mercury -->
+      <button onclick="switchTheme('mercury')" id="btn-theme-mercury" class="theme-btn px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-stone-600 hover:text-stone-900">
+        1C. Mercury (Space Grotesk & Forest)
+      </button>
+    </div>
+
+    <!-- 2. SCREEN VIEW SELECTOR -->
+    <nav class="flex items-center theme-subtle p-1 rounded-lg border theme-border text-xs font-medium">
+      <button onclick="switchScreen('facilitator')" id="tab-facilitator" class="screen-tab px-3 py-1 rounded transition-all bg-white font-bold theme-text-main shadow-sm border theme-border">
+        Facilitátor
+      </button>
+      <button onclick="switchScreen('team')" id="tab-team" class="screen-tab px-3 py-1 rounded transition-all theme-text-muted hover:theme-text-main">
+        Csapat Tablet
+      </button>
+      <button onclick="switchScreen('player')" id="tab-player" class="screen-tab px-3 py-1 rounded transition-all theme-text-muted hover:theme-text-main">
+        Résztvevői Mobil
+      </button>
+      <button onclick="switchScreen('ona')" id="tab-ona" class="screen-tab px-3 py-1 rounded transition-all theme-text-muted hover:theme-text-main">
+        Debrief & ONA
+      </button>
+    </nav>
+  </header>
+
+  <!-- LIVE FONT & BENCHMARK EXPLANATION BAR -->
+  <div class="px-6 py-2.5 text-xs border-b theme-border flex items-center justify-between theme-subtle">
+    <div id="style-description" class="theme-text-muted flex items-center gap-2">
+      <!-- Dynamic via JS -->
+    </div>
+    <div class="hidden md:flex items-center gap-3 theme-font-mono text-[11px] theme-text-muted">
+      <span>Munkamenet: <strong class="theme-text-main">TRD-7729</strong></span>
+      <span>·</span>
+      <span>4 Vállalat · 16 Résztvevő</span>
+    </div>
+  </div>
+
+  <!-- MAIN CANVAS -->
+  <main class="flex-1 p-4 md:p-8 flex justify-center">
+
+    <!-- ============================================================== -->
+    <!-- 1. FACILITATOR SCREEN                                          -->
+    <!-- ============================================================== -->
+    <section id="screen-facilitator" class="device-screen w-full max-w-6xl space-y-6">
+      
+      <!-- HERO TIMER -->
+      <div class="theme-card p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div>
+          <div class="text-[11px] theme-font-mono uppercase tracking-wider theme-text-muted mb-1">
+            Terem A · Facilitátori Irányítópult
+          </div>
+          <h1 class="text-2xl font-bold tracking-tight theme-text-main">
+            The Trading Game — Fázisvezérlés
+          </h1>
+          <div class="text-xs theme-text-muted mt-1">
+            Aktív fázis: <strong class="theme-text-main">1. Termelési & Kereskedelmi Kör (15 perc)</strong>
+          </div>
+        </div>
+
+        <!-- BIG CLASSROOM TIMER -->
+        <div class="flex items-center gap-6 theme-subtle border theme-border px-6 py-3 rounded-xl">
+          <div>
+            <div class="text-[10px] theme-font-mono uppercase tracking-widest theme-text-muted">Hátralévő idő</div>
+            <div class="text-4xl theme-font-mono font-bold tracking-tight theme-text-main tnum">
+              11:42
+            </div>
+          </div>
+          <div class="h-10 w-px theme-border border-r"></div>
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-center gap-2">
+              <button class="theme-subtle border theme-border-strong hover:opacity-80 text-xs px-2.5 py-1.5 rounded font-medium transition theme-text-main">
+                Szünet
+              </button>
+              <button class="btn-primary text-xs px-3 py-1.5 rounded font-medium shadow-sm">
+                +2 perc
+              </button>
+            </div>
+            <button class="text-[11px] text-left underline theme-text-muted hover:theme-text-main">
+              Kör azonnali lezárása
+            </button>
+          </div>
+        </div>
+
+        <!-- PHASE ADVANCE -->
+        <div class="flex items-center gap-2">
+          <button class="border theme-border hover:theme-subtle px-3.5 py-2 rounded-lg text-xs font-semibold theme-text-main transition">
+            ← Előző Fázis
+          </button>
+          <button class="btn-primary px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition">
+            Következő: Piaci Esemény 1 →
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN WORKBENCH -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- COMMODITY BANK DESK (PHYSICAL PRODUCT VALIDATION) -->
+        <div class="lg:col-span-7 theme-card p-6 space-y-5">
+          <div class="border-b theme-border pb-3 flex items-center justify-between">
+            <div>
+              <h2 class="text-base font-bold theme-text-main">Központi Bank & Minőségátvételi Pult</h2>
+              <p class="text-xs theme-text-muted">A csapatok ide hozzák a fizikai papírtermékeket ellenőrzésre.</p>
+            </div>
+            <span class="badge-green text-xs font-semibold px-2.5 py-0.5 rounded-full">
+              Pult Állapot: Nyitva
+            </span>
+          </div>
+
+          <!-- Select Team -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider theme-text-muted mb-2">
+              Leadó Csapat / Vállalat Kiválasztása
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button class="text-left p-3 rounded-lg border theme-border hover:theme-subtle text-xs">
+                <div class="font-bold theme-text-main">Alpha Corp</div>
+                <div class="text-[10px] theme-font-mono theme-text-muted">Tőkeerős</div>
+              </button>
+              <button class="text-left p-3 rounded-lg border-2 border-current theme-subtle text-xs">
+                <div class="font-bold theme-text-main">Beta Ind.</div>
+                <div class="text-[10px] theme-font-mono theme-text-muted">Technológia</div>
+              </button>
+              <button class="text-left p-3 rounded-lg border theme-border hover:theme-subtle text-xs">
+                <div class="font-bold theme-text-main">Gamma Res.</div>
+                <div class="text-[10px] theme-font-mono theme-text-muted">Nyersanyag</div>
+              </button>
+              <button class="text-left p-3 rounded-lg border theme-border hover:theme-subtle text-xs">
+                <div class="font-bold theme-text-main">Delta Vent.</div>
+                <div class="text-[10px] theme-font-mono theme-text-muted">Start-up</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Inspector Table -->
+          <div class="space-y-3 pt-1">
+            <div class="text-xs font-bold uppercase tracking-wider theme-text-muted">
+              Fizikailag Leadott Formák & Darabszámok
+            </div>
+
+            <!-- Square -->
+            <div class="flex items-center justify-between p-3 rounded-lg border theme-border theme-subtle">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 border theme-border bg-white flex items-center justify-center theme-font-mono text-xs font-bold text-stone-700 rounded">
+                  10×10
+                </div>
+                <div>
+                  <div class="text-xs font-bold theme-text-main">Szabályos Négyzet</div>
+                  <div class="text-[11px] theme-font-mono theme-text-muted">Érvényes felvásárlási ár: $300</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="flex items-center border theme-border rounded bg-white overflow-hidden">
+                  <button class="px-3 py-1.5 hover:theme-subtle theme-font-mono font-bold text-sm">-</button>
+                  <span class="px-4 py-1.5 text-xs theme-font-mono font-bold theme-text-main">2</span>
+                  <button class="px-3 py-1.5 hover:theme-subtle theme-font-mono font-bold text-sm">+</button>
+                </div>
+                <div class="text-xs theme-font-mono font-bold theme-text-main w-16 text-right">$600</div>
+              </div>
+            </div>
+
+            <!-- Triangle -->
+            <div class="flex items-center justify-between p-3 rounded-lg border theme-border theme-subtle">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 border theme-border bg-white flex items-center justify-center theme-font-mono text-xs font-bold text-stone-700 rounded">
+                  ▲10
+                </div>
+                <div>
+                  <div class="text-xs font-bold theme-text-main">Egyenlő oldalú Háromszög</div>
+                  <div class="text-[11px] theme-font-mono theme-text-muted">Érvényes felvásárlási ár: $150</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="flex items-center border theme-border rounded bg-white overflow-hidden">
+                  <button class="px-3 py-1.5 hover:theme-subtle theme-font-mono font-bold text-sm">-</button>
+                  <span class="px-4 py-1.5 text-xs theme-font-mono font-bold theme-text-main">1</span>
+                  <button class="px-3 py-1.5 hover:theme-subtle theme-font-mono font-bold text-sm">+</button>
+                </div>
+                <div class="text-xs theme-font-mono font-bold theme-text-main w-16 text-right">$150</div>
+              </div>
+            </div>
+
+            <!-- Circle -->
+            <div class="flex items-center justify-between p-3 rounded-lg border theme-border theme-subtle">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 border theme-border bg-white flex items-center justify-center theme-font-mono text-xs font-bold text-stone-700 rounded-full">
+                  Ø10
+                </div>
+                <div>
+                  <div class="text-xs font-bold theme-text-main">Kör (Sablonnal vágott)</div>
+                  <div class="text-[11px] theme-font-mono theme-text-muted">Érvényes felvásárlási ár: $250</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="flex items-center border theme-border rounded bg-white overflow-hidden">
+                  <button class="px-3 py-1.5 hover:theme-subtle theme-font-mono font-bold text-sm">-</button>
+                  <span class="px-4 py-1.5 text-xs theme-font-mono font-bold theme-text-muted">0</span>
+                  <button class="px-3 py-1.5 hover:theme-subtle theme-font-mono font-bold text-sm">+</button>
+                </div>
+                <div class="text-xs theme-font-mono font-bold theme-text-muted w-16 text-right">$0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total Calculation & Commit -->
+          <div class="pt-4 border-t theme-border flex items-center justify-between">
+            <div>
+              <div class="text-[11px] theme-font-mono theme-text-muted">Kifizetendő összeg (Beta Industries):</div>
+              <div class="text-2xl theme-font-mono font-bold theme-text-main">$750</div>
+            </div>
+            <button onclick="alert('Átvétel rögzítve: Beta Industries egyenlegére $750 jóváírva.')" class="btn-primary text-xs font-bold px-5 py-2.5 rounded-lg shadow-sm">
+              Minőség Elfogadása & Kifizetés
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT: MARKET EVENTS & AUDIT -->
+        <div class="lg:col-span-5 space-y-6">
+
+          <!-- MARKET BULLETIN -->
+          <div class="theme-card p-5 space-y-4">
+            <div class="border-b theme-border pb-2">
+              <h2 class="text-sm font-bold theme-text-main">Piaci Változások & Hirdetmények</h2>
+              <p class="text-[11px] theme-text-muted">Azonnali szinkronizáció a csapatok képernyőivel.</p>
+            </div>
+
+            <div class="space-y-2.5">
+              <div class="p-3.5 rounded-lg border theme-border badge-amber space-y-1">
+                <div class="flex items-center justify-between font-bold text-xs">
+                  <span>Piaci árváltozás (Négyzet)</span>
+                  <span class="text-[10px] theme-font-mono uppercase font-semibold">Érvényben</span>
+                </div>
+                <p class="text-[11px] leading-relaxed opacity-90">
+                  A Bank a szabályos négyzeteket a megnövekedett kereslet miatt $300 helyett ideiglenesen $450-ért vásárolja fel.
+                </p>
+              </div>
+
+              <div class="p-3.5 rounded-lg border theme-border theme-subtle space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-xs theme-text-main">Nyersanyag-korlátozás (Papírembargó)</span>
+                  <button class="border theme-border bg-white hover:theme-subtle text-[11px] px-2.5 py-0.5 rounded font-semibold theme-text-main">
+                    Kiküldés
+                  </button>
+                </div>
+                <p class="text-[11px] theme-text-muted leading-relaxed">
+                  A Bank papírellátása lezárult. Új A4-es papírlapok kizárólag a Gamma Resources csapattól szerezhetők be.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FINANCIAL AUDIT TABLE -->
+          <div class="theme-card p-5 space-y-3">
+            <div class="flex items-center justify-between border-b theme-border pb-2">
+              <h2 class="text-sm font-bold theme-text-main">Csapatok Pénzügyi Állása</h2>
+              <span class="text-[10px] theme-font-mono theme-text-soft">Audit 11:42</span>
+            </div>
+
+            <table class="w-full text-xs">
+              <thead>
+                <tr class="text-[10px] theme-font-mono uppercase theme-text-muted border-b theme-border text-left">
+                  <th class="pb-1.5 font-semibold">Vállalat</th>
+                  <th class="pb-1.5 font-semibold text-right">Eladott Forma</th>
+                  <th class="pb-1.5 font-semibold text-right">Készpénz</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y theme-border theme-font-mono">
+                <tr>
+                  <td class="py-2.5 font-bold theme-text-main">Beta Industries</td>
+                  <td class="py-2.5 text-right theme-text-muted">4 db</td>
+                  <td class="py-2.5 text-right font-bold theme-text-main">$1,850</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 font-medium theme-text-main">Alpha Corp</td>
+                  <td class="py-2.5 text-right theme-text-muted">0 db</td>
+                  <td class="py-2.5 text-right theme-text-muted">$1,500</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 font-medium theme-text-main">Gamma Resources</td>
+                  <td class="py-2.5 text-right theme-text-muted">2 db</td>
+                  <td class="py-2.5 text-right theme-text-muted">$950</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 font-medium theme-text-main">Delta Ventures</td>
+                  <td class="py-2.5 text-right theme-text-muted">1 db</td>
+                  <td class="py-2.5 text-right theme-text-muted">$700</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- 2. TEAM STATION (TABLET)                                       -->
+    <!-- ============================================================== -->
+    <section id="screen-team" class="device-screen hidden w-full max-w-5xl space-y-6">
+      
+      <!-- TEAM HEADER -->
+      <div class="theme-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="text-[10px] theme-font-mono uppercase tracking-wider theme-text-muted mb-0.5">
+            Csapat Munkaállomás · 2. Asztal
+          </div>
+          <h1 class="text-xl font-bold theme-text-main flex items-center gap-2">
+            Beta Industries <span class="text-xs font-semibold px-2 py-0.5 rounded-full badge-green">Technológiai Bajnok</span>
+          </h1>
+        </div>
+
+        <div class="flex items-center gap-6 text-xs theme-font-mono">
+          <div>
+            <div class="theme-text-muted text-[10px] uppercase">Kör hátralévő ideje</div>
+            <div class="text-2xl font-bold theme-text-main tnum">11:42</div>
+          </div>
+          <div class="h-8 w-px theme-border border-r"></div>
+          <div>
+            <div class="theme-text-muted text-[10px] uppercase">Virtuális Egyenleg</div>
+            <div class="text-2xl font-bold theme-text-main tnum">$1,850</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVENTORY LEDGER -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="theme-card p-3.5">
+          <div class="text-[11px] theme-font-mono theme-text-muted">A4 Papírlap (Nyersanyag)</div>
+          <div class="text-xl theme-font-mono font-bold theme-text-main mt-1">2 lap</div>
+          <div class="text-[10px] font-semibold text-amber-600 mt-0.5">Alapanyaghiány</div>
+        </div>
+        <div class="theme-card p-3.5">
+          <div class="text-[11px] theme-font-mono theme-text-muted">Vágóeszköz (Olló)</div>
+          <div class="text-xl theme-font-mono font-bold theme-text-main mt-1">2 db</div>
+          <div class="text-[10px] theme-text-muted mt-0.5">Bérbeadható eszköz</div>
+        </div>
+        <div class="theme-card p-3.5">
+          <div class="text-[11px] theme-font-mono theme-text-muted">Mérőeszköz (Vonalzó)</div>
+          <div class="text-xl theme-font-mono font-bold theme-text-main mt-1">2 db</div>
+          <div class="text-[10px] theme-text-muted mt-0.5">Aktív termelésben</div>
+        </div>
+        <div class="theme-card p-3.5">
+          <div class="text-[11px] theme-font-mono theme-text-muted">Geometriai Sablon</div>
+          <div class="text-xl theme-font-mono font-bold theme-text-main mt-1">2 db</div>
+          <div class="text-[10px] font-semibold text-emerald-600 mt-0.5">Monopólium technológia</div>
+        </div>
+      </div>
+
+      <!-- P2P EXCHANGE & PRICE INDEX -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <div class="lg:col-span-7 theme-card p-5 space-y-4">
+          <div class="border-b theme-border pb-2 flex items-center justify-between">
+            <h2 class="text-sm font-bold theme-text-main">Vállalatközi (P2P) Csereügyletek</h2>
+            <span class="text-[10px] theme-font-mono theme-text-muted">Kétoldalú jóváhagyás kötelező</span>
+          </div>
+
+          <!-- Pending Trade Notice -->
+          <div class="border theme-border rounded-lg p-3.5 theme-subtle text-xs space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold theme-text-main">Beérkezett Csereajánlat · Gamma Resources</span>
+              <span class="text-[10px] theme-font-mono theme-text-muted">11:38</span>
+            </div>
+            <div class="theme-text-muted leading-relaxed theme-font-mono text-[11px]">
+              <div>Átadásra kínálnak: <strong class="theme-text-main">5 lap A4 papír</strong></div>
+              <div>Cserébe kérik: <strong class="theme-text-main">1 db Olló használata + $100</strong></div>
+            </div>
+            <div class="flex items-center gap-2 pt-1">
+              <button onclick="alert('Ajánlat elfogadva! Készletek frissítve.')" class="btn-primary text-xs px-3.5 py-1.5 rounded font-semibold transition">
+                Ajánlat Elfogadása
+              </button>
+              <button onclick="alert('Ajánlat elutasítva.')" class="border theme-border hover:theme-subtle theme-text-main text-xs px-3.5 py-1.5 rounded font-semibold transition">
+                Elutasítás
+              </button>
+            </div>
+          </div>
+
+          <!-- Initiate New Proposal -->
+          <div class="space-y-3 pt-2">
+            <div class="text-xs font-bold theme-text-muted uppercase tracking-wider">Új Kereskedelmi Ajánlat Indítása</div>
+            
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] theme-font-mono theme-text-muted mb-1">Partner Vállalat</label>
+                <select class="w-full border theme-border rounded-lg p-2 text-xs bg-white theme-text-main">
+                  <option>Gamma Resources (Nyersanyag)</option>
+                  <option>Alpha Corp (Tőkeerős)</option>
+                  <option>Delta Ventures (Start-up)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] theme-font-mono theme-text-muted mb-1">Amit átadunk tőlünk</label>
+                <select class="w-full border theme-border rounded-lg p-2 text-xs bg-white theme-text-main">
+                  <option>1 db Olló használata (bérlet)</option>
+                  <option>1 db Geometriai Sablon</option>
+                  <option>Készpénz ($)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] theme-font-mono theme-text-muted mb-1">Amit kérünk cserébe</label>
+              <input type="text" placeholder="Pl. 4 lap A4 papír vagy $250 készpénz" class="w-full border theme-border rounded-lg p-2 text-xs bg-white theme-text-main">
+            </div>
+
+            <button onclick="alert('Kereskedelmi ajánlat továbbítva.')" class="w-full btn-primary text-xs py-2.5 rounded-lg font-bold shadow-sm transition">
+              Ajánlat Hivatalos Továbbítása
+            </button>
+          </div>
+        </div>
+
+        <!-- BANK PRICE INDEX -->
+        <div class="lg:col-span-5 theme-card p-5 space-y-4">
+          <div class="border-b theme-border pb-2">
+            <h2 class="text-sm font-bold theme-text-main">Hivatalos Banki Árfolyamok</h2>
+            <p class="text-[11px] theme-text-muted">A leadott termékek minőségi követelményei és árai.</p>
+          </div>
+
+          <div class="space-y-2 text-xs theme-font-mono">
+            <div class="flex items-center justify-between p-2 rounded-lg border theme-border theme-subtle">
+              <span class="theme-text-main font-medium">Négyzet (10×10 cm)</span>
+              <span class="font-bold theme-text-main">$450 <span class="text-[10px] text-amber-600 font-normal">(Emelt ár)</span></span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg border theme-border theme-subtle">
+              <span class="theme-text-main font-medium">Háromszög (10 cm oldal)</span>
+              <span class="font-bold theme-text-main">$150</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg border theme-border theme-subtle">
+              <span class="theme-text-main font-medium">Kör (Ø 10 cm sablonnal)</span>
+              <span class="font-bold theme-text-main">$250</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg border theme-border theme-subtle">
+              <span class="theme-text-main font-medium">Prémium Csomag (2▲ + 1⬛)</span>
+              <span class="font-bold theme-text-main">$800</span>
+            </div>
+          </div>
+
+          <div class="p-3.5 theme-subtle rounded-lg border theme-border text-xs theme-text-muted leading-relaxed">
+            <div class="font-bold theme-text-main mb-0.5">Minőségi szabvány:</div>
+            Az egyenetlen élű vagy mérethibás formákat a Bank selejtként elutasítja. A fizikai vágás előtt ellenőrizzétek a méretet vonalzóval!
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- 3. PLAYER MOBILE VIEW                                          -->
+    <!-- ============================================================== -->
+    <section id="screen-player" class="device-screen hidden w-full flex justify-center">
+      
+      <div class="w-full max-w-[380px] theme-card p-6 rounded-[32px] shadow-lg space-y-6">
+        
+        <div class="flex items-center justify-between border-b theme-border pb-3 text-xs">
+          <div>
+            <div class="text-[10px] theme-font-mono uppercase theme-text-soft">PeerPlay Mobile</div>
+            <div class="font-bold theme-text-main">Kovács Péter</div>
+          </div>
+          <span class="text-[11px] theme-font-mono badge-green px-2 py-0.5 rounded-full font-semibold">
+            Beta Industries
+          </span>
+        </div>
+
+        <div class="flex items-center justify-between text-[11px] theme-font-mono theme-text-muted">
+          <span>Kérdés 2 / 3</span>
+          <span class="font-semibold theme-text-main">Peer Értékelés</span>
+        </div>
+
+        <div class="space-y-4">
+          <div class="space-y-1">
+            <h2 class="text-base font-bold theme-text-main leading-snug">
+              Ki koordinálta leginkább a csapatok közötti együttműködést?
+            </h2>
+            <p class="text-xs theme-text-muted">
+              Jelöld meg azt a résztvevőt, aki a legaktívabban segítette az információáramlást a kereskedelmi körökben.
+            </p>
+          </div>
+
+          <div class="space-y-2 pt-1">
+            <label class="flex items-center justify-between p-3 rounded-lg border-2 border-current theme-subtle text-xs cursor-pointer">
+              <div>
+                <div class="font-bold theme-text-main">Nagy Anna</div>
+                <div class="text-[11px] theme-text-muted">Beta Industries (Saját csapat)</div>
+              </div>
+              <span class="w-4 h-4 rounded-full border-2 border-current flex items-center justify-center">
+                <span class="w-2 h-2 rounded-full bg-current"></span>
+              </span>
+            </label>
+
+            <label class="flex items-center justify-between p-3 rounded-lg border theme-border hover:theme-subtle text-xs cursor-pointer">
+              <div>
+                <div class="font-medium theme-text-main">Szabó Balázs</div>
+                <div class="text-[11px] theme-text-muted">Alpha Corp (Kereskedelmi tárgyaló)</div>
+              </div>
+              <span class="w-4 h-4 rounded-full border theme-border"></span>
+            </label>
+
+            <label class="flex items-center justify-between p-3 rounded-lg border theme-border hover:theme-subtle text-xs cursor-pointer">
+              <div>
+                <div class="font-medium theme-text-main">Tóth Dániel</div>
+                <div class="text-[11px] theme-text-muted">Gamma Resources (Alapanyagfelelős)</div>
+              </div>
+              <span class="w-4 h-4 rounded-full border theme-border"></span>
+            </label>
+          </div>
+
+          <button onclick="alert('Válasz mentve.')" class="w-full btn-primary text-xs py-3 rounded-lg font-bold shadow-sm mt-4">
+            Tovább a Következő Kérdésre →
+          </button>
+        </div>
+
+        <div class="text-center pt-2">
+          <span class="text-[10px] theme-font-mono theme-text-soft">A visszajelzések anonim módon aggregálódnak.</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- 4. DEBRIEF & ONA REPORT VIEW                                   -->
+    <!-- ============================================================== -->
+    <section id="screen-ona" class="device-screen hidden w-full max-w-6xl space-y-6">
+      
+      <div class="theme-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="text-[10px] theme-font-mono uppercase tracking-wider theme-text-muted mb-0.5">
+            Szervezetdiagnosztikai Összegzés · PeerPlay Intelligence
+          </div>
+          <h1 class="text-2xl font-bold tracking-tight theme-text-main">
+            Hálózatelemzés & Szimulált Viselkedési Összevetés
+          </h1>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button class="border theme-border hover:theme-subtle theme-text-main text-xs px-3.5 py-2 rounded-lg font-semibold transition">
+            Nyomtatóbarát PDF
+          </button>
+          <button class="btn-primary text-xs px-4 py-2 rounded-lg font-semibold shadow-sm transition">
+            HR Dashboard Mentés
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- SOCIOGRAM -->
+        <div class="lg:col-span-7 theme-card p-6 space-y-4">
+          <div class="flex items-center justify-between border-b theme-border pb-3">
+            <div>
+              <h2 class="text-base font-bold theme-text-main">Szervezeti Topológia & Kapcsolati Háló</h2>
+              <p class="text-xs theme-text-muted">A szimulált piaci cserék és a valós munkahelyi információáramlás átfedése.</p>
+            </div>
+            <div class="text-[11px] theme-font-mono theme-text-muted">
+              Hálózati Sűrűség: <strong class="theme-text-main">64%</strong>
+            </div>
+          </div>
+
+          <div class="w-full h-80 theme-subtle border theme-border rounded-lg p-6 relative flex items-center justify-center overflow-hidden">
+            <svg class="absolute inset-0 w-full h-full pointer-events-none stroke-stone-400" stroke-width="1.5">
+              <line x1="25%" y1="35%" x2="75%" y2="35%" stroke="currentColor" stroke-width="2" />
+              <line x1="25%" y1="35%" x2="50%" y2="70%" stroke="currentColor" stroke-width="1.5" />
+              <line x1="75%" y1="35%" x2="50%" y2="70%" stroke="currentColor" stroke-width="2" />
+              <line x1="50%" y1="70%" x2="85%" y2="75%" stroke="currentColor" stroke-dasharray="3" />
+            </svg>
+
+            <div class="absolute top-[25%] left-[15%] theme-card p-3 rounded-lg shadow-sm text-center">
+              <div class="text-xs font-bold theme-text-main">Alpha Corp</div>
+              <div class="text-[10px] theme-font-mono theme-text-muted">In: 4 · Out: 2</div>
+            </div>
+
+            <div class="absolute top-[25%] right-[15%] theme-card p-3 rounded-lg shadow-sm text-center">
+              <div class="text-xs font-bold theme-text-main">Beta Industries</div>
+              <div class="text-[10px] theme-font-mono theme-text-muted">In: 6 · Out: 5</div>
+            </div>
+
+            <div class="absolute bottom-[20%] left-[40%] bg-stone-900 text-white p-3.5 rounded-lg shadow-md text-center">
+              <div class="text-xs font-bold">Nagy Anna (Közvetítő Híd)</div>
+              <div class="text-[10px] theme-font-mono text-stone-300">Betweenness Centrality: 0.82</div>
+            </div>
+
+            <div class="absolute bottom-[18%] right-[8%] theme-card p-2.5 rounded-lg text-center opacity-70">
+              <div class="text-xs font-medium theme-text-muted">Delta Ventures</div>
+              <div class="text-[10px] theme-font-mono text-rose-500">Silókockázat</div>
+            </div>
+          </div>
+
+          <div class="text-[11px] theme-text-muted theme-font-mono flex items-center justify-between pt-1">
+            <span>Folytonos vonal: Kölcsönös P2P csere (Reciprocitás)</span>
+            <span>Szaggatott vonal: Egyirányú információáramlás</span>
+          </div>
+        </div>
+
+        <!-- DIAGNOSTIC MEMO -->
+        <div class="lg:col-span-5 theme-card p-6 space-y-5">
+          <div class="border-b theme-border pb-2">
+            <h2 class="text-base font-bold theme-text-main">Vezetői Diagnosztikai Megállapítások</h2>
+            <p class="text-xs theme-text-muted">Módszertani hipotézisek a szervezeti együttműködés fejlesztéséhez.</p>
+          </div>
+
+          <div class="space-y-4 text-xs leading-relaxed theme-text-muted">
+            <div>
+              <div class="font-bold theme-text-main mb-0.5">1. Informális Kulcsszereplő (Broker):</div>
+              <p>
+                <strong class="theme-text-main">Nagy Anna</strong> mind a kereskedelmi tárgyalásokban, mind a munkahelyi felmérésben központi híd-szerepet töltött be a szervezeti egységek között. Az információáramlás stabilitása nagymértékben tőle függ.
+              </p>
+            </div>
+
+            <div>
+              <div class="font-bold theme-text-main mb-0.5">2. Szervezeti Silósodási Kockázat:</div>
+              <p>
+                A <strong class="theme-text-main">Delta Ventures</strong> csapat belsőleg hatékonyan termelt, ám kifelé alig kezdeményezett együttműködést. Ez a minta a valós munkahelyi ONA adatokban is visszaköszön: perifériás szerepben vannak.
+              </p>
+            </div>
+
+            <div>
+              <div class="font-bold theme-text-main mb-0.5">3. Bevonódási & Energiaszint Dinamika:</div>
+              <p>
+                A résztvevők kezdő energiaszintje (átlagosan 6.2/10) a 2. kör piaci változásai után szignifikánsan emelkedett (8.4/10). A szimuláció hatékonyan oldotta a kezdeti passzivitást.
+              </p>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t theme-border">
+            <div class="text-[11px] theme-font-mono theme-text-soft">
+              Ajánlott beavatkozás: Keresztfunkcionális kooperációs műhely a Delta és Beta csapatok között.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t theme-border bg-white/50 px-6 py-4 text-center text-xs theme-text-soft theme-font-mono">
+    PeerPlay Intelligence · Enterprise SaaS Design Explorer · Switch between 3 Variations above
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+    const themeDetails = {
+      stripe: {
+        desc: '<strong class="theme-text-main font-bold">1A. Stripe Enterprise (Cobalt & Slate):</strong> Hideg kékesszürke vászon (#F8FAFC), tiszta fehér kártyák, kobaltkék (#2563EB) gombok, Plus Jakarta Sans betűtípus. Ultra-megbízható fintech elegancia.',
+        benchmark: 'Benchmark: Stripe Dashboard, Apple B2B, Pitch'
+      },
+      vercel: {
+        desc: '<strong class="theme-text-main font-bold">1B. Vercel Monochrome (Pure Black & Geist):</strong> Minimál fekete-fehér (#000000 / #FAFAFA), borotvaéles 1px szürke vonalak, szigorú Vercel Geist + Geist Mono betűkészlet. Hi-tech fejlesztői és elemzői precizitás.',
+        benchmark: 'Benchmark: Vercel, Supabase, Linear Light'
+      },
+      mercury: {
+        desc: '<strong class="theme-text-main font-bold">1C. Mercury Executive (Forest Emerald & Space Grotesk):</strong> Meleg gyöngyház vászon (#FBFBFA), mély erdei smaragdzöld (#0F3D2E) akcentus, karakteres Space Grotesk címek. Prémium neo-bank és vezetési tanácsadói luxus.',
+        benchmark: 'Benchmark: Mercury Bank, Ramp, Carta'
+      }
+    };
+
+    function switchTheme(themeName) {
+      document.body.classList.remove('theme-stripe', 'theme-vercel', 'theme-mercury');
+      document.body.classList.add('theme-' + themeName);
+
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-stone-900', 'shadow-sm', 'border', 'border-stone-300');
+        btn.classList.add('text-stone-600');
+      });
+      const activeBtn = document.getElementById('btn-theme-' + themeName);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-white', 'text-stone-900', 'shadow-sm', 'border', 'border-stone-300');
+        activeBtn.classList.remove('text-stone-600');
+      }
+
+      document.getElementById('style-description').innerHTML = 
+        themeDetails[themeName].desc + ' <span class="ml-2 px-2 py-0.5 rounded bg-stone-300/40 text-[10px] theme-font-mono font-bold">' + themeDetails[themeName].benchmark + '</span>';
+    }
+
+    function switchScreen(screenId) {
+      document.querySelectorAll('.device-screen').forEach(el => el.classList.add('hidden'));
+      const target = document.getElementById('screen-' + screenId);
+      if (target) target.classList.remove('hidden');
+
+      document.querySelectorAll('.screen-tab').forEach(tab => {
+        tab.classList.remove('bg-white', 'font-bold', 'theme-text-main', 'shadow-sm', 'border', 'theme-border');
+        tab.classList.add('theme-text-muted');
+      });
+      const activeTab = document.getElementById('tab-' + screenId);
+      if (activeTab) {
+        activeTab.classList.add('bg-white', 'font-bold', 'theme-text-main', 'shadow-sm', 'border', 'theme-border');
+        activeTab.classList.remove('theme-text-muted');
+      }
+    }
+
+    // Initialize
+    switchTheme('stripe');
+  </script>
+</body>
+</html>

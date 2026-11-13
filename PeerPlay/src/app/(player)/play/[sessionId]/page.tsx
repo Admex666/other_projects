@@ -5,22 +5,23 @@ import { notFound } from 'next/navigation'
 import PlaySessionClient from './PlaySessionClient'
 
 export default async function PlaySessionPage({
-    params,
-    searchParams
+  params,
+  searchParams,
 }: {
-    params: Promise<{ sessionId: string }>
-    searchParams: Promise<{ userId: string }>
+  params: Promise<{ sessionId: string }>
+  searchParams: Promise<{ teamId?: string; userId?: string }>
 }) {
-    const { sessionId } = await params;
-    const { userId } = await searchParams;
-    const initialSessionData = await getSessionDetails(sessionId)
-    if (!initialSessionData) notFound()
+  const { sessionId } = await params
+  const { teamId } = await searchParams
+  const initialSessionData = await getSessionDetails(sessionId)
 
-    return (
-        <PlaySessionClient
-            sessionId={sessionId}
-            initialUserId={userId}
-            initialSessionData={initialSessionData as any}
-        />
-    )
+  if (!initialSessionData) notFound()
+
+  return (
+    <PlaySessionClient
+      sessionId={initialSessionData.id}
+      initialTeamId={teamId}
+      initialSessionData={initialSessionData as any}
+    />
+  )
 }

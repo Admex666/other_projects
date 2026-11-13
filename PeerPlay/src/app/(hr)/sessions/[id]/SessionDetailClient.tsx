@@ -1,164 +1,202 @@
 'use client'
 
+import { useState } from 'react'
 import useSWR from 'swr'
 import Link from 'next/link'
-import StartSessionButton from '@/components/StartSessionButton'
-import NetworkGraph from '@/components/NetworkGraph'
-import HRTeamAllocationPanel from '@/components/HRTeamAllocationPanel'
-import HRReportPanel from '@/components/HRReportPanel'
-import HREventPanel from '@/components/HREventPanel'
-import { getSessionDetails, closeSession, startRound, closeRound } from '@/modules/session/actions'
+import { getSessionDetails } from '@/modules/session/actions'
+import PhaseControlHeroTimer from '@/components/facilitator/PhaseControlHeroTimer'
+import BankIntakeDesk from '@/components/facilitator/BankIntakeDesk'
+import MarketEventsDispatcher from '@/components/facilitator/MarketEventsDispatcher'
+import LiveLeaderboard from '@/components/facilitator/LiveLeaderboard'
 
 const fetcher = async (id: string) => {
-    return await getSessionDetails(id)
+  return await getSessionDetails(id)
 }
 
 export default function SessionDetailClient({ initialSessionData }: { initialSessionData: any }) {
-    const { data: sessionData } = useSWR(initialSessionData.id, fetcher, {
-        fallbackData: initialSessionData,
-        refreshInterval: 3000,
-        revalidateOnFocus: true
-    })
+  const { data: session } = useSWR(initialSessionData.id, fetcher, {
+    fallbackData: initialSessionData,
+    refreshInterval: 2500,
+    revalidateOnFocus: true,
+  })
 
-    const session = sessionData as any
+  const [activeTab, setActiveTab] = useState<'overview' | 'bank' | 'market' | 'leaderboard'>('overview')
 
-    if (!session) return <div>Loading...</div>
-
+  if (!session) {
     return (
-        <div className="min-h-screen bg-gray-50 p-8">
-            <div className="max-w-5xl mx-auto space-y-6">
-                <div className="flex items-center space-x-4 mb-8">
-                    <Link href="/dashboard" className="text-gray-500 hover:text-gray-900">
-                        &larr; Back to Dashboard
-                    </Link>
-                </div>
-
-                <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex justify-between items-start">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Session: {session.scenario.name}</h1>
-                        <p className="text-gray-600">
-                            Room Code: <span className="font-mono text-2xl bg-indigo-100 text-indigo-900 border border-indigo-200 px-3 py-1 rounded tracking-widest font-black uppercase">{session.joinCode}</span>
-                        </p>
-
-                        <div className="mt-6 space-y-2 text-sm text-gray-700">
-                            <p><span className="font-semibold text-gray-900">Organization:</span> {session.organization.name}</p>
-                            <p><span className="font-semibold text-gray-900">Scenario:</span> {session.scenario.name} (v{session.scenario.version})</p>
-                            <p><span className="font-semibold text-gray-900">Created:</span> {new Date(session.createdAt).toLocaleString()}</p>
-                            <p><span className="font-semibold text-gray-900">Status:</span>
-                                <span className={`ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                  ${session.status === 'active' ? 'bg-green-100 text-green-800' :
-                                        session.status === 'draft' ? 'bg-gray-100 text-gray-800' : 'bg-blue-100 text-blue-800'}`}>
-                                    {session.status.toUpperCase()}
-                                </span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="text-right space-y-4">
-                        {session.status === 'draft' && (
-                            <StartSessionButton sessionId={session.id} participantsCount={session.participants.length} />
-                        )}
-                        {session.status === 'active' && (
-                            <div className="flex flex-col items-end space-y-2">
-                                <span className={`px-4 py-2 font-bold rounded-lg shadow ${session.isRoundActive ? 'bg-green-500 text-white' : 'bg-yellow-500 text-white'}`}>
-                                    Round {session.currentRound} {session.isRoundActive ? 'Active' : 'Paused'}
-                                </span>
-                                <div className="flex gap-2">
-                                    {!session.isRoundActive ? (
-                                        <button
-                                            onClick={async () => { await startRound(session.id, session.currentRound + 1); }}
-                                            className="px-3 py-1 bg-indigo-600 text-white text-sm rounded shadow hover:bg-indigo-700"
-                                        >
-                                            Kör Indítása
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={async () => { await closeRound(session.id); }}
-                                            className="px-3 py-1 bg-amber-600 text-white text-sm rounded shadow hover:bg-amber-700"
-                                        >
-                                            Kör Lezárása
-                                        </button>
-                                    )}
-                                </div>
-                                <button
-                                    onClick={async () => { await closeSession(session.id); }}
-                                    className="text-sm underline text-red-600 hover:text-red-800 mt-2"
-                                >
-                                    End Session (Enable Surveys)
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* HR Manual Team Allocation - only during draft */}
-                {session.status === 'draft' && (
-                    <HRTeamAllocationPanel
-                        sessionId={session.id}
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        participants={session.participants as any}
-                        teams={session.teams}
-                    />
-                )}
-
-                {/* Network Graph */}
-                {(session.status === 'active' || session.status === 'closed') && (
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h2 className="text-xl font-bold bg-gray-50 -my-6 -mx-6 p-4 border-b border-gray-100 mb-6 flex justify-between">
-                            <span>Organizational Network</span>
-                            <span className="text-sm bg-white border px-3 py-1 rounded-full font-normal">
-                                {session.interactions.length} Trades &bull; {session.surveyResponses.length} Surveys
-                            </span>
-                        </h2>
-                        <NetworkGraph
-                            participants={session.participants}
-                            interactions={session.interactions}
-                            surveyResponses={session.surveyResponses}
-                        />
-                    </div>
-                )}
-
-                {/* Event Control Panel - active and round >= 3 */}
-                <HREventPanel
-                    sessionId={session.id}
-                    isVisible={session.status === 'active' && session.currentRound >= 3}
-                />
-
-                {/* Live Team Report - active or closed */}
-                {(session.status === 'active' || session.status === 'closed') && (
-                    <HRReportPanel
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        teams={session.teams as any}
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        participants={session.participants as any}
-                    />
-                )}
-                {/* Participants List */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h2 className="text-xl font-bold bg-gray-50 -my-6 -mx-6 p-4 border-b border-gray-100 mb-6">
-                        Participants ({session.participants.length})
-                    </h2>
-
-                    {session.participants.length > 0 ? (
-                        <ul className="divide-y divide-gray-200">
-                            {session.participants.map((p: any) => (
-                                <li key={p.id} className="py-3 flex justify-between items-center">
-                                    <div>
-                                        <p className="font-medium text-gray-900">{p.user.name}</p>
-                                        <p className="text-sm text-gray-600">{p.user.role} {p.user.teamMembership ? `• ${p.user.teamMembership}` : ''}</p>
-                                    </div>
-                                    <div className="text-sm text-gray-400">
-                                        Joined at {new Date(p.joinedAt).toLocaleTimeString()}
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="text-gray-500 text-center py-4">No participants have joined yet.</p>
-                    )}
-                </div>
-
-            </div>
-        </div>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-sm font-mono text-slate-500">Munkamenet betöltése...</div>
+      </div>
     )
+  }
+
+  // Active market event multiplier parsing
+  const activeEvent = session.marketEvents?.find((e: any) => e.isActive)
+  let activeMultipliers: Record<string, number> = {}
+  if (activeEvent?.priceMultipliers) {
+    try {
+      activeMultipliers = JSON.parse(activeEvent.priceMultipliers)
+    } catch (e) {
+      console.warn('Error parsing multipliers:', e)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-16">
+      {/* Facilitator Top Header Bar */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-2xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/dashboard"
+              className="text-slate-400 hover:text-slate-700 transition p-1 rounded hover:bg-slate-100"
+              title="Vissza az áttekintőhöz"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+            </Link>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                  Facilitátori Irányítópult
+                </span>
+                <span className="text-xs text-slate-400 font-mono">
+                  {session.organization?.name || 'Vállalat'}
+                </span>
+              </div>
+              <h1 className="text-lg font-extrabold text-slate-900 tracking-tight">
+                {session.name || 'The Trading Game Workshop'}
+              </h1>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* PIN Code Badge */}
+            <div className="flex items-center gap-2 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg">
+              <span className="text-[10px] font-mono text-slate-500 uppercase font-bold">Terem PIN:</span>
+              <span className="font-mono font-black text-lg text-slate-900 tracking-widest">
+                {session.joinCode}
+              </span>
+            </div>
+
+            {/* Direct Projector Debrief Link */}
+            <Link
+              href={`/sessions/${session.id}/debrief`}
+              target="_blank"
+              className="px-3.5 py-1.5 border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5" />
+              </svg>
+              <span>Debrief Kivetítő</span>
+            </Link>
+
+            {/* Direct Station Link */}
+            <Link
+              href={`/play/${session.id}`}
+              target="_blank"
+              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-xs flex items-center gap-1"
+            >
+              <span>Csapat Munkaállomás</span>
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-2 border-t border-slate-100">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`py-2.5 px-4 text-xs font-bold border-b-2 transition cursor-pointer ${
+              activeTab === 'overview'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            Fázisvezérlő & Időzítő
+          </button>
+          <button
+            onClick={() => setActiveTab('bank')}
+            className={`py-2.5 px-4 text-xs font-bold border-b-2 transition cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'bank'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <span>Központi Bank Pult</span>
+            {session.bankSales?.length > 0 && (
+              <span className="font-mono text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded-full">
+                {session.bankSales.length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('market')}
+            className={`py-2.5 px-4 text-xs font-bold border-b-2 transition cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'market'
+                ? 'border-amber-600 text-amber-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <span>Piaci Események Dispatcher</span>
+            {activeEvent && activeEvent.isActive && (
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('leaderboard')}
+            className={`py-2.5 px-4 text-xs font-bold border-b-2 transition cursor-pointer ${
+              activeTab === 'leaderboard'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            Élő Vállalati Rangsor
+          </button>
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            <PhaseControlHeroTimer
+              sessionId={session.id}
+              currentPhase={session.currentPhase}
+              phaseStartedAt={session.phaseStartedAt}
+              phaseDurationSeconds={session.phaseDurationSeconds}
+              isTimerPaused={session.isTimerPaused}
+              timerRemainingSeconds={session.timerRemainingSeconds}
+            />
+
+            {/* Quick Overview of the 4 Teams */}
+            <LiveLeaderboard teams={session.teams || []} />
+          </div>
+        )}
+
+        {activeTab === 'bank' && (
+          <BankIntakeDesk
+            sessionId={session.id}
+            teams={session.teams || []}
+            activeMultipliers={activeMultipliers}
+            recentSales={session.bankSales || []}
+          />
+        )}
+
+        {activeTab === 'market' && (
+          <MarketEventsDispatcher
+            sessionId={session.id}
+            activeEvent={activeEvent || null}
+          />
+        )}
+
+        {activeTab === 'leaderboard' && (
+          <LiveLeaderboard teams={session.teams || []} />
+        )}
+      </main>
+    </div>
+  )
 }
