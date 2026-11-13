@@ -409,6 +409,13 @@ export function evaluateCardActivation(
       return allCards.length * pointsPerCard;
     }
 
+    case 'tableau_color_count': {
+      const targetColor = effect.targetColor as CardColor;
+      const pointsPerCard = (effect.pointsPerCard as number) || 1;
+      const count = allCards.filter((c) => c.card.color === targetColor).length;
+      return count * pointsPerCard;
+    }
+
     case 'row_col_type_color': {
       const targetColor = effect.color as CardColor;
       const targetType = effect.cardType as CardType;

@@ -84,7 +84,8 @@ export function dealStartingHands(deck: CardDefinition[]): {
     c.effect?.type === 'row_col_color' ||
     c.effect?.type === 'row_col_type_color' ||
     c.effect?.type === 'tableau_name_starts_s' ||
-    c.effect?.type === 'tableau_card_count';
+    c.effect?.type === 'tableau_card_count' ||
+    c.effect?.type === 'tableau_color_count';
 
   p1Hand.sort((a, b) => (canScoreImmediate(b) ? 1 : 0) - (canScoreImmediate(a) ? 1 : 0));
   p2Hand.sort((a, b) => (canScoreImmediate(b) ? 1 : 0) - (canScoreImmediate(a) ? 1 : 0));

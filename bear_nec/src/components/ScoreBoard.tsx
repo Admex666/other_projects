@@ -85,8 +85,10 @@ export const ScoreBoard: React.FC<ScoreBoardProps> = ({
                   Active
                 </span>
               </div>
-              <span className="text-[10px] text-stone-300 font-serif">
-                Bee Hives: {playerHives} × {player.beeTokens} = +{projectedBeeBonus} VP
+              <span className="text-[10px] text-stone-300 font-serif inline-flex items-center gap-1">
+                <span>Bee Hives: {playerHives} × {player.beeTokens} = +{projectedBeeBonus}</span>
+                <GameIcon type="vp" size="xs" />
+                <span>VP</span>
               </span>
             </div>
 

@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 import type { WebSocket } from 'ws';
-import type { GameState, GridPosition, GameAction } from '../game/types';
+import type { GameState, GridPosition, GameAction, RoundSummary } from '../game/types';
 import {
   createInitialGameState,
   executeSelectCards,
@@ -33,6 +33,7 @@ export interface GameRoom {
   gameState: GameState | null;
   turnState: EngineTurnState;
   rematchRequests: Set<string>;
+  readyNextRoundPlayers: Set<string>;
   disconnectTimeouts: Map<string, NodeJS.Timeout>;
 }
 
@@ -108,6 +109,7 @@ export class RoomManager {
       gameState: null,
       turnState: createInitialTurnState(),
       rematchRequests: new Set(),
+      readyNextRoundPlayers: new Set(),
       disconnectTimeouts: new Map(),
     };
 
@@ -260,6 +262,9 @@ export class RoomManager {
     }
 
     const sanitized = room.gameState ? filterStateForPlayer(room.gameState, playerId) : undefined;
+    if (sanitized && room.readyNextRoundPlayers.size > 0) {
+      sanitized.readyNextRoundPlayers = Array.from(room.readyNextRoundPlayers);
+    }
     return {
       success: true,
       state: sanitized,
@@ -274,7 +279,13 @@ export class RoomManager {
     playerId: string,
     action:
       | GameAction
-      | { type: 'SUBMIT_SELECTION'; tableauCardId: number; reserveCardId: number; position?: GridPosition }
+      | {
+          type: 'SUBMIT_SELECTION';
+          tableauCardId: number;
+          reserveCardId: number;
+          position?: GridPosition;
+          activationOrder?: number[];
+        }
       | { type: 'CHOOSE_REFILL_OPTION'; decision: 'keep' | 'discard' }
   ): {
     success: boolean;
@@ -321,12 +332,14 @@ export class RoomManager {
           tableauCardId: action.tableauCardId,
           reserveCardId: action.reserveCardId,
           position: action.position,
+          activationOrder: action.activationOrder,
         });
 
         room.gameState = result.state;
         room.turnState = result.turnState;
 
         if (result.roundResolved) {
+          room.readyNextRoundPlayers.clear();
           this.broadcastRoundResolved(upperRoomId, result.roundResolved);
         } else {
           this.broadcastState(upperRoomId, 'CARD_SELECTED');
@@ -343,6 +356,7 @@ export class RoomManager {
         type: 'CONFIRM_PLACEMENT',
         playerId,
         position: action.position,
+        activationOrder: action.activationOrder,
       };
 
       const validation = isValidAction(room.gameState, placementAction);
@@ -353,12 +367,14 @@ export class RoomManager {
       const result = executeConfirmPlacement(room.gameState, room.turnState, {
         playerId,
         position: action.position,
+        activationOrder: action.activationOrder,
       });
 
       room.gameState = result.state;
       room.turnState = result.turnState;
 
       if (result.roundResolved) {
+        room.readyNextRoundPlayers.clear();
         this.broadcastRoundResolved(upperRoomId, result.roundResolved);
       } else {
         this.broadcastState(upperRoomId, 'PLACEMENT_CONFIRMED');
@@ -399,6 +415,51 @@ export class RoomManager {
   }
 
   /**
+   * Handles a player clicking "Ready" on the end-of-round summary.
+   * Broadcasts ROUND_READY_UPDATE to both players; clears ready set once both are ready.
+   */
+  public handleReadyNextRound(
+    roomId: string,
+    playerId: string
+  ): {
+    success: boolean;
+    allReady: boolean;
+    readyPlayerIds: string[];
+    error?: string;
+  } {
+    const upperRoomId = roomId.trim().toUpperCase();
+    const room = this.rooms.get(upperRoomId);
+
+    if (!room || !room.gameState) {
+      return { success: false, allReady: false, readyPlayerIds: [], error: 'Room not found.' };
+    }
+
+    if (!room.players[playerId]) {
+      return { success: false, allReady: false, readyPlayerIds: [], error: 'Player not in room.' };
+    }
+
+    room.readyNextRoundPlayers.add(playerId);
+    const readyPlayerIds = Array.from(room.readyNextRoundPlayers);
+    const playerIds = Object.keys(room.players);
+    const allReady = playerIds.length === 2 && room.readyNextRoundPlayers.size >= 2;
+
+    for (const pid of playerIds) {
+      this.sendToPlayer(upperRoomId, pid, {
+        type: 'ROUND_READY_UPDATE',
+        roomId: upperRoomId,
+        readyPlayerIds,
+        allReady,
+      });
+    }
+
+    if (allReady) {
+      room.readyNextRoundPlayers.clear();
+    }
+
+    return { success: true, allReady, readyPlayerIds };
+  }
+
+  /**
    * Handles rematch requests. When both players confirm, restarts the game.
    */
   public handleRematch(
@@ -429,6 +490,7 @@ export class RoomManager {
       room.gameState = restarted.state;
       room.turnState = restarted.turnState;
       room.rematchRequests.clear();
+      room.readyNextRoundPlayers.clear();
 
       this.broadcastGameStarted(upperRoomId);
       return { success: true, restarted: true };
@@ -550,11 +612,20 @@ export class RoomManager {
    */
   public broadcastRoundResolved(
     roomId: string,
-    roundData: { round: number; roundScores: Record<string, number>; beeWinners: string[] }
+    roundData: {
+      round: number;
+      roundScores: Record<string, number>;
+      beeWinners: string[];
+      roundSummary?: RoundSummary;
+    }
   ): void {
     const upperRoomId = roomId.trim().toUpperCase();
     const room = this.rooms.get(upperRoomId);
     if (!room || !room.gameState) return;
+
+    const summary =
+      roundData.roundSummary ||
+      room.gameState.roundSummaries?.[room.gameState.roundSummaries.length - 1];
 
     for (const pid of Object.keys(room.players)) {
       const sanitized = filterStateForPlayer(room.gameState, pid);
@@ -564,6 +635,7 @@ export class RoomManager {
         round: roundData.round,
         roundScores: roundData.roundScores,
         beeWinners: roundData.beeWinners,
+        roundSummary: summary,
         state: sanitized,
       });
     }

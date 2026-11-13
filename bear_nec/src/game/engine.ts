@@ -4,6 +4,8 @@ import {
   GridPosition,
   GameHistoryEntry,
   GameAction,
+  CardActivationDetail,
+  RoundSummary,
 } from './types';
 import { createDeck, shuffleDeck, dealStartingHands } from './deck';
 import { createEmptyTableau, isValidPlacement } from './validation';
@@ -79,6 +81,7 @@ export function initGame(
     discardPile: [],
     status: 'in_progress',
     history: initialHistory,
+    roundSummaries: [],
     winner: null,
     pendingSelections: {},
   };
@@ -110,7 +113,8 @@ export function submitCardSelection(
   playerId: string,
   tableauCardId: number,
   reserveCardId: number,
-  position?: GridPosition
+  position?: GridPosition,
+  activationOrder?: number[]
 ): GameState {
   const next = cloneGameState(state);
   const player = next.players[playerId];
@@ -148,6 +152,7 @@ export function submitCardSelection(
     tableauCard,
     reserveCard,
     placement: validPlacement,
+    activationOrder: activationOrder ? [...activationOrder] : undefined,
   };
 
   next.history.push({
@@ -168,7 +173,8 @@ export function submitCardSelection(
 export function submitPlacement(
   state: GameState,
   playerId: string,
-  position: GridPosition
+  position: GridPosition,
+  activationOrder?: number[]
 ): GameState {
   const next = cloneGameState(state);
   const player = next.players[playerId];
@@ -185,6 +191,9 @@ export function submitPlacement(
   }
 
   next.pendingSelections[playerId].placement = position;
+  if (activationOrder) {
+    next.pendingSelections[playerId].activationOrder = [...activationOrder];
+  }
   return next;
 }
 
@@ -248,18 +257,29 @@ export function resolveRound(
 
   // 2. Resolve activations for Player 1
   // Placed card activates FIRST
+  const p1Order = p1ActivationOrder ?? p1Pending?.activationOrder;
+  const p1Activations: CardActivationDetail[] = [];
+
   const p1SelfVP = evaluateCardActivation(card1, p1.tableau, pos1, p1, p2, {
     isPlacement: true,
   });
   p1.vpTokens += p1SelfVP;
   p1.roundScore += p1SelfVP;
+  p1Activations.push({
+    cardId: card1.id,
+    cardName: card1.name,
+    cardColor: card1.color,
+    position: { ...pos1 },
+    vp: p1SelfVP,
+    isPlacedCard: true,
+  });
 
   // Adjacent neighbors activate NEXT in player's chosen order
   let p1Neighbors = getOrthogonalNeighbors(p1.tableau, pos1);
-  if (p1ActivationOrder && p1ActivationOrder.length > 0) {
+  if (p1Order && p1Order.length > 0) {
     p1Neighbors.sort((a, b) => {
-      const idxA = p1ActivationOrder.indexOf(a.card.id);
-      const idxB = p1ActivationOrder.indexOf(b.card.id);
+      const idxA = p1Order.indexOf(a.card.id);
+      const idxB = p1Order.indexOf(b.card.id);
       if (idxA === -1 && idxB === -1) return 0;
       if (idxA === -1) return 1;
       if (idxB === -1) return -1;
@@ -273,22 +293,41 @@ export function resolveRound(
     });
     p1.vpTokens += nVP;
     p1.roundScore += nVP;
+    p1Activations.push({
+      cardId: neighbor.card.id,
+      cardName: neighbor.card.name,
+      cardColor: neighbor.card.color,
+      position: { ...neighbor.pos },
+      vp: nVP,
+      isPlacedCard: false,
+    });
   }
 
   // 2. Resolve activations for Player 2
   // Placed card activates FIRST
+  const p2Order = p2ActivationOrder ?? p2Pending?.activationOrder;
+  const p2Activations: CardActivationDetail[] = [];
+
   const p2SelfVP = evaluateCardActivation(card2, p2.tableau, pos2, p2, p1, {
     isPlacement: true,
   });
   p2.vpTokens += p2SelfVP;
   p2.roundScore += p2SelfVP;
+  p2Activations.push({
+    cardId: card2.id,
+    cardName: card2.name,
+    cardColor: card2.color,
+    position: { ...pos2 },
+    vp: p2SelfVP,
+    isPlacedCard: true,
+  });
 
   // Adjacent neighbors activate NEXT in player's chosen order
   let p2Neighbors = getOrthogonalNeighbors(p2.tableau, pos2);
-  if (p2ActivationOrder && p2ActivationOrder.length > 0) {
+  if (p2Order && p2Order.length > 0) {
     p2Neighbors.sort((a, b) => {
-      const idxA = p2ActivationOrder.indexOf(a.card.id);
-      const idxB = p2ActivationOrder.indexOf(b.card.id);
+      const idxA = p2Order.indexOf(a.card.id);
+      const idxB = p2Order.indexOf(b.card.id);
       if (idxA === -1 && idxB === -1) return 0;
       if (idxA === -1) return 1;
       if (idxB === -1) return -1;
@@ -302,6 +341,14 @@ export function resolveRound(
     });
     p2.vpTokens += nVP;
     p2.roundScore += nVP;
+    p2Activations.push({
+      cardId: neighbor.card.id,
+      cardName: neighbor.card.name,
+      cardColor: neighbor.card.color,
+      position: { ...neighbor.pos },
+      vp: nVP,
+      isPlacedCard: false,
+    });
   }
 
   // 3. Step 3: Bee Time
@@ -318,6 +365,39 @@ export function resolveRound(
     p2.beeTokens += 1;
     beesAwardedTo = [p1Id, p2Id];
   }
+
+  // Record structured round summary for UI & persistent Game History
+  const roundSummary: RoundSummary = {
+    round: next.round,
+    players: {
+      [p1Id]: {
+        playerId: p1Id,
+        playerName: p1.name,
+        placedCard: { id: card1.id, name: card1.name, color: card1.color },
+        position: { ...pos1 },
+        activations: p1Activations,
+        totalRoundVp: p1.roundScore,
+        totalVpTokens: p1.vpTokens,
+        receivedBeeToken: beesAwardedTo.includes(p1Id),
+      },
+      [p2Id]: {
+        playerId: p2Id,
+        playerName: p2.name,
+        placedCard: { id: card2.id, name: card2.name, color: card2.color },
+        position: { ...pos2 },
+        activations: p2Activations,
+        totalRoundVp: p2.roundScore,
+        totalVpTokens: p2.vpTokens,
+        receivedBeeToken: beesAwardedTo.includes(p2Id),
+      },
+    },
+    beeWinners: beesAwardedTo,
+    isGameOver: next.round === 12,
+  };
+  if (!next.roundSummaries) {
+    next.roundSummaries = [];
+  }
+  next.roundSummaries.push(roundSummary);
 
   next.history.push({
     round: next.round,
@@ -423,6 +503,7 @@ export interface EnginePlayerChoice {
   tableauCardId?: number;
   reserveCardId?: number;
   position?: GridPosition;
+  activationOrder?: number[];
   decision?: 'keep' | 'discard';
 }
 
@@ -478,6 +559,7 @@ export function executeSelectCards(
     tableauCardId: number;
     reserveCardId: number;
     position?: GridPosition;
+    activationOrder?: number[];
   }
 ): {
   state: GameState;
@@ -489,6 +571,7 @@ export function executeSelectCards(
     round: number;
     roundScores: Record<string, number>;
     beeWinners: string[];
+    roundSummary?: RoundSummary;
   };
 } {
   const nextState = submitCardSelection(
@@ -496,7 +579,8 @@ export function executeSelectCards(
     input.playerId,
     input.tableauCardId,
     input.reserveCardId,
-    input.position
+    input.position,
+    input.activationOrder
   );
 
   const nextTurnState: EngineTurnState = {
@@ -506,6 +590,7 @@ export function executeSelectCards(
         tableauCardId: input.tableauCardId,
         reserveCardId: input.reserveCardId,
         position: input.position,
+        activationOrder: input.activationOrder,
       },
     },
   };
@@ -521,7 +606,13 @@ export function executeSelectCards(
       const p1PreVP = nextState.players[p1Id].vpTokens;
       const p2PreVP = nextState.players[p2Id].vpTokens;
 
-      const resolved = resolveRound(nextState, undefined, undefined, c1.position, c2.position);
+      const resolved = resolveRound(
+        nextState,
+        c1.activationOrder,
+        c2.activationOrder,
+        c1.position,
+        c2.position
+      );
 
       const p1Score = resolved.players[p1Id].vpTokens - p1PreVP;
       const p2Score = resolved.players[p2Id].vpTokens - p2PreVP;
@@ -530,6 +621,8 @@ export function executeSelectCards(
       if (p1Score < p2Score) beeTokenRecipients.push(p1Id);
       else if (p2Score < p1Score) beeTokenRecipients.push(p2Id);
       else beeTokenRecipients.push(p1Id, p2Id);
+
+      const roundSummary = resolved.roundSummaries?.[resolved.roundSummaries.length - 1];
 
       return {
         state: resolved,
@@ -544,6 +637,7 @@ export function executeSelectCards(
             [p2Id]: p2Score,
           },
           beeWinners: beeTokenRecipients,
+          roundSummary,
         },
       };
     }
@@ -558,7 +652,7 @@ export function executeSelectCards(
 export function executeConfirmPlacement(
   gameState: GameState,
   turnState: EngineTurnState,
-  input: { playerId: string; position: GridPosition }
+  input: { playerId: string; position: GridPosition; activationOrder?: number[] }
 ): {
   state: GameState;
   turnState: EngineTurnState;
@@ -569,15 +663,17 @@ export function executeConfirmPlacement(
     round: number;
     roundScores: Record<string, number>;
     beeWinners: string[];
+    roundSummary?: RoundSummary;
   };
 } {
-  const nextState = submitPlacement(gameState, input.playerId, input.position);
+  const nextState = submitPlacement(gameState, input.playerId, input.position, input.activationOrder);
   const nextTurnState: EngineTurnState = {
     choices: {
       ...turnState.choices,
       [input.playerId]: {
         ...turnState.choices[input.playerId],
         position: input.position,
+        activationOrder: input.activationOrder,
       },
     },
   };
@@ -592,7 +688,13 @@ export function executeConfirmPlacement(
       const p1PreVP = nextState.players[p1Id].vpTokens;
       const p2PreVP = nextState.players[p2Id].vpTokens;
 
-      const resolved = resolveRound(nextState, undefined, undefined, c1.position, c2.position);
+      const resolved = resolveRound(
+        nextState,
+        c1.activationOrder,
+        c2.activationOrder,
+        c1.position,
+        c2.position
+      );
       const p1Score = resolved.players[p1Id].vpTokens - p1PreVP;
       const p2Score = resolved.players[p2Id].vpTokens - p2PreVP;
 
@@ -600,6 +702,8 @@ export function executeConfirmPlacement(
       if (p1Score < p2Score) beeTokenRecipients.push(p1Id);
       else if (p2Score < p1Score) beeTokenRecipients.push(p2Id);
       else beeTokenRecipients.push(p1Id, p2Id);
+
+      const roundSummary = resolved.roundSummaries?.[resolved.roundSummaries.length - 1];
 
       return {
         state: resolved,
@@ -614,6 +718,7 @@ export function executeConfirmPlacement(
             [p2Id]: p2Score,
           },
           beeWinners: beeTokenRecipients,
+          roundSummary,
         },
       };
     }

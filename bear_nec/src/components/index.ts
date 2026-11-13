@@ -4,4 +4,6 @@ export * from './HandView';
 export * from './ScoreBoard';
 export * from './OpponentBoard';
 export * from './GameOverModal';
+export * from './RoundSummaryModal';
+export * from './GameHistory';
 export * from './Lobby';

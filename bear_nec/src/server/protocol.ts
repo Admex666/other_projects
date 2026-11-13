@@ -7,6 +7,7 @@ import type {
   GamePhase,
   GameStatus,
   GameHistoryEntry,
+  RoundSummary,
   GridPosition,
   GameAction,
 } from '../game/types';
@@ -50,6 +51,8 @@ export interface SanitizedGameState {
   discardPile: CardDefinition[];
   status: GameStatus;
   history: GameHistoryEntry[];
+  roundSummaries?: RoundSummary[];
+  readyNextRoundPlayers?: string[];
   winner: string[] | null;
 }
 
@@ -83,6 +86,7 @@ export interface SubmitSelectionMessage {
   tableauCardId: number;
   reserveCardId: number;
   position?: GridPosition;
+  activationOrder?: number[];
 }
 
 export interface ChooseRefillOptionMessage {
@@ -106,6 +110,14 @@ export interface ConfirmPlacementMessage {
   playerId: string;
   sessionToken: string;
   position: GridPosition;
+  activationOrder?: number[];
+}
+
+export interface ReadyNextRoundMessage {
+  type: 'READY_NEXT_ROUND';
+  roomId: string;
+  playerId: string;
+  sessionToken: string;
 }
 
 export interface GameActionMessage {
@@ -124,6 +136,7 @@ export type ClientMessage =
   | ChooseRefillOptionMessage
   | RequestRematchMessage
   | ConfirmPlacementMessage
+  | ReadyNextRoundMessage
   | GameActionMessage;
 
 // ==========================================
@@ -165,7 +178,15 @@ export interface RoundResolvedMessage {
   round: number;
   roundScores: Record<string, number>;
   beeWinners: string[];
+  roundSummary?: RoundSummary;
   state: SanitizedGameState;
+}
+
+export interface RoundReadyUpdateMessage {
+  type: 'ROUND_READY_UPDATE';
+  roomId: string;
+  readyPlayerIds: string[];
+  allReady: boolean;
 }
 
 export interface ErrorMessage {
@@ -192,6 +213,7 @@ export type ServerMessage =
   | GameStartedMessage
   | StateUpdateMessage
   | RoundResolvedMessage
+  | RoundReadyUpdateMessage
   | ErrorMessage
   | OpponentDisconnectedMessage
   | OpponentReconnectedMessage;
@@ -263,6 +285,7 @@ export function filterStateForPlayer(gameState: GameState, playerId: string): Sa
     discardPile: gameState.discardPile.map(c => ({ ...c })),
     status: gameState.status,
     history: gameState.history.map(entry => ({ ...entry })),
+    roundSummaries: gameState.roundSummaries ? JSON.parse(JSON.stringify(gameState.roundSummaries)) : [],
     winner: gameState.winner ? [...gameState.winner] : null,
   };
 }

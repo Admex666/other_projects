@@ -1,10 +1,11 @@
-import { GameState, GridPosition } from './types';
+import { GameState, GridPosition, RoundSummary } from './types';
 import { initGame, submitCardSelection, resolveRound } from './engine';
 
 export interface PlayerTurnSelection {
   tableauCardId: number;
   reserveCardId: number;
   position: GridPosition;
+  activationOrder?: number[];
 }
 
 export interface TurnResolutionResult {
@@ -13,6 +14,7 @@ export interface TurnResolutionResult {
   p2VpScored: number;
   beeTokenRecipients: string[];
   logMessage: string;
+  roundSummary: RoundSummary;
 }
 
 /**
@@ -39,7 +41,8 @@ export function resolveHotseatRound(
     'p1',
     p1Choice.tableauCardId,
     p1Choice.reserveCardId,
-    p1Choice.position
+    p1Choice.position,
+    p1Choice.activationOrder
   );
 
   state = submitCardSelection(
@@ -47,13 +50,14 @@ export function resolveHotseatRound(
     'p2',
     p2Choice.tableauCardId,
     p2Choice.reserveCardId,
-    p2Choice.position
+    p2Choice.position,
+    p2Choice.activationOrder
   );
 
   const prevP1Bees = state.players.p1.beeTokens;
   const prevP2Bees = state.players.p2.beeTokens;
 
-  const nextState = resolveRound(state);
+  const nextState = resolveRound(state, p1Choice.activationOrder, p2Choice.activationOrder);
 
   const p1VpScored = nextState.players.p1.roundScore;
   const p2VpScored = nextState.players.p2.roundScore;
@@ -68,6 +72,7 @@ export function resolveHotseatRound(
 
   const roundNum = currentState.round;
   const logMessage = `Round ${roundNum} complete: ${nextState.players.p1.name} scored ${p1VpScored} VP, ${nextState.players.p2.name} scored ${p2VpScored} VP.`;
+  const roundSummary = nextState.roundSummaries![nextState.roundSummaries!.length - 1];
 
   return {
     nextState,
@@ -75,5 +80,6 @@ export function resolveHotseatRound(
     p2VpScored,
     beeTokenRecipients,
     logMessage,
+    roundSummary,
   };
 }

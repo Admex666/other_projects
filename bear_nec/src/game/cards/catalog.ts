@@ -626,9 +626,9 @@ export const CARD_CATALOG: CardDefinition[] = [
     types: ['building'],
     beeHives: 0,
     hasGoal: false,
-    text: '1 VP per card in your tableau.',
+    text: '1 VP per City card in your tableau.',
     spriteIndex: 53,
-    effect: { type: 'tableau_card_count', pointsPerCard: 1 },
+    effect: { type: 'tableau_color_count', targetColor: 'city', pointsPerCard: 1 },
   },
   {
     id: 54,

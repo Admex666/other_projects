@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { GameState, GridPosition } from './game/types';
+import { GameState, GridPosition, RoundSummary } from './game/types';
 import { getValidPlacements } from './game/validation';
+import { getOrthogonalNeighbors } from './game/scoring/calculator';
 import { createInitialGameState, resolveHotseatRound, PlayerTurnSelection } from './game/hotseat';
 import { chooseBotMove, BotDifficulty } from './game/ai/bot';
 import {
@@ -10,9 +11,11 @@ import {
   ScoreBoard,
   OpponentBoard,
   GameOverModal,
+  RoundSummaryModal,
+  GameHistory,
   Lobby,
 } from './components';
-import { Info, ArrowRight, X, Copy, Check, Loader2, Lock } from 'lucide-react';
+import { Info, ArrowRight, ArrowLeft, X, Copy, Check, Loader2, Lock, ListOrdered } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Screen mode: 'lobby' | 'hotseat' | 'multiplayer' | 'bot'
@@ -34,9 +37,15 @@ export const App: React.FC = () => {
   const [selectedTableauCardId, setSelectedTableauCardId] = useState<number | null>(null);
   const [selectedReserveCardId, setSelectedReserveCardId] = useState<number | null>(null);
   const [selectedPlacement, setSelectedPlacement] = useState<GridPosition | null>(null);
+  const [activationOrder, setActivationOrder] = useState<number[]>([]);
 
   // Pass-the-device screen transition in hotseat
   const [showPassScreen, setShowPassScreen] = useState<boolean>(false);
+
+  // Round summary modal & multiplayer ready state
+  const [pendingRoundSummary, setPendingRoundSummary] = useState<RoundSummary | null>(null);
+  const [readyPlayerIds, setReadyPlayerIds] = useState<string[]>([]);
+  const [hasClickedReady, setHasClickedReady] = useState<boolean>(false);
 
   // Round summary notification
   const [roundNotification, setRoundNotification] = useState<string | null>(null);
@@ -85,6 +94,10 @@ export const App: React.FC = () => {
     setSelectedTableauCardId(null);
     setSelectedReserveCardId(null);
     setSelectedPlacement(null);
+    setActivationOrder([]);
+    setPendingRoundSummary(null);
+    setReadyPlayerIds([]);
+    setHasClickedReady(false);
     setShowPassScreen(false);
     setRoundNotification(null);
     setLastBeeWinnerName(null);
@@ -102,6 +115,10 @@ export const App: React.FC = () => {
     setSelectedTableauCardId(null);
     setSelectedReserveCardId(null);
     setSelectedPlacement(null);
+    setActivationOrder([]);
+    setPendingRoundSummary(null);
+    setReadyPlayerIds([]);
+    setHasClickedReady(false);
     setShowPassScreen(false);
     setRoundNotification(`Game started against ${botName}!`);
     setLastBeeWinnerName(null);
@@ -165,12 +182,23 @@ export const App: React.FC = () => {
       } else if (msg.type === 'GAME_STARTED') {
         if (msg.state) setGameState(msg.state);
         setHasSubmittedRound(false);
+        setPendingRoundSummary(null);
+        setReadyPlayerIds([]);
+        setHasClickedReady(false);
+        setActivationOrder([]);
         setLastBeeWinnerName(null);
         setRoundNotification('Game started! Both players connected.');
         setTimeout(() => setRoundNotification(null), 4000);
       } else if (msg.type === 'STATE_UPDATE') {
         setGameState(msg.state);
         if (msg.reason === 'RECONNECTED') {
+          const myId = myPlayerIdRef.current || multiplayerPlayerId;
+          if (msg.state?.readyNextRoundPlayers?.length > 0 && msg.state?.roundSummaries?.length > 0) {
+            const latestSummary = msg.state.roundSummaries[msg.state.roundSummaries.length - 1];
+            setPendingRoundSummary(latestSummary);
+            setReadyPlayerIds(msg.state.readyNextRoundPlayers);
+            setHasClickedReady(Boolean(myId && msg.state.readyNextRoundPlayers.includes(myId)));
+          }
           setRoundNotification('Reconnected to game!');
           setTimeout(() => setRoundNotification(null), 3000);
         }
@@ -178,6 +206,17 @@ export const App: React.FC = () => {
         const nextState = msg.state || msg.nextState;
         setGameState(nextState);
         setHasSubmittedRound(false);
+        setReadyPlayerIds([]);
+        setHasClickedReady(false);
+
+        const summary: RoundSummary | null =
+          msg.roundSummary ||
+          (nextState?.roundSummaries?.length
+            ? nextState.roundSummaries[nextState.roundSummaries.length - 1]
+            : null);
+        if (summary) {
+          setPendingRoundSummary(summary);
+        }
 
         const myId = myPlayerIdRef.current || multiplayerPlayerId;
         if (msg.beeWinners && nextState?.players) {
@@ -199,6 +238,13 @@ export const App: React.FC = () => {
           setRoundNotification(`Round ${msg.round} complete!`);
         }
         setTimeout(() => setRoundNotification(null), 5000);
+      } else if (msg.type === 'ROUND_READY_UPDATE') {
+        setReadyPlayerIds(msg.readyPlayerIds || []);
+        if (msg.allReady) {
+          setPendingRoundSummary(null);
+          setReadyPlayerIds([]);
+          setHasClickedReady(false);
+        }
       } else if (msg.type === 'OPPONENT_DISCONNECTED') {
         setRoundNotification(`${msg.playerName || 'Opponent'} disconnected. Waiting for them to reconnect...`);
       } else if (msg.type === 'OPPONENT_RECONNECTED') {
@@ -286,19 +332,86 @@ export const App: React.FC = () => {
   // Valid placements for current active player
   const validPlacements = currentP ? getValidPlacements(currentP.tableau) : [];
 
+  // Adjacent neighbors for currently selected placement (to support player-chosen activation order)
+  const adjacentNeighbors =
+    currentP && selectedPlacement
+      ? getOrthogonalNeighbors(currentP.tableau, selectedPlacement)
+      : [];
+  const needsActivationOrdering = adjacentNeighbors.length >= 2;
+
+  const handleSelectPlacement = (pos: GridPosition) => {
+    setSelectedPlacement(pos);
+    if (currentP) {
+      const neighbors = getOrthogonalNeighbors(currentP.tableau, pos);
+      if (neighbors.length >= 2) {
+        setActivationOrder(neighbors.map((n) => n.card.id));
+      } else {
+        setActivationOrder([]);
+      }
+    }
+  };
+
+  const handleMoveActivationOrder = (index: number, direction: -1 | 1) => {
+    setActivationOrder((prev) => {
+      const targetIdx = index + direction;
+      if (targetIdx < 0 || targetIdx >= prev.length) return prev;
+      const copy = [...prev];
+      const temp = copy[index];
+      copy[index] = copy[targetIdx];
+      copy[targetIdx] = temp;
+      return copy;
+    });
+  };
+
+  // Clicking an adjacent card on the grid moves it to the front (1st neighbor to activate)
+  // or cycles it forward so players can quickly click cards in desired order.
+  const handleSelectNeighborOrder = (cardId: number) => {
+    if (!needsActivationOrdering) return;
+    setActivationOrder((prev) => {
+      const idx = prev.indexOf(cardId);
+      if (idx <= 0) return prev;
+      const copy = [...prev];
+      copy.splice(idx, 1);
+      copy.unshift(cardId);
+      return copy;
+    });
+  };
+
   // Can confirm move?
   const canConfirmMove =
     selectedTableauCardId !== null &&
     selectedReserveCardId !== null &&
     selectedTableauCardId !== selectedReserveCardId &&
     selectedPlacement !== null &&
-    validPlacements.some((p) => p.row === selectedPlacement.row && p.col === selectedPlacement.col);
+    validPlacements.some((p) => p.row === selectedPlacement.row && p.col === selectedPlacement.col) &&
+    (!needsActivationOrdering || activationOrder.length === adjacentNeighbors.length);
+
+  // Handle Ready button on End-of-Round Summary
+  const handleReadyNextRound = () => {
+    if (mode === 'multiplayer' && socket && roomId && multiplayerPlayerId) {
+      socket.send(
+        JSON.stringify({
+          type: 'READY_NEXT_ROUND',
+          roomId,
+          playerId: multiplayerPlayerId,
+          sessionToken: sessionToken || '',
+        })
+      );
+      setHasClickedReady(true);
+      return;
+    }
+
+    // Hotseat or Bot mode: dismiss summary and proceed
+    setPendingRoundSummary(null);
+  };
 
   // Handle Confirm Move (Hotseat or Multiplayer)
   const handleConfirmMove = () => {
     if (!canConfirmMove || !selectedPlacement || !selectedTableauCardId || !selectedReserveCardId) {
       return;
     }
+
+    const chosenOrder = needsActivationOrdering ? activationOrder : undefined;
 
     if (mode === 'multiplayer' && socket && multiplayerPlayerId && roomId) {
       socket.send(
@@ -310,11 +423,13 @@ export const App: React.FC = () => {
           tableauCardId: selectedTableauCardId,
           reserveCardId: selectedReserveCardId,
           position: selectedPlacement,
+          activationOrder: chosenOrder,
         })
       );
       setSelectedTableauCardId(null);
       setSelectedReserveCardId(null);
       setSelectedPlacement(null);
+      setActivationOrder([]);
       setHasSubmittedRound(true);
       setRoundNotification('Move locked in! Waiting for opponent to finish their turn...');
       return;
@@ -324,6 +439,7 @@ export const App: React.FC = () => {
       tableauCardId: selectedTableauCardId,
       reserveCardId: selectedReserveCardId,
       position: selectedPlacement,
+      activationOrder: chosenOrder,
     };
 
     if (mode === 'bot') {
@@ -343,6 +459,8 @@ export const App: React.FC = () => {
       setSelectedTableauCardId(null);
       setSelectedReserveCardId(null);
       setSelectedPlacement(null);
+      setActivationOrder([]);
+      setPendingRoundSummary(resolution.roundSummary);
 
       // Bee winner names
       if (resolution.beeTokenRecipients.length === 2) {
@@ -366,6 +484,7 @@ export const App: React.FC = () => {
       setSelectedTableauCardId(null);
       setSelectedReserveCardId(null);
       setSelectedPlacement(null);
+      setActivationOrder([]);
       // Prompt pass device to Player 2
       setShowPassScreen(true);
       setActiveHotseatPlayer('p2');
@@ -380,8 +499,10 @@ export const App: React.FC = () => {
       setSelectedTableauCardId(null);
       setSelectedReserveCardId(null);
       setSelectedPlacement(null);
+      setActivationOrder([]);
       setShowPassScreen(false);
       setActiveHotseatPlayer('p1');
+      setPendingRoundSummary(resolution.roundSummary);
 
       // Bee winner names
       if (resolution.beeTokenRecipients.length === 2) {
@@ -649,9 +770,65 @@ export const App: React.FC = () => {
               tableau={currentP.tableau}
               validPlacements={validPlacements}
               selectedPlacement={selectedPlacement}
-              onSelectPosition={(pos) => setSelectedPlacement(pos)}
+              onSelectPosition={handleSelectPlacement}
+              activationOrder={activationOrder}
+              onSelectNeighborOrder={handleSelectNeighborOrder}
               size="md"
             />
+
+            {/* Player-Chosen Activation Order Panel (>= 2 adjacent cards) */}
+            {needsActivationOrdering && (
+              <div className="w-full max-w-[560px] mt-3 p-3 rounded-xl bg-sky-50/95 border-2 border-sky-400 shadow-md text-[#3c2a18]">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-1.5 font-serif font-bold text-xs sm:text-sm text-sky-950">
+                    <ListOrdered className="w-4 h-4 text-sky-700" />
+                    <span>Adjacent Activation Order</span>
+                  </div>
+                  <span className="text-[11px] font-serif text-sky-800">
+                    Placed card activates 1st, then neighbors in order:
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {activationOrder.map((cardId, idx) => {
+                    const neighbor = adjacentNeighbors.find((n) => n.card.id === cardId);
+                    if (!neighbor) return null;
+                    return (
+                      <div
+                        key={cardId}
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-sky-300 shadow-sm text-xs font-serif"
+                      >
+                        <span className="w-5 h-5 rounded-full bg-sky-600 text-white font-mono font-bold text-[10px] flex items-center justify-center">
+                          #{idx + 1}
+                        </span>
+                        <span className="font-bold text-stone-800">{neighbor.card.name}</span>
+                        <button
+                          type="button"
+                          disabled={idx === 0}
+                          onClick={() => handleMoveActivationOrder(idx, -1)}
+                          title="Activate earlier"
+                          className="p-0.5 rounded hover:bg-sky-100 disabled:opacity-30 cursor-pointer"
+                        >
+                          <ArrowLeft className="w-3.5 h-3.5 text-sky-700" />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={idx === activationOrder.length - 1}
+                          onClick={() => handleMoveActivationOrder(idx, 1)}
+                          title="Activate later"
+                          className="p-0.5 rounded hover:bg-sky-100 disabled:opacity-30 cursor-pointer"
+                        >
+                          <ArrowRight className="w-3.5 h-3.5 text-sky-700" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="text-[10px] font-serif text-sky-700 mt-1.5">
+                  Tip: Use arrows or click a highlighted neighbor on the grid to move it to #1.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Opponent Compact Board (4 cols on lg) */}
@@ -676,10 +853,28 @@ export const App: React.FC = () => {
           round={gameState.round}
           disabled={mode === 'multiplayer' && hasSubmittedRound}
         />
+
+        {/* Collapsible Game History (BoardGameArena-style) */}
+        <GameHistory
+          summaries={gameState.roundSummaries || []}
+          activePlayerId={currentP.id}
+        />
       </main>
 
+      {/* End-of-Round Summary Modal */}
+      {pendingRoundSummary && (
+        <RoundSummaryModal
+          summary={pendingRoundSummary}
+          activePlayerId={currentP.id}
+          isMultiplayer={mode === 'multiplayer'}
+          readyPlayerIds={readyPlayerIds}
+          hasClickedReady={hasClickedReady}
+          onReady={handleReadyNextRound}
+        />
+      )}
+
       {/* Game Over Modal */}
-      {gameState.phase === 'GAME_OVER' && (
+      {gameState.phase === 'GAME_OVER' && !pendingRoundSummary && (
         <GameOverModal
           players={gameState.players}
           activePlayerId={currentP.id}

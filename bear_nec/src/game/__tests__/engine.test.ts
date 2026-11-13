@@ -451,6 +451,13 @@ describe('Bear Necessities Game Engine (Phase 2)', () => {
       const finalEntry = state.history.find((h) => h.action === 'FINAL_SCORING');
       expect(startEntry).toBeDefined();
       expect(finalEntry).toBeDefined();
+
+      // Round summaries recorded for all 12 rounds, with Round 12 marked isGameOver
+      expect(state.roundSummaries?.length).toBe(12);
+      expect(state.roundSummaries?.[0].round).toBe(1);
+      expect(state.roundSummaries?.[0].isGameOver).toBe(false);
+      expect(state.roundSummaries?.[11].round).toBe(12);
+      expect(state.roundSummaries?.[11].isGameOver).toBe(true);
     });
   });
 });

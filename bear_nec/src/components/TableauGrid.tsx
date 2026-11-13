@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tableau, GridPosition } from '../game/types';
 import CardView from './CardView';
+import GameIcon from './GameIcon';
 import { Plus } from 'lucide-react';
 
 export interface TableauGridProps {
@@ -8,6 +9,8 @@ export interface TableauGridProps {
   selectedPlacement?: GridPosition | null;
   validPlacements?: GridPosition[];
   onSelectPosition?: (pos: GridPosition) => void;
+  activationOrder?: number[];
+  onSelectNeighborOrder?: (cardId: number) => void;
   activePlacementPos?: GridPosition | null;
   activatedNeighbors?: GridPosition[];
   lastScoredPos?: GridPosition | null;
@@ -22,6 +25,8 @@ export const TableauGrid: React.FC<TableauGridProps> = ({
   selectedPlacement,
   validPlacements = [],
   onSelectPosition,
+  activationOrder = [],
+  onSelectNeighborOrder,
   activePlacementPos,
   activatedNeighbors = [],
   lastScoredPos,
@@ -32,6 +37,13 @@ export const TableauGrid: React.FC<TableauGridProps> = ({
 }) => {
   const isPosEqual = (p1?: GridPosition | null, p2?: GridPosition | null) =>
     p1 && p2 && p1.row === p2.row && p1.col === p2.col;
+
+  const isAdjacentToSelected = (row: number, col: number) => {
+    if (!selectedPlacement) return false;
+    const dr = Math.abs(selectedPlacement.row - row);
+    const dc = Math.abs(selectedPlacement.col - col);
+    return dr + dc === 1;
+  };
 
   const isValidTarget = (row: number, col: number) =>
     !readOnly && validPlacements.some((p) => p.row === row && p.col === col);
@@ -62,13 +74,26 @@ export const TableauGrid: React.FC<TableauGridProps> = ({
             const isScored = isPosEqual(lastScoredPos, { row, col });
 
             if (card) {
+              const isAdjNeighbor = !readOnly && isAdjacentToSelected(row, col);
+              const orderIdx = isAdjNeighbor ? activationOrder.indexOf(card.id) : -1;
+              const showOrderBadge = isAdjNeighbor && activationOrder.length >= 2 && orderIdx !== -1;
+
               return (
                 <div
                   key={`${row}-${col}`}
+                  onClick={() => {
+                    if (isAdjNeighbor && onSelectNeighborOrder) {
+                      onSelectNeighborOrder(card.id);
+                    }
+                  }}
                   className={`relative ${cellSizes} rounded-md transition-transform duration-200 ${
                     isPlacedJustNow ? 'ring-4 ring-amber-400 shadow-xl scale-[1.03] z-10' : ''
                   } ${
                     isNeighborActivating ? 'ring-3 ring-emerald-500 animate-pulse z-10' : ''
+                  } ${
+                    isAdjNeighbor && onSelectNeighborOrder
+                      ? 'ring-2 ring-sky-400 cursor-pointer hover:scale-[1.02] z-10'
+                      : ''
                   }`}
                 >
                   <CardView
@@ -76,9 +101,15 @@ export const TableauGrid: React.FC<TableauGridProps> = ({
                     size={size}
                     showInspectButton={true}
                     badge={
-                      isScored && lastScoreAmount !== null && lastScoreAmount !== undefined ? (
-                        <div className="px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-black text-[11px] shadow-lg animate-bounce">
-                          +{lastScoreAmount} VP
+                      showOrderBadge ? (
+                        <div className="px-2 py-0.5 rounded-full bg-sky-600 text-white font-mono font-black text-[11px] shadow-lg border border-white">
+                          #{orderIdx + 1}
+                        </div>
+                      ) : isScored && lastScoreAmount !== null && lastScoreAmount !== undefined ? (
+                        <div className="px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-black text-[11px] shadow-lg animate-bounce flex items-center gap-0.5">
+                          <span>+{lastScoreAmount}</span>
+                          <GameIcon type="vp" size="xs" />
+                          <span>VP</span>
                         </div>
                       ) : undefined
                     }

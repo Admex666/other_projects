@@ -70,6 +70,38 @@ export interface RoundSelection {
   tableauCard: CardDefinition;
   reserveCard: CardDefinition;
   placement?: GridPosition;
+  activationOrder?: number[];
+}
+
+export interface CardActivationDetail {
+  cardId: number;
+  cardName: string;
+  cardColor: CardColor;
+  position: GridPosition;
+  vp: number;
+  isPlacedCard: boolean;
+}
+
+export interface PlayerRoundSummary {
+  playerId: string;
+  playerName: string;
+  placedCard: {
+    id: number;
+    name: string;
+    color: CardColor;
+  };
+  position: GridPosition;
+  activations: CardActivationDetail[];
+  totalRoundVp: number;
+  totalVpTokens: number;
+  receivedBeeToken: boolean;
+}
+
+export interface RoundSummary {
+  round: number;
+  players: Record<string, PlayerRoundSummary>;
+  beeWinners: string[];
+  isGameOver: boolean;
 }
 
 export interface GameHistoryEntry {
@@ -90,6 +122,7 @@ export interface GameState {
   discardPile: CardDefinition[];
   status: GameStatus;
   history: GameHistoryEntry[];
+  roundSummaries?: RoundSummary[];
   winner: string[] | null; // Array of playerIds sharing victory, or null if ongoing
   pendingSelections?: Record<string, RoundSelection>;
 }
@@ -101,11 +134,13 @@ export type GameAction =
       playerId: string;
       tableauCardId: number;
       reserveCardId: number;
+      activationOrder?: number[];
     }
   | {
       type: 'CONFIRM_PLACEMENT';
       playerId: string;
       position: GridPosition;
+      activationOrder?: number[];
     }
   | {
       type: 'ORDER_ACTIVATION';

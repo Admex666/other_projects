@@ -73,6 +73,17 @@ const TYPE_EMOJI: Record<CardType, string> = {
   animal: '🦊',
 };
 
+const CARD_BACK_SLOTS = [23, 45, 70, 97];
+
+/**
+ * Maps a 0-based spritesheet slotIndex (0..96, skipping card backs at 23, 45, 70, 97)
+ * to the 1-based sequential WebP slice number (1..94) in public/assets/cards/manifest.json.
+ */
+export function getCardAssetId(slotIndex: number): number {
+  const backsBefore = CARD_BACK_SLOTS.filter((b) => b < slotIndex).length;
+  return slotIndex + 1 - backsBefore;
+}
+
 export const CardView: React.FC<CardViewProps> = ({
   card,
   isBack = false,
@@ -147,8 +158,10 @@ export const CardView: React.FC<CardViewProps> = ({
     );
   }
 
-  const paddedId = card.id.toString().padStart(2, '0');
-  const webpSrc = `/assets/cards/card_${paddedId}.webp`;
+  const slot = card.slotIndex ?? card.spriteIndex ?? card.id;
+  const paddedSlot = slot.toString().padStart(2, '0');
+  const paddedAssetId = getCardAssetId(slot).toString().padStart(2, '0');
+  const webpSrc = `/assets/cards/card_${paddedAssetId}.webp`;
   const colorInfo = COLOR_MAP[card.color] || COLOR_MAP.water;
 
   return (
@@ -159,11 +172,10 @@ export const CardView: React.FC<CardViewProps> = ({
         style={{ aspectRatio: '320 / 499' }}
         data-card-id={card.id}
       >
-        {/* Level 1: Primary CSS Spritesheet */}
+        {/* Level 1: Primary CSS Spritesheet (use .bn-slot-XX to match 0-based spritesheet slot) */}
         {!spriteFailed ? (
           <div
-            className={`bn-card-face bn-card-${paddedId}`}
-            data-card-id={card.id}
+            className={`bn-card-face bn-slot-${paddedSlot}`}
             onError={() => setSpriteFailed(true)}
             style={{
               width: '100%',

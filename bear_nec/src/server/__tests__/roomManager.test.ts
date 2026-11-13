@@ -321,4 +321,105 @@ describe('RoomManager & Multiplayer Server Protocol', () => {
       expect(room.disconnectTimeouts.has(host.playerId)).toBe(true);
     });
   });
+
+  describe('Round Summary, Activation Order, and READY_NEXT_ROUND Synchronization', () => {
+    it('passes activationOrder and broadcasts roundSummary in ROUND_RESOLVED', () => {
+      const host = roomManager.createRoom('Alice');
+      const guest = roomManager.joinRoom(host.roomId, 'Bob');
+      const room = roomManager.getRoom(host.roomId)!;
+
+      const hostSocket: any = { readyState: 1, send: vi.fn() };
+      const guestSocket: any = { readyState: 1, send: vi.fn() };
+      roomManager.bindSocket(hostSocket, host.roomId, host.playerId);
+      roomManager.bindSocket(guestSocket, host.roomId, guest.playerId);
+
+      // Complete 3 rounds to set up 2 adjacent neighbors for (1,1)
+      const positions = [
+        { row: 0, col: 0 },
+        { row: 0, col: 1 },
+        { row: 1, col: 0 },
+      ];
+      for (const pos of positions) {
+        const p1H = room.gameState!.players[host.playerId].hand;
+        const p2H = room.gameState!.players[guest.playerId].hand;
+        roomManager.handleAction(host.roomId, host.playerId, {
+          type: 'SUBMIT_SELECTION',
+          tableauCardId: p1H[0].id,
+          reserveCardId: p1H[1].id,
+          position: pos,
+        });
+        roomManager.handleAction(host.roomId, guest.playerId, {
+          type: 'SUBMIT_SELECTION',
+          tableauCardId: p2H[0].id,
+          reserveCardId: p2H[1].id,
+          position: pos,
+        });
+      }
+
+      const adjAId = room.gameState!.players[host.playerId].tableau[0][1]!.id;
+      const adjBId = room.gameState!.players[host.playerId].tableau[1][0]!.id;
+      const p1H4 = room.gameState!.players[host.playerId].hand;
+      const p2H4 = room.gameState!.players[guest.playerId].hand;
+      const placedId = p1H4[0].id;
+
+      hostSocket.send.mockClear();
+
+      roomManager.handleAction(host.roomId, host.playerId, {
+        type: 'SUBMIT_SELECTION',
+        tableauCardId: placedId,
+        reserveCardId: p1H4[1].id,
+        position: { row: 1, col: 1 },
+        activationOrder: [adjBId, adjAId],
+      });
+      roomManager.handleAction(host.roomId, guest.playerId, {
+        type: 'SUBMIT_SELECTION',
+        tableauCardId: p2H4[0].id,
+        reserveCardId: p2H4[1].id,
+        position: { row: 1, col: 1 },
+      });
+
+      const sentMessages = hostSocket.send.mock.calls.map((c: any[]) => JSON.parse(c[0]));
+      const roundResolvedMsg = sentMessages.find((m: any) => m.type === 'ROUND_RESOLVED');
+      expect(roundResolvedMsg).toBeDefined();
+      expect(roundResolvedMsg.roundSummary).toBeDefined();
+      expect(roundResolvedMsg.roundSummary.round).toBe(4);
+      const p1Activations = roundResolvedMsg.roundSummary.players[host.playerId].activations;
+      expect(p1Activations.map((a: any) => a.cardId)).toEqual([placedId, adjBId, adjAId]);
+
+      // Verify roundSummaries persists through filterStateForPlayer
+      const filtered = filterStateForPlayer(room.gameState!, host.playerId);
+      expect(filtered.roundSummaries?.length).toBe(4);
+    });
+
+    it('requires both players to send READY_NEXT_ROUND before allReady becomes true', () => {
+      const host = roomManager.createRoom('Alice');
+      const guest = roomManager.joinRoom(host.roomId, 'Bob');
+
+      const hostSocket: any = { readyState: 1, send: vi.fn() };
+      const guestSocket: any = { readyState: 1, send: vi.fn() };
+      roomManager.bindSocket(hostSocket, host.roomId, host.playerId);
+      roomManager.bindSocket(guestSocket, host.roomId, guest.playerId);
+
+      // Player 1 clicks Ready
+      const res1 = roomManager.handleReadyNextRound(host.roomId, host.playerId);
+      expect(res1.success).toBe(true);
+      expect(res1.allReady).toBe(false);
+      expect(res1.readyPlayerIds).toEqual([host.playerId]);
+
+      // Reconnecting guest sees host is already ready
+      const recon = roomManager.reconnectPlayer(host.roomId, guest.playerId, guest.sessionToken);
+      expect(recon.state?.readyNextRoundPlayers).toEqual([host.playerId]);
+
+      // Player 2 clicks Ready
+      const res2 = roomManager.handleReadyNextRound(host.roomId, guest.playerId);
+      expect(res2.success).toBe(true);
+      expect(res2.allReady).toBe(true);
+      expect(res2.readyPlayerIds).toContain(host.playerId);
+      expect(res2.readyPlayerIds).toContain(guest.playerId);
+
+      // Ready set is cleared after both are ready
+      const room = roomManager.getRoom(host.roomId)!;
+      expect(room.readyNextRoundPlayers.size).toBe(0);
+    });
+  });
 });

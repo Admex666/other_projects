@@ -123,7 +123,9 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
                     <span className="font-serif font-black text-2xl sm:text-3xl text-amber-700">
                       {item.finalScore}
                     </span>
-                    <span className="text-xs font-bold text-amber-900">VP</span>
+                    <span className="text-xs font-bold text-amber-900 flex items-center gap-1">
+                      <GameIcon type="vp" size="xs" /> VP
+                    </span>
                   </div>
                 </div>
 
@@ -151,8 +153,8 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
                     <span className="block text-amber-700 text-[10px] font-bold flex items-center justify-center gap-1">
                       <GameIcon type="beetoken" size="xs" /> Bee Bonus
                     </span>
-                    <span className="font-bold text-amber-700 text-sm">
-                      +{item.beeBonus} VP
+                    <span className="font-bold text-amber-700 text-sm inline-flex items-center justify-center gap-1">
+                      +{item.beeBonus} <GameIcon type="vp" size="xs" /> VP
                     </span>
                   </div>
                 </div>

@@ -243,6 +243,20 @@ wss.on('connection', (ws: WebSocket) => {
           break;
         }
 
+        case 'READY_NEXT_ROUND': {
+          const readyResult = roomManager.handleReadyNextRound(data.roomId, data.playerId);
+          if (!readyResult.success) {
+            ws.send(
+              JSON.stringify({
+                type: 'ERROR',
+                code: 'READY_NEXT_ROUND_FAILED',
+                message: readyResult.error || 'Ready next round failed.',
+              })
+            );
+          }
+          break;
+        }
+
         case 'GAME_ACTION': {
           const actionResult = roomManager.handleAction(data.roomId, data.playerId, data.action);
           if (!actionResult.success) {
