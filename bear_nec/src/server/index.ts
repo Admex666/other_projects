@@ -1,5 +1,6 @@
 import http from 'http';
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { WebSocketServer, WebSocket } from 'ws';
@@ -9,8 +10,21 @@ import type { ClientMessage } from './protocol';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+function getLanIp(): string {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name] || []) {
+      if (iface.family === 'IPv4' && !iface.internal && !iface.address.startsWith('169.254.')) {
+        return iface.address;
+      }
+    }
+  }
+  return 'localhost';
+}
+
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
-const HOST = process.env.HOST || 'localhost';
+const LAN_IP = getLanIp();
+const HOST = process.env.HOST || LAN_IP;
 const BASE_URL = process.env.BASE_URL || `http://${HOST}:${PORT}`;
 
 export const roomManager = new RoomManager(BASE_URL);
@@ -46,6 +60,18 @@ export const server = http.createServer((req, res) => {
         status: 'ok',
         name: 'Bear Necessities Game Server',
         activeRooms: roomManager.getAllRooms().length,
+      })
+    );
+    return;
+  }
+
+  if (pathname === '/api/network-info') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(
+      JSON.stringify({
+        lanIp: LAN_IP,
+        port: PORT,
+        baseUrl: BASE_URL,
       })
     );
     return;
