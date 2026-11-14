@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PeerPlay · 3 Enterprise SaaS Stílusvariáció (Stripe / Vercel / Mercury)</title>
+  <title>PeerPlay · Enterprise Felületi Stílusvariációk</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,8 +15,8 @@
 
   <style>
     /* ================================================================= */
-    /* VARIÁCIÓ 1A: STRIPE ENTERPRISE (Clean Slate & Cobalt Blue)       */
-    /* Benchmark: Stripe Dashboard, Apple B2B, Pitch                     */
+    /* VARIÁCIÓ 1A: COBALT & SLATE (Tiszta pala & kobaltkék)             */
+    /* Vállalati diagnosztikai és facilitátori felület                   */
     /* ================================================================= */
     body.theme-stripe {
       --bg-canvas: #F8FAFC;
@@ -49,8 +49,8 @@
     }
 
     /* ================================================================= */
-    /* VARIÁCIÓ 1B: VERCEL MONOCHROME (Pure Black, Crisp Gray, Geist)   */
-    /* Benchmark: Vercel, Supabase, Next.js Developer Console            */
+    /* VARIÁCIÓ 1B: MONOCHROME GEIST (Tiszta fekete, precíziós szürke)   */
+    /* Adatelemzői és hálózati metrika nézet                             */
     /* ================================================================= */
     body.theme-vercel {
       --bg-canvas: #FAFAFA;
@@ -83,8 +83,8 @@
     }
 
     /* ================================================================= */
-    /* VARIÁCIÓ 1C: MERCURY EXECUTIVE (Warm Pearl & Deep Forest Emerald) */
-    /* Benchmark: Mercury Bank, Ramp, Carta, High-End FinTech            */
+    /* VARIÁCIÓ 1C: EXECUTIVE EMERALD (Meleg gyöngyház és smaragdzöld)   */
+    /* Vezetői összefoglaló és debrief nézet                             */
     /* ================================================================= */
     body.theme-mercury {
       --bg-canvas: #FBFBFA;
@@ -177,19 +177,19 @@
     <div class="flex items-center gap-1.5 bg-stone-200/60 p-1 rounded-xl border theme-border">
       <span class="text-[11px] font-bold px-2 theme-text-muted hidden sm:inline">Stílusvariáció:</span>
       
-      <!-- Option 1: Stripe -->
+      <!-- Option 1: Cobalt & Slate -->
       <button onclick="switchTheme('stripe')" id="btn-theme-stripe" class="theme-btn px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-stone-900 shadow-sm border border-stone-300">
-        1A. Stripe (Cobalt & Slate)
+        1A. Cobalt & Slate (Alapértelmezett)
       </button>
       
-      <!-- Option 2: Vercel -->
+      <!-- Option 2: Monochrome Geist -->
       <button onclick="switchTheme('vercel')" id="btn-theme-vercel" class="theme-btn px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-stone-600 hover:text-stone-900">
-        1B. Vercel (Monochrome Geist)
+        1B. Monochrome Geist (Precíziós)
       </button>
       
-      <!-- Option 3: Mercury -->
+      <!-- Option 3: Executive Emerald -->
       <button onclick="switchTheme('mercury')" id="btn-theme-mercury" class="theme-btn px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-stone-600 hover:text-stone-900">
-        1C. Mercury (Space Grotesk & Forest)
+        1C. Executive Emerald (Vezetői)
       </button>
     </div>
 
@@ -210,7 +210,7 @@
     </nav>
   </header>
 
-  <!-- LIVE FONT & BENCHMARK EXPLANATION BAR -->
+  <!-- LIVE FONT & STÍLUS EXPLANATION BAR -->
   <div class="px-6 py-2.5 text-xs border-b theme-border flex items-center justify-between theme-subtle">
     <div id="style-description" class="theme-text-muted flex items-center gap-2">
       <!-- Dynamic via JS -->
@@ -822,23 +822,23 @@
 
   <!-- FOOTER -->
   <footer class="border-t theme-border bg-white/50 px-6 py-4 text-center text-xs theme-text-soft theme-font-mono">
-    PeerPlay Intelligence · Enterprise SaaS Design Explorer · Switch between 3 Variations above
+    PeerPlay Intelligence · Enterprise Design Explorer · Váltson a fenti 3 stílusvariáció között
   </footer>
 
   <!-- SCRIPT -->
   <script>
     const themeDetails = {
       stripe: {
-        desc: '<strong class="theme-text-main font-bold">1A. Stripe Enterprise (Cobalt & Slate):</strong> Hideg kékesszürke vászon (#F8FAFC), tiszta fehér kártyák, kobaltkék (#2563EB) gombok, Plus Jakarta Sans betűtípus. Ultra-megbízható fintech elegancia.',
-        benchmark: 'Benchmark: Stripe Dashboard, Apple B2B, Pitch'
+        desc: '<strong class="theme-text-main font-bold">1A. Cobalt & Slate (Alapértelmezett):</strong> Hideg kékesszürke vászon (#F8FAFC), tiszta fehér kártyák, kobaltkék (#2563EB) gombok, Plus Jakarta Sans betűtípus. Letisztult, átlátható vállalati felület.',
+        category: 'Típus: Operatív és facilitátori fókusz'
       },
       vercel: {
-        desc: '<strong class="theme-text-main font-bold">1B. Vercel Monochrome (Pure Black & Geist):</strong> Minimál fekete-fehér (#000000 / #FAFAFA), borotvaéles 1px szürke vonalak, szigorú Vercel Geist + Geist Mono betűkészlet. Hi-tech fejlesztői és elemzői precizitás.',
-        benchmark: 'Benchmark: Vercel, Supabase, Linear Light'
+        desc: '<strong class="theme-text-main font-bold">1B. Monochrome Geist (Precíziós):</strong> Minimál fekete-fehér (#000000 / #FAFAFA), precíz 1px szürke vonalak, Geist + Geist Mono betűkészlet. Nagy adatsűrűségű hálózatelemzési nézet.',
+        category: 'Típus: Hálózatelemzési és metrika fókusz'
       },
       mercury: {
-        desc: '<strong class="theme-text-main font-bold">1C. Mercury Executive (Forest Emerald & Space Grotesk):</strong> Meleg gyöngyház vászon (#FBFBFA), mély erdei smaragdzöld (#0F3D2E) akcentus, karakteres Space Grotesk címek. Prémium neo-bank és vezetési tanácsadói luxus.',
-        benchmark: 'Benchmark: Mercury Bank, Ramp, Carta'
+        desc: '<strong class="theme-text-main font-bold">1C. Executive Emerald (Vezetői):</strong> Meleg gyöngyház vászon (#FBFBFA), mély erdei smaragdzöld (#0F3D2E) akcentus, karakteres Space Grotesk címek. Prémium vezetői összefoglaló és debrief nézet.',
+        category: 'Típus: Stratégiai és vezetői fókusz'
       }
     };
 
@@ -857,7 +857,7 @@
       }
 
       document.getElementById('style-description').innerHTML = 
-        themeDetails[themeName].desc + ' <span class="ml-2 px-2 py-0.5 rounded bg-stone-300/40 text-[10px] theme-font-mono font-bold">' + themeDetails[themeName].benchmark + '</span>';
+        themeDetails[themeName].desc + ' <span class="ml-2 px-2 py-0.5 rounded bg-stone-300/40 text-[10px] theme-font-mono font-bold">' + themeDetails[themeName].category + '</span>';
     }
 
     function switchScreen(screenId) {

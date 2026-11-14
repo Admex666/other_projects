@@ -35,10 +35,10 @@ export default async function JoinPage({
         {/* Footer */}
         <div className="text-center pt-2 border-t border-slate-100">
           <Link
-            href="/dashboard"
+            href="/"
             className="text-xs text-slate-400 hover:text-slate-700 transition font-medium"
           >
-            ← Vissza a facilitátori felületre
+            ← Vissza a kezdőlapra
           </Link>
         </div>
       </div>

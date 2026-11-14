@@ -144,7 +144,7 @@ export default function SurveyPageClient({
 
       {/* Footer */}
       <footer className="text-center text-[10px] text-slate-400 font-mono mt-8">
-        PeerPlay Enterprise v2.0 · Stripe Enterprise Standard
+        PeerPlay Enterprise v2.0 · Szervezetdiagnosztikai Platform
       </footer>
     </div>
   )

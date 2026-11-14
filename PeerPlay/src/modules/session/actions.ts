@@ -220,26 +220,46 @@ export async function joinWorkshopSession(
   userEmail: string,
   teamId?: string
 ) {
+  const cleanJoinCode = (joinCode || '').trim().toUpperCase()
+  const cleanEmail = (userEmail || '').trim().toLowerCase()
+  const cleanName = (userName || '').trim()
+
+  if (!cleanJoinCode) {
+    throw new Error('Kérlek add meg a munkamenet PIN kódot!')
+  }
+  if (!cleanName) {
+    throw new Error('Kérlek add meg a teljes nevedet!')
+  }
+  if (!cleanEmail) {
+    throw new Error('Kérlek add meg a munkahelyi e-mail címedet!')
+  }
+
   const session = await prisma.session.findUnique({
-    where: { joinCode: joinCode.toUpperCase() },
+    where: { joinCode: cleanJoinCode },
     include: { teams: true },
   })
 
   if (!session) {
-    throw new Error('Érvénytelen workshop kód!')
+    throw new Error(`Nem található aktív munkamenet ezzel a kóddal: ${cleanJoinCode}`)
   }
 
   let user = await prisma.user.findUnique({
-    where: { email: userEmail },
+    where: { email: cleanEmail },
   })
 
   if (!user) {
     user = await prisma.user.create({
       data: {
-        email: userEmail,
-        name: userName,
+        email: cleanEmail,
+        name: cleanName,
         organizationId: session.organizationId,
       },
+    })
+  } else if (user.name !== cleanName && cleanName) {
+    // Frissítjük a nevet, ha megváltozott
+    user = await prisma.user.update({
+      where: { id: user.id },
+      data: { name: cleanName },
     })
   }
 
@@ -350,5 +370,17 @@ export async function getSessions() {
 // Backward-compatible aliases
 export const createSession = createWorkshopSession
 export const joinSession = joinWorkshopSession
+
+/**
+ * 8. Facilitátori PIN kód ellenőrzése
+ */
+export async function verifyFacilitatorPin(pin: string): Promise<{ success: boolean; error?: string }> {
+  const configuredPin = (process.env.FACILITATOR_PIN || '2026').trim()
+  if (!pin || pin.trim() !== configuredPin) {
+    return { success: false, error: 'Helytelen facilitátori PIN kód. Kérlek próbáld újra!' }
+  }
+  return { success: true }
+}
+
 
 

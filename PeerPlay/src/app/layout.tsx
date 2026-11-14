@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "PeerPlay · The Trading Game & Organizational Diagnostics",
-  description: "Behavioral Simulation-Based Organizational Diagnostics Platform (Stripe Enterprise Standard)",
+  description: "Behavioral Simulation-Based Organizational Diagnostics Platform",
 };
 
 export default function RootLayout({

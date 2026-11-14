@@ -26,7 +26,8 @@ Numbered Architectural Decision Records (ADRs).
 
 ### 3. Inviolable Rules & Standards (`knowledge/rules/`)
 Non-negotiable engineering principles, safety constraints, design system, and QA quality gates.
-- [brand_and_design_guidelines.md](file:///E:/Data/other_projects/PeerPlay/knowledge/rules/brand_and_design_guidelines.md) — **Canonical Stripe Enterprise Design System Tokens & Component Standards** (Colors, Plus Jakarta Sans & JetBrains Mono, Card Layouts).
+- [white_label_and_client_facing_standards.md](file:///E:/Data/other_projects/PeerPlay/knowledge/rules/white_label_and_client_facing_standards.md) — **White-Label & Client-Facing Integrity**: Strict prohibition of internal benchmark mentions (Stripe, Vercel, Mercury) on customer-facing screens.
+- [brand_and_design_guidelines.md](file:///E:/Data/other_projects/PeerPlay/knowledge/rules/brand_and_design_guidelines.md) — **Canonical PeerPlay Design System Tokens & Component Standards** (Colors, Plus Jakarta Sans & JetBrains Mono, Card Layouts).
 - [human_centered_design_standards.md](file:///E:/Data/other_projects/PeerPlay/knowledge/rules/human_centered_design_standards.md) — **Anti-"AI Slop" Design Principles**: Guidelines to eliminate generic AI aesthetics.
 - `architecture_rules.md` — Module boundaries, transaction integrity (ACID), and forbidden cross-dependencies.
 
