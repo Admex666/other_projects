@@ -48,27 +48,27 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
   const isUserWinner = winners.some((w) => w.player.id === activePlayerId);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in select-none">
-      <div className="relative wood-panel rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border-4 border-[#6b4a2c] text-[#3c2a18]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in select-none">
+      <div className="relative wood-panel rounded-3xl p-4 sm:p-8 max-w-xl w-full shadow-2xl border-4 border-[#6b4a2c] text-[#3c2a18] max-h-[90vh] overflow-y-auto">
         {/* Celebratory Woodland Trophy Banner */}
-        <div className="flex flex-col items-center text-center mb-6">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 border-4 border-[#fffdf6] shadow-xl flex items-center justify-center text-amber-950 mb-3 animate-bounce">
-            <Trophy className="w-10 h-10 sm:w-12 sm:h-12" />
+        <div className="flex flex-col items-center text-center mb-4 sm:mb-6">
+          <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 border-4 border-[#fffdf6] shadow-xl flex items-center justify-center text-amber-950 mb-2 sm:mb-3 animate-bounce">
+            <Trophy className="w-8 h-8 sm:w-12 sm:h-12" />
           </div>
 
-          <span className="font-serif font-black text-xs uppercase tracking-widest text-[#6b4a2c] bg-amber-200/60 px-3 py-1 rounded-full border border-amber-400">
+          <span className="font-serif font-black text-[10px] sm:text-xs uppercase tracking-widest text-[#6b4a2c] bg-amber-200/60 px-2.5 sm:px-3 py-1 rounded-full border border-amber-400">
             Game Over — 12 Rounds Completed
           </span>
 
-          <h2 className="font-serif font-black text-2xl sm:text-3xl text-[#4e3218] mt-2">
+          <h2 className="font-serif font-black text-xl sm:text-3xl text-[#4e3218] mt-2">
             {isTie ? (
               <span className="flex items-center gap-2 justify-center">
-                <Sparkles className="w-6 h-6 text-amber-500" />
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
                 It's a Woodland Tie!
               </span>
             ) : isUserWinner ? (
               <span className="text-emerald-800 flex items-center gap-2 justify-center">
-                <Sparkles className="w-6 h-6 text-amber-500" />
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
                 Victory! You Won!
               </span>
             ) : (
@@ -82,7 +82,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
         </div>
 
         {/* Players Breakdown Comparison Table */}
-        <div className="space-y-3 mb-6">
+        <div className="space-y-2.5 sm:space-y-3 mb-5 sm:mb-6">
           {playerStats.map((item, index) => {
             const isWinner = winners.some((w) => w.player.id === item.player.id);
             const isYou = item.player.id === activePlayerId;

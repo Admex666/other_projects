@@ -4,6 +4,7 @@ import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { WebSocketServer, WebSocket } from 'ws';
+import localtunnel from 'localtunnel';
 import { RoomManager } from './roomManager';
 import type { ClientMessage } from './protocol';
 
@@ -12,6 +13,40 @@ const __dirname = path.dirname(__filename);
 
 function getLanIp(): string {
   const interfaces = os.networkInterfaces();
+  const candidates: { address: string; name: string }[] = [];
+
+  for (const name of Object.keys(interfaces)) {
+    const lower = name.toLowerCase();
+    // Skip virtual switches / containers (Hyper-V, WSL, VirtualBox, Docker, VMware)
+    if (
+      lower.includes('vethernet') ||
+      lower.includes('virtual') ||
+      lower.includes('wsl') ||
+      lower.includes('docker') ||
+      lower.includes('vmware') ||
+      lower.includes('host-only')
+    ) {
+      continue;
+    }
+
+    for (const iface of interfaces[name] || []) {
+      if (iface.family === 'IPv4' && !iface.internal && !iface.address.startsWith('169.254.')) {
+        candidates.push({ address: iface.address, name: lower });
+      }
+    }
+  }
+
+  // Prioritize Wi-Fi or Ethernet
+  const primary =
+    candidates.find((c) => c.name.includes('wi-fi') || c.name.includes('wifi') || c.name.includes('wlan')) ||
+    candidates.find((c) => c.name.includes('ethernet') || c.name.includes('eth')) ||
+    candidates[0];
+
+  if (primary) {
+    return primary.address;
+  }
+
+  // Fallback to any non-internal IPv4
   for (const name of Object.keys(interfaces)) {
     for (const iface of interfaces[name] || []) {
       if (iface.family === 'IPv4' && !iface.internal && !iface.address.startsWith('169.254.')) {
@@ -19,6 +54,7 @@ function getLanIp(): string {
       }
     }
   }
+
   return 'localhost';
 }
 
@@ -301,7 +337,25 @@ wss.on('connection', (ws: WebSocket) => {
 });
 
 if (process.env.NODE_ENV !== 'test') {
-  server.listen(PORT, () => {
-    console.log(`Bear Necessities server running on port ${PORT}`);
+  server.listen(PORT, async () => {
+    console.log(`Bear Necessities server running locally on port ${PORT}`);
+    console.log(`Local LAN URL: http://${HOST}:${PORT}`);
+
+    if (process.env.ENABLE_TUNNEL !== 'false') {
+      try {
+        console.log('Online alagut letrehozasa a telefonos csatlakozashoz...');
+        const tunnel = await localtunnel({ port: PORT });
+        roomManager.setBaseUrl(tunnel.url);
+        console.log('========================================================');
+        console.log(`  ONLINE ELERES (TELON IS MUKODIK!): ${tunnel.url}`);
+        console.log('========================================================');
+
+        tunnel.on('close', () => {
+          console.log('Localtunnel kapcsolat lezárult.');
+        });
+      } catch (err) {
+        console.warn('Nem sikerült automatikus alagutat indítani:', err);
+      }
+    }
   });
 }

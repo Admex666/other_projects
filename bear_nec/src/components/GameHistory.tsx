@@ -20,18 +20,18 @@ export const GameHistory: React.FC<GameHistoryProps> = ({
   const orderedSummaries = [...summaries].reverse();
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-2 sm:px-4">
+    <div className="w-full max-w-5xl mx-auto px-1 sm:px-4">
       <div className="rounded-2xl bg-[#faf3e6] border-2 border-[#6b4a2c]/60 shadow-md overflow-hidden">
         {/* Toggle Header */}
         <button
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
-          className="w-full px-4 py-2.5 flex items-center justify-between bg-[#f4e6ca]/80 hover:bg-[#f4e6ca] transition text-[#4e3218] cursor-pointer"
+          className="w-full px-3 sm:px-4 py-2.5 flex items-center justify-between bg-[#f4e6ca]/80 hover:bg-[#f4e6ca] transition text-[#4e3218] cursor-pointer"
         >
-          <div className="flex items-center gap-2 font-serif font-bold text-sm">
+          <div className="flex items-center gap-2 font-serif font-bold text-xs sm:text-sm">
             <History className="w-4 h-4 text-amber-700" />
             <span>Game History</span>
-            <span className="text-[11px] font-mono font-normal bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
+            <span className="text-[10px] sm:text-[11px] font-mono font-normal bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
               {summaries.length} {summaries.length === 1 ? 'round' : 'rounds'}
             </span>
           </div>
@@ -43,7 +43,7 @@ export const GameHistory: React.FC<GameHistoryProps> = ({
 
         {/* Collapsible Content */}
         {expanded && (
-          <div className="p-3 sm:p-4 max-h-72 overflow-y-auto space-y-2.5 border-t border-[#6b4a2c]/20">
+          <div className="p-2.5 sm:p-4 max-h-64 sm:max-h-72 overflow-y-auto space-y-2 sm:space-y-2.5 border-t border-[#6b4a2c]/20">
             {orderedSummaries.length === 0 ? (
               <div className="text-center py-4 text-xs font-serif text-stone-500">
                 No rounds completed yet. Detailed round logs will appear here after Round 1.

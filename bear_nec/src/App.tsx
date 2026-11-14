@@ -17,6 +17,20 @@ import {
 } from './components';
 import { Info, ArrowRight, ArrowLeft, X, Copy, Check, Loader2, Lock, ListOrdered } from 'lucide-react';
 
+export function getWebSocketUrl(): string {
+  if (typeof window === 'undefined') return 'ws://localhost:3001';
+  const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  // If Vite dev server (default port 5173), target local backend server on port 3001
+  if (window.location.port === '5173') {
+    return `${wsProtocol}//${window.location.hostname || 'localhost'}:3001`;
+  }
+  // When accessed via tunnel, reverse proxy (port 80/443), or standard host, window.location.host
+  // includes the port only if non-standard (e.g. "192.168.1.5:3001" or "localhost:3001")
+  // and omits it for standard ports (e.g. "xxx.loca.lt")
+  const host = window.location.host || 'localhost:3001';
+  return `${wsProtocol}//${host}`;
+}
+
 export const App: React.FC = () => {
   // Screen mode: 'lobby' | 'hotseat' | 'multiplayer' | 'bot'
   const [mode, setMode] = useState<'lobby' | 'hotseat' | 'multiplayer' | 'bot'>('lobby');
@@ -265,10 +279,7 @@ export const App: React.FC = () => {
 
   const reconnectWebSocket = (savedRoomId: string, savedPlayerId: string, savedToken: string) => {
     try {
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsHost = window.location.hostname || 'localhost';
-      const wsPort = window.location.port ? window.location.port : '3001';
-      const wsUrl = `${wsProtocol}//${wsHost}:${wsPort}`;
+      const wsUrl = getWebSocketUrl();
       const ws = new WebSocket(wsUrl);
       const myPlayerIdRef = { current: savedPlayerId };
 
@@ -301,11 +312,7 @@ export const App: React.FC = () => {
     setServerError(null);
     setHasSubmittedRound(false);
     try {
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsHost = window.location.hostname || 'localhost';
-      const wsPort = window.location.port ? window.location.port : '3001';
-      const wsUrl = `${wsProtocol}//${wsHost}:${wsPort}`;
-
+      const wsUrl = getWebSocketUrl();
       const ws = new WebSocket(wsUrl);
       const myPlayerIdRef = { current: null as string | null };
 
@@ -570,11 +577,9 @@ export const App: React.FC = () => {
 
   // Waiting for opponent screen in multiplayer
   if (mode === 'multiplayer' && (!gameState || !currentP)) {
-    const shareableUrl =
-      inviteUrl ||
-      (roomId
-        ? `${window.location.origin}${window.location.pathname}?room=${roomId}`
-        : `${window.location.origin}${window.location.pathname}`);
+    const shareableUrl = roomId
+      ? `${window.location.origin}${window.location.pathname}?room=${roomId}`
+      : inviteUrl || `${window.location.origin}${window.location.pathname}`;
 
     const handleCopyWaitingLink = () => {
       navigator.clipboard.writeText(shareableUrl).then(() => {
@@ -584,20 +589,20 @@ export const App: React.FC = () => {
     };
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="wood-panel rounded-3xl p-8 max-w-md w-full text-center shadow-2xl text-[#3c2a18]">
-          <div className="w-16 h-16 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg">
+      <div className="min-h-screen flex items-center justify-center p-3 sm:p-4">
+        <div className="wood-panel rounded-3xl p-5 sm:p-8 max-w-md w-full text-center shadow-2xl text-[#3c2a18]">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center mx-auto mb-3 sm:mb-4 text-2xl sm:text-3xl shadow-lg">
             🌐
           </div>
           <h2 className="font-serif font-black text-2xl sm:text-3xl text-[#4e3218]">
             Room Created!
           </h2>
-          <p className="font-serif text-sm text-stone-600 mt-1">
+          <p className="font-serif text-xs sm:text-sm text-stone-600 mt-1">
             Waiting for Player 2 to join...
           </p>
 
           {roomId && (
-            <div className="mt-4 flex flex-col items-center gap-3 p-4 rounded-2xl bg-amber-100/70 border-2 border-amber-300">
+            <div className="mt-4 flex flex-col items-center gap-3 p-3 sm:p-4 rounded-2xl bg-amber-100/70 border-2 border-amber-300">
               <div>
                 <span className="block text-[11px] font-mono uppercase tracking-wider text-amber-800 font-bold mb-0.5">
                   Room Code
@@ -645,7 +650,7 @@ export const App: React.FC = () => {
             </button>
           </div>
 
-          <div className="mt-6 flex items-center justify-center gap-2 text-stone-500 font-serif text-xs">
+          <div className="mt-5 flex items-center justify-center gap-2 text-stone-500 font-serif text-xs">
             <Loader2 className="w-4 h-4 animate-spin text-amber-600" />
             <span>Game will start immediately when the second player joins</span>
           </div>
@@ -671,24 +676,24 @@ export const App: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col justify-between pb-8 select-none">
       {/* Top Header & Navigation */}
-      <header className="px-4 py-3 bg-[#5c3c20] text-stone-100 shadow-md flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🐻</span>
-          <span className="font-serif font-black text-lg sm:text-xl tracking-tight text-amber-200">
+      <header className="px-3 sm:px-4 py-2 sm:py-3 bg-[#5c3c20] text-stone-100 shadow-md flex items-center justify-between">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+          <span className="text-xl sm:text-2xl shrink-0">🐻</span>
+          <span className="font-serif font-black text-base sm:text-xl tracking-tight text-amber-200 truncate">
             Bear Necessities
           </span>
-          <span className="text-[10px] font-mono uppercase bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded border border-amber-400/40 ml-1">
-            {mode === 'hotseat' ? 'Hotseat Mode' : mode === 'bot' ? `Vs Bot (${botDifficulty})` : `Room: ${roomId}`}
+          <span className="text-[9px] sm:text-[10px] font-mono uppercase bg-amber-400/20 text-amber-300 px-1.5 sm:px-2 py-0.5 rounded border border-amber-400/40 shrink-0">
+            {mode === 'hotseat' ? 'Hotseat' : mode === 'bot' ? `Bot (${botDifficulty})` : `Room: ${roomId}`}
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button
             onClick={() => setRulesModalOpen(true)}
-            className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-serif flex items-center gap-1.5 transition text-amber-100"
+            className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-serif flex items-center gap-1 transition text-amber-100 cursor-pointer"
           >
             <Info className="w-3.5 h-3.5" />
-            <span>Rules</span>
+            <span className="hidden xs:inline">Rules</span>
           </button>
 
           <button
@@ -701,15 +706,15 @@ export const App: React.FC = () => {
               setHasSubmittedRound(false);
               setMode('lobby');
             }}
-            className="px-3 py-1.5 rounded-lg bg-black/20 hover:bg-black/30 text-xs font-serif text-stone-300 transition"
+            className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-black/20 hover:bg-black/30 text-xs font-serif text-stone-300 transition cursor-pointer"
           >
-            Leave Game
+            Leave
           </button>
         </div>
       </header>
 
       {/* Round & Score Board */}
-      <div className="my-3">
+      <div className="my-2 sm:my-3">
         <ScoreBoard
           round={gameState.round}
           player={currentP}
@@ -721,8 +726,8 @@ export const App: React.FC = () => {
 
       {/* Turn Banner (Hotseat indication) */}
       {mode === 'hotseat' && (
-        <div className="max-w-5xl mx-auto px-4 w-full mb-2">
-          <div className="flex items-center justify-between bg-gradient-to-r from-amber-600 to-amber-700 text-white px-4 py-2 rounded-xl shadow-md border border-amber-400/60 font-serif text-xs sm:text-sm">
+        <div className="max-w-5xl mx-auto px-2 sm:px-4 w-full mb-2">
+          <div className="flex items-center justify-between bg-gradient-to-r from-amber-600 to-amber-700 text-white px-3 sm:px-4 py-2 rounded-xl shadow-md border border-amber-400/60 font-serif text-xs sm:text-sm">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
               <span className="font-black tracking-wide">
@@ -738,7 +743,7 @@ export const App: React.FC = () => {
 
       {/* Multiplayer Waiting Banner */}
       {mode === 'multiplayer' && hasSubmittedRound && gameState.phase !== 'GAME_OVER' && (
-        <div className="bg-amber-900/80 border-b border-amber-500/40 px-4 py-2 text-center text-sm font-serif text-amber-100 flex items-center justify-center gap-2">
+        <div className="bg-amber-900/80 border-b border-amber-500/40 px-3 sm:px-4 py-2 text-center text-xs sm:text-sm font-serif text-amber-100 flex items-center justify-center gap-2">
           <Lock className="w-4 h-4 text-amber-300" />
           <span>Move locked in for Round {gameState.round}. Waiting for opponent...</span>
         </div>
@@ -746,23 +751,23 @@ export const App: React.FC = () => {
 
       {/* Round Notification Toast */}
       {roundNotification && (
-        <div className="max-w-xl mx-auto px-4 w-full mb-3 animate-fade-in">
-          <div className="p-3 rounded-xl bg-amber-100 border-2 border-amber-500 text-amber-950 font-serif font-bold text-xs sm:text-sm text-center shadow-lg">
+        <div className="max-w-xl mx-auto px-2 sm:px-4 w-full mb-3 animate-fade-in">
+          <div className="p-2.5 sm:p-3 rounded-xl bg-amber-100 border-2 border-amber-500 text-amber-950 font-serif font-bold text-xs sm:text-sm text-center shadow-lg">
             {roundNotification}
           </div>
         </div>
       )}
 
       {/* Main Game Board Area */}
-      <main className="max-w-6xl mx-auto px-2 sm:px-4 w-full flex-1 flex flex-col justify-center gap-6">
+      <main className="max-w-6xl mx-auto px-1 sm:px-4 w-full flex-1 flex flex-col justify-center gap-4 sm:gap-6">
         {/* Upper Area: Opponent Tableau (Compact) & Active Tableau Side-by-Side on Desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 items-start">
           {/* Active Player Tableau (8 cols on lg) */}
           <div className="lg:col-span-8 flex flex-col items-center">
-            <div className="flex items-center justify-between w-full max-w-[560px] mb-2 px-1 text-xs font-serif font-bold text-[#4e3218]">
+            <div className="flex items-center justify-between w-full max-w-[560px] mb-1.5 sm:mb-2 px-1 text-[11px] sm:text-xs font-serif font-bold text-[#4e3218]">
               <span>Your Photographic Journey (4×3 Grid)</span>
               <span className="text-emerald-800">
-                {validPlacements.length} valid placement {validPlacements.length === 1 ? 'slot' : 'slots'}
+                {validPlacements.length} valid {validPlacements.length === 1 ? 'slot' : 'slots'}
               </span>
             </div>
 
@@ -778,36 +783,36 @@ export const App: React.FC = () => {
 
             {/* Player-Chosen Activation Order Panel (>= 2 adjacent cards) */}
             {needsActivationOrdering && (
-              <div className="w-full max-w-[560px] mt-3 p-3 rounded-xl bg-sky-50/95 border-2 border-sky-400 shadow-md text-[#3c2a18]">
-                <div className="flex items-center justify-between gap-2 mb-2">
+              <div className="w-full max-w-[560px] mt-2.5 sm:mt-3 p-2.5 sm:p-3 rounded-xl bg-sky-50/95 border-2 border-sky-400 shadow-md text-[#3c2a18]">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
                   <div className="flex items-center gap-1.5 font-serif font-bold text-xs sm:text-sm text-sky-950">
                     <ListOrdered className="w-4 h-4 text-sky-700" />
                     <span>Adjacent Activation Order</span>
                   </div>
-                  <span className="text-[11px] font-serif text-sky-800">
+                  <span className="text-[10px] sm:text-[11px] font-serif text-sky-800">
                     Placed card activates 1st, then neighbors in order:
                   </span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                   {activationOrder.map((cardId, idx) => {
                     const neighbor = adjacentNeighbors.find((n) => n.card.id === cardId);
                     if (!neighbor) return null;
                     return (
                       <div
                         key={cardId}
-                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-sky-300 shadow-sm text-xs font-serif"
+                        className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white border border-sky-300 shadow-sm text-xs font-serif"
                       >
-                        <span className="w-5 h-5 rounded-full bg-sky-600 text-white font-mono font-bold text-[10px] flex items-center justify-center">
+                        <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-sky-600 text-white font-mono font-bold text-[9px] sm:text-[10px] flex items-center justify-center shrink-0">
                           #{idx + 1}
                         </span>
-                        <span className="font-bold text-stone-800">{neighbor.card.name}</span>
+                        <span className="font-bold text-stone-800 truncate max-w-[90px] xs:max-w-none">{neighbor.card.name}</span>
                         <button
                           type="button"
                           disabled={idx === 0}
                           onClick={() => handleMoveActivationOrder(idx, -1)}
                           title="Activate earlier"
-                          className="p-0.5 rounded hover:bg-sky-100 disabled:opacity-30 cursor-pointer"
+                          className="p-1 rounded hover:bg-sky-100 disabled:opacity-30 cursor-pointer"
                         >
                           <ArrowLeft className="w-3.5 h-3.5 text-sky-700" />
                         </button>
@@ -816,7 +821,7 @@ export const App: React.FC = () => {
                           disabled={idx === activationOrder.length - 1}
                           onClick={() => handleMoveActivationOrder(idx, 1)}
                           title="Activate later"
-                          className="p-0.5 rounded hover:bg-sky-100 disabled:opacity-30 cursor-pointer"
+                          className="p-1 rounded hover:bg-sky-100 disabled:opacity-30 cursor-pointer"
                         >
                           <ArrowRight className="w-3.5 h-3.5 text-sky-700" />
                         </button>

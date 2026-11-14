@@ -105,11 +105,11 @@ export const CardView: React.FC<CardViewProps> = ({
 
   // Determine size classes
   const sizeClasses = {
-    compact: 'w-[68px] h-[106px] text-[9px]',
-    sm: 'w-[90px] h-[140px] text-[10px]',
-    md: 'w-[125px] h-[195px] text-xs',
-    lg: 'w-[160px] h-[250px] text-sm',
-    hand: 'w-[145px] h-[226px] text-xs sm:w-[155px] sm:h-[242px]',
+    compact: 'w-[54px] h-[84px] xs:w-[64px] xs:h-[100px] sm:w-[68px] sm:h-[106px] text-[8px] sm:text-[9px]',
+    sm: 'w-[70px] h-[109px] xs:w-[78px] xs:h-[122px] sm:w-[90px] sm:h-[140px] text-[9px] sm:text-[10px]',
+    md: 'w-[72px] h-[112px] xs:w-[86px] xs:h-[134px] sm:w-[125px] sm:h-[195px] md:w-[130px] md:h-[202px] text-[9px] sm:text-xs',
+    lg: 'w-[130px] h-[202px] sm:w-[160px] sm:h-[250px] text-xs sm:text-sm',
+    hand: 'w-[96px] h-[150px] xs:w-[110px] xs:h-[171px] sm:w-[145px] sm:h-[226px] md:w-[155px] md:h-[242px] text-[10px] sm:text-xs',
   }[size];
 
   // Selection styling
@@ -239,7 +239,7 @@ export const CardView: React.FC<CardViewProps> = ({
         {/* Selection Badge Overlay */}
         {selected && selectionType && (
           <div
-            className={`absolute top-1 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-white shadow-md z-20 ${
+            className={`absolute top-1 left-1/2 -translate-x-1/2 px-1.5 sm:px-2 py-0.5 rounded-full text-[8px] xs:text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-white shadow-md z-20 ${
               selectionType === 'tableau' ? 'bg-amber-600' : 'bg-sky-600'
             }`}
           >
@@ -254,7 +254,7 @@ export const CardView: React.FC<CardViewProps> = ({
           </div>
         )}
 
-        {/* Inspect / Zoom Button */}
+        {/* Inspect / Zoom Button - visible on touch devices or on desktop hover */}
         {showInspectButton && (
           <button
             type="button"
@@ -263,9 +263,9 @@ export const CardView: React.FC<CardViewProps> = ({
               e.stopPropagation();
               setInspectOpen(true);
             }}
-            className="absolute bottom-1 right-1 p-1 bg-black/60 hover:bg-black/85 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-20 shadow"
+            className="absolute bottom-1 right-1 p-1 bg-black/60 hover:bg-black/85 text-white rounded-full opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity z-20 shadow cursor-pointer"
           >
-            <ZoomIn className="w-3.5 h-3.5" />
+            <ZoomIn className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
           </button>
         )}
       </div>
@@ -273,11 +273,11 @@ export const CardView: React.FC<CardViewProps> = ({
       {/* Inspect Modal Dialog */}
       {inspectOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-fade-in"
           onClick={() => setInspectOpen(false)}
         >
           <div
-            className="relative bg-[#f8f0de] border-4 border-[#6b4a2c] rounded-2xl p-6 max-w-sm w-full shadow-2xl text-[#3c2a18]"
+            className="relative bg-[#f8f0de] border-4 border-[#6b4a2c] rounded-2xl p-4 sm:p-6 max-w-sm w-full shadow-2xl text-[#3c2a18] max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button

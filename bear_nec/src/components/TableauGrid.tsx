@@ -53,17 +53,17 @@ export const TableauGrid: React.FC<TableauGridProps> = ({
 
   // Cell sizing matching bearnecessities.css grid rules
   const cellSizes = {
-    compact: 'w-[68px] h-[106px]',
-    sm: 'w-[90px] h-[140px]',
-    md: 'w-[125px] h-[195px] sm:w-[130px] sm:h-[202px]',
+    compact: 'w-[54px] h-[84px] xs:w-[64px] xs:h-[100px] sm:w-[68px] sm:h-[106px]',
+    sm: 'w-[70px] h-[109px] xs:w-[78px] xs:h-[122px] sm:w-[90px] sm:h-[140px]',
+    md: 'w-[72px] h-[112px] xs:w-[86px] xs:h-[134px] sm:w-[125px] sm:h-[195px] md:w-[130px] md:h-[202px]',
   }[size];
 
   return (
     <div
-      className={`relative inline-block p-3 sm:p-4 rounded-2xl bg-gradient-to-b from-[#f7eedc] to-[#ebd8b7] border-2 border-[#6b4a2c] shadow-xl ${className}`}
+      className={`relative inline-block p-1.5 xs:p-2 sm:p-4 rounded-2xl bg-gradient-to-b from-[#f7eedc] to-[#ebd8b7] border-2 border-[#6b4a2c] shadow-xl ${className}`}
     >
       {/* 4 columns x 3 rows grid */}
-      <div className="grid grid-cols-4 gap-2 sm:gap-2.5">
+      <div className="grid grid-cols-4 gap-1 xs:gap-1.5 sm:gap-2.5">
         {Array.from({ length: 3 }).map((_, row) =>
           Array.from({ length: 4 }).map((_, col) => {
             const card = tableau[row]?.[col] || null;
@@ -102,11 +102,11 @@ export const TableauGrid: React.FC<TableauGridProps> = ({
                     showInspectButton={true}
                     badge={
                       showOrderBadge ? (
-                        <div className="px-2 py-0.5 rounded-full bg-sky-600 text-white font-mono font-black text-[11px] shadow-lg border border-white">
+                        <div className="px-1 sm:px-2 py-0.5 rounded-full bg-sky-600 text-white font-mono font-black text-[9px] sm:text-[11px] shadow-lg border border-white">
                           #{orderIdx + 1}
                         </div>
                       ) : isScored && lastScoreAmount !== null && lastScoreAmount !== undefined ? (
-                        <div className="px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-black text-[11px] shadow-lg animate-bounce flex items-center gap-0.5">
+                        <div className="px-1 sm:px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 font-black text-[9px] sm:text-[11px] shadow-lg animate-bounce flex items-center gap-0.5">
                           <span>+{lastScoreAmount}</span>
                           <GameIcon type="vp" size="xs" />
                           <span>VP</span>
@@ -116,7 +116,7 @@ export const TableauGrid: React.FC<TableauGridProps> = ({
                   />
 
                   {/* Coordinates indicator overlay */}
-                  <div className="absolute bottom-0.5 left-1 text-[8px] font-mono text-stone-500/80 pointer-events-none select-none">
+                  <div className="absolute bottom-0.5 left-1 text-[7px] sm:text-[8px] font-mono text-stone-500/80 pointer-events-none select-none">
                     {row + 1},{col + 1}
                   </div>
                 </div>
@@ -144,15 +144,15 @@ export const TableauGrid: React.FC<TableauGridProps> = ({
               >
                 {valid ? (
                   <div className="flex flex-col items-center text-[#2f7d4f] transition-transform">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-600/20 flex items-center justify-center text-emerald-800">
-                      <Plus className="w-5 h-5 stroke-[2.5]" />
+                    <div className="w-5 h-5 xs:w-6 xs:h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-600/20 flex items-center justify-center text-emerald-800">
+                      <Plus className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
                     </div>
-                    <span className="text-[10px] font-bold font-serif tracking-wider uppercase mt-1">
+                    <span className="text-[8px] xs:text-[9px] sm:text-[10px] font-bold font-serif tracking-wider uppercase mt-0.5 sm:mt-1">
                       {isSelected ? 'Selected' : 'Place'}
                     </span>
                   </div>
                 ) : (
-                  <span className="text-[10px] font-mono text-stone-400 select-none">
+                  <span className="text-[8px] sm:text-[10px] font-mono text-stone-400 select-none">
                     {row + 1},{col + 1}
                   </span>
                 )}

@@ -7,10 +7,13 @@
 
 ## Quick Start
 
+### 1-kattintásos indítás (Windows):
+Egyszerűen kattints duplán a gyökérkönyvtárban lévő [start.bat](file:///E:/Data/other_projects/PeerPlay/start.bat) fájlra, ami automatikusan ellenőrzi a környezetet, elindítja a dev szervert, és megnyitja a böngészőt.
+
+### Manuális indítás (Terminálból):
 ```bash
 npm install
 npx prisma generate
-npx prisma db push
 npm run dev
 ```
 

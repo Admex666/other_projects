@@ -51,18 +51,18 @@ export const Lobby: React.FC<LobbyProps> = ({
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto px-4 py-8">
+    <div className="w-full max-w-xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
       {/* Decorative Wood Frame Box */}
-      <div className="wood-panel rounded-3xl p-6 sm:p-8 text-[#3c2a18]">
+      <div className="wood-panel rounded-3xl p-4 sm:p-8 text-[#3c2a18]">
         {/* Title Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-b from-amber-400 to-amber-600 text-white shadow-lg mb-3 border-2 border-[#fffdf6]">
-            <span className="text-3xl">🐻</span>
+        <div className="text-center mb-5 sm:mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-amber-400 to-amber-600 text-white shadow-lg mb-2 sm:mb-3 border-2 border-[#fffdf6]">
+            <span className="text-2xl sm:text-3xl">🐻</span>
           </div>
-          <h1 className="font-serif font-black text-3xl sm:text-4xl text-[#4e3218] tracking-tight">
+          <h1 className="font-serif font-black text-2xl sm:text-4xl text-[#4e3218] tracking-tight">
             Bear Necessities
           </h1>
-          <p className="font-serif text-sm sm:text-base text-stone-600 mt-1 max-w-sm mx-auto">
+          <p className="font-serif text-xs sm:text-base text-stone-600 mt-1 max-w-sm mx-auto">
             A serene woodland tableau-building journey for 2 players.
           </p>
         </div>
@@ -237,13 +237,13 @@ export const Lobby: React.FC<LobbyProps> = ({
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                   placeholder="e.g. BEAR01"
                   maxLength={6}
-                  className="w-full px-3 py-2 rounded-xl bg-white border border-[#6b4a2c]/40 font-mono text-center font-bold tracking-widest text-[#4e3218] focus:border-amber-600 focus:outline-none"
+                  className="flex-1 min-w-0 px-3 py-2 rounded-xl bg-white border border-[#6b4a2c]/40 font-mono text-center font-bold tracking-widest text-[#4e3218] focus:border-amber-600 focus:outline-none text-sm sm:text-base"
                 />
                 <button
                   type="button"
                   disabled={joinCode.trim().length < 3 || isConnecting}
                   onClick={() => onJoinRoom(joinCode.trim())}
-                  className="px-5 py-2 rounded-xl bg-[#6b4a2c] hover:bg-[#573a1e] text-white font-serif font-bold text-sm disabled:opacity-50 transition shadow"
+                  className="px-4 sm:px-5 py-2 rounded-xl bg-[#6b4a2c] hover:bg-[#573a1e] text-white font-serif font-bold text-xs sm:text-sm disabled:opacity-50 transition shadow cursor-pointer shrink-0"
                 >
                   Join
                 </button>

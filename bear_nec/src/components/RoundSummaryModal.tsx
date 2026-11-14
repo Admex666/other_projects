@@ -39,27 +39,27 @@ export const RoundSummaryModal: React.FC<RoundSummaryModalProps> = ({
   const opponentReady = opponent ? readyPlayerIds.includes(opponent.playerId) : false;
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
-      <div className="wood-panel rounded-3xl p-5 sm:p-7 max-w-2xl w-full shadow-2xl text-[#3c2a18] max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-40 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
+      <div className="wood-panel rounded-3xl p-4 sm:p-7 max-w-2xl w-full shadow-2xl text-[#3c2a18] max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="text-center mb-5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-200/80 border border-amber-400 text-amber-950 font-mono text-xs font-bold uppercase tracking-wider mb-2">
+        <div className="text-center mb-4 sm:mb-5">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-200/80 border border-amber-400 text-amber-950 font-mono text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1.5 sm:mb-2">
             <Sparkles className="w-3.5 h-3.5 text-amber-700" />
             <span>Round {summary.round} of 12</span>
           </div>
-          <h2 className="font-serif font-black text-2xl sm:text-3xl text-[#4e3218]">
+          <h2 className="font-serif font-black text-xl sm:text-3xl text-[#4e3218]">
             {summary.isGameOver ? 'Final Round Complete!' : `Round ${summary.round} Summary`}
           </h2>
         </div>
 
         {/* Player Breakdowns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-5">
           {sortedPlayers.map((p) => {
             const isSelf = p.playerId === activePlayerId;
             return (
               <div
                 key={p.playerId}
-                className={`rounded-2xl p-4 border-2 shadow-sm ${
+                className={`rounded-2xl p-3 sm:p-4 border-2 shadow-sm ${
                   isSelf
                     ? 'bg-amber-50/90 border-amber-400'
                     : 'bg-white/80 border-[#6b4a2c]/30'

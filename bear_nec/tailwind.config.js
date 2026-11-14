@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: '420px',
+      },
       colors: {
         game: {
           city: "#dc2626",      // red
@@ -18,3 +21,4 @@ export default {
   },
   plugins: [],
 }
+
