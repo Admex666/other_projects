@@ -6,6 +6,14 @@ import { getOrthogonalNeighbors } from './game/scoring/calculator';
 import { createInitialGameState, resolveHotseatRound, PlayerTurnSelection } from './game/hotseat';
 import { chooseBotMove, BotDifficulty } from './game/ai/bot';
 import {
+  saveLocalGameSession,
+  loadLocalGameSession,
+  clearLocalGameSession,
+  saveMultiplayerSession,
+  loadMultiplayerSession,
+  clearMultiplayerSession,
+} from './game/persistence';
+import {
   TableauGrid,
   HandView,
   ScoreBoard,
@@ -78,20 +86,110 @@ export const App: React.FC = () => {
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [hasSubmittedRound, setHasSubmittedRound] = useState<boolean>(false);
 
-  // Auto-reconnect on page reload if session exists
+  // Auto-restore game state or reconnect on mount
   useEffect(() => {
-    const saved = localStorage.getItem('bn_session');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed.roomId && parsed.playerId && parsed.sessionToken) {
-          reconnectWebSocket(parsed.roomId, parsed.playerId, parsed.sessionToken);
-        }
-      } catch {
-        localStorage.removeItem('bn_session');
+    // 1. Check for saved multiplayer session
+    const mpSession = loadMultiplayerSession();
+    if (mpSession && mpSession.roomId && mpSession.playerId && mpSession.sessionToken) {
+      reconnectWebSocket(mpSession.roomId, mpSession.playerId, mpSession.sessionToken);
+      return;
+    }
+
+    // 2. Check for saved active local game session (Hotseat or AI Bot)
+    const localSession = loadLocalGameSession();
+    if (localSession && localSession.gameState && localSession.gameState.phase !== 'GAME_OVER') {
+      setGameState(localSession.gameState);
+      setMode(localSession.mode);
+      setBotDifficulty(localSession.botDifficulty || 'medium');
+      if (localSession.playerName) setPlayerName(localSession.playerName);
+      if (localSession.player2Name) setPlayer2Name(localSession.player2Name);
+      setActiveHotseatPlayer(localSession.activeHotseatPlayer || 'p1');
+      setP1Selection(localSession.p1Selection || null);
+      setSelectedTableauCardId(localSession.selectedTableauCardId ?? null);
+      setSelectedReserveCardId(localSession.selectedReserveCardId ?? null);
+      setSelectedPlacement(localSession.selectedPlacement ?? null);
+      setActivationOrder(localSession.activationOrder || []);
+      setShowPassScreen(Boolean(localSession.showPassScreen));
+      setPendingRoundSummary(localSession.pendingRoundSummary || null);
+      setLastBeeWinnerName(localSession.lastBeeWinnerName || null);
+      if (localSession.roundNotification) {
+        setRoundNotification(localSession.roundNotification);
       }
     }
   }, []);
+
+  // Persist active local session whenever hotseat or bot state changes
+  useEffect(() => {
+    if ((mode === 'hotseat' || mode === 'bot') && gameState) {
+      if (gameState.phase === 'GAME_OVER') {
+        clearLocalGameSession();
+      } else {
+        saveLocalGameSession({
+          mode,
+          gameState,
+          botDifficulty,
+          playerName,
+          player2Name,
+          activeHotseatPlayer,
+          p1Selection,
+          selectedTableauCardId,
+          selectedReserveCardId,
+          selectedPlacement,
+          activationOrder,
+          showPassScreen,
+          pendingRoundSummary,
+          lastBeeWinnerName,
+          roundNotification,
+        });
+      }
+    }
+  }, [
+    mode,
+    gameState,
+    botDifficulty,
+    playerName,
+    player2Name,
+    activeHotseatPlayer,
+    p1Selection,
+    selectedTableauCardId,
+    selectedReserveCardId,
+    selectedPlacement,
+    activationOrder,
+    showPassScreen,
+    pendingRoundSummary,
+    lastBeeWinnerName,
+    roundNotification,
+  ]);
+
+  // Persist active multiplayer in-progress selections whenever selection or state changes
+  useEffect(() => {
+    if (mode === 'multiplayer' && roomId && multiplayerPlayerId && sessionToken) {
+      saveMultiplayerSession({
+        roomId,
+        playerId: multiplayerPlayerId,
+        sessionToken,
+        inviteUrl,
+        round: gameState?.round,
+        selectedTableauCardId,
+        selectedReserveCardId,
+        selectedPlacement,
+        activationOrder,
+        hasSubmittedRound,
+      });
+    }
+  }, [
+    mode,
+    roomId,
+    multiplayerPlayerId,
+    sessionToken,
+    inviteUrl,
+    gameState?.round,
+    selectedTableauCardId,
+    selectedReserveCardId,
+    selectedPlacement,
+    activationOrder,
+    hasSubmittedRound,
+  ]);
 
   // Current active player object in hotseat or multiplayer
   const activePid = mode === 'multiplayer' && multiplayerPlayerId ? multiplayerPlayerId : activeHotseatPlayer;
@@ -99,8 +197,41 @@ export const App: React.FC = () => {
   const opponentPid = gameState ? Object.keys(gameState.players).find((id) => id !== activePid) : undefined;
   const opponentP = opponentPid ? gameState?.players[opponentPid] : (gameState && activeHotseatPlayer === 'p1' ? gameState.players.p2 : gameState?.players.p1);
 
+  // Leave Game and return to Lobby (clearing saved sessions)
+  const handleLeaveGame = () => {
+    clearLocalGameSession();
+    clearMultiplayerSession();
+    if (socket) {
+      try {
+        socket.close();
+      } catch {}
+    }
+    setSocket(null);
+    setRoomId(null);
+    setInviteUrl(null);
+    setMultiplayerPlayerId(null);
+    setSessionToken(null);
+    setGameState(null);
+    setP1Selection(null);
+    setSelectedTableauCardId(null);
+    setSelectedReserveCardId(null);
+    setSelectedPlacement(null);
+    setActivationOrder([]);
+    setPendingRoundSummary(null);
+    setReadyPlayerIds([]);
+    setHasClickedReady(false);
+    setShowPassScreen(false);
+    setRoundNotification(null);
+    setLastBeeWinnerName(null);
+    setHasSubmittedRound(false);
+    setServerError(null);
+    setMode('lobby');
+  };
+
   // Initialize Hotseat Game
   const handleStartHotseat = () => {
+    clearMultiplayerSession();
+    clearLocalGameSession();
     const initialState = createInitialGameState(playerName || 'Player 1', player2Name || 'Player 2');
     setGameState(initialState);
     setActiveHotseatPlayer('p1');
@@ -120,6 +251,8 @@ export const App: React.FC = () => {
 
   // Initialize Game vs Bot
   const handleStartBotGame = (difficulty: BotDifficulty = 'medium') => {
+    clearMultiplayerSession();
+    clearLocalGameSession();
     const botName = `BearBot (${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)})`;
     const initialState = createInitialGameState(playerName || 'Explorer', botName);
     setGameState(initialState);
@@ -160,11 +293,13 @@ export const App: React.FC = () => {
 
   // Handle Online Room Creation
   const handleCreateRoom = () => {
+    clearLocalGameSession();
     connectWebSocket('', playerName || 'Player 1', true);
   };
 
   // Handle Join Online Room
   const handleJoinRoom = (code: string) => {
+    clearLocalGameSession();
     const cleanCode = code.trim().toUpperCase();
     setRoomId(cleanCode);
     connectWebSocket(cleanCode, playerName || 'Player 2', false);
@@ -179,26 +314,34 @@ export const App: React.FC = () => {
         setRoomId(msg.roomId);
         if (msg.sessionToken) setSessionToken(msg.sessionToken);
         if (msg.inviteUrl) setInviteUrl(msg.inviteUrl);
-        localStorage.setItem(
-          'bn_session',
-          JSON.stringify({ roomId: msg.roomId, playerId: msg.playerId, sessionToken: msg.sessionToken })
-        );
+        saveMultiplayerSession({
+          roomId: msg.roomId,
+          playerId: msg.playerId,
+          sessionToken: msg.sessionToken,
+          inviteUrl: msg.inviteUrl,
+        });
       } else if (msg.type === 'ROOM_JOINED') {
         myPlayerIdRef.current = msg.playerId;
         setMultiplayerPlayerId(msg.playerId);
         setRoomId(msg.roomId);
         if (msg.sessionToken) setSessionToken(msg.sessionToken);
+        if (msg.inviteUrl) setInviteUrl(msg.inviteUrl);
         if (msg.gameState) setGameState(msg.gameState);
-        localStorage.setItem(
-          'bn_session',
-          JSON.stringify({ roomId: msg.roomId, playerId: msg.playerId, sessionToken: msg.sessionToken })
-        );
+        saveMultiplayerSession({
+          roomId: msg.roomId,
+          playerId: msg.playerId,
+          sessionToken: msg.sessionToken,
+          inviteUrl: msg.inviteUrl,
+        });
       } else if (msg.type === 'GAME_STARTED') {
         if (msg.state) setGameState(msg.state);
         setHasSubmittedRound(false);
         setPendingRoundSummary(null);
         setReadyPlayerIds([]);
         setHasClickedReady(false);
+        setSelectedTableauCardId(null);
+        setSelectedReserveCardId(null);
+        setSelectedPlacement(null);
         setActivationOrder([]);
         setLastBeeWinnerName(null);
         setRoundNotification('Game started! Both players connected.');
@@ -207,12 +350,34 @@ export const App: React.FC = () => {
         setGameState(msg.state);
         if (msg.reason === 'RECONNECTED') {
           const myId = myPlayerIdRef.current || multiplayerPlayerId;
-          if (msg.state?.readyNextRoundPlayers?.length > 0 && msg.state?.roundSummaries?.length > 0) {
-            const latestSummary = msg.state.roundSummaries[msg.state.roundSummaries.length - 1];
-            setPendingRoundSummary(latestSummary);
-            setReadyPlayerIds(msg.state.readyNextRoundPlayers);
-            setHasClickedReady(Boolean(myId && msg.state.readyNextRoundPlayers.includes(myId)));
+          const summary =
+            msg.state?.pendingRoundSummary ||
+            (msg.state?.roundSummaries && msg.state.roundSummaries.length > 0 && msg.state?.readyNextRoundPlayers?.length
+              ? msg.state.roundSummaries[msg.state.roundSummaries.length - 1]
+              : null);
+
+          if (summary) {
+            setPendingRoundSummary(summary);
+            setReadyPlayerIds(msg.state?.readyNextRoundPlayers || []);
+            setHasClickedReady(Boolean(myId && msg.state?.readyNextRoundPlayers?.includes(myId)));
           }
+
+          if (msg.state?.hasSubmittedRound) {
+            setHasSubmittedRound(true);
+            setSelectedTableauCardId(null);
+            setSelectedReserveCardId(null);
+            setSelectedPlacement(null);
+            setActivationOrder([]);
+          } else {
+            const savedMp = loadMultiplayerSession();
+            if (savedMp && savedMp.round === msg.state?.round && !savedMp.hasSubmittedRound) {
+              if (savedMp.selectedTableauCardId !== undefined) setSelectedTableauCardId(savedMp.selectedTableauCardId);
+              if (savedMp.selectedReserveCardId !== undefined) setSelectedReserveCardId(savedMp.selectedReserveCardId);
+              if (savedMp.selectedPlacement !== undefined) setSelectedPlacement(savedMp.selectedPlacement);
+              if (savedMp.activationOrder !== undefined) setActivationOrder(savedMp.activationOrder);
+            }
+          }
+
           setRoundNotification('Reconnected to game!');
           setTimeout(() => setRoundNotification(null), 3000);
         }
@@ -222,6 +387,10 @@ export const App: React.FC = () => {
         setHasSubmittedRound(false);
         setReadyPlayerIds([]);
         setHasClickedReady(false);
+        setSelectedTableauCardId(null);
+        setSelectedReserveCardId(null);
+        setSelectedPlacement(null);
+        setActivationOrder([]);
 
         const summary: RoundSummary | null =
           msg.roundSummary ||
@@ -266,8 +435,14 @@ export const App: React.FC = () => {
         setTimeout(() => setRoundNotification(null), 3000);
       } else if (msg.type === 'ERROR') {
         if (msg.code === 'RECONNECT_FAILED') {
-          localStorage.removeItem('bn_session');
+          clearMultiplayerSession();
           setMode('lobby');
+          setServerError(msg.message || 'Your previous multiplayer room has expired or could not be found.');
+          setSocket(null);
+          setRoomId(null);
+          setSessionToken(null);
+          setMultiplayerPlayerId(null);
+          setGameState(null);
         } else {
           setServerError(msg.message);
         }
@@ -279,6 +454,7 @@ export const App: React.FC = () => {
 
   const reconnectWebSocket = (savedRoomId: string, savedPlayerId: string, savedToken: string) => {
     try {
+      setServerError(null);
       const wsUrl = getWebSocketUrl();
       const ws = new WebSocket(wsUrl);
       const myPlayerIdRef = { current: savedPlayerId };
@@ -301,10 +477,14 @@ export const App: React.FC = () => {
 
       ws.onmessage = (event) => handleWsMessage(event, myPlayerIdRef);
       ws.onerror = () => {
-        localStorage.removeItem('bn_session');
+        clearMultiplayerSession();
+        setMode('lobby');
+        setServerError('Unable to reconnect to multiplayer session. Returned to lobby.');
       };
     } catch {
-      localStorage.removeItem('bn_session');
+      clearMultiplayerSession();
+      setMode('lobby');
+      setServerError('Unable to reconnect to multiplayer session. Returned to lobby.');
     }
   };
 
@@ -329,6 +509,8 @@ export const App: React.FC = () => {
       ws.onmessage = (event) => handleWsMessage(event, myPlayerIdRef);
 
       ws.onerror = () => {
+        clearMultiplayerSession();
+        setMode('lobby');
         setServerError('Could not connect to online server. Check if server is running on port 3001.');
       };
     } catch {
@@ -633,17 +815,7 @@ export const App: React.FC = () => {
 
             <button
               type="button"
-              onClick={() => {
-                localStorage.removeItem('bn_session');
-                if (socket) {
-                  try {
-                    socket.close();
-                  } catch {}
-                }
-                setSocket(null);
-                setRoomId(null);
-                setMode('lobby');
-              }}
+              onClick={handleLeaveGame}
               className="w-full py-2.5 rounded-xl font-serif text-xs font-bold text-stone-600 hover:bg-stone-200/60 transition cursor-pointer"
             >
               Cancel & Back to Lobby
@@ -697,18 +869,11 @@ export const App: React.FC = () => {
           </button>
 
           <button
-            onClick={() => {
-              localStorage.removeItem('bn_session');
-              socket?.close();
-              setSocket(null);
-              setRoomId('');
-              setSessionToken('');
-              setHasSubmittedRound(false);
-              setMode('lobby');
-            }}
-            className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-black/20 hover:bg-black/30 text-xs font-serif text-stone-300 transition cursor-pointer"
+            onClick={handleLeaveGame}
+            title="Leave current game and return to lobby"
+            className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-black/20 hover:bg-black/30 text-xs font-serif text-stone-300 transition cursor-pointer flex items-center gap-1"
           >
-            Leave
+            <span>Leave Game</span>
           </button>
         </div>
       </header>
@@ -885,6 +1050,7 @@ export const App: React.FC = () => {
           activePlayerId={currentP.id}
           winnerIds={gameState.winner}
           onRematch={handleRematch}
+          onLeaveGame={handleLeaveGame}
         />
       )}
 

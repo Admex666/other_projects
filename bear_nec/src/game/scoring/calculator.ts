@@ -147,6 +147,9 @@ export function evaluateCardActivation(
     case 'adjacent_family': {
       const parents = (effect.parents as string[]) || [];
       const hasParent = neighbors.some((n) => parents.includes(n.card.name));
+      if (effect.metPoints !== undefined) {
+        return hasParent ? (effect.metPoints as number) : (effect.unmetPoints as number);
+      }
       return hasParent ? (effect.points as number) : (context?.isPlacement ? 1 : 0);
     }
 
@@ -250,6 +253,9 @@ export function evaluateCardActivation(
       const targetType = effect.targetType as CardType;
       const pointsPerCard = (effect.pointsPerCard as number) || 2;
       const count = neighbors.filter((n) => n.card.types.includes(targetType)).length;
+      if (effect.exactCount !== undefined) {
+        return count === (effect.exactCount as number) ? (effect.points as number) : 0;
+      }
       return count * pointsPerCard;
     }
 
@@ -279,11 +285,11 @@ export function evaluateCardActivation(
     }
 
     case 'secret_honey_stash': {
-      const bees = context?.isPlacement
-        ? (effect.placeBees as number) || 2
-        : (effect.activateBees as number) || 1;
-      playerState.beeTokens += bees;
-      return 0;
+      if (context?.isPlacement) {
+        playerState.beeTokens += (effect.placeBees as number) || 2;
+        return 0;
+      }
+      return (effect.activateVP as number) || 1;
     }
 
     case 'adjacent_distinct_types': {
@@ -539,10 +545,43 @@ export function evaluateCardActivation(
       return colors.size === 4 ? (effect.metPoints as number) : (effect.unmetPoints as number);
     }
 
+    case 'adjacent_card_count': {
+      const pointsPerCard = (effect.pointsPerCard as number) || 2;
+      return neighbors.length * pointsPerCard;
+    }
+
+    case 'adjacent_min_type': {
+      const targetType = effect.targetType as CardType;
+      const minCount = (effect.minCount as number) || 1;
+      const count = neighbors.filter((n) => n.card.types.includes(targetType)).length;
+      return count >= minCount
+        ? (effect.metPoints as number)
+        : (effect.unmetPoints as number);
+    }
+
+    case 'adjacent_plant_and_animal': {
+      const hasPlant = neighbors.some((n) => n.card.types.includes('plant'));
+      const hasAnimal = neighbors.some((n) => n.card.types.includes('animal'));
+      return hasPlant && hasAnimal
+        ? (effect.metPoints as number)
+        : (effect.unmetPoints as number);
+    }
+
+    case 'row_animals': {
+      const pointsPerAnimal = (effect.pointsPerAnimal as number) || 4;
+      const count = tableau[pos.row].filter((c) => c !== null && c.types.includes('animal')).length;
+      return count * pointsPerAnimal;
+    }
+
     case 'tableau_min_items': {
       const minItems = (effect.minItems as number) || 3;
-      const pointsPerItem = (effect.pointsPerItem as number) || 3;
       const itemCount = allCards.filter((c) => c.card.types.includes('item')).length;
+      if (effect.metPoints !== undefined) {
+        return itemCount >= minItems
+          ? (effect.metPoints as number)
+          : (effect.unmetPoints as number);
+      }
+      const pointsPerItem = (effect.pointsPerItem as number) || 3;
       return itemCount >= minItems ? itemCount * pointsPerItem : 0;
     }
 

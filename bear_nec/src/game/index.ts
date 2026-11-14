@@ -8,3 +8,4 @@ export {
 } from './scoring';
 export * from './engine';
 export * from './ai/bot';
+export * from './persistence';

@@ -228,21 +228,34 @@ wss.on('connection', (ws: WebSocket) => {
 
         case 'RECONNECT': {
           const recon = roomManager.reconnectPlayer(data.roomId, data.playerId, data.sessionToken, ws);
-          if (recon.success && recon.state) {
-            ws.send(
-              JSON.stringify({
-                type: 'STATE_UPDATE',
-                roomId: data.roomId,
-                state: recon.state,
-                reason: 'RECONNECTED',
-              })
-            );
+          if (recon.success) {
+            if (recon.state) {
+              ws.send(
+                JSON.stringify({
+                  type: 'STATE_UPDATE',
+                  roomId: data.roomId,
+                  state: recon.state,
+                  reason: 'RECONNECTED',
+                })
+              );
+            } else {
+              // Game has not started yet (waiting in lobby for Player 2)
+              ws.send(
+                JSON.stringify({
+                  type: 'ROOM_JOINED',
+                  roomId: data.roomId,
+                  playerId: data.playerId,
+                  sessionToken: data.sessionToken,
+                  inviteUrl: roomManager.getInviteUrl(data.roomId),
+                })
+              );
+            }
           } else {
             ws.send(
               JSON.stringify({
                 type: 'ERROR',
                 code: 'RECONNECT_FAILED',
-                message: recon.error || 'Failed to reconnect.',
+                message: recon.error || 'Your previous multiplayer room has expired or could not be found.',
               })
             );
           }

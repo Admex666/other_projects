@@ -421,5 +421,53 @@ describe('RoomManager & Multiplayer Server Protocol', () => {
       const room = roomManager.getRoom(host.roomId)!;
       expect(room.readyNextRoundPlayers.size).toBe(0);
     });
+
+    it('recovers pendingRoundSummary and hasSubmittedRound on reconnection', () => {
+      const host = roomManager.createRoom('Alice');
+      const guest = roomManager.joinRoom(host.roomId, 'Bob');
+      const room = roomManager.getRoom(host.roomId)!;
+
+      const hostP = room.gameState!.players[host.playerId];
+      const hostT = hostP.hand[0].id;
+      const hostR = hostP.hand[1].id;
+
+      // Host submits card selection
+      const submitRes = roomManager.handleAction(host.roomId, host.playerId, {
+        type: 'SUBMIT_SELECTION',
+        tableauCardId: hostT,
+        reserveCardId: hostR,
+        position: { row: 1, col: 1 },
+      });
+      expect(submitRes.success).toBe(true);
+
+      // Reconnecting host sees hasSubmittedRound: true
+      const hostRecon = roomManager.reconnectPlayer(host.roomId, host.playerId, host.sessionToken);
+      expect(hostRecon.state?.hasSubmittedRound).toBe(true);
+
+      // Reconnecting guest sees hasSubmittedRound is falsy (not submitted yet)
+      const guestRecon = roomManager.reconnectPlayer(host.roomId, guest.playerId, guest.sessionToken);
+      expect(guestRecon.state?.hasSubmittedRound).toBeFalsy();
+
+      // Guest submits selection to resolve the round
+      const guestP = room.gameState!.players[guest.playerId];
+      roomManager.handleAction(host.roomId, guest.playerId, {
+        type: 'SUBMIT_SELECTION',
+        tableauCardId: guestP.hand[0].id,
+        reserveCardId: guestP.hand[1].id,
+        position: { row: 1, col: 1 },
+      });
+
+      // Now round is resolved; reconnecting either player recovers pendingRoundSummary
+      const hostReconRoundEnd = roomManager.reconnectPlayer(host.roomId, host.playerId, host.sessionToken);
+      expect(hostReconRoundEnd.state?.pendingRoundSummary).toBeDefined();
+      expect(hostReconRoundEnd.state?.pendingRoundSummary?.round).toBe(1);
+
+      // Once both players ready up, pendingRoundSummary clears
+      roomManager.handleReadyNextRound(host.roomId, host.playerId);
+      roomManager.handleReadyNextRound(host.roomId, guest.playerId);
+
+      const hostReconNextRound = roomManager.reconnectPlayer(host.roomId, host.playerId, host.sessionToken);
+      expect(hostReconNextRound.state?.pendingRoundSummary).toBeNull();
+    });
   });
 });

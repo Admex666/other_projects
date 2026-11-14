@@ -8,6 +8,7 @@ export interface GameOverModalProps {
   activePlayerId: string;
   winnerIds?: string[] | null;
   onRematch: () => void;
+  onLeaveGame?: () => void;
 }
 
 export const GameOverModal: React.FC<GameOverModalProps> = ({
@@ -15,6 +16,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
   activePlayerId,
   winnerIds: _winnerIds,
   onRematch,
+  onLeaveGame,
 }) => {
   const playerList = Object.values(players);
 
@@ -163,8 +165,8 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
           })}
         </div>
 
-        {/* Action Button: Rematch */}
-        <div className="flex justify-center">
+        {/* Action Buttons: Rematch & Leave */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             type="button"
             onClick={onRematch}
@@ -173,6 +175,16 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
             <RotateCcw className="w-5 h-5" />
             <span>Play Rematch</span>
           </button>
+
+          {onLeaveGame && (
+            <button
+              type="button"
+              onClick={onLeaveGame}
+              className="w-full sm:w-auto px-6 py-3 rounded-full font-serif font-bold text-sm uppercase tracking-wider bg-stone-700 hover:bg-stone-600 text-stone-200 flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+            >
+              <span>Leave Game / Lobby</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

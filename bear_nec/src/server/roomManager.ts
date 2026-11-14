@@ -35,6 +35,7 @@ export interface GameRoom {
   rematchRequests: Set<string>;
   readyNextRoundPlayers: Set<string>;
   disconnectTimeouts: Map<string, NodeJS.Timeout>;
+  pendingRoundSummary?: RoundSummary | null;
 }
 
 export class RoomManager {
@@ -48,6 +49,10 @@ export class RoomManager {
 
   public setBaseUrl(url: string): void {
     this.defaultHostUrl = url;
+  }
+
+  public getInviteUrl(roomId: string): string {
+    return `${this.defaultHostUrl}/?room=${roomId.trim().toUpperCase()}`;
   }
 
   public getRoom(roomId: string): GameRoom | undefined {
@@ -111,6 +116,7 @@ export class RoomManager {
       rematchRequests: new Set(),
       readyNextRoundPlayers: new Set(),
       disconnectTimeouts: new Map(),
+      pendingRoundSummary: null,
     };
 
     this.rooms.set(roomId, room);
@@ -262,8 +268,14 @@ export class RoomManager {
     }
 
     const sanitized = room.gameState ? filterStateForPlayer(room.gameState, playerId) : undefined;
-    if (sanitized && room.readyNextRoundPlayers.size > 0) {
-      sanitized.readyNextRoundPlayers = Array.from(room.readyNextRoundPlayers);
+    if (sanitized) {
+      if (room.readyNextRoundPlayers.size > 0) {
+        sanitized.readyNextRoundPlayers = Array.from(room.readyNextRoundPlayers);
+      }
+      sanitized.pendingRoundSummary = room.pendingRoundSummary || null;
+      if (room.turnState?.choices?.[playerId]) {
+        sanitized.hasSubmittedRound = true;
+      }
     }
     return {
       success: true,
@@ -340,6 +352,8 @@ export class RoomManager {
 
         if (result.roundResolved) {
           room.readyNextRoundPlayers.clear();
+          room.pendingRoundSummary = result.roundResolved.roundSummary ||
+            (room.gameState?.roundSummaries?.length ? room.gameState.roundSummaries[room.gameState.roundSummaries.length - 1] : null);
           this.broadcastRoundResolved(upperRoomId, result.roundResolved);
         } else {
           this.broadcastState(upperRoomId, 'CARD_SELECTED');
@@ -375,6 +389,8 @@ export class RoomManager {
 
       if (result.roundResolved) {
         room.readyNextRoundPlayers.clear();
+        room.pendingRoundSummary = result.roundResolved.roundSummary ||
+          (room.gameState?.roundSummaries?.length ? room.gameState.roundSummaries[room.gameState.roundSummaries.length - 1] : null);
         this.broadcastRoundResolved(upperRoomId, result.roundResolved);
       } else {
         this.broadcastState(upperRoomId, 'PLACEMENT_CONFIRMED');
@@ -454,6 +470,7 @@ export class RoomManager {
 
     if (allReady) {
       room.readyNextRoundPlayers.clear();
+      room.pendingRoundSummary = null;
     }
 
     return { success: true, allReady, readyPlayerIds };
@@ -491,6 +508,7 @@ export class RoomManager {
       room.turnState = restarted.turnState;
       room.rematchRequests.clear();
       room.readyNextRoundPlayers.clear();
+      room.pendingRoundSummary = null;
 
       this.broadcastGameStarted(upperRoomId);
       return { success: true, restarted: true };
@@ -580,6 +598,13 @@ export class RoomManager {
 
     for (const pid of Object.keys(room.players)) {
       const sanitized = filterStateForPlayer(room.gameState, pid);
+      if (room.readyNextRoundPlayers.size > 0) {
+        sanitized.readyNextRoundPlayers = Array.from(room.readyNextRoundPlayers);
+      }
+      sanitized.pendingRoundSummary = room.pendingRoundSummary || null;
+      if (room.turnState?.choices?.[pid]) {
+        sanitized.hasSubmittedRound = true;
+      }
       this.sendToPlayer(upperRoomId, pid, {
         type: 'STATE_UPDATE',
         roomId: upperRoomId,
@@ -626,6 +651,8 @@ export class RoomManager {
     const summary =
       roundData.roundSummary ||
       room.gameState.roundSummaries?.[room.gameState.roundSummaries.length - 1];
+
+    room.pendingRoundSummary = summary || null;
 
     for (const pid of Object.keys(room.players)) {
       const sanitized = filterStateForPlayer(room.gameState, pid);

@@ -90,7 +90,7 @@ describe('Scoring & Placement Rules', () => {
     const eagle = getCardById(71)!; // mountain
 
     expect(touristOffice.name).toBe('Tourist Office');
-    expect(touristOffice.text).toBe('1 VP per City card in your tableau.');
+    expect(touristOffice.text).toBe('1 point per RED card in your tableau.');
 
     tableau[0][0] = touristOffice; // city
     tableau[0][1] = station; // city

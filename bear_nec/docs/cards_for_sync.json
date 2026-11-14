@@ -1,0 +1,942 @@
+[
+  {
+    "id": 0,
+    "slot": 0,
+    "bgaId": 1,
+    "name": "Baby Beaver",
+    "hasGoal": false,
+    "text": "3 VP if adjacent to Beaver Dad or Beaver Mom.",
+    "bgaText": "2 points. Goal: 8 points if adjacent to Beaver Dad or Beaver Mom.",
+    "effect": "{ type: 'adjacent_family', parents: ['Beaver Dad', 'Beaver Mom'], points: 3 }"
+  },
+  {
+    "id": 1,
+    "slot": 1,
+    "bgaId": 2,
+    "name": "Beaver Dad",
+    "hasGoal": false,
+    "text": "3 VP if adjacent to Baby Beaver or Beaver Mom.",
+    "bgaText": "3 points.",
+    "effect": "{ type: 'adjacent_family', parents: ['Baby Beaver', 'Beaver Mom'], points: 3 }"
+  },
+  {
+    "id": 2,
+    "slot": 2,
+    "bgaId": 3,
+    "name": "Beaver Mom",
+    "hasGoal": false,
+    "text": "3 VP if adjacent to Baby Beaver or Beaver Dad.",
+    "bgaText": "3 points.",
+    "effect": "{ type: 'adjacent_family', parents: ['Baby Beaver', 'Beaver Dad'], points: 3 }"
+  },
+  {
+    "id": 3,
+    "slot": 3,
+    "bgaId": 4,
+    "name": "Fish",
+    "hasGoal": false,
+    "text": "2 VP per Fish in your largest group of orthogonally adjacent Fish.",
+    "bgaText": "2 points per BLUE card in your largest group of adjacent BLUE cards.",
+    "effect": "{ type: 'largest_group', targetName: 'Fish', pointsPerCard: 2 }"
+  },
+  {
+    "id": 4,
+    "slot": 4,
+    "bgaId": 5,
+    "name": "Fish",
+    "hasGoal": false,
+    "text": "2 VP per Fish in your largest group of orthogonally adjacent Fish.",
+    "bgaText": "2 points per BLUE card in your largest group of adjacent BLUE cards.",
+    "effect": "{ type: 'largest_group', targetName: 'Fish', pointsPerCard: 2 }"
+  },
+  {
+    "id": 5,
+    "slot": 5,
+    "bgaId": 6,
+    "name": "Fish",
+    "hasGoal": false,
+    "text": "2 VP per Fish in your largest group of orthogonally adjacent Fish.",
+    "bgaText": "2 points per BLUE card in your largest group of adjacent BLUE cards.",
+    "effect": "{ type: 'largest_group', targetName: 'Fish', pointsPerCard: 2 }"
+  },
+  {
+    "id": 6,
+    "slot": 6,
+    "bgaId": 7,
+    "name": "Fish",
+    "hasGoal": false,
+    "text": "2 VP per Fish in your largest group of orthogonally adjacent Fish.",
+    "bgaText": "2 points per BLUE card in your largest group of adjacent BLUE cards.",
+    "effect": "{ type: 'largest_group', targetName: 'Fish', pointsPerCard: 2 }"
+  },
+  {
+    "id": 7,
+    "slot": 7,
+    "bgaId": 8,
+    "name": "Fish",
+    "hasGoal": false,
+    "text": "2 VP per Fish in your largest group of orthogonally adjacent Fish.",
+    "bgaText": "2 points per BLUE card in your largest group of adjacent BLUE cards.",
+    "effect": "{ type: 'largest_group', targetName: 'Fish', pointsPerCard: 2 }"
+  },
+  {
+    "id": 8,
+    "slot": 8,
+    "bgaId": 9,
+    "name": "Fish",
+    "hasGoal": false,
+    "text": "2 VP per Fish in your largest group of orthogonally adjacent Fish.",
+    "bgaText": "2 points per BLUE card in your largest group of adjacent BLUE cards.",
+    "effect": "{ type: 'largest_group', targetName: 'Fish', pointsPerCard: 2 }"
+  },
+  {
+    "id": 9,
+    "slot": 9,
+    "bgaId": 10,
+    "name": "Fish",
+    "hasGoal": false,
+    "text": "2 VP per Fish in your largest group of orthogonally adjacent Fish.",
+    "bgaText": "2 points per BLUE card in your largest group of adjacent BLUE cards.",
+    "effect": "{ type: 'largest_group', targetName: 'Fish', pointsPerCard: 2 }"
+  },
+  {
+    "id": 10,
+    "slot": 10,
+    "bgaId": 11,
+    "name": "Fish",
+    "hasGoal": false,
+    "text": "2 VP per Fish in your largest group of orthogonally adjacent Fish.",
+    "bgaText": "2 points per BLUE card in your largest group of adjacent BLUE cards.",
+    "effect": "{ type: 'largest_group', targetName: 'Fish', pointsPerCard: 2 }"
+  },
+  {
+    "id": 11,
+    "slot": 11,
+    "bgaId": 12,
+    "name": "Cabin",
+    "hasGoal": false,
+    "text": "4 VP if adjacent to exactly 1 Mountain or Water card.",
+    "bgaText": "4 points if adjacent to exactly 1 Bearfolk.",
+    "effect": "{ type: 'adjacent_exact_color', colors: ['mountain', 'water'], count: 1, points: 4 }"
+  },
+  {
+    "id": 12,
+    "slot": 12,
+    "bgaId": 13,
+    "name": "Harbor",
+    "hasGoal": true,
+    "text": "Goal: 8 VP if adjacent to at least 2 Water cards; else 2 VP.",
+    "bgaText": "2 points. Goal: 7 points if adjacent to at least 2 BLUE cards.",
+    "effect": "{ type: 'adjacent_min_color', color: 'water', minCount: 2, metPoints: 8, unmetPoints: 2 }"
+  },
+  {
+    "id": 13,
+    "slot": 13,
+    "bgaId": 14,
+    "name": "Lighthouse",
+    "hasGoal": false,
+    "text": "2 VP per Water card in this row and in this column (counted once).",
+    "bgaText": "2 points per BLUE card in this row and this column (counting itself once).",
+    "effect": "{ type: 'row_col_color', color: 'water', pointsPerCard: 2 }"
+  },
+  {
+    "id": 14,
+    "slot": 14,
+    "bgaId": 15,
+    "name": "Binoculars",
+    "hasGoal": false,
+    "text": "Activate a Building in your tableau (scores 4 VP).",
+    "bgaText": "Activate a BLUE card in your tableau.",
+    "effect": "{ type: 'activate_remote', targetType: 'building', points: 4 }"
+  },
+  {
+    "id": 15,
+    "slot": 15,
+    "bgaId": 16,
+    "name": "Collector",
+    "hasGoal": false,
+    "text": "3 VP per Item in your tableau.",
+    "bgaText": "3 points per Item in your tableau.",
+    "effect": "{ type: 'tableau_type_count', targetType: 'item', pointsPerMatch: 3 }"
+  },
+  {
+    "id": 16,
+    "slot": 16,
+    "bgaId": 17,
+    "name": "Collector",
+    "hasGoal": true,
+    "text": "Goal: 20 VP if you have at least 5 of the same color or type; else 2 VP.",
+    "bgaText": "2 points. Goal: 12 points if you have at least 5 cards of the same color.",
+    "effect": "{ type: 'goal_majority_type_color', minCount: 5, metPoints: 20, unmetPoints: 2 }"
+  },
+  {
+    "id": 17,
+    "slot": 17,
+    "bgaId": 18,
+    "name": "Telescope",
+    "hasGoal": false,
+    "text": "Activate a card in your tableau (scores 3 VP).",
+    "bgaText": "Activate an Item in your tableau.",
+    "effect": "{ type: 'activate_remote', points: 3 }"
+  },
+  {
+    "id": 18,
+    "slot": 18,
+    "bgaId": 19,
+    "name": "Fisherbear",
+    "hasGoal": false,
+    "text": "4 VP if adjacent to at least 1 Water card.",
+    "bgaText": "4 points if adjacent to at least 1 BLUE card.",
+    "effect": "{ type: 'adjacent_min_color', color: 'water', minCount: 1, points: 4 }"
+  },
+  {
+    "id": 19,
+    "slot": 19,
+    "bgaId": 20,
+    "name": "Spy",
+    "hasGoal": false,
+    "text": "",
+    "bgaText": "2 points per BLUE card in any one opponent's tableau.",
+    "effect": "{ type: 'opponent_tableau_color', color: 'water', pointsPerCard: 2 }"
+  },
+  {
+    "id": 20,
+    "slot": 20,
+    "bgaId": 21,
+    "name": "Reed",
+    "hasGoal": false,
+    "text": "5 VP if adjacent to exactly 1 Water card.",
+    "bgaText": "5 points if adjacent to exactly 1 BLUE card.",
+    "effect": "{ type: 'adjacent_exact_color', color: 'water', count: 1, points: 5 }"
+  },
+  {
+    "id": 21,
+    "slot": 21,
+    "bgaId": 22,
+    "name": "Reed",
+    "hasGoal": false,
+    "text": "5 VP if adjacent to exactly 1 Water card.",
+    "bgaText": "5 points if adjacent to exactly 1 BLUE card.",
+    "effect": "{ type: 'adjacent_exact_color', color: 'water', count: 1, points: 5 }"
+  },
+  {
+    "id": 22,
+    "slot": 22,
+    "bgaId": 23,
+    "name": "Water Lily",
+    "hasGoal": false,
+    "text": "3 VP per adjacent Water card.",
+    "bgaText": "3 points per adjacent BLUE card.",
+    "effect": "{ type: 'adjacent_color_count', color: 'water', pointsPerCard: 3 }"
+  },
+  {
+    "id": 24,
+    "slot": 24,
+    "bgaId": 25,
+    "name": "Coyote",
+    "hasGoal": false,
+    "text": "3 VP per adjacent Animal.",
+    "bgaText": "4 points per adjacent GREEN card.",
+    "effect": "{ type: 'adjacent_type_count', targetType: 'animal', pointsPerCard: 3 }"
+  },
+  {
+    "id": 25,
+    "slot": 25,
+    "bgaId": 26,
+    "name": "Queen Bee",
+    "hasGoal": false,
+    "text": "4 VP per adjacent Bee Hive symbol.",
+    "bgaText": "4 points per adjacent Hive symbol.",
+    "effect": "{ type: 'adjacent_hive_count', pointsPerHive: 4 }"
+  },
+  {
+    "id": 26,
+    "slot": 26,
+    "bgaId": 27,
+    "name": "Trading Post",
+    "hasGoal": true,
+    "text": "Goal: 16 VP if adjacent to 4 different colors; else 4 VP.",
+    "bgaText": "2 points. Goal: 16 points if adjacent to 4 different colors.",
+    "effect": "{ type: 'adjacent_distinct_colors', requiredCount: 4, metPoints: 16, unmetPoints: 4 }"
+  },
+  {
+    "id": 27,
+    "slot": 27,
+    "bgaId": 28,
+    "name": "CIA Headquarters",
+    "hasGoal": false,
+    "text": "5 VP per Spy in your tableau.",
+    "bgaText": "5 points per Spy in your tableau.",
+    "effect": "{ type: 'tableau_spy_count', pointsPerSpy: 5 }"
+  },
+  {
+    "id": 28,
+    "slot": 28,
+    "bgaId": 29,
+    "name": "Rock Shelter",
+    "hasGoal": false,
+    "text": "4 VP if adjacent to at least 1 Desert card.",
+    "bgaText": "3 points.",
+    "effect": "{ type: 'adjacent_min_color', color: 'desert', minCount: 1, points: 4 }"
+  },
+  {
+    "id": 29,
+    "slot": 29,
+    "bgaId": 30,
+    "name": "Small Trading Post",
+    "hasGoal": true,
+    "text": "Goal: 8 VP if adjacent to exactly 2 different colors; else 2 VP.",
+    "bgaText": "2 points. Goal: 8 points if adjacent to exactly 2 different colors.",
+    "effect": "{ type: 'adjacent_distinct_colors', requiredCount: 2, metPoints: 8, unmetPoints: 2 }"
+  },
+  {
+    "id": 30,
+    "slot": 30,
+    "bgaId": 31,
+    "name": "Medium Trading Post",
+    "hasGoal": true,
+    "text": "Goal: 12 VP if adjacent to exactly 3 different colors; else 3 VP.",
+    "bgaText": "2 points. Goal: 12 points if adjacent to exactly 3 different colors.",
+    "effect": "{ type: 'adjacent_distinct_colors', requiredCount: 3, metPoints: 12, unmetPoints: 3 }"
+  },
+  {
+    "id": 31,
+    "slot": 31,
+    "bgaId": 32,
+    "name": "Bearbecue",
+    "hasGoal": false,
+    "text": "4 VP per adjacent Fish.",
+    "bgaText": "6 points per adjacent Fish.",
+    "effect": "{ type: 'adjacent_fish_count', pointsPerCard: 4 }"
+  },
+  {
+    "id": 32,
+    "slot": 32,
+    "bgaId": 33,
+    "name": "Binoculars",
+    "hasGoal": false,
+    "text": "Activate a card in your tableau (scores 3 VP).",
+    "bgaText": "Activate a YELLOW card in your tableau.",
+    "effect": "{ type: 'activate_remote', points: 3 }"
+  },
+  {
+    "id": 33,
+    "slot": 33,
+    "bgaId": 34,
+    "name": "Compass",
+    "hasGoal": false,
+    "text": "2 VP per adjacent Item.",
+    "bgaText": "2 points per adjacent card.",
+    "effect": "{ type: 'adjacent_type_count', targetType: 'item', pointsPerCard: 2 }"
+  },
+  {
+    "id": 34,
+    "slot": 34,
+    "bgaId": 35,
+    "name": "Secret Honey Stash",
+    "hasGoal": false,
+    "text": "Gain 2 Bee tokens when placed. Gain 1 Bee token when activated by another card.",
+    "bgaText": "Take 2 Bee tokens when placed. 1 point when activated by another card.",
+    "effect": "{ type: 'secret_honey_stash', placeBees: 2, activateBees: 1 }"
+  },
+  {
+    "id": 35,
+    "slot": 35,
+    "bgaId": 36,
+    "name": "Signpost",
+    "hasGoal": false,
+    "text": "2 VP per adjacent Desert card.",
+    "bgaText": "4 points per adjacent RED card.",
+    "effect": "{ type: 'adjacent_color_count', color: 'desert', pointsPerCard: 2 }"
+  },
+  {
+    "id": 36,
+    "slot": 36,
+    "bgaId": 37,
+    "name": "Water Canteen",
+    "hasGoal": false,
+    "text": "4 VP per adjacent Water card.",
+    "bgaText": "4 points per adjacent YELLOW card.",
+    "effect": "{ type: 'adjacent_color_count', color: 'water', pointsPerCard: 4 }"
+  },
+  {
+    "id": 37,
+    "slot": 37,
+    "bgaId": 38,
+    "name": "Explorer",
+    "hasGoal": false,
+    "text": "3 VP per different type adjacent.",
+    "bgaText": "3 points per different color adjacent.",
+    "effect": "{ type: 'adjacent_distinct_types', pointsPerType: 3 }"
+  },
+  {
+    "id": 38,
+    "slot": 38,
+    "bgaId": 39,
+    "name": "Photographer",
+    "hasGoal": true,
+    "text": "Goal: 8 VP if there is a card adjacent to its right; else 2 VP.",
+    "bgaText": "2 points. Goal: 8 points if an Animal is adjacent to its right.",
+    "effect": "{ type: 'right_adjacent', metPoints: 8, unmetPoints: 2 }"
+  },
+  {
+    "id": 39,
+    "slot": 39,
+    "bgaId": 40,
+    "name": "Spy",
+    "hasGoal": false,
+    "text": "",
+    "bgaText": "1 point per RED and 1 point per GREEN card in any one opponent's tableau.",
+    "effect": "{ type: 'opponent_tableau_colors', colors: ['city', 'desert'], pointsPerMatch: 1 }"
+  },
+  {
+    "id": 40,
+    "slot": 40,
+    "bgaId": 41,
+    "name": "Spy",
+    "hasGoal": false,
+    "text": "",
+    "bgaText": "3 points per Goal symbol in any one opponent's tableau.",
+    "effect": "{ type: 'opponent_tableau_count', pointsPerCard: 1 }"
+  },
+  {
+    "id": 41,
+    "slot": 41,
+    "bgaId": 42,
+    "name": "Treasure Hunter",
+    "hasGoal": true,
+    "text": "Goal: 4 VP per Goal card in your tableau (met: >= 1 Goal card scores 4 VP per Goal; unmet: 2 VP).",
+    "bgaText": "2 points. Goal: 8 points if adjacent to at least 1 Goal symbol.",
+    "effect": "{ type: 'tableau_goal_count', pointsPerGoal: 4, minMet: 1, unmetPoints: 2 }"
+  },
+  {
+    "id": 42,
+    "slot": 42,
+    "bgaId": 43,
+    "name": "Cactus",
+    "hasGoal": false,
+    "text": "4 VP if not adjacent to Water.",
+    "bgaText": "4 points if not adjacent to a Bearfolk.",
+    "effect": "{ type: 'not_adjacent_color', avoidColor: 'water', points: 4 }"
+  },
+  {
+    "id": 43,
+    "slot": 43,
+    "bgaId": 44,
+    "name": "Sunflower",
+    "hasGoal": false,
+    "text": "5 VP if adjacent to exactly 1 Plant.",
+    "bgaText": "5 points if adjacent to exactly 1 YELLOW card.",
+    "effect": "{ type: 'adjacent_exact_plant', count: 1, points: 5 }"
+  },
+  {
+    "id": 44,
+    "slot": 44,
+    "bgaId": 45,
+    "name": "Yucca",
+    "hasGoal": false,
+    "text": "2 VP per Plant in your tableau.",
+    "bgaText": "3 points per YELLOW card in your tableau.",
+    "effect": "{ type: 'tableau_type_count', targetType: 'plant', pointsPerMatch: 2 }"
+  },
+  {
+    "id": 46,
+    "slot": 46,
+    "bgaId": 47,
+    "name": "Cat",
+    "hasGoal": false,
+    "text": "4 VP per adjacent Bearfolk.",
+    "bgaText": "4 points per adjacent Item.",
+    "effect": "{ type: 'adjacent_type_count', targetType: 'bearfolk', pointsPerCard: 4 }"
+  },
+  {
+    "id": 47,
+    "slot": 47,
+    "bgaId": 48,
+    "name": "Dog",
+    "hasGoal": false,
+    "text": "3 VP per adjacent Bearfolk.",
+    "bgaText": "3 points per adjacent Bearfolk.",
+    "effect": "{ type: 'adjacent_type_count', targetType: 'bearfolk', pointsPerCard: 3 }"
+  },
+  {
+    "id": 48,
+    "slot": 48,
+    "bgaId": 49,
+    "name": "Pigeon",
+    "hasGoal": false,
+    "text": "4 VP per Animal in all rows below this card.",
+    "bgaText": "4 points per Bearfolk in all rows below this card.",
+    "effect": "{ type: 'rows_below_type', targetType: 'animal', pointsPerMatch: 4 }"
+  },
+  {
+    "id": 49,
+    "slot": 49,
+    "bgaId": 50,
+    "name": "Cellar",
+    "hasGoal": false,
+    "text": "4 VP per Item or Building in all rows above this card.",
+    "bgaText": "4 points per Building in all rows above this card.",
+    "effect": "{ type: 'rows_above_type', targetTypes: ['item', 'building'], pointsPerMatch: 4 }"
+  },
+  {
+    "id": 50,
+    "slot": 50,
+    "bgaId": 51,
+    "name": "Factory",
+    "hasGoal": false,
+    "text": "4 VP if not adjacent to Plant or Animal.",
+    "bgaText": "4 points if not adjacent to a RED card.",
+    "effect": "{ type: 'not_adjacent_types', avoidTypes: ['plant', 'animal'], points: 4 }"
+  },
+  {
+    "id": 51,
+    "slot": 51,
+    "bgaId": 52,
+    "name": "Suburban Apartments",
+    "hasGoal": false,
+    "text": "2 VP per complete column in your tableau.",
+    "bgaText": "2 points per complete column (3 cards).",
+    "effect": "{ type: 'complete_columns', pointsPerColumn: 2 }"
+  },
+  {
+    "id": 52,
+    "slot": 52,
+    "bgaId": 53,
+    "name": "Station",
+    "hasGoal": false,
+    "text": "3 VP per complete row in your tableau.",
+    "bgaText": "3 points per complete row (4 cards).",
+    "effect": "{ type: 'complete_rows', pointsPerRow: 3 }"
+  },
+  {
+    "id": 53,
+    "slot": 53,
+    "bgaId": 54,
+    "name": "Tourist Office",
+    "hasGoal": false,
+    "text": "1 VP per City card in your tableau.",
+    "bgaText": "1 point per RED card in your tableau.",
+    "effect": "{ type: 'tableau_color_count', targetColor: 'city', pointsPerCard: 1 }"
+  },
+  {
+    "id": 54,
+    "slot": 54,
+    "bgaId": 55,
+    "name": "Town Hall",
+    "hasGoal": false,
+    "text": "2 VP per City or Building in this row and column (counted once).",
+    "bgaText": "2 points per RED card in this row and this column (counting itself once).",
+    "effect": "{ type: 'row_col_type_color', color: 'city', cardType: 'building', pointsPerCard: 2 }"
+  },
+  {
+    "id": 55,
+    "slot": 55,
+    "bgaId": 56,
+    "name": "Rubber Duck",
+    "hasGoal": false,
+    "text": "2 VP (provides 2 Bee Hive multipliers).",
+    "bgaText": "2 points.",
+    "effect": "{ type: 'flat_vp', points: 2 }"
+  },
+  {
+    "id": 56,
+    "slot": 56,
+    "bgaId": 57,
+    "name": "Binoculars",
+    "hasGoal": false,
+    "text": "Activate a Building in your tableau (scores 4 VP).",
+    "bgaText": "Activate a RED card in your tableau.",
+    "effect": "{ type: 'activate_remote', targetType: 'building', points: 4 }"
+  },
+  {
+    "id": 57,
+    "slot": 57,
+    "bgaId": 58,
+    "name": "Streetlight",
+    "hasGoal": true,
+    "text": "Goal: 10 VP if adjacent to at least 2 City cards; else 2 VP.",
+    "bgaText": "2 points. Goal: 12 points if adjacent to at least 2 Buildings.",
+    "effect": "{ type: 'adjacent_min_city', minCount: 2, metPoints: 10, unmetPoints: 2 }"
+  },
+  {
+    "id": 58,
+    "slot": 58,
+    "bgaId": 59,
+    "name": "Statue",
+    "hasGoal": false,
+    "text": "2 VP per card with at least 1 Bee Hive symbol in your tableau.",
+    "bgaText": "2 points per column with at least 1 RED card.",
+    "effect": "{ type: 'tableau_hive_cards', pointsPerCard: 2 }"
+  },
+  {
+    "id": 59,
+    "slot": 59,
+    "bgaId": 60,
+    "name": "Actor",
+    "hasGoal": false,
+    "text": "2 VP per every other Bearfolk in your tableau.",
+    "bgaText": "2 points per other Bearfolk in your tableau.",
+    "effect": "{ type: 'tableau_other_bearfolk', pointsPerBearfolk: 2 }"
+  },
+  {
+    "id": 60,
+    "slot": 60,
+    "bgaId": 61,
+    "name": "Architect",
+    "hasGoal": false,
+    "text": "4 VP per Building in your tableau.",
+    "bgaText": "4 points per Building in your tableau.",
+    "effect": "{ type: 'tableau_type_count', targetType: 'building', pointsPerMatch: 4 }"
+  },
+  {
+    "id": 61,
+    "slot": 61,
+    "bgaId": 62,
+    "name": "Banker",
+    "hasGoal": false,
+    "text": "5 VP per Goal card in your tableau.",
+    "bgaText": "5 points per Goal symbol in your tableau.",
+    "effect": "{ type: 'tableau_goal_count', pointsPerGoal: 5 }"
+  },
+  {
+    "id": 62,
+    "slot": 62,
+    "bgaId": 63,
+    "name": "Football Player",
+    "hasGoal": true,
+    "text": "Goal: 8 VP if this row is complete (4 cards); else 2 VP.",
+    "bgaText": "2 points. Goal: 8 points if this row is complete.",
+    "effect": "{ type: 'goal_complete_row', metPoints: 8, unmetPoints: 2 }"
+  },
+  {
+    "id": 63,
+    "slot": 63,
+    "bgaId": 64,
+    "name": "Bearlet",
+    "hasGoal": true,
+    "text": "Goal: 10 VP if you have at least 6 Bee tokens; else 2 VP.",
+    "bgaText": "2 points. Goal: 10 points if you have at least 6 Bee tokens.",
+    "effect": "{ type: 'goal_bee_tokens', minTokens: 6, metPoints: 10, unmetPoints: 2 }"
+  },
+  {
+    "id": 64,
+    "slot": 64,
+    "bgaId": 65,
+    "name": "Optician",
+    "hasGoal": false,
+    "text": "4 VP per Bearfolk without glasses in your tableau.",
+    "bgaText": "4 points per Bearfolk without glasses in your tableau.",
+    "effect": "{ type: 'tableau_bearfolk_no_glasses', pointsPerMatch: 4 }"
+  },
+  {
+    "id": 65,
+    "slot": 65,
+    "bgaId": 66,
+    "name": "Sergeant",
+    "hasGoal": false,
+    "text": "3 VP per Bearfolk in this row.",
+    "bgaText": "3 points per Bearfolk in this row.",
+    "effect": "{ type: 'row_bearfolk', pointsPerBearfolk: 3 }"
+  },
+  {
+    "id": 66,
+    "slot": 66,
+    "bgaId": 67,
+    "name": "Spy",
+    "hasGoal": false,
+    "text": "",
+    "bgaText": "2 points per YELLOW card in any one opponent's tableau.",
+    "effect": "{ type: 'opponent_bee_tokens', pointsPerToken: 2 }"
+  },
+  {
+    "id": 67,
+    "slot": 67,
+    "bgaId": 68,
+    "name": "Window Cleaner",
+    "hasGoal": true,
+    "text": "Goal: 8 VP if this column is complete (3 cards); else 2 VP.",
+    "bgaText": "2 points. Goal: 7 points if this column is complete.",
+    "effect": "{ type: 'goal_complete_col', metPoints: 8, unmetPoints: 2 }"
+  },
+  {
+    "id": 68,
+    "slot": 68,
+    "bgaId": 69,
+    "name": "Planter Box",
+    "hasGoal": false,
+    "text": "2 VP per card with at least 1 Plant in this row.",
+    "bgaText": "2 points per row with at least 1 RED card.",
+    "effect": "{ type: 'row_plants', pointsPerPlant: 2 }"
+  },
+  {
+    "id": 69,
+    "slot": 69,
+    "bgaId": 70,
+    "name": "Rose",
+    "hasGoal": true,
+    "text": "Goal: 10 VP if adjacent to exactly 2 Plants; else 2 VP.",
+    "bgaText": "2 points. Goal: 10 points if adjacent to exactly 2 Bearfolk.",
+    "effect": "{ type: 'adjacent_exact_rose', count: 2, metPoints: 10, unmetPoints: 2 }"
+  },
+  {
+    "id": 71,
+    "slot": 71,
+    "bgaId": 72,
+    "name": "Eagle",
+    "hasGoal": false,
+    "text": "2 VP per Animal in your tableau (including itself).",
+    "bgaText": "2 points per Animal in your tableau.",
+    "effect": "{ type: 'tableau_type_count', targetType: 'animal', pointsPerMatch: 2 }"
+  },
+  {
+    "id": 72,
+    "slot": 72,
+    "bgaId": 73,
+    "name": "Mountain Goat",
+    "hasGoal": false,
+    "text": "4 VP per adjacent Mountain card.",
+    "bgaText": "4 points per adjacent Plant.",
+    "effect": "{ type: 'adjacent_color_count', color: 'mountain', pointsPerCard: 4 }"
+  },
+  {
+    "id": 73,
+    "slot": 73,
+    "bgaId": 74,
+    "name": "Snake",
+    "hasGoal": false,
+    "text": "2 VP per card in your tableau whose name starts with S.",
+    "bgaText": "2 points per card in your tableau whose name starts with S.",
+    "effect": "{ type: 'tableau_name_starts_s', pointsPerMatch: 2 }"
+  },
+  {
+    "id": 74,
+    "slot": 74,
+    "bgaId": 75,
+    "name": "Lookout Tower",
+    "hasGoal": false,
+    "text": "1 VP per card in your tableau not adjacent to this card.",
+    "bgaText": "1 point per card in your tableau not adjacent to this card.",
+    "effect": "{ type: 'tableau_non_adjacent', pointsPerCard: 1 }"
+  },
+  {
+    "id": 75,
+    "slot": 75,
+    "bgaId": 76,
+    "name": "Research Lab",
+    "hasGoal": true,
+    "text": "Goal: 10 VP if adjacent to at least 1 Building and 1 Item; else 2 VP.",
+    "bgaText": "2 points. Goal: 10 points if adjacent to at least 1 Plant and 1 Animal.",
+    "effect": "{ type: 'adjacent_building_and_item', metPoints: 10, unmetPoints: 2 }"
+  },
+  {
+    "id": 76,
+    "slot": 76,
+    "bgaId": 77,
+    "name": "Visitor Center",
+    "hasGoal": true,
+    "text": "Goal: 15 VP if all 4 colors are in your tableau; else 3 VP.",
+    "bgaText": "2 points. Goal: 7 points if all 4 colors are in your tableau.",
+    "effect": "{ type: 'all_colors_in_tableau', metPoints: 15, unmetPoints: 3 }"
+  },
+  {
+    "id": 77,
+    "slot": 77,
+    "bgaId": 78,
+    "name": "Backpack",
+    "hasGoal": false,
+    "text": "3 VP per Item if at least 3 Items in your tableau; else 0 VP.",
+    "bgaText": "2 points. Goal: 8 points if you have at least 3 Items in your tableau.",
+    "effect": "{ type: 'tableau_min_items', minItems: 3, pointsPerItem: 3 }"
+  },
+  {
+    "id": 78,
+    "slot": 78,
+    "bgaId": 79,
+    "name": "Binoculars",
+    "hasGoal": false,
+    "text": "Activate a card in your tableau (scores 3 VP).",
+    "bgaText": "Activate a GREEN card in your tableau.",
+    "effect": "{ type: 'activate_remote', points: 3 }"
+  },
+  {
+    "id": 79,
+    "slot": 79,
+    "bgaId": 80,
+    "name": "Water Trough",
+    "hasGoal": false,
+    "text": "4 VP per adjacent Animal.",
+    "bgaText": "4 points per adjacent Animal.",
+    "effect": "{ type: 'adjacent_type_count', targetType: 'animal', pointsPerCard: 4 }"
+  },
+  {
+    "id": 80,
+    "slot": 80,
+    "bgaId": 81,
+    "name": "Snack Bag",
+    "hasGoal": false,
+    "text": "2 VP per Bee token you have in your reserve.",
+    "bgaText": "2 points per Bee token you own.",
+    "effect": "{ type: 'bee_tokens_count', pointsPerToken: 2 }"
+  },
+  {
+    "id": 81,
+    "slot": 81,
+    "bgaId": 82,
+    "name": "Weather Forecast: City",
+    "hasGoal": false,
+    "text": "7 VP if you have a City (Red) card in your reserve.",
+    "bgaText": "7 points if the card in your reserve is RED.",
+    "effect": "{ type: 'reserve_color', requiredColor: 'city', points: 7 }"
+  },
+  {
+    "id": 82,
+    "slot": 82,
+    "bgaId": 83,
+    "name": "Weather Forecast: Water",
+    "hasGoal": false,
+    "text": "7 VP if you have a Water (Blue) card in your reserve.",
+    "bgaText": "7 points if the card in your reserve is BLUE.",
+    "effect": "{ type: 'reserve_color', requiredColor: 'water', points: 7 }"
+  },
+  {
+    "id": 83,
+    "slot": 83,
+    "bgaId": 84,
+    "name": "Weather Forecast: Mountain",
+    "hasGoal": false,
+    "text": "7 VP if you have a Mountain (Green) card in your reserve.",
+    "bgaText": "7 points if the card in your reserve is GREEN.",
+    "effect": "{ type: 'reserve_color', requiredColor: 'mountain', points: 7 }"
+  },
+  {
+    "id": 84,
+    "slot": 84,
+    "bgaId": 85,
+    "name": "Weather Forecast: Desert",
+    "hasGoal": false,
+    "text": "7 VP if you have a Desert (Yellow) card in your reserve.",
+    "bgaText": "7 points if the card in your reserve is YELLOW.",
+    "effect": "{ type: 'reserve_color', requiredColor: 'desert', points: 7 }"
+  },
+  {
+    "id": 85,
+    "slot": 85,
+    "bgaId": 86,
+    "name": "Botanist",
+    "hasGoal": false,
+    "text": "3 VP per Plant in your tableau.",
+    "bgaText": "4 points per Plant in your tableau.",
+    "effect": "{ type: 'tableau_type_count', targetType: 'plant', pointsPerMatch: 3 }"
+  },
+  {
+    "id": 86,
+    "slot": 86,
+    "bgaId": 87,
+    "name": "Guide",
+    "hasGoal": false,
+    "text": "Activate a Bearfolk in your tableau (scores 3 VP).",
+    "bgaText": "Activate a Bearfolk in your tableau.",
+    "effect": "{ type: 'activate_remote', targetType: 'bearfolk', points: 3 }"
+  },
+  {
+    "id": 87,
+    "slot": 87,
+    "bgaId": 88,
+    "name": "Hiker",
+    "hasGoal": false,
+    "text": "2 VP per Mountain card in your tableau.",
+    "bgaText": "2 points per GREEN card in your tableau.",
+    "effect": "{ type: 'tableau_mountain_count', pointsPerCard: 2 }"
+  },
+  {
+    "id": 88,
+    "slot": 88,
+    "bgaId": 89,
+    "name": "Spy",
+    "hasGoal": false,
+    "text": "",
+    "bgaText": "1 point per YELLOW and 1 point per GREEN card in any one opponent's tableau.",
+    "effect": "{ type: 'opponent_tableau_colors', colors: ['mountain', 'city'], pointsPerMatch: 1 }"
+  },
+  {
+    "id": 89,
+    "slot": 89,
+    "bgaId": 90,
+    "name": "Spy",
+    "hasGoal": false,
+    "text": "",
+    "bgaText": "1 point per RED and 1 point per BLUE card in any one opponent's tableau.",
+    "effect": "{ type: 'opponent_tableau_colors', colors: ['mountain', 'water'], pointsPerMatch: 1 }"
+  },
+  {
+    "id": 90,
+    "slot": 90,
+    "bgaId": 91,
+    "name": "Spy",
+    "hasGoal": false,
+    "text": "",
+    "bgaText": "2 points per Bee token owned by any one opponent.",
+    "effect": "{ type: 'opponent_bee_tokens', pointsPerToken: 2 }"
+  },
+  {
+    "id": 91,
+    "slot": 91,
+    "bgaId": 92,
+    "name": "Wildlife Ranger",
+    "hasGoal": false,
+    "text": "3 VP per Animal in your tableau.",
+    "bgaText": "3 points per Animal in your tableau.",
+    "effect": "{ type: 'tableau_type_count', targetType: 'animal', pointsPerMatch: 3 }"
+  },
+  {
+    "id": 92,
+    "slot": 92,
+    "bgaId": 93,
+    "name": "Berries",
+    "hasGoal": false,
+    "text": "4 VP per Plant in this row.",
+    "bgaText": "4 points per Animal in this row.",
+    "effect": "{ type: 'row_plants', pointsPerPlant: 4 }"
+  },
+  {
+    "id": 93,
+    "slot": 93,
+    "bgaId": 94,
+    "name": "Dandelion",
+    "hasGoal": false,
+    "text": "7 VP when placed. 1 VP when activated by another card.",
+    "bgaText": "7 points when placed. 1 point when activated by another card.",
+    "effect": "{ type: 'dandelion', placeVP: 7, activateVP: 1 }"
+  },
+  {
+    "id": 94,
+    "slot": 94,
+    "bgaId": 95,
+    "name": "Fern",
+    "hasGoal": false,
+    "text": "3 VP per adjacent Plant.",
+    "bgaText": "4 points per adjacent Building.",
+    "effect": "{ type: 'adjacent_type_count', targetType: 'plant', pointsPerCard: 3 }"
+  },
+  {
+    "id": 95,
+    "slot": 95,
+    "bgaId": 96,
+    "name": "Sequoia",
+    "hasGoal": false,
+    "text": "Flat 3 VP.",
+    "bgaText": "3 points.",
+    "effect": "{ type: 'flat_vp', points: 3 }"
+  },
+  {
+    "id": 96,
+    "slot": 96,
+    "bgaId": 97,
+    "name": "Wild Carrot",
+    "hasGoal": false,
+    "text": "5 VP if adjacent to at least 1 Animal.",
+    "bgaText": "5 points if adjacent to at least 1 Animal.",
+    "effect": "{ type: 'adjacent_min_animal', minCount: 1, points: 5 }"
+  }
+]

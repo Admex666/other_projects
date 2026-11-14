@@ -54,6 +54,8 @@ export interface SanitizedGameState {
   roundSummaries?: RoundSummary[];
   readyNextRoundPlayers?: string[];
   winner: string[] | null;
+  hasSubmittedRound?: boolean;
+  pendingRoundSummary?: RoundSummary | null;
 }
 
 // ==========================================
