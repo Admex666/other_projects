@@ -25,8 +25,8 @@ export async function createWorkshopSession(
     if (!defaultOrg) {
       defaultOrg = await prisma.organization.create({
         data: {
-          name: 'Demo Vállalat',
-          industry: 'Enterprise Tech',
+          name: 'Demó Vállalat',
+          industry: 'Technológia',
         },
       })
     }
@@ -38,7 +38,7 @@ export async function createWorkshopSession(
   const session = await prisma.session.create({
     data: {
       organizationId,
-      name: sessionName || 'The Trading Game Workshop',
+      name: sessionName || 'Kereskedelmi Szimuláció',
       joinCode: finalJoinCode,
       status: 'DRAFT',
       currentPhase: 'PHASE_0_SETUP',
@@ -341,6 +341,34 @@ export async function getSessionDetails(idOrCode: string) {
       where: { joinCode: idOrCode.toUpperCase() },
       include: includeQuery,
     })
+  }
+
+  if (session && session.teams?.length > 0) {
+    const neutralNames: Record<string, string> = {
+      CAPITAL: 'Alfa Vállalat',
+      RESOURCE: 'Béta Vállalat',
+      TECH: 'Gamma Vállalat',
+      EMERGING: 'Delta Vállalat',
+    }
+    let renamed = false
+    for (const t of session.teams) {
+      const targetName = neutralNames[t.profileCode]
+      if (targetName && t.name !== targetName) {
+        try {
+          await prisma.sessionTeam.update({
+            where: { id: t.id },
+            data: { name: targetName },
+          })
+          t.name = targetName
+          renamed = true
+        } catch (err) {
+          console.warn('Auto-rename team warning:', err)
+        }
+      }
+    }
+    if (renamed) {
+      session.teams.sort((a, b) => a.name.localeCompare(b.name, 'hu'))
+    }
   }
 
   return session

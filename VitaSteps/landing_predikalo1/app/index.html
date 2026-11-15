@@ -7,9 +7,10 @@
   <meta name="description" content="VitaSteps Kitérő — Önvezetett digitális városi élményséták. A Kisföldalatti Nyomában.">
   <title>VitaSteps Kitérő — A Kisföldalatti Nyomában</title>
 
-  <!-- PWA Manifest -->
+  <!-- PWA Manifest & Icons -->
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="../assets/kitero/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
 
   <!-- Tipográfia: Outfit & Material Symbols Outlined -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,8 +32,11 @@
       <!-- FELSŐ LEBEGŐ SÁV & TELEMETRIA -->
       <header class="top-telemetry-bar">
         <div class="brand-section">
-          <span class="brand-logo-badge">Kitérő</span>
-          <span class="tour-id-tag" id="header-tour-title">Kisföldalatti</span>
+          <button class="tour-switcher-btn" id="btn-open-tours-header" title="Séta választása">
+            <span class="brand-logo-badge">Kitérő</span>
+            <span class="tour-id-tag" id="header-tour-title">Kisföldalatti</span>
+            <span class="material-symbols-outlined" style="font-size:16px;">unfold_more</span>
+          </button>
         </div>
 
         <div class="top-actions">
@@ -51,7 +55,7 @@
           </button>
 
           <!-- Teszt üzemmód gomb -->
-          <button class="icon-btn-header" id="test-mode-toggle-btn" title="Teszt üzemmód és GPS szimulátor">
+          <button class="icon-btn-header" id="test-mode-toggle-btn" title="Teszt üzemmód és GPS szimulátor" style="display: none;">
             <span class="material-symbols-outlined" style="font-size:18px;">science</span>
           </button>
         </div>
@@ -61,15 +65,182 @@
       <main class="screens-viewport">
 
         <!-- ═══════════════════════════════════════════
+             SCREEN 0: SÉTAVÁLASZTÓ (TOURS)
+             ═══════════════════════════════════════════ -->
+        <section id="screen-tours" class="screen-pane">
+          <div class="tours-viewport">
+            <div class="tours-header-wrap">
+              <div class="tours-eyebrow">Kitérő Séták</div>
+              <h1 class="tours-title">Válassz élményt és indulj útnak</h1>
+              <p class="tours-subtitle">Önvezetett városi történetek és élő GPS-es terepteszt a saját környékeden</p>
+            </div>
+
+            <!-- 1. KÁRTYA: A KISFÖLDALATTI NYOMÁBAN -->
+            <div class="tour-card active-tour" id="card-tour-m1" data-tour="m1">
+              <div class="tour-card-media">
+                <img src="assets/pois/hero_m1.jpg" alt="A Kisföldalatti Nyomában" class="tour-card-img">
+                <div class="tour-card-badges">
+                  <span class="tour-badge badge-dest">Budapest</span>
+                  <span class="tour-badge badge-cat">Történelmi séta</span>
+                  <span class="tour-badge badge-status" id="badge-status-m1">Aktív Séta</span>
+                </div>
+              </div>
+              <div class="tour-card-body">
+                <h2 class="tour-card-title">A Kisföldalatti Nyomában</h2>
+                <p class="tour-card-sub">Mexikói úti járműteleptől a Vörösmarty térig</p>
+
+                <div class="tour-card-metrics">
+                  <div class="tour-metric-item">
+                    <span class="material-symbols-outlined metric-icon">pin_drop</span>
+                    <span class="metric-val">9 megálló</span>
+                  </div>
+                  <div class="tour-metric-item">
+                    <span class="material-symbols-outlined metric-icon">directions_walk</span>
+                    <span class="metric-val">3.4 km</span>
+                  </div>
+                  <div class="tour-metric-item">
+                    <span class="material-symbols-outlined metric-icon">schedule</span>
+                    <span class="metric-val">1.5 – 2 óra</span>
+                  </div>
+                  <div class="tour-metric-item">
+                    <span class="material-symbols-outlined metric-icon">record_voice_over</span>
+                    <span class="metric-val">Imre narráció</span>
+                  </div>
+                </div>
+
+                <p class="tour-card-desc">
+                  A kontinens első földalattijának rejtélyei, millenniumi kulisszatitkok és emberi sorsok.
+                </p>
+
+                <div class="tour-card-actions">
+                  <button class="btn-tour-cta primary" id="btn-tour-m1-open">
+                    <span class="material-symbols-outlined" style="font-size:18px;">explore</span>
+                    <span id="btn-text-tour-m1">Kisföldalatti Megnyitása</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. KÁRTYA: ÉLŐ TEREPTESZT — SAJÁT KÖRNYÉK -->
+            <div class="tour-card test-tour-card" id="card-tour-test" data-tour="test">
+              <div class="tour-card-media test-media">
+                <div class="tour-test-pattern">
+                  <div class="test-radar-circle"></div>
+                  <span class="material-symbols-outlined test-hero-icon">near_me</span>
+                </div>
+                <div class="tour-card-badges">
+                  <span class="tour-badge badge-test">Terepteszt</span>
+                  <span class="tour-badge badge-loc">Saját Utcád</span>
+                  <span class="tour-badge badge-voice">Imre teszthangok</span>
+                  <span class="tour-badge badge-status" id="badge-status-test" style="display:none;">Aktív Teszt</span>
+                </div>
+              </div>
+              <div class="tour-card-body">
+                <h2 class="tour-card-title">Élő Terepteszt a Saját Környékeden</h2>
+                <p class="tour-card-sub">Próbáld ki a sétát a saját utcádban valós GPS-szel!</p>
+
+                <div class="tour-card-metrics">
+                  <div class="tour-metric-item">
+                    <span class="material-symbols-outlined metric-icon">scatter_plot</span>
+                    <span class="metric-val">2–9 megálló</span>
+                  </div>
+                  <div class="tour-metric-item">
+                    <span class="material-symbols-outlined metric-icon">route</span>
+                    <span class="metric-val">Egyedi táv</span>
+                  </div>
+                  <div class="tour-metric-item">
+                    <span class="material-symbols-outlined metric-icon">record_voice_over</span>
+                    <span class="metric-val">Imre tesztnarráció</span>
+                  </div>
+                </div>
+
+                <p class="tour-card-desc">
+                  Jelölj ki pontokat a térképen vagy rakj le automatikusan 3 pontot köréd. Imre valódi hangon köszönt és vezeti a lépteidet!
+                </p>
+
+                <div class="tour-test-quick-actions">
+                  <button class="btn-test-quick primary" id="btn-tour-test-around-me">
+                    <span class="material-symbols-outlined" style="font-size:16px;">bolt</span>
+                    <span>⚡ 3 megálló lerakása körém</span>
+                  </button>
+                  <button class="btn-test-quick" id="btn-tour-test-pick-map">
+                    <span class="material-symbols-outlined" style="font-size:16px;">edit_location_alt</span>
+                    <span>🗺️ Megállók kijelölése a térképen</span>
+                  </button>
+                  <button class="btn-test-quick subtle" id="btn-tour-test-open">
+                    <span class="material-symbols-outlined" style="font-size:16px;">play_circle</span>
+                    <span id="btn-text-tour-test">Teszt Séta Betöltése</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. & 4. KÁRTYÁK: HAMAROSAN ÉRKEZŐ SÉTÁK -->
+            <div class="tours-section-heading">Hamarosan Érkező Séták</div>
+
+            <div class="tour-card coming-soon-card">
+              <div class="tour-card-body">
+                <div class="tour-card-header-row">
+                  <div>
+                    <h3 class="tour-card-title small">A Palotanegyed Titkai</h3>
+                    <p class="tour-card-sub">Nemesi paloták és a pesti arisztokrácia rejtett történetei</p>
+                  </div>
+                  <span class="tour-badge badge-soon">Hamarosan</span>
+                </div>
+                <div class="tour-card-metrics">
+                  <div class="tour-metric-item">
+                    <span class="material-symbols-outlined metric-icon">pin_drop</span>
+                    <span class="metric-val">8 megálló</span>
+                  </div>
+                  <div class="tour-metric-item">
+                    <span class="material-symbols-outlined metric-icon">directions_walk</span>
+                    <span class="metric-val">2.8 km</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tour-card coming-soon-card">
+              <div class="tour-card-body">
+                <div class="tour-card-header-row">
+                  <div>
+                    <h3 class="tour-card-title small">A Budai Vár Rejtett Udvarai</h3>
+                    <p class="tour-card-sub">Középkori pincerendszerek és bástyák titkai</p>
+                  </div>
+                  <span class="tour-badge badge-soon">Hamarosan</span>
+                </div>
+                <div class="tour-card-metrics">
+                  <div class="tour-metric-item">
+                    <span class="material-symbols-outlined metric-icon">pin_drop</span>
+                    <span class="metric-val">7 megálló</span>
+                  </div>
+                  <div class="tour-metric-item">
+                    <span class="material-symbols-outlined metric-icon">directions_walk</span>
+                    <span class="metric-val">2.5 km</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
              SCREEN 1: SÉTA ÁTTEKINTÉS (BRIEF)
              ═══════════════════════════════════════════ -->
         <section id="screen-brief" class="screen-pane active">
           <div class="brief-viewport">
-            <img class="brief-hero-image" id="brief-hero-img" src="https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80" alt="Kisföldalatti útvonal">
+            <img class="brief-hero-image" id="brief-hero-img" src="assets/pois/hero_m1.jpg" alt="Kisföldalatti útvonal">
 
-            <div>
-              <h1 class="brief-title-h1" id="brief-title">A Kisföldalatti Nyomában</h1>
-              <p class="brief-sub" id="brief-subtitle">9 történelmi állomás a Mexikói úttól a Vörösmarty térig</p>
+            <div class="brief-title-row" style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+              <div>
+                <h1 class="brief-title-h1" id="brief-title">A Kisföldalatti Nyomában</h1>
+                <p class="brief-sub" id="brief-subtitle">9 történelmi állomás a Mexikói úttól a Vörösmarty térig</p>
+              </div>
+              <button class="btn-switch-tour-pill" id="btn-switch-tour-brief" title="Séta váltása">
+                <span class="material-symbols-outlined" style="font-size:16px;">swap_horiz</span>
+                <span>Séta váltása</span>
+              </button>
             </div>
 
             <!-- 3 részes specifikációs rács -->
@@ -116,6 +287,21 @@
             <!-- Térkép Konténer -->
             <div id="map-container"></div>
 
+            <!-- Lebegő Megálló-kijelölő Banner (Helyi Terepteszthez) -->
+            <div class="map-picker-banner" id="map-picker-banner" style="display: none;">
+              <div class="map-picker-text" id="map-picker-text">
+                📍 Bökj a térképre az 1. megálló lerakásához! (0 kijelölve)
+              </div>
+              <div class="map-picker-actions">
+                <button class="picker-btn primary" id="btn-save-picked-route" disabled>
+                  ✅ Mentés & Teszt Indítása
+                </button>
+                <button class="picker-btn cancel" id="btn-cancel-picked-route">
+                  ❌ Mégse
+                </button>
+              </div>
+            </div>
+
             <!-- Lebegő Térkép Vezérlők -->
             <div class="map-floating-controls">
               <button class="floating-btn" id="btn-recenter-gps" title="Saját GPS helyzet központosítása">
@@ -124,7 +310,7 @@
               <button class="floating-btn" id="btn-wakelock" title="Képernyő ébrentartása séta közben">
                 <span class="material-symbols-outlined" id="wakelock-icon" style="font-size:20px;">screen_lock_portrait</span>
               </button>
-              <button class="floating-btn" id="btn-open-test" title="GPS szimulátor teszt panel">
+              <button class="floating-btn" id="btn-open-test" title="GPS szimulátor teszt panel" style="display: none;">
                 <span class="material-symbols-outlined" style="font-size:20px;">tune</span>
               </button>
             </div>
@@ -152,7 +338,7 @@
                   </div>
                   <div class="telemetry-time">
                     <span id="hud-audio-current">00:00</span>
-                    <span id="hud-audio-duration">02:30 (TTS)</span>
+                    <span id="hud-audio-duration">02:30 (Imre)</span>
                   </div>
                 </div>
               </div>
@@ -228,7 +414,7 @@
               </div>
               <div class="telemetry-time">
                 <span id="story-audio-current">00:00</span>
-                <span id="story-audio-duration">02:30 (TTS Felolvasó)</span>
+                <span id="story-audio-duration">02:30 (Imre)</span>
               </div>
             </div>
 
@@ -249,6 +435,17 @@
               <div class="matrix-cell">
                 <div class="matrix-title">Történelmi súly</div>
                 <div class="matrix-value" id="matrix-historical">Vonal lezárása és modernizációja</div>
+              </div>
+            </div>
+
+            <!-- Helyszíni Megfigyelési Fókusz (Detail) -->
+            <div class="observation-focus-card" id="story-observation-box">
+              <div class="observation-icon-wrap">
+                <span class="material-symbols-outlined">visibility</span>
+              </div>
+              <div class="observation-content">
+                <div class="observation-label">Mit figyelj meg a helyszínen?</div>
+                <div class="observation-text" id="story-observation-text">Betöltés...</div>
               </div>
             </div>
 
@@ -396,7 +593,7 @@
         <button class="btn-play-global" id="global-btn-play" title="Lejátszás / Szünet">
           <span class="material-symbols-outlined" id="global-play-icon" style="font-size:22px;">play_arrow</span>
         </button>
-        <div class="global-track-info" id="global-track-info">
+        <div class="global-track-info" id="global-track-info" title="Történet megnyitása">
           <div class="global-track-title" id="global-track-title">1. Mexikói úti járműtelep</div>
           <div class="global-track-progress">
             <div class="global-progress-bar" id="global-progress-bar"></div>
@@ -406,6 +603,10 @@
             <span id="global-time-total">02:30</span>
           </div>
         </div>
+        <button class="btn-story-global" id="global-btn-story" title="Történet megnyitása">
+          <span class="material-symbols-outlined" style="font-size:15px;">menu_book</span>
+          <span>Történet</span>
+        </button>
         <button class="btn-close-global" id="global-btn-close" title="Lejátszó bezárása">
           <span class="material-symbols-outlined" style="font-size:18px;">close</span>
         </button>
@@ -413,19 +614,19 @@
 
       <!-- ALSÓ FŐ NAVIGÁCIÓ -->
       <nav class="bottom-nav-bar">
-        <button class="nav-tab-btn active" data-screen="screen-brief">
+        <button class="nav-tab-btn" data-screen="screen-tours" id="nav-btn-tours">
           <span class="material-symbols-outlined">explore</span>
-          <span>Séta</span>
+          <span>Séták</span>
         </button>
-        <button class="nav-tab-btn" data-screen="screen-map">
+        <button class="nav-tab-btn" data-screen="screen-map" id="nav-btn-map">
           <span class="material-symbols-outlined">map</span>
           <span>Térkép</span>
         </button>
-        <button class="nav-tab-btn" data-screen="screen-story">
+        <button class="nav-tab-btn" data-screen="screen-story" id="nav-btn-story">
           <span class="material-symbols-outlined">menu_book</span>
           <span>Megálló</span>
         </button>
-        <button class="nav-tab-btn" data-screen="screen-profile">
+        <button class="nav-tab-btn" data-screen="screen-profile" id="nav-btn-profile">
           <span class="material-symbols-outlined">person</span>
           <span>Profil</span>
         </button>
@@ -477,6 +678,23 @@
             <button class="test-btn" id="test-btn-reset-data">
               <span class="material-symbols-outlined" style="font-size:16px;">restart_alt</span>
               <span>Nullázás</span>
+            </button>
+          </div>
+
+          <!-- ÉLŐ TEREPTESZT A SAJÁT KÖRNYÉKEDEN -->
+          <div class="field-test-section">
+            <div class="field-test-heading">📍 Élő Terepteszt a Saját Környékeden</div>
+            <p class="field-test-desc">
+              Jelölj ki megállókat a saját utcádban, sétálj el hozzájuk élőben a telefonoddal, és teszteld a 35m-es geofence hang-aktiválást!
+            </p>
+            <button class="test-btn primary" id="test-btn-pick-map" style="width:100%;">
+              <span>🗺️ Megállók kijelölése a térképen</span>
+            </button>
+            <button class="test-btn" id="test-btn-around-me" style="width:100%;">
+              <span>⚡ 3 megálló automatikus lerakása körém (~50m-enként)</span>
+            </button>
+            <button class="test-btn" id="test-btn-restore-original" style="width:100%;">
+              <span>🔄 Eredeti Kisföldalatti útvonal visszaállítása</span>
             </button>
           </div>
 

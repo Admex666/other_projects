@@ -13,45 +13,44 @@ export interface TeamProfileDefinition {
 export const TEAM_ARCHETYPES: TeamProfileDefinition[] = [
   {
     profileCode: 'CAPITAL',
-    name: 'Tőkeerős Vállalat (Capital Rich)',
+    name: 'Alfa Vállalat',
     cashBalance: 1500,
     paperSheets: 2,
     scissorsCount: 0,
     rulersCount: 0,
     templatesCount: 0,
-    description: 'Bőséges tőke, de eszközök és alapanyag nélkül. Vásárolnia vagy bérelnie kell.',
+    description: 'Alfa Vállalat induló erőforráscsomag.',
   },
   {
     profileCode: 'RESOURCE',
-    name: 'Nyersanyag-óriás (Resource Rich)',
+    name: 'Béta Vállalat',
     cashBalance: 200,
     paperSheets: 15,
     scissorsCount: 0,
     rulersCount: 0,
     templatesCount: 0,
-    description: 'Rengeteg papír, minimális tőke és nulla eszköz. Nyersanyagot kell eladnia.',
+    description: 'Béta Vállalat induló erőforráscsomag.',
   },
   {
     profileCode: 'TECH',
-    name: 'Technológiai Bajnok (Tech Leader)',
+    name: 'Gamma Vállalat',
     cashBalance: 300,
     paperSheets: 3,
     scissorsCount: 2,
     rulersCount: 2,
     templatesCount: 2,
-    description: 'Kiváló eszközök és sablonok, de szűkös nyersanyag. Bérgyártó vagy eszközbérbeadó.',
+    description: 'Gamma Vállalat induló erőforráscsomag.',
   },
   {
     profileCode: 'EMERGING',
-    name: 'Feltörekvő Start-up (Emerging Team)',
+    name: 'Delta Vállalat',
     cashBalance: 500,
     paperSheets: 5,
     scissorsCount: 1,
     rulersCount: 1,
     templatesCount: 0,
-    description: 'Vegyes, de korlátozott induló készlet. Gyors szövetségkötésre kényszerül.',
+    description: 'Delta Vállalat induló erőforráscsomag.',
   },
 ];
 
 export const TEAM_PROFILES = TEAM_ARCHETYPES;
-

@@ -1,11 +1,41 @@
+# Environment & Secrets
 .env
+*.csv
+revolut_statement.csv
+meta_kreativ_napi_riport.csv
 contacts.csv
+
+# SQL & Database migrations
+*.sql
+supabase_analytics_schema.sql
+supabase_lead_nurturing_schema.sql
+
+# Backup & Deprecated Concept Files
+*.bak
+checkout.html.bak
+checkout_concept*.html
+kisero_kartya.html
+
+# Heavy Raw Data & Media Archives
+companion/data_gtfs/
+companion/archive/
+companion/tests/
+
+# Development, Documentation & Prompts
+mockups/
+scripts/
+docs/
+prompts/
+email_templates/
 send_emails.py
 email_template.html
+parse_tally.py
 test_sheets.js
 test_helpers.js
 test_leaderboard.js
-parse_tally.py
+count_records.js
+
+# Cache & Metadata
 __pycache__/
 .gitignore
-kisero_kartya.html
+doppler.yaml

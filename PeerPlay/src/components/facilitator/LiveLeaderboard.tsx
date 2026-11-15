@@ -1,5 +1,7 @@
 'use client'
 
+import { getProfileLabel } from '@/modules/session/constants'
+
 interface Participant {
   id: string
   user: {
@@ -44,10 +46,10 @@ export default function LiveLeaderboard({ teams }: LiveLeaderboardProps) {
 
   return (
     <div className="theme-card p-6 space-y-4">
-      <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+      <div className="flex flex-wrap justify-between items-center gap-2 pb-3 border-b border-slate-100">
         <div>
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-            Élő Vállalati Rangsor & Készletállomány
+            Élő Vállalati Rangsor &amp; Készletállomány
           </h3>
           <p className="text-xs text-slate-500">
             Valós idejű vagyonértékelés (Készpénz + Nyilvántartott eszközérték)
@@ -63,7 +65,7 @@ export default function LiveLeaderboard({ teams }: LiveLeaderboardProps) {
           <thead className="bg-slate-50">
             <tr>
               <th className="px-4 py-2.5 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
-                Helyezés & Vállalat
+                Helyezés &amp; Vállalat
               </th>
               <th className="px-4 py-2.5 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider text-right">
                 Készpénz
@@ -100,8 +102,8 @@ export default function LiveLeaderboard({ teams }: LiveLeaderboardProps) {
                       </span>
                       <div>
                         <div className="text-xs font-bold text-slate-900">{team.name}</div>
-                        <span className="text-[10px] font-mono text-slate-400 uppercase">
-                          {team.profileCode} · {team.participants?.length || 0} fő
+                        <span className="text-[10px] font-mono text-slate-500">
+                          {team.participants?.length || 0} fő
                         </span>
                       </div>
                     </div>
@@ -132,7 +134,7 @@ export default function LiveLeaderboard({ teams }: LiveLeaderboardProps) {
       <div className="pt-3 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {teams.map((t) => (
           <div key={t.id} className="p-3 bg-slate-50/60 rounded-lg border border-slate-100">
-            <span className="text-[10px] font-mono font-bold text-slate-400 uppercase block">
+            <span className="text-[10px] font-mono font-bold text-slate-500 uppercase block">
               {t.name} Csapattagok ({t.participants?.length || 0})
             </span>
             <div className="mt-1 space-y-1">

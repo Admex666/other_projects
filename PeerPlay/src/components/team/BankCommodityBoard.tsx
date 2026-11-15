@@ -82,7 +82,7 @@ export default function BankCommodityBoard({ activeEvent }: BankCommodityBoardPr
         <div className="pb-3 border-b border-slate-100 flex justify-between items-center">
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
-              Hivatalos Banki Árfolyamtábla (S-TEAM-03)
+              Hivatalos Banki Árfolyamtábla
             </h3>
             <p className="text-xs text-slate-500">
               A Központi Bank felvásárlási egységárai a jelenlegi fázisban
@@ -108,7 +108,7 @@ export default function BankCommodityBoard({ activeEvent }: BankCommodityBoardPr
                     <span className="text-xs font-mono text-slate-400">({c.dimensions})</span>
                     {hasMultiplier && (
                       <span className="text-[10px] font-mono font-bold bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded">
-                        {mult > 1.0 ? `+${Math.round((mult - 1) * 100)}% Boom` : 'Árcsökkenés'}
+                        {mult > 1.0 ? `+${Math.round((mult - 1) * 100)}% Felár` : 'Árcsökkenés'}
                       </span>
                     )}
                   </div>

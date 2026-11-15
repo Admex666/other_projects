@@ -11,13 +11,62 @@
   // ══════════════════════════════════════════════════════════════
   const STORAGE_KEY = 'kitero_progress_m1';
   const THEME_KEY = 'kitero_theme';
+  const CUSTOM_TEST_ROUTE_KEY = 'kitero_custom_test_route_v1';
   const GEOFENCE_RADIUS_METERS = 35;
 
+  const TEST_POINT_TEXTS = [
+    {
+      hook: "Ez az első tesztpont, üdvözöllek! A GPS érzékelés és a hangindítás működik.",
+      story: "Ez az első tesztpont, üdvözöllek a VitaSteps Kitérő élő tereptesztjén! Ha ezt a hangot hallod, a telefonod sikeresen érzékelte a harmincöt méteres zónát, és automatikusan elindította Imre narrációját. Most indulj el a második kijelölt pont felé!"
+    },
+    {
+      hook: "Ez a második tesztpont, üdvözöllek! A zóna-aktiválás itt is pontosan kapcsolt.",
+      story: "Megérkeztél a második tesztpontra! A gyalogos útvonaltervezés és a távolságmérés folyamatosan követi a lépteidet. Sétálj tovább a harmadik pontra!"
+    },
+    {
+      hook: "Ez a harmadik tesztpont, üdvözöllek! Gratulálok, a terepteszt sikeresen vizsgázott.",
+      story: "Ez a harmadik tesztpont! Gratulálok, sikeresen letesztelted a saját környékeden a teljes folyamatot: a pontok kijelölését, a gyalogos navigációt és az automatikus hangindítást. Ha kijelöltél még pontokat, folytasd a sétát, vagy a Teszt Laborban bármikor visszaállíthatod az eredeti Kisföldalatti útvonalat."
+    },
+    {
+      hook: "Ez a negyedik tesztpont, üdvözöllek! A navigációs ritmus kiválóan tartható.",
+      story: "Elérted a negyedik tesztpontot! A rendszer stabilan kezeli a hosszabb sétaútvonalat is. Figyeld meg, hogyan frissülnek a hátralévő méterek, miközben az ötödik megálló felé veszed az irányt."
+    },
+    {
+      hook: "Ez az ötödik tesztpont, üdvözöllek! Félúton vagyunk, a térkép és a tájolás hibátlan.",
+      story: "Ez az ötödik tesztpont, a táv felét már magad mögött hagytad! A zónaérzékelés azonnal aktiválódott a belépés pillanatában. Tartsd a tempót, és haladj tovább a hatodik pont felé!"
+    },
+    {
+      hook: "Ez a hatodik tesztpont, üdvözöllek! A lépésszámlálás és a helymeghatározás folyamatos.",
+      story: "Megérkeztél a hatodik tesztpontra! A telefonod háttérben is folyamatosan számolja a lépéseket és tartja a kapcsolatot a műholdakkal. Indulj tovább a hetedik pont irányába!"
+    },
+    {
+      hook: "Ez a hetedik tesztpont, üdvözöllek! Már a finisben jársz a tesztkörön.",
+      story: "Ez a hetedik tesztpont! Nagyszerűen teljesíted a saját környékedre szabott bejárást. A hangfájlok betöltése és a Gestalt gyűrű animációja is szinkronban van. Sétálj tovább a nyolcadik pontra!"
+    },
+    {
+      hook: "Ez a nyolcadik tesztpont, üdvözöllek! Már csak egyetlen állomás van hátra.",
+      story: "Elérted a nyolcadik tesztpontot! A geofence réteg és az audio vezérlő tökéletesen együttműködik. Még egy utolsó szakasz maradt: vedd az irányt a záró, kilencedik tesztpont felé!"
+    },
+    {
+      hook: "Ez a kilencedik tesztpont, üdvözöllek! Teljesítetted a teljes kilencállomásos tereptesztet.",
+      story: "Megérkeztél a kilencedik, befejező tesztpontra! Gratulálok, a kilenc állomásos terepteszt minden funkciója hibátlanul levizsgázott a valós környezetben. A Teszt Laborban bármikor új útvonalat rögzíthetsz, vagy egyetlen kattintással visszatérhetsz a klasszikus Kisföldalatti túrához. Köszönöm a tesztelést!"
+    }
+  ];
+
   let tourData = null;
+  let originalTourData = null;
+  let originalTourBackup = null;
   let activeStopIndex = 0;
   let completedStopIds = new Set();
   let startTime = null;
   let isFinished = false;
+
+  // Térképes megálló-kijelölő (Helyi Terepteszt) állapot
+  let isMapPickingMode = false;
+  let pickedCoords = [];
+  let pickedMarkers = [];
+  let pickedPreviewLine = null;
+  let pickedRouteData = null;
 
   // Felhasználói GPS Pozíció
   let userCoords = null; // [lat, lng]
@@ -92,16 +141,18 @@
   function updateMapTileTheme(theme) {
     if (!map) return;
     
-    // Hosszúlépésben bevált és stabil CartoDB dark csempe:
-    const tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+    // Ingyenes, stabil kulcsmentes Esri Canvas térképcsempék:
+    // FIGYELEM: ArcGIS REST formátumban a koordináták sorrendje {z}/{y}/{x} !
+    const tileUrl = theme === 'dark'
+      ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+      : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 
     if (tileLayer) {
       map.removeLayer(tileLayer);
     }
     tileLayer = L.tileLayer(tileUrl, {
-      maxZoom: 19,
-      subdomains: 'abcd',
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+      maxZoom: 16,
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
     }).addTo(map);
   }
 
@@ -112,7 +163,13 @@
     try {
       const res = await fetch('./tour_m1.json');
       if (!res.ok) throw new Error('Nem sikerült betölteni a tour_m1.json fájlt');
-      tourData = await res.json();
+      const rawJson = await res.json();
+      originalTourData = JSON.parse(JSON.stringify(rawJson));
+      originalTourBackup = JSON.parse(JSON.stringify(rawJson));
+      tourData = JSON.parse(JSON.stringify(rawJson));
+
+      // Ha van elmentett helyi terepteszt útvonal, alkalmazzuk
+      applySavedCustomTestRoute();
 
       loadSavedProgress();
       renderBriefScreen();
@@ -122,18 +179,76 @@
       updateStoryScreen();
       renderVaultList();
       updateProfileScreen();
+      updateTourSelectorUI();
 
       // GPS figyelés indítása
       startGeolocationTracking();
 
-      // URL ellenőrzés test_mode-ra
+      // Teszt gombok láthatóságának frissítése (csak ?test_mode=1 vagy aktív helyi terepteszt esetén)
       const params = new URLSearchParams(window.location.search);
-      if (params.get('test_mode') === '1') {
+      const isTestUrl = params.get('test_mode') === '1';
+      const hasCustomRoute = Boolean(localStorage.getItem(CUSTOM_TEST_ROUTE_KEY));
+      updateTestButtonsVisibility(isTestUrl || hasCustomRoute);
+
+      if (isTestUrl) {
         openTestPanel();
       }
     } catch (err) {
       console.error('Hiba a túraadatok betöltésekor:', err);
       showToast('Hiba a túraadatok betöltésekor', 'error');
+    }
+  }
+
+  function updateTestButtonsVisibility(show) {
+    const headerTestBtn = document.getElementById('test-mode-toggle-btn');
+    const mapTestBtn = document.getElementById('btn-open-test');
+    if (headerTestBtn) headerTestBtn.style.display = show ? 'flex' : 'none';
+    if (mapTestBtn) mapTestBtn.style.display = show ? 'flex' : 'none';
+  }
+
+  function applySavedCustomTestRoute() {
+    try {
+      const rawCustom = localStorage.getItem(CUSTOM_TEST_ROUTE_KEY);
+      const baseTour = originalTourBackup || originalTourData;
+      if (!rawCustom || !baseTour) return;
+      const custom = JSON.parse(rawCustom);
+      if (Array.isArray(custom.coords) && custom.coords.length >= 2) {
+        const count = Math.min(custom.coords.length, baseTour.pois.length);
+        tourData = JSON.parse(JSON.stringify(baseTour));
+        tourData.is_custom_test = true;
+        tourData.title = 'Helyi Terepteszt';
+        tourData.subtitle = 'Élő GPS és hangindítás tesztállomás';
+        tourData.pois = tourData.pois.slice(0, count).map((poi, idx) => {
+          const textItem = TEST_POINT_TEXTS[idx] || TEST_POINT_TEXTS[0];
+          return {
+            ...poi,
+            coords: custom.coords[idx],
+            is_custom_test: true,
+            name: `${idx + 1}. Tesztpont — Saját Környék`,
+            subtitle: 'Élő GPS és hangindítás tesztállomás',
+            detail: 'Élő GPS és hangindítás tesztállomás',
+            audio_hook: textItem.hook,
+            audio_story: textItem.story,
+            hook: textItem.hook,
+            desc: textItem.story,
+            secrets: [
+              {
+                icon: 'record_voice_over',
+                title: `${idx + 1}. Tesztpont Narrációja`,
+                badge: 'Imre TTS',
+                content: textItem.story
+              }
+            ]
+          };
+        });
+        tourData.walking_route = Array.isArray(custom.walking_route) && custom.walking_route.length > 0
+          ? custom.walking_route
+          : custom.coords;
+        tourData.walking_legs = Array.isArray(custom.walking_legs) ? custom.walking_legs : [];
+        tourData.map_center = custom.coords[0];
+      }
+    } catch (e) {
+      console.warn('Nem sikerült az egyedi terepteszt útvonalat betölteni:', e);
     }
   }
 
@@ -191,6 +306,7 @@
     const btnStartWalk = document.getElementById('btn-start-walk');
     if (btnStartWalk) {
       btnStartWalk.addEventListener('click', () => {
+        unlockMobileAudio();
         showScreen('screen-map');
         requestWakeLock();
         showToast('Séta elindítva! Keresd a következő állomást a térképen.');
@@ -219,6 +335,146 @@
     const btnProfileFromFinish = document.getElementById('btn-view-profile-from-finish');
     if (btnProfileFromFinish) {
       btnProfileFromFinish.addEventListener('click', () => showScreen('screen-profile'));
+    }
+
+    // Sétaválasztó (Tour Selector) vezérlők
+    const btnOpenToursHeader = document.getElementById('btn-open-tours-header');
+    if (btnOpenToursHeader) {
+      btnOpenToursHeader.addEventListener('click', () => showScreen('screen-tours'));
+    }
+
+    const btnSwitchTourBrief = document.getElementById('btn-switch-tour-brief');
+    if (btnSwitchTourBrief) {
+      btnSwitchTourBrief.addEventListener('click', () => showScreen('screen-tours'));
+    }
+
+    // Teljes Kisföldalatti kártya kattintás
+    const cardM1 = document.getElementById('card-tour-m1');
+    if (cardM1) {
+      cardM1.addEventListener('click', () => selectTour('m1'));
+    }
+
+    const btnSelectM1 = document.getElementById('btn-tour-m1-open') || document.getElementById('btn-select-tour-m1');
+    if (btnSelectM1) {
+      btnSelectM1.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectTour('m1');
+      });
+    }
+
+    // Teljes Terepteszt kártya kattintás
+    const cardTest = document.getElementById('card-tour-test');
+    if (cardTest) {
+      cardTest.addEventListener('click', (e) => {
+        // Ha közvetlenül a kártyán lévő specifikus gombokra kattintott, a gomb saját akciója érvényesül
+        if (e.target.closest('#btn-tour-test-around-me') || e.target.closest('#btn-tour-test-pick-map')) {
+          return;
+        }
+        selectTour('test');
+      });
+    }
+
+    const btnTourAroundMe = document.getElementById('btn-tour-test-around-me');
+    if (btnTourAroundMe) {
+      btnTourAroundMe.addEventListener('click', (e) => {
+        e.stopPropagation();
+        unlockMobileAudio();
+        selectTour('test');
+        generateStopsAroundMe();
+      });
+    }
+
+    const btnTourPickMap = document.getElementById('btn-tour-test-pick-map');
+    if (btnTourPickMap) {
+      btnTourPickMap.addEventListener('click', (e) => {
+        e.stopPropagation();
+        unlockMobileAudio();
+        selectTour('test');
+        startMapPickerMode();
+      });
+    }
+
+    const btnTourTestOpen = document.getElementById('btn-tour-test-open');
+    if (btnTourTestOpen) {
+      btnTourTestOpen.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectTour('test');
+      });
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  // SÉTAVÁLASZTÓ (TOUR SELECTOR) VEZÉRLÉS
+  // ══════════════════════════════════════════════════════════════
+  function selectTour(tourType) {
+    if (tourType === 'm1') {
+      if (tourData?.is_custom_test || localStorage.getItem(CUSTOM_TEST_ROUTE_KEY)) {
+        restoreOriginalRoute();
+      }
+      const headerTourTitle = document.getElementById('header-tour-title');
+      if (headerTourTitle) headerTourTitle.textContent = 'Kisföldalatti';
+      updateTourSelectorUI();
+      showScreen('screen-brief');
+      showToast('Kisföldalatti séta aktív!', 'success');
+    } else if (tourType === 'test') {
+      const headerTourTitle = document.getElementById('header-tour-title');
+      if (headerTourTitle) headerTourTitle.textContent = 'Terepteszt';
+      updateTestButtonsVisibility(true);
+
+      const hasSaved = Boolean(localStorage.getItem(CUSTOM_TEST_ROUTE_KEY));
+      if (hasSaved) {
+        applySavedCustomTestRoute();
+        updateTourSelectorUI();
+        showScreen('screen-map');
+        centerMapOnActive();
+        showToast('Mentett terepteszt betöltve!', 'success');
+      } else {
+        updateTourSelectorUI();
+        showScreen('screen-map');
+        showToast('Válassz akciót: ⚡ 3 megálló lerakása köréd, vagy 🗺️ kijelölés a térképen!');
+      }
+    }
+  }
+
+  function updateTourSelectorUI() {
+    const isCustom = Boolean(tourData?.is_custom_test || localStorage.getItem(CUSTOM_TEST_ROUTE_KEY));
+
+    const cardM1 = document.getElementById('card-tour-m1');
+    const badgeM1 = document.getElementById('badge-status-m1');
+    const btnTextM1 = document.getElementById('btn-text-tour-m1');
+
+    const cardTest = document.getElementById('card-tour-test');
+    const badgeTest = document.getElementById('badge-status-test');
+    const btnTextTest = document.getElementById('btn-text-tour-test');
+
+    const headerTourTitle = document.getElementById('header-tour-title');
+
+    if (isCustom) {
+      if (headerTourTitle) headerTourTitle.textContent = 'Terepteszt';
+      if (cardM1) cardM1.classList.remove('active-tour');
+      if (badgeM1) badgeM1.style.display = 'none';
+      if (btnTextM1) btnTextM1.textContent = 'Visszaváltás Kisföldalattira';
+
+      if (cardTest) cardTest.classList.add('active-tour');
+      if (badgeTest) badgeTest.style.display = 'inline-flex';
+      if (btnTextTest) btnTextTest.textContent = 'Teszt Folytatása a Térképen';
+    } else {
+      if (headerTourTitle) headerTourTitle.textContent = 'Kisföldalatti';
+      if (cardM1) cardM1.classList.add('active-tour');
+      if (badgeM1) badgeM1.style.display = 'inline-flex';
+      if (btnTextM1) {
+        btnTextM1.textContent = (completedStopIds && completedStopIds.size > 0)
+          ? 'Megtekintés / Folytatás'
+          : 'Kisföldalatti Megnyitása';
+      }
+
+      if (cardTest) cardTest.classList.remove('active-tour');
+      if (badgeTest) badgeTest.style.display = 'none';
+      if (btnTextTest) {
+        btnTextTest.textContent = localStorage.getItem(CUSTOM_TEST_ROUTE_KEY)
+          ? 'Mentett Teszt Betöltése'
+          : 'Teszt Séta Betöltése';
+      }
     }
   }
 
@@ -281,7 +537,7 @@
 
     if (titleEl) titleEl.textContent = tourData.title;
     if (subEl) subEl.textContent = tourData.subtitle;
-    if (headerTitle) headerTitle.textContent = 'Kisföldalatti';
+    if (headerTitle) headerTitle.textContent = (tourData && tourData.is_custom_test) ? 'Terepteszt' : 'Kisföldalatti';
     if (secretsCount) secretsCount.textContent = `${tourData.pois.length} Titok`;
 
     const container = document.getElementById('brief-stops-container');
@@ -332,14 +588,17 @@
     const currentTheme = document.body.classList.contains('theme-dark') ? 'dark' : 'light';
     updateMapTileTheme(currentTheme);
 
-    // Útvonal Polyline rajzolása
-    const latlngs = tourData.pois.map(p => p.coords);
+    // Útvonal Polyline rajzolása: kizárólag a valódi gyalogos nyomvonalon, zöld színnel
+    const latlngs = (tourData.walking_route && tourData.walking_route.length > 0)
+      ? tourData.walking_route
+      : tourData.pois.map(p => p.coords);
+
     routePolyline = L.polyline(latlngs, {
-      color: 'var(--track-base)',
+      color: '#529B72',
       weight: 5,
       opacity: 0.8,
       lineCap: 'round',
-      dashArray: '8, 8'
+      lineJoin: 'round'
     }).addTo(map);
 
     // Megálló Markerek elhelyezése
@@ -362,8 +621,34 @@
       btnOpenTest.addEventListener('click', openTestPanel);
     }
 
+    // Térképes megálló-kijelölő kattintás esemény (Helyi Terepteszt)
+    map.on('click', (e) => {
+      if (!isMapPickingMode) return;
+      handleMapPickClick([e.latlng.lat, e.latlng.lng]);
+    });
+
     // Térkép központosítása az aktív megállóra
     centerMapOnActive();
+  }
+
+  function refreshMapRoutePolylines() {
+    if (!map || !tourData) return;
+    const latlngs = (tourData.walking_route && tourData.walking_route.length > 0)
+      ? tourData.walking_route
+      : tourData.pois.map(p => p.coords);
+
+    if (routePolyline) {
+      routePolyline.setLatLngs(latlngs);
+    } else {
+      routePolyline = L.polyline(latlngs, {
+        color: '#529B72',
+        weight: 5,
+        opacity: 0.8,
+        lineCap: 'round',
+        lineJoin: 'round'
+      }).addTo(map);
+    }
+    renderMapStopMarkers();
   }
 
   function renderMapStopMarkers() {
@@ -405,20 +690,23 @@
       map.removeLayer(completedPolyline);
     }
 
-    // Csak a már bejárt megállók vonala
+    // Csak a már bejárt megállók gyalogos szakaszai (soha nem légvonal!)
     const completedCoords = [];
-    for (let i = 0; i <= activeStopIndex; i++) {
-      if (tourData.pois[i]) {
-        completedCoords.push(tourData.pois[i].coords);
+    if (Array.isArray(tourData.walking_legs) && tourData.walking_legs.length > 0) {
+      for (let i = 0; i < activeStopIndex; i++) {
+        if (tourData.walking_legs[i]) {
+          completedCoords.push(...tourData.walking_legs[i]);
+        }
       }
     }
 
     if (completedCoords.length >= 2) {
       completedPolyline = L.polyline(completedCoords, {
-        color: '#529B72',
-        weight: 5,
-        opacity: 0.9,
-        lineCap: 'round'
+        color: '#365A45',
+        weight: 6,
+        opacity: 1.0,
+        lineCap: 'round',
+        lineJoin: 'round'
       }).addTo(map);
     }
   }
@@ -433,6 +721,11 @@
 
   function selectStop(index) {
     if (!tourData || index < 0 || index >= tourData.pois.length) return;
+    if (index !== activeStopIndex) {
+      stopAudio();
+      const globalPlayer = document.getElementById('floating-global-player');
+      if (globalPlayer) globalPlayer.style.display = 'none';
+    }
     activeStopIndex = index;
     saveProgress();
 
@@ -537,6 +830,11 @@
     }
 
     if (!isAlreadyCompleted) {
+      if ('vibrate' in navigator) {
+        try {
+          navigator.vibrate([200, 100, 200]);
+        } catch (e) {}
+      }
       showToast(`Megérkeztél a(z) ${poi.id}. állomáshoz: ${poi.name}!`, 'success');
       // Automatikus hang lejátszása ha még nem szól semmi
       if (!isAudioPlaying) {
@@ -616,7 +914,7 @@
     // Kép és feloldás jelvény
     const photoEl = document.getElementById('story-photo');
     if (photoEl) {
-      photoEl.src = poi.photo || 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80';
+      photoEl.src = poi.photo || 'assets/pois/hero_m1.jpg';
       photoEl.alt = poi.name;
     }
 
@@ -648,10 +946,71 @@
     if (funcEl) funcEl.textContent = matrix.function_change;
     if (histEl) histEl.textContent = matrix.historical_weight;
 
-    // Szövegtörzs
+    // Helyszíni Megfigyelési Fókusz (Detail)
+    const obsBox = document.getElementById('story-observation-box');
+    const obsText = document.getElementById('story-observation-text');
+    if (obsBox && obsText) {
+      if (poi.detail) {
+        obsBox.style.display = 'flex';
+        obsText.textContent = poi.detail;
+      } else {
+        obsBox.style.display = 'none';
+      }
+    }
+
+    // Szövegtörzs és Exkluzív Titok Kártyák megjelenítése
     const fullTextEl = document.getElementById('story-full-text');
     if (fullTextEl) {
-      fullTextEl.textContent = poi.audio_story || poi.desc || '';
+      if (poi.secrets && poi.secrets.length > 0) {
+        fullTextEl.innerHTML = `
+          <div class="secrets-container">
+            ${poi.secrets.map((sec, i) => `
+              <div class="secret-card ${i === 0 ? 'open' : ''}">
+                <div class="secret-header">
+                  <div class="secret-title-wrap">
+                    <div class="secret-icon-box">
+                      <span class="material-symbols-outlined secret-icon">${sec.icon || 'lock_open'}</span>
+                    </div>
+                    <div class="secret-text-col">
+                      <div class="secret-title">${sec.title}</div>
+                      <div class="secret-cta-hint">
+                        <span class="material-symbols-outlined" style="font-size:13px;">touch_app</span>
+                        <span>Koppints a titok felfedéséhez</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="secret-right-wrap">
+                    <span class="secret-badge">${sec.badge || `${i+1}. Titok`}</span>
+                    <div class="secret-chevron-circle">
+                      <span class="material-symbols-outlined" style="font-size:18px;">expand_more</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="secret-content">
+                  ${sec.content}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+        // Exkluzív Accordion működés: ha egy kártya kinyílik, a többi automatikusan bezárul
+        const cards = fullTextEl.querySelectorAll('.secret-card');
+        cards.forEach((card) => {
+          const header = card.querySelector('.secret-header');
+          if (header) {
+            header.addEventListener('click', () => {
+              const isAlreadyOpen = card.classList.contains('open');
+              cards.forEach(c => c.classList.remove('open'));
+              if (!isAlreadyOpen) {
+                card.classList.add('open');
+              }
+            });
+          }
+        });
+      } else {
+        fullTextEl.textContent = poi.audio_story || poi.desc || '';
+      }
     }
 
     // Teljesítés gomb felirat
@@ -748,6 +1107,9 @@
     if (btnSkipBack) {
       btnSkipBack.addEventListener('click', () => {
         audioElapsedSec = Math.max(0, audioElapsedSec - 10);
+        if (nativeAudio && nativeAudio.src) {
+          nativeAudio.currentTime = audioElapsedSec;
+        }
         updateAudioProgressUI();
       });
     }
@@ -755,6 +1117,9 @@
     if (btnSkipFwd) {
       btnSkipFwd.addEventListener('click', () => {
         audioElapsedSec = Math.min(audioTotalSec, audioElapsedSec + 10);
+        if (nativeAudio && nativeAudio.src) {
+          nativeAudio.currentTime = audioElapsedSec;
+        }
         updateAudioProgressUI();
       });
     }
@@ -808,10 +1173,29 @@
         showScreen('screen-story');
       });
     }
+    const globalBtnStory = document.getElementById('global-btn-story');
+    if (globalBtnStory) {
+      globalBtnStory.addEventListener('click', () => {
+        showScreen('screen-story');
+      });
+    }
 
     // HTML5 nativeAudio eseménykezelők a Piper hangokhoz
     nativeAudio.addEventListener('ended', onAudioFinished);
     nativeAudio.addEventListener('error', (e) => {
+      if (nativeAudio.src && nativeAudio.src.endsWith('.mp3')) {
+        console.warn('Helyi Piper MP3 hiba, fallback WAV-ra', e);
+        nativeAudio.src = nativeAudio.src.replace(/\.mp3$/, '.wav');
+        nativeAudio.playbackRate = playbackRate;
+        nativeAudio.load();
+        nativeAudio.play().then(() => {
+          isAudioPlaying = true;
+          updateAudioPlayIcons();
+        }).catch(() => {
+          fallbackWebSpeech(audioMode);
+        });
+        return;
+      }
       console.warn('Helyi Piper WAV hiba, fallback WebSpeech-re', e);
       fallbackWebSpeech(audioMode);
     });
@@ -832,6 +1216,28 @@
     }
   }
 
+  function unlockMobileAudio() {
+    if (isAudioPlaying || !nativeAudio) return;
+    try {
+      nativeAudio.src = 'audio/poi_1_hook.mp3';
+      nativeAudio.muted = true;
+      const playPromise = nativeAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          nativeAudio.pause();
+          nativeAudio.currentTime = 0;
+          nativeAudio.muted = false;
+        }).catch(() => {
+          nativeAudio.muted = false;
+        });
+      } else {
+        nativeAudio.muted = false;
+      }
+    } catch (e) {
+      nativeAudio.muted = false;
+    }
+  }
+
   function playAudio(mode) {
     if (!tourData) return;
     const poi = tourData.pois[activeStopIndex];
@@ -843,11 +1249,15 @@
     if (globalPlayer) globalPlayer.style.display = 'flex';
     if (globalTitle) globalTitle.textContent = `${activeStopIndex + 1}. ${poi.name} (${mode === 'hook' ? 'Felütés' : 'Történet'})`;
 
-    // Piper Imre hangfájl betöltése a helyi /audio/ mappából
-    const audioUrl = `/app/audio/poi_${poi.id}_${mode}.wav`;
+    // Imre hangfájl betöltése a helyi audio mappából (MP3 elsődlegesen, WAV fallbackkel)
+    // Ha egyedi terepteszt útvonal van aktívban, a test_${poi.id}_${mode}.mp3 teszthangokat töltjük be
+    const isCustom = Boolean(poi.is_custom_test || (tourData && tourData.is_custom_test) || localStorage.getItem(CUSTOM_TEST_ROUTE_KEY));
+    const audioPrefix = isCustom ? `test_${poi.id}` : `poi_${poi.id}`;
+    const audioUrl = `audio/${audioPrefix}_${mode}.mp3`;
     
     // Ha a böngésző már ezt játssza vagy betöltötte
-    if (nativeAudio.src && nativeAudio.src.includes(`poi_${poi.id}_${mode}.wav`) && nativeAudio.currentTime > 0 && !nativeAudio.ended) {
+    if (nativeAudio.src && (nativeAudio.src.includes(`${audioPrefix}_${mode}.mp3`) || nativeAudio.src.includes(`${audioPrefix}_${mode}.wav`)) && nativeAudio.currentTime > 0 && !nativeAudio.ended) {
+      nativeAudio.muted = false;
       nativeAudio.play().then(() => {
         isAudioPlaying = true;
         updateAudioPlayIcons();
@@ -858,16 +1268,27 @@
     }
 
     nativeAudio.pause();
+    nativeAudio.muted = false;
     nativeAudio.src = audioUrl;
     nativeAudio.playbackRate = playbackRate;
     nativeAudio.load();
     nativeAudio.play().then(() => {
       isAudioPlaying = true;
       updateAudioPlayIcons();
-      showToast('Piper Imre hanganyaga megszólalt.');
+      showToast('Imre narrációja elindult.');
     }).catch(err => {
-      console.error('Audio play sikertelen, fallback speechre:', err);
-      fallbackWebSpeech(mode);
+      console.warn('MP3 lejátszás sikertelen, próba WAV formátummal:', err);
+      nativeAudio.src = `audio/${audioPrefix}_${mode}.wav`;
+      nativeAudio.playbackRate = playbackRate;
+      nativeAudio.load();
+      nativeAudio.play().then(() => {
+        isAudioPlaying = true;
+        updateAudioPlayIcons();
+        showToast('Imre narrációja elindult.');
+      }).catch(wavErr => {
+        console.warn('Audio play elutasítva vagy sikertelen, fallback speechre:', wavErr);
+        fallbackWebSpeech(mode);
+      });
     });
   }
 
@@ -976,12 +1397,11 @@
     const durStr = `${formatTime(audioTotalSec)}`;
 
     if (hudCur) hudCur.textContent = curStr;
-    if (hudDur) hudDur.textContent = `${durStr} (Piper)`;
+    if (hudDur) hudDur.textContent = `${durStr} (Imre)`;
     if (storyCur) storyCur.textContent = curStr;
-    if (storyDur) storyDur.textContent = `${durStr} (Piper)`;
+    if (storyDur) storyDur.textContent = `${durStr} (Imre)`;
     if (globalElapsed) globalElapsed.textContent = curStr;
     if (globalTotal) globalTotal.textContent = durStr;
-  }
   }
 
   function formatTime(sec) {
@@ -1173,6 +1593,321 @@
         closeTestPanel();
       });
     }
+
+    // 1. Megállók kijelölése a térképen (Helyi Terepteszt)
+    const btnPickMap = document.getElementById('test-btn-pick-map');
+    if (btnPickMap) {
+      btnPickMap.addEventListener('click', startMapPickerMode);
+    }
+
+    const btnSavePicked = document.getElementById('btn-save-picked-route');
+    if (btnSavePicked) {
+      btnSavePicked.addEventListener('click', () => {
+        unlockMobileAudio();
+        savePickedRouteAndStart();
+      });
+    }
+
+    const btnCancelPicked = document.getElementById('btn-cancel-picked-route');
+    if (btnCancelPicked) {
+      btnCancelPicked.addEventListener('click', cancelMapPickerMode);
+    }
+
+    // 2. 3 megálló automatikus lerakása körém (~50m-enként)
+    const btnAroundMe = document.getElementById('test-btn-around-me');
+    if (btnAroundMe) {
+      btnAroundMe.addEventListener('click', () => {
+        unlockMobileAudio();
+        generateStopsAroundMe();
+      });
+    }
+
+    // 3. Eredeti Kisföldalatti útvonal visszaállítása
+    const btnRestoreOrig = document.getElementById('test-btn-restore-original');
+    if (btnRestoreOrig) {
+      btnRestoreOrig.addEventListener('click', restoreOriginalRoute);
+    }
+  }
+
+  // OSRM gyalogos útvonal lekérése tetszőleges koordináták között
+  async function fetchOSRMFootRoute(coordsList) {
+    if (!Array.isArray(coordsList) || coordsList.length < 2) {
+      return { walking_route: coordsList || [], walking_legs: [] };
+    }
+    try {
+      const coordStr = coordsList.map(c => `${c[1]},${c[0]}`).join(';');
+      const url = `https://routing.openstreetmap.de/routed-foot/route/v1/foot/${coordStr}?overview=full&geometries=geojson&steps=true`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('OSRM HTTP hiba');
+      const data = await res.json();
+      if (data.routes && data.routes[0]) {
+        const route = data.routes[0];
+        const walking_route = route.geometry.coordinates.map(pt => [pt[1], pt[0]]);
+        const walking_legs = (route.legs || []).map((leg, i) => {
+          const legCoords = [];
+          if (Array.isArray(leg.steps)) {
+            leg.steps.forEach(step => {
+              if (step.geometry && Array.isArray(step.geometry.coordinates)) {
+                step.geometry.coordinates.forEach(c => legCoords.push([c[1], c[0]]));
+              }
+            });
+          }
+          return legCoords.length > 0 ? legCoords : [coordsList[i], coordsList[i + 1]];
+        });
+        return { walking_route, walking_legs };
+      }
+    } catch (e) {
+      console.warn('OSRM gyalogos útvonal lekérés sikertelen, egyenes szakaszok használata:', e);
+    }
+    const fallbackLegs = [];
+    for (let i = 0; i < coordsList.length - 1; i++) {
+      fallbackLegs.push([coordsList[i], coordsList[i + 1]]);
+    }
+    return { walking_route: coordsList, walking_legs: fallbackLegs };
+  }
+
+  function startMapPickerMode() {
+    closeTestPanel();
+    showScreen('screen-map');
+    isMapPickingMode = true;
+    pickedCoords = [];
+    pickedRouteData = null;
+    clearPickedPreview();
+
+    const banner = document.getElementById('map-picker-banner');
+    const textEl = document.getElementById('map-picker-text');
+    const saveBtn = document.getElementById('btn-save-picked-route');
+    if (banner) banner.style.display = 'flex';
+    if (textEl) textEl.textContent = '📍 Bökj a térképre az 1. megálló lerakásához! (0 kijelölve)';
+    if (saveBtn) saveBtn.disabled = true;
+
+    if (map) {
+      setTimeout(() => {
+        map.invalidateSize();
+        if (userCoords) {
+          map.setView(userCoords, 17, { animate: true });
+        }
+      }, 150);
+    }
+  }
+
+  function clearPickedPreview() {
+    if (!map) return;
+    pickedMarkers.forEach(m => map.removeLayer(m));
+    pickedMarkers = [];
+    if (pickedPreviewLine) {
+      map.removeLayer(pickedPreviewLine);
+      pickedPreviewLine = null;
+    }
+  }
+
+  async function handleMapPickClick(latlng) {
+    const maxStops = originalTourData?.pois?.length || 9;
+    if (pickedCoords.length >= maxStops) {
+      showToast(`Maximum ${maxStops} megálló jelölhető ki!`, 'info');
+      return;
+    }
+
+    pickedCoords.push(latlng);
+    const count = pickedCoords.length;
+
+    // Ideiglenes jelölő kirajzolása
+    if (map) {
+      const icon = L.divIcon({
+        className: 'custom-leaflet-marker',
+        html: `<div class="kitero-marker active">${count}</div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+      const m = L.marker(latlng, { icon }).addTo(map);
+      pickedMarkers.push(m);
+    }
+
+    const textEl = document.getElementById('map-picker-text');
+    const saveBtn = document.getElementById('btn-save-picked-route');
+    if (textEl) {
+      if (count < maxStops) {
+        textEl.textContent = `📍 Bökj a térképre a(z) ${count + 1}. megálló lerakásához! (${count} kijelölve)`;
+      } else {
+        textEl.textContent = `📍 Elérted a maximális ${count} megállót! Kattints a Mentésre.`;
+      }
+    }
+    if (saveBtn) {
+      saveBtn.disabled = count < 2;
+    }
+
+    if (count >= 2) {
+      pickedRouteData = await fetchOSRMFootRoute(pickedCoords);
+      if (map && pickedRouteData) {
+        if (pickedPreviewLine) map.removeLayer(pickedPreviewLine);
+        pickedPreviewLine = L.polyline(pickedRouteData.walking_route, {
+          color: '#529B72',
+          weight: 5,
+          dashArray: '6, 6',
+          opacity: 0.9
+        }).addTo(map);
+      }
+    }
+  }
+
+  async function savePickedRouteAndStart() {
+    if (pickedCoords.length < 2) return;
+    const routeInfo = pickedRouteData || await fetchOSRMFootRoute(pickedCoords);
+    isMapPickingMode = false;
+    const banner = document.getElementById('map-picker-banner');
+    if (banner) banner.style.display = 'none';
+    clearPickedPreview();
+
+    applyCustomCoordinatesToTour(pickedCoords, routeInfo.walking_route, routeInfo.walking_legs);
+    showToast(`Helyi terepteszt elindítva (${pickedCoords.length} megállóval)! Sétálj az 1. ponthoz!`, 'success');
+  }
+
+  function cancelMapPickerMode() {
+    isMapPickingMode = false;
+    pickedCoords = [];
+    pickedRouteData = null;
+    clearPickedPreview();
+    const banner = document.getElementById('map-picker-banner');
+    if (banner) banner.style.display = 'none';
+    showToast('Megálló-kijelölés megszakítva.');
+  }
+
+  function applyCustomCoordinatesToTour(coords, walkingRoute, walkingLegs) {
+    const baseTour = originalTourBackup || originalTourData;
+    if (!baseTour) return;
+    const count = Math.min(coords.length, baseTour.pois.length);
+    tourData = JSON.parse(JSON.stringify(baseTour));
+    tourData.is_custom_test = true;
+    tourData.title = 'Helyi Terepteszt';
+    tourData.subtitle = 'Élő GPS és hangindítás tesztállomás';
+    tourData.pois = tourData.pois.slice(0, count).map((poi, idx) => {
+      const textItem = TEST_POINT_TEXTS[idx] || TEST_POINT_TEXTS[0];
+      return {
+        ...poi,
+        coords: coords[idx],
+        is_custom_test: true,
+        name: `${idx + 1}. Tesztpont — Saját Környék`,
+        subtitle: 'Élő GPS és hangindítás tesztállomás',
+        detail: 'Élő GPS és hangindítás tesztállomás',
+        audio_hook: textItem.hook,
+        audio_story: textItem.story,
+        hook: textItem.hook,
+        desc: textItem.story,
+        secrets: [
+          {
+            icon: 'record_voice_over',
+            title: `${idx + 1}. Tesztpont Narrációja`,
+            badge: 'Imre TTS',
+            content: textItem.story
+          }
+        ]
+      };
+    });
+    tourData.walking_route = walkingRoute && walkingRoute.length > 0 ? walkingRoute : coords;
+    tourData.walking_legs = walkingLegs || [];
+    tourData.map_center = coords[0];
+
+    localStorage.setItem(CUSTOM_TEST_ROUTE_KEY, JSON.stringify({
+      coords,
+      walking_route: tourData.walking_route,
+      walking_legs: tourData.walking_legs
+    }));
+
+    updateTestButtonsVisibility(true);
+
+    // Haladás nullázása és valós GPS követés indítása
+    completedStopIds.clear();
+    activeStopIndex = 0;
+    isFinished = false;
+    startTime = new Date();
+    saveProgress();
+
+    isSimulatedGPS = false;
+    startGeolocationTracking();
+    requestWakeLock();
+
+    updateGestaltRing();
+    renderBriefScreen();
+    refreshMapRoutePolylines();
+    updateHUD();
+    updateStoryScreen();
+    renderVaultList();
+    updateProfileScreen();
+    updateTourSelectorUI();
+    showScreen('screen-map');
+    centerMapOnActive();
+  }
+
+  function generateStopsAroundMe() {
+    const createFromBase = async (lat, lng) => {
+      const coords = [
+        [lat + 0.0004, lng + 0.0004],
+        [lat + 0.0008, lng + 0.0008],
+        [lat + 0.0012, lng + 0.0012]
+      ];
+      closeTestPanel();
+      showToast('Gyalogos tesztútvonal tervezése a környékeden...');
+      const routeInfo = await fetchOSRMFootRoute(coords);
+      applyCustomCoordinatesToTour(coords, routeInfo.walking_route, routeInfo.walking_legs);
+      updateUserPosition(lat, lng, 10);
+      showToast('3 megálló lerakva köréd (~50m-enként)! Indulhat a séta!', 'success');
+    };
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          createFromBase(pos.coords.latitude, pos.coords.longitude);
+        },
+        () => {
+          if (userCoords) {
+            createFromBase(userCoords[0], userCoords[1]);
+          } else {
+            showToast('Nem sikerült lekérni a valós GPS pozíciót! Engedélyezd a helymeghatározást.', 'error');
+          }
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    } else if (userCoords) {
+      createFromBase(userCoords[0], userCoords[1]);
+    } else {
+      showToast('A böngésző nem támogatja a GPS helymeghatározást.', 'error');
+    }
+  }
+
+  function restoreOriginalRoute() {
+    localStorage.removeItem(CUSTOM_TEST_ROUTE_KEY);
+    const baseTour = originalTourBackup || originalTourData;
+    if (baseTour) {
+      tourData = JSON.parse(JSON.stringify(baseTour));
+      if (tourData.is_custom_test) delete tourData.is_custom_test;
+      if (Array.isArray(tourData.pois)) {
+        tourData.pois.forEach(p => {
+          if (p.is_custom_test) delete p.is_custom_test;
+        });
+      }
+    }
+    cancelMapPickerMode();
+    completedStopIds.clear();
+    activeStopIndex = 0;
+    isFinished = false;
+    startTime = new Date();
+    saveProgress();
+
+    const params = new URLSearchParams(window.location.search);
+    updateTestButtonsVisibility(params.get('test_mode') === '1');
+
+    updateGestaltRing();
+    renderBriefScreen();
+    refreshMapRoutePolylines();
+    updateHUD();
+    updateStoryScreen();
+    renderVaultList();
+    updateProfileScreen();
+    updateTourSelectorUI();
+    closeTestPanel();
+    showScreen('screen-map');
+    centerMapOnActive();
+    showToast('Eredeti Kisföldalatti útvonal (9 megálló) visszaállítva!', 'success');
   }
 
   function openTestPanel() {

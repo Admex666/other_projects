@@ -103,6 +103,11 @@ model TradeTransaction {
   receiverTeamId     String
   receiverTeam       SessionTeam @relation("ReceivedTrades", fields: [receiverTeamId], references: [id])
 
+  createdByName      String?
+  createdByUserId    String?
+  acceptedByName     String?
+  acceptedByUserId   String?
+
   offeredItems       String      // JSON: ResourceBundle
   requestedItems     String      // JSON: ResourceBundle
   escrowedItems      String      // JSON: ResourceBundle zárolt tételei
@@ -114,20 +119,25 @@ model TradeTransaction {
 }
 
 model BankSale {
-  id             String      @id @default(uuid())
-  sessionId      String
-  session        Session     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  teamId         String
-  team           SessionTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  id                 String      @id @default(uuid())
+  sessionId          String
+  session            Session     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  teamId             String
+  team               SessionTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
-  shapeType      String      // SQUARE | TRIANGLE | CIRCLE | RECTANGLE | PREMIUM_PACK
-  quantity       Int         @default(1)
-  unitBasePrice  Int
-  multiplier     Float       @default(1.0)
-  finalUnitPrice Int
-  totalPayout    Int
-  qualityNotes   String?
-  soldAt         DateTime    @default(now())
+  batchId            String?
+  shapeType          String      // SQUARE | TRIANGLE | CIRCLE | RECTANGLE | PREMIUM_PACK
+  quantity           Int         @default(1)
+  unitBasePrice      Int
+  multiplier         Float       @default(1.0)
+  finalUnitPrice     Int
+  totalPayout        Int
+  qualityNotes       String?
+  status             String      @default("APPROVED") // PENDING | APPROVED | REJECTED
+  submittedByName    String?
+  submittedByUserId  String?
+  approvedAt         DateTime?
+  soldAt             DateTime    @default(now())
 }
 
 model MarketEvent {

@@ -4,6 +4,10 @@
     { "source": "/main", "destination": "/main/index.html" },
     { "source": "/main/", "destination": "/main/index.html" },
     { "source": "/kitero", "destination": "/kitero/index.html" },
-    { "source": "/kitero/", "destination": "/kitero/index.html" }
+    { "source": "/kitero/", "destination": "/kitero/index.html" },
+    { "source": "/app", "destination": "/app/index.html" },
+    { "source": "/app/", "destination": "/app/index.html" },
+    { "source": "/kitero/app", "destination": "/app/index.html" },
+    { "source": "/kitero/app/", "destination": "/app/index.html" }
   ]
 }

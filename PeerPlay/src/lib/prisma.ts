@@ -8,7 +8,8 @@ declare global {
   var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>
 }
 
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
+// Invalidate previously cached instance to pick up runtime schema updates
+const prisma = new PrismaClient()
 
 export default prisma
 

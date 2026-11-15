@@ -1,14 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  createTradeOffer,
-  acceptTradeOffer,
-  rejectTradeOffer,
-  cancelTradeOffer,
-  ResourceBundle,
-} from '@/modules/trade/actions'
+import { ResourceBundle } from '@/modules/trade/actions'
+import { getTradeStatusLabel } from '@/modules/session/constants'
 import toast from 'react-hot-toast'
+
+interface TeamParticipantSummary {
+  id: string
+  userId: string
+  user?: {
+    id: string
+    name: string
+  }
+}
 
 interface TeamSummary {
   id: string
@@ -19,6 +23,7 @@ interface TeamSummary {
   scissorsCount: number
   rulersCount: number
   templatesCount: number
+  participants?: TeamParticipantSummary[]
 }
 
 interface TradeItem {
@@ -26,6 +31,10 @@ interface TradeItem {
   sessionId: string
   senderTeamId: string
   receiverTeamId: string
+  createdByName?: string | null
+  createdByUserId?: string | null
+  acceptedByName?: string | null
+  acceptedByUserId?: string | null
   offeredItems: string
   requestedItems: string
   escrowedItems: string
@@ -42,6 +51,7 @@ interface P2PTradeCenterProps {
   myTeam: TeamSummary
   allTeams: TeamSummary[]
   trades: TradeItem[]
+  onMutate?: () => void
 }
 
 const emptyBundle: ResourceBundle = {
@@ -57,10 +67,14 @@ export default function P2PTradeCenter({
   myTeam,
   allTeams,
   trades = [],
+  onMutate,
 }: P2PTradeCenterProps) {
   const otherTeams = allTeams.filter((t) => t.id !== myTeam.id)
+  const myParticipants = myTeam.participants || []
 
   const [targetTeamId, setTargetTeamId] = useState<string>(otherTeams[0]?.id || '')
+  const [selectedSenderParticipantId, setSelectedSenderParticipantId] = useState<string>('')
+  const [selectedReceiverParticipantMap, setSelectedReceiverParticipantMap] = useState<Record<string, string>>({})
   const [offered, setOffered] = useState<ResourceBundle>({ ...emptyBundle })
   const [requested, setRequested] = useState<ResourceBundle>({ ...emptyBundle })
   const [notes, setNotes] = useState<string>('')
@@ -100,9 +114,32 @@ export default function P2PTradeCenter({
       return
     }
 
+    const senderPart = myParticipants.find(
+      (p) => p.userId === selectedSenderParticipantId || p.user?.id === selectedSenderParticipantId
+    )
+
     setLoadingAction(true)
     try {
-      await createTradeOffer(sessionId, myTeam.id, targetTeamId, offered, requested, notes)
+      const res = await fetch('/api/trade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create',
+          sessionId,
+          senderTeamId: myTeam.id,
+          receiverTeamId: targetTeamId,
+          createdByName: senderPart?.user?.name || undefined,
+          createdByUserId: senderPart?.user?.id || selectedSenderParticipantId || undefined,
+          offered,
+          requested,
+          notes,
+        }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Hiba az ajánlat létrehozásakor')
+      }
+      onMutate?.()
       toast.success('Hivatalos kereskedelmi ajánlat elküldve! A felkínált javak zárolásra kerültek.')
       setOffered({ ...emptyBundle })
       setRequested({ ...emptyBundle })
@@ -115,9 +152,30 @@ export default function P2PTradeCenter({
   }
 
   const handleAccept = async (tradeId: string) => {
+    const receiverPartId = selectedReceiverParticipantMap[tradeId] || ''
+    const receiverPart = myParticipants.find(
+      (p) => p.userId === receiverPartId || p.user?.id === receiverPartId
+    )
+
     setLoadingAction(true)
     try {
-      await acceptTradeOffer(sessionId, tradeId, myTeam.id)
+      const res = await fetch('/api/trade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'accept',
+          sessionId,
+          tradeId,
+          receiverTeamId: myTeam.id,
+          acceptedByName: receiverPart?.user?.name || undefined,
+          acceptedByUserId: receiverPart?.user?.id || receiverPartId || undefined,
+        }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Hiba az ajánlat elfogadásakor')
+      }
+      onMutate?.()
       toast.success('Üzlet létrejött! A javak jóváírásra és átadásra kerültek.')
     } catch (e: any) {
       toast.error(e.message || 'Hiba az ajánlat elfogadásakor')
@@ -129,7 +187,21 @@ export default function P2PTradeCenter({
   const handleReject = async (tradeId: string) => {
     setLoadingAction(true)
     try {
-      await rejectTradeOffer(sessionId, tradeId, myTeam.id)
+      const res = await fetch('/api/trade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'reject',
+          sessionId,
+          tradeId,
+          receiverTeamId: myTeam.id,
+        }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Hiba az ajánlat elutasításakor')
+      }
+      onMutate?.()
       toast('Ajánlat elutasítva. A zárolt letét visszakerült a küldőhöz.')
     } catch (e: any) {
       toast.error(e.message || 'Hiba az ajánlat elutasításakor')
@@ -141,7 +213,21 @@ export default function P2PTradeCenter({
   const handleCancel = async (tradeId: string) => {
     setLoadingAction(true)
     try {
-      await cancelTradeOffer(sessionId, tradeId, myTeam.id)
+      const res = await fetch('/api/trade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'cancel',
+          sessionId,
+          tradeId,
+          senderTeamId: myTeam.id,
+        }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Hiba az ajánlat visszavonásakor')
+      }
+      onMutate?.()
       toast.success('Ajánlat visszavonva! A letétbe helyezett javak visszakerültek a készletedbe.')
     } catch (e: any) {
       toast.error(e.message || 'Hiba az ajánlat visszavonásakor')
@@ -155,7 +241,6 @@ export default function P2PTradeCenter({
       const origOffered: ResourceBundle = JSON.parse(trade.offeredItems)
       const origRequested: ResourceBundle = JSON.parse(trade.requestedItems)
       setTargetTeamId(trade.senderTeamId)
-      // We flip: what they offered becomes what we request, what they requested becomes what we offer
       setOffered(origRequested)
       setRequested(origOffered)
       setNotes(`Ellenajánlat a #${trade.id.slice(0, 5)} ügyletre`)
@@ -165,11 +250,11 @@ export default function P2PTradeCenter({
     }
   }
 
-  const renderBundleText = (bundleJson: string) => {
+  const renderBundleText = (jsonStr: string) => {
     try {
-      const b: ResourceBundle = JSON.parse(bundleJson)
+      const b: ResourceBundle = JSON.parse(jsonStr)
       const parts = []
-      if (b.cash > 0) parts.push(`$${b.cash} készpénz`)
+      if (b.cash > 0) parts.push(`$${b.cash}`)
       if (b.paperSheets > 0) parts.push(`${b.paperSheets} lap papír`)
       if (b.scissorsCount > 0) parts.push(`${b.scissorsCount} db olló`)
       if (b.rulersCount > 0) parts.push(`${b.rulersCount} db vonalzó`)
@@ -216,6 +301,11 @@ export default function P2PTradeCenter({
                       <span className="text-xs font-bold text-slate-900">
                         {sender?.name || 'Partner Vállalat'} ajánlata
                       </span>
+                      {trade.createdByName && (
+                        <span className="text-xs text-blue-700 font-semibold ml-2">
+                          (Átadó: {trade.createdByName})
+                        </span>
+                      )}
                       <span className="text-[10px] font-mono text-slate-400 ml-2">
                         {new Date(trade.createdAt).toLocaleTimeString('hu-HU', {
                           hour: '2-digit',
@@ -253,6 +343,32 @@ export default function P2PTradeCenter({
                     </p>
                   )}
 
+                  {/* Who takes receipt in our team? */}
+                  {myParticipants.length > 0 && (
+                    <div className="flex items-center gap-2 pt-1 text-xs">
+                      <span className="text-slate-600 font-medium shrink-0">
+                        Ki vette át az ajánlatot nálunk?
+                      </span>
+                      <select
+                        value={selectedReceiverParticipantMap[trade.id] || ''}
+                        onChange={(e) =>
+                          setSelectedReceiverParticipantMap((prev) => ({
+                            ...prev,
+                            [trade.id]: e.target.value,
+                          }))
+                        }
+                        className="text-xs font-semibold px-2 py-1 bg-white border border-slate-300 rounded text-slate-800 cursor-pointer"
+                      >
+                        <option value="">(Általános átvétel / Nincs megadva)</option>
+                        {myParticipants.map((p) => (
+                          <option key={p.id} value={p.userId || p.user?.id}>
+                            {p.user?.name || 'Csapattag'}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-end gap-2 pt-1">
                     <button
                       type="button"
@@ -278,7 +394,7 @@ export default function P2PTradeCenter({
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                       </svg>
-                      <span>Ajánlat Elfogadása</span>
+                      <span>Ajánlat Átvétele &amp; Elfogadása</span>
                     </button>
                   </div>
                 </div>
@@ -292,29 +408,51 @@ export default function P2PTradeCenter({
       <div className="theme-card p-6 space-y-4">
         <div className="pb-3 border-b border-slate-100">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
-            Új Kereskedelmi Ajánlat Indítása (Outbound Proposal)
+            Új Kereskedelmi Ajánlat Indítása
           </h3>
           <p className="text-xs text-slate-500">
-            A felajánlott tételek azonnal zárolásra kerülnek a készletedből (Immediate Escrow).
+            A felajánlott tételek azonnal letéti zárolásra kerülnek a készletedből.
           </p>
         </div>
 
         <form onSubmit={handleCreateOffer} className="space-y-4">
-          <div>
-            <label className="text-xs font-semibold text-slate-700 block mb-1">
-              Cél Vállalat Kiválasztása
-            </label>
-            <select
-              value={targetTeamId}
-              onChange={(e) => setTargetTeamId(e.target.value)}
-              className="w-full text-xs px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium"
-            >
-              {otherTeams.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name} ({t.profileCode})
-                </option>
-              ))}
-            </select>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-semibold text-slate-700 block mb-1">
+                Cél Partner Vállalat Kiválasztása
+              </label>
+              <select
+                value={targetTeamId}
+                onChange={(e) => setTargetTeamId(e.target.value)}
+                className="w-full text-xs px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium"
+              >
+                {otherTeams.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {myParticipants.length > 0 && (
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">
+                  Ki küldi / adja át az ajánlatot a csapatból?
+                </label>
+                <select
+                  value={selectedSenderParticipantId}
+                  onChange={(e) => setSelectedSenderParticipantId(e.target.value)}
+                  className="w-full text-xs px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium"
+                >
+                  <option value="">(Csapat nevében / Általános)</option>
+                  {myParticipants.map((p) => (
+                    <option key={p.id} value={p.userId || p.user?.id}>
+                      {p.user?.name || 'Csapattag'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           {/* 2 Columns: We Offer vs We Request */}
@@ -322,7 +460,7 @@ export default function P2PTradeCenter({
             {/* Left: What We Offer */}
             <div className="p-4 bg-slate-50/70 border border-slate-200 rounded-xl space-y-2.5">
               <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 block">
-                Amit tőlünk felajánlunk (Escrow zárolás):
+                Amit tőlünk felajánlunk (Letéti zárolás):
               </span>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
@@ -395,15 +533,15 @@ export default function P2PTradeCenter({
             </div>
 
             {/* Right: What We Request */}
-            <div className="p-4 bg-slate-50/70 border border-slate-200 rounded-xl space-y-2.5">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 block">
+            <div className="p-4 bg-blue-50/40 border border-blue-200 rounded-xl space-y-2.5">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-blue-900 block">
                 Amit cserébe kérünk a partnertől:
               </span>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
                   <label className="text-[10px] text-slate-500 font-medium block">
-                    Kért Készpénz ($)
+                    Készpénz ($)
                   </label>
                   <input
                     type="number"
@@ -415,7 +553,7 @@ export default function P2PTradeCenter({
                 </div>
                 <div>
                   <label className="text-[10px] text-slate-500 font-medium block">
-                    Kért A4 Lapok
+                    A4 Lapok (db)
                   </label>
                   <input
                     type="number"
@@ -427,7 +565,7 @@ export default function P2PTradeCenter({
                 </div>
                 <div>
                   <label className="text-[10px] text-slate-500 font-medium block">
-                    Kért Olló (db)
+                    Olló (db)
                   </label>
                   <input
                     type="number"
@@ -439,7 +577,7 @@ export default function P2PTradeCenter({
                 </div>
                 <div>
                   <label className="text-[10px] text-slate-500 font-medium block">
-                    Kért Vonalzó (db)
+                    Vonalzó (db)
                   </label>
                   <input
                     type="number"
@@ -451,7 +589,7 @@ export default function P2PTradeCenter({
                 </div>
                 <div className="col-span-2">
                   <label className="text-[10px] text-slate-500 font-medium block">
-                    Kért Sablon (db)
+                    Sablon (db)
                   </label>
                   <input
                     type="number"
@@ -466,25 +604,30 @@ export default function P2PTradeCenter({
           </div>
 
           <div>
+            <label className="text-xs font-semibold text-slate-700 block mb-1">
+              Üzenet a partner felé (opcionális)
+            </label>
             <input
               type="text"
-              placeholder="Üzenet / Tárgyalási megjegyzés (opcionális)"
+              placeholder="pl. 'Kész formákat szállítunk cserébe, ha adtok vonalzót'"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full text-xs px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full text-xs px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loadingAction}
-            className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <span>Hivatalos Ajánlat Továbbítása</span>
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </button>
+          <div className="flex justify-end pt-2">
+            <button
+              type="submit"
+              disabled={loadingAction}
+              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-xs cursor-pointer flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+              </svg>
+              <span>Ajánlat Küldése &amp; Letét Zárolása</span>
+            </button>
+          </div>
         </form>
       </div>
 
@@ -492,20 +635,25 @@ export default function P2PTradeCenter({
       {outboundPending.length > 0 && (
         <div className="theme-card p-6 space-y-3">
           <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-            Elküldött, Függőben Lévő Ajánlataink ({outboundPending.length})
+            Kiküldött Nyitott Ajánlataink ({outboundPending.length})
           </h4>
-          <div className="space-y-2">
+          <div className="divide-y divide-slate-100 text-xs">
             {outboundPending.map((trade) => {
               const receiver = allTeams.find((t) => t.id === trade.receiverTeamId)
               return (
                 <div
                   key={trade.id}
-                  className="p-3 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between text-xs"
+                  className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                 >
                   <div>
                     <span className="font-semibold text-slate-900">
                       Címzett: {receiver?.name || 'Partner'}
                     </span>
+                    {trade.createdByName && (
+                      <span className="text-[11px] text-slate-500 ml-1.5">
+                        (Átadó: {trade.createdByName})
+                      </span>
+                    )}
                     <span className="text-slate-500 ml-2">
                       (Felkínált: {renderBundleText(trade.offeredItems)})
                     </span>
@@ -516,7 +664,7 @@ export default function P2PTradeCenter({
                     disabled={loadingAction}
                     className="px-3 py-1 text-xs text-red-600 hover:text-red-700 border border-red-200 hover:bg-red-50 rounded font-semibold cursor-pointer"
                   >
-                    Visszavonás (Refund)
+                    Visszavonás
                   </button>
                 </div>
               )
@@ -529,24 +677,36 @@ export default function P2PTradeCenter({
       {resolvedTrades.length > 0 && (
         <div className="theme-card p-6 space-y-3">
           <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-            Kereskedelmi Történet
+            Kereskedelmi Történet (Személyes Átadások)
           </h4>
           <div className="divide-y divide-slate-100 text-xs">
-            {resolvedTrades.slice(0, 6).map((t) => {
+            {resolvedTrades.slice(0, 8).map((t) => {
               const isSender = t.senderTeamId === myTeam.id
               const partner = allTeams.find((tm) => tm.id === (isSender ? t.receiverTeamId : t.senderTeamId))
               return (
-                <div key={t.id} className="py-2.5 flex items-center justify-between">
+                <div key={t.id} className="py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <span className="font-mono text-slate-400 mr-2">
-                      {new Date(t.createdAt).toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                    <span className="font-semibold text-slate-800">
-                      {isSender ? `Küldve neki: ${partner?.name}` : `Érkezett tőle: ${partner?.name}`}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-slate-400">
+                        {new Date(t.createdAt).toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                      <span className="font-semibold text-slate-800">
+                        {isSender ? `Küldve neki: ${partner?.name}` : `Érkezett tőle: ${partner?.name}`}
+                      </span>
+                    </div>
+
+                    {(t.createdByName || t.acceptedByName) && (
+                      <div className="text-[11px] text-blue-700 mt-0.5">
+                        {t.createdByName && t.acceptedByName
+                          ? `${t.createdByName} átadta neki: ${t.acceptedByName}`
+                          : t.acceptedByName
+                          ? `Átvevő: ${t.acceptedByName}`
+                          : `Leadó: ${t.createdByName}`}
+                      </div>
+                    )}
                   </div>
                   <span
-                    className={`font-mono font-bold text-[10px] px-2 py-0.5 rounded ${
+                    className={`font-mono font-bold text-[10px] px-2 py-0.5 rounded w-max ${
                       t.status === 'ACCEPTED'
                         ? 'bg-emerald-100 text-emerald-800'
                         : t.status === 'CANCELLED'
@@ -554,7 +714,7 @@ export default function P2PTradeCenter({
                         : 'bg-red-100 text-red-800'
                     }`}
                   >
-                    {t.status}
+                    {getTradeStatusLabel(t.status)}
                   </span>
                 </div>
               )

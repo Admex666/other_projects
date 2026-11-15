@@ -6,39 +6,27 @@ import Link from 'next/link'
 export default async function JoinPage({
   searchParams,
 }: {
-  searchParams: Promise<{ code?: string }>
+  searchParams: Promise<{ code?: string; error?: string }>
 }) {
-  const { code } = await searchParams
+  const { code, error } = await searchParams
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 sm:p-6 font-sans">
-      <div className="theme-card max-w-[420px] w-full p-6 sm:p-8 space-y-6">
-        {/* Brand Header */}
-        <div className="text-center space-y-1">
-          <div className="flex items-center justify-center gap-1.5 mb-2">
-            <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-500">
-              PeerPlay Enterprise
-            </span>
-          </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-            The Trading Game
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-3 sm:p-5 font-sans">
+      <div className="theme-card max-w-[400px] w-full p-5 sm:p-6 space-y-4">
+        <div className="text-center">
+          <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">
+            Csatlakozás a Játékhoz
           </h1>
-          <p className="text-xs text-slate-500">
-            Jelszómentes gyors becsatlakozás okostelefonról
-          </p>
         </div>
 
-        {/* Join Form Component */}
-        <JoinSessionForm prefillCode={code} />
+        <JoinSessionForm prefillCode={code} initialError={error} />
 
-        {/* Footer */}
         <div className="text-center pt-2 border-t border-slate-100">
           <Link
             href="/"
             className="text-xs text-slate-400 hover:text-slate-700 transition font-medium"
           >
-            ← Vissza a kezdőlapra
+            ← Kezdőlap
           </Link>
         </div>
       </div>

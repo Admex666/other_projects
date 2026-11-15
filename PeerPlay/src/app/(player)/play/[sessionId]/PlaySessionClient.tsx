@@ -2,14 +2,17 @@
 
 import { useState } from 'react'
 import useSWR from 'swr'
-import Link from 'next/link'
-import { getSessionDetails } from '@/modules/session/actions'
+import { getProfileLabel } from '@/modules/session/constants'
 import TeamLedgerHUD from '@/components/team/TeamLedgerHUD'
 import P2PTradeCenter from '@/components/team/P2PTradeCenter'
 import BankCommodityBoard from '@/components/team/BankCommodityBoard'
 
 const fetcher = async (sessionId: string) => {
-  return await getSessionDetails(sessionId)
+  const res = await fetch(`/api/session/${encodeURIComponent(sessionId)}?t=${Date.now()}`, {
+    cache: 'no-store',
+  })
+  if (!res.ok) throw new Error('Failed to fetch session')
+  return await res.json()
 }
 
 export default function PlaySessionClient({
@@ -21,9 +24,10 @@ export default function PlaySessionClient({
   initialTeamId?: string
   initialSessionData: any
 }) {
-  const { data: session } = useSWR(sessionId, fetcher, {
+  const { data: session, mutate } = useSWR(sessionId, fetcher, {
     fallbackData: initialSessionData,
-    refreshInterval: 2500,
+    refreshInterval: 2000,
+    dedupingInterval: 1000,
     revalidateOnFocus: true,
   })
 
@@ -36,7 +40,7 @@ export default function PlaySessionClient({
   if (!session) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-sm font-mono text-slate-500">Munkaállomás betöltése...</div>
+        <div className="text-sm font-mono text-slate-500">Betöltés...</div>
       </div>
     )
   }
@@ -45,33 +49,27 @@ export default function PlaySessionClient({
   const activeEvent = session.marketEvents?.find((e: any) => e.isActive)
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-16">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-12">
       {/* Top Station Navigation Bar */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-            <div>
-              <span className="text-[10px] font-mono uppercase font-bold text-slate-400 block">
-                Asztali Munkaállomás · {session.name}
-              </span>
-              <div className="text-xs font-bold text-slate-800">
-                Terem PIN: <span className="font-mono text-blue-600 font-black">{session.joinCode}</span>
-              </div>
-            </div>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span className="text-xs font-bold text-slate-800">
+              {session.name} · PIN: <span className="font-mono text-blue-600 font-black">{session.joinCode}</span>
+            </span>
           </div>
 
-          {/* Quick Team Switcher for Tablet Station Setup */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500 font-medium">Asztal Vállalata:</span>
+            <span className="text-xs text-slate-500 font-medium">Csapat:</span>
             <select
               value={myTeam?.id}
               onChange={(e) => setSelectedTeamId(e.target.value)}
-              className="text-xs font-bold px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+              className="text-xs font-bold px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
             >
               {teams.map((t: any) => (
                 <option key={t.id} value={t.id}>
-                  {t.name} ({t.profileCode})
+                  {t.name}
                 </option>
               ))}
             </select>
@@ -80,8 +78,7 @@ export default function PlaySessionClient({
       </header>
 
       {/* Main Tablet Layout */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
-        {/* S-TEAM-01: Team Ledger HUD */}
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 mt-4 space-y-5">
         {myTeam && (
           <TeamLedgerHUD
             teamName={myTeam.name}
@@ -99,7 +96,7 @@ export default function PlaySessionClient({
           />
         )}
 
-        {/* Tab Switcher for smaller screens / Side-by-side on desktop */}
+        {/* Tab Switcher for smaller screens */}
         <div className="flex sm:hidden border-b border-slate-200 gap-4">
           <button
             onClick={() => setActiveTab('trade')}
@@ -107,7 +104,7 @@ export default function PlaySessionClient({
               activeTab === 'trade' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500'
             }`}
           >
-            P2P Kereskedelem
+            Cserekereskedelem
           </button>
           <button
             onClick={() => setActiveTab('bank')}
@@ -119,9 +116,7 @@ export default function PlaySessionClient({
           </button>
         </div>
 
-        {/* Desktop 2-Column Workspace */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column (7 cols): S-TEAM-02 P2P Trade Center */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           <div className={`lg:col-span-7 ${activeTab === 'bank' ? 'hidden sm:block' : ''}`}>
             {myTeam && (
               <P2PTradeCenter
@@ -129,11 +124,11 @@ export default function PlaySessionClient({
                 myTeam={myTeam}
                 allTeams={teams}
                 trades={session.tradeTransactions || []}
+                onMutate={() => mutate()}
               />
             )}
           </div>
 
-          {/* Right Column (5 cols): S-TEAM-03 Bank Commodity Board */}
           <div className={`lg:col-span-5 ${activeTab === 'trade' ? 'hidden sm:block' : ''}`}>
             <BankCommodityBoard activeEvent={activeEvent || null} />
           </div>

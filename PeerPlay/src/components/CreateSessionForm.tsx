@@ -15,33 +15,30 @@ export default function CreateSessionForm({ orgId }: { orgId?: string }) {
     setLoading(true)
     try {
       const session = await createWorkshopSession(orgId, undefined, sessionName || undefined)
-      toast.success('Munkamenet sikeresen létrehozva!')
+      toast.success('Munkamenet létrehozva!')
       router.push(`/sessions/${session.id}`)
     } catch (err: any) {
-      toast.error(err.message || 'Hiba történt a munkamenet létrehozásakor.')
+      toast.error(err.message || 'Hiba történt a létrehozáskor.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleCreate} className="flex items-center gap-3">
+    <form onSubmit={handleCreate} className="flex flex-wrap items-center gap-2">
       <input
         type="text"
-        placeholder="Munkamenet megnevezése (opcionális)"
+        placeholder="Új játék neve (opcionális)"
         value={sessionName}
         onChange={(e) => setSessionName(e.target.value)}
-        className="px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64 shadow-2xs"
+        className="px-3 py-1.5 text-xs sm:text-sm bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 w-48 sm:w-56 shadow-2xs"
       />
       <button
         type="submit"
         disabled={loading}
-        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
+        className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs sm:text-sm font-bold rounded-lg shadow-xs transition flex items-center gap-1.5 cursor-pointer shrink-0"
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-        </svg>
-        {loading ? 'Létrehozás...' : 'Új Munkamenet'}
+        <span>+ {loading ? 'Létrehozás...' : 'Új Munkamenet'}</span>
       </button>
     </form>
   )

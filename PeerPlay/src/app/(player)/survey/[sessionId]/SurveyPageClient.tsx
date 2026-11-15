@@ -1,15 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useSWR from 'swr'
-import Link from 'next/link'
-import { getSessionDetails } from '@/modules/session/actions'
+import { getPhaseLabel } from '@/modules/session/constants'
 import PreGamePulseForm from '@/components/mobile/PreGamePulseForm'
 import MobileCompanionHUD from '@/components/mobile/MobileCompanionHUD'
 import PostGamePeerFeedbackForm from '@/components/mobile/PostGamePeerFeedbackForm'
 
 const fetcher = async (sessionId: string) => {
-  return await getSessionDetails(sessionId)
+  const res = await fetch(`/api/session/${encodeURIComponent(sessionId)}?t=${Date.now()}`, {
+    cache: 'no-store',
+  })
+  if (!res.ok) throw new Error('Failed to fetch session')
+  return await res.json()
 }
 
 export default function SurveyPageClient({
@@ -25,22 +28,50 @@ export default function SurveyPageClient({
   hasPreGameSubmitted?: boolean
   hasPostGameSubmitted?: boolean
 }) {
-  const { data: session } = useSWR(sessionId, fetcher, {
+  const { data: session, mutate } = useSWR(sessionId, fetcher, {
     fallbackData: initialSessionData,
-    refreshInterval: 2500,
+    refreshInterval: 2000,
+    dedupingInterval: 1000,
     revalidateOnFocus: true,
+    revalidateOnMount: true,
   })
 
   const [hasPreGame, setHasPreGame] = useState(initialPreGameSubmitted)
   const [hasPostGame, setHasPostGame] = useState(initialPostGameSubmitted)
 
+  // Mark window as hydrated so pre-hydration script knows SWR is active
+  useEffect(() => {
+    ;(window as any).__PEERPLAY_HYDRATED = true
+  }, [])
+
   if (!session) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center font-sans">
-        <div className="text-xs font-mono text-slate-500">Munkamenet betöltése...</div>
+        <div className="text-xs font-mono text-slate-500">Betöltés...</div>
       </div>
     )
   }
+
+  // Also check live surveyResponses from session data
+  const serverPreSubmitted = Boolean(
+    initialUserId &&
+      session.surveyResponses?.some(
+        (r: any) =>
+          (r.userId === initialUserId || r.respondentUserId === initialUserId) &&
+          r.phaseType === 'PRE_GAME'
+      )
+  )
+  const serverPostSubmitted = Boolean(
+    initialUserId &&
+      session.surveyResponses?.some(
+        (r: any) =>
+          (r.userId === initialUserId || r.respondentUserId === initialUserId) &&
+          r.phaseType === 'POST_GAME'
+      )
+  )
+
+  const effectiveHasPreGame = hasPreGame || serverPreSubmitted
+  const effectiveHasPostGame = hasPostGame || serverPostSubmitted
 
   // Find user and participant
   let participant: any = null
@@ -62,90 +93,137 @@ export default function SurveyPageClient({
     })
   })
 
-  // Fallback to first team if not found
   if (!userTeam) {
     userTeam = session.teams?.[0]
   }
 
   const phase = session.currentPhase || 'PHASE_0_SETUP'
-  const isPostGamePhase = phase === 'PHASE_10_POST_SURVEY' || phase === 'PHASE_11_DEBRIEF'
+  const isPreSurveyPhase = phase === 'PHASE_0_SETUP' || phase === 'PHASE_1_PRE_SURVEY'
+  const isPostSurveyPhase = phase === 'PHASE_10_POST_SURVEY'
+  const isDebriefPhase = phase === 'PHASE_11_DEBRIEF' || phase === 'POST_WORKPLACE_ONA'
 
-  // Active market event
   const activeEvent = session.marketEvents?.find((e: any) => e.isActive)
+  let activeMultipliers: Record<string, number> = {}
+  if (activeEvent?.priceMultipliers) {
+    try {
+      activeMultipliers = JSON.parse(activeEvent.priceMultipliers)
+    } catch {}
+  }
+
+  const defaultTeam = userTeam || {
+    id: '',
+    name: 'Alfa Vállalat',
+    profileCode: 'CAPITAL',
+    cashBalance: 0,
+    paperSheets: 0,
+    scissorsCount: 0,
+    rulersCount: 0,
+    templatesCount: 0,
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 sm:p-6 flex flex-col justify-between">
-      <div className="max-w-[440px] w-full mx-auto space-y-4">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-3 sm:p-5 flex flex-col justify-between">
+      <div className="max-w-[460px] w-full mx-auto space-y-3">
         {/* Top Header */}
-        <header className="flex items-center justify-between pb-3 border-b border-slate-200">
-          <div>
-            <span className="text-[10px] font-mono uppercase font-bold text-slate-400">
-              The Trading Game · Mobil Kísérő
-            </span>
-            <div className="text-xs font-semibold text-slate-700">
-              {participant ? `Belépve: ${participant.user?.name}` : 'Mobil Résztvevő'}
-            </div>
+        <header className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-200">
+          <div className="text-xs font-bold text-slate-800">
+            {participant ? participant.user?.name : 'Mobil Kísérő'}
           </div>
-          <span className="font-mono text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-            PIN: {session.joinCode}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span
+              id="live-phase-badge"
+              className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200"
+            >
+              {getPhaseLabel(phase)}
+            </span>
+            <span className="font-mono text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+              PIN: {session.joinCode}
+            </span>
+          </div>
         </header>
 
         {/* View Selection Based on Phase & State */}
-        <div className="theme-card p-6">
-          {/* Case 1: Post Game Phase */}
-          {isPostGamePhase ? (
-            hasPostGame ? (
-              <div className="text-center py-8 space-y-3">
-                <span className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 inline-flex items-center justify-center">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                </span>
-                <h3 className="text-lg font-bold text-slate-900">
-                  Visszajelzésedet Rögzítettük!
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto">
-                  Köszönjük az együttműködési értékelést! Most nézz fel a központi kivetítőre a végső eredmények és a hálózati debrief megtekintéséhez.
-                </p>
+        <div className="theme-card p-4 sm:p-5">
+          {isDebriefPhase || (isPostSurveyPhase && effectiveHasPostGame) ? (
+            <div className="text-center py-6 space-y-2">
+              <span className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 inline-flex items-center justify-center">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+              </span>
+              <div className="text-xs font-bold uppercase text-blue-600">
+                {getPhaseLabel(phase)}
               </div>
-            ) : (
-              <PostGamePeerFeedbackForm
-                sessionId={session.id}
-                userId={initialUserId || ''}
-                myTeamId={userTeam?.id || ''}
-                allParticipants={allParticipantsList}
-                onSubmitted={() => setHasPostGame(true)}
-              />
-            )
-          ) : /* Case 2: Pre-Game Pulse not yet submitted */
-          !hasPreGame ? (
+              <h3 className="text-base font-bold text-slate-900">
+                {effectiveHasPostGame
+                  ? 'Visszajelzésedet Rögzítettük!'
+                  : 'Eredményhirdetés Folyamatban'}
+              </h3>
+              <p className="text-xs text-slate-500">
+                Köszönjük a részvételt! Kövesd a központi kivetítőt az eredményekért.
+              </p>
+            </div>
+          ) : isPostSurveyPhase ? (
+            <PostGamePeerFeedbackForm
+              sessionId={session.id}
+              userId={initialUserId || ''}
+              myTeamId={defaultTeam.id}
+              allParticipants={allParticipantsList}
+              onSubmitted={() => {
+                setHasPostGame(true)
+                mutate()
+              }}
+            />
+          ) : isPreSurveyPhase && !effectiveHasPreGame ? (
             <PreGamePulseForm
               sessionId={session.id}
               userId={initialUserId || ''}
-              onSubmitted={() => setHasPreGame(true)}
+              onSubmitted={() => {
+                setHasPreGame(true)
+                mutate()
+              }}
             />
           ) : (
-            /* Case 3: In-Game Passive Companion */
             <MobileCompanionHUD
-              teamName={userTeam?.name || 'Vállalat'}
-              profileCode={userTeam?.profileCode || 'CAPITAL'}
+              sessionId={session.id}
+              userId={initialUserId || ''}
+              userName={participant?.user?.name || 'Játékos'}
+              myTeam={defaultTeam}
+              allTeams={session.teams || []}
+              trades={session.tradeTransactions || []}
+              bankSales={session.bankSales || []}
               currentPhase={phase}
-              phaseStartedAt={session.phaseStartedAt}
-              phaseDurationSeconds={session.phaseDurationSeconds}
-              isTimerPaused={session.isTimerPaused}
-              timerRemainingSeconds={session.timerRemainingSeconds}
               activeEventTitle={activeEvent?.title}
               activeEventDescription={activeEvent?.description}
+              activeMultipliers={activeMultipliers}
+              onMutate={() => mutate()}
             />
           )}
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="text-center text-[10px] text-slate-400 font-mono mt-8">
-        PeerPlay Enterprise v2.0 · Szervezetdiagnosztikai Platform
-      </footer>
+      {/* Pre-hydration fallback poller so mobile always reloads if phase changes before JS finishes hydrating */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+(function(){
+  var sid = ${JSON.stringify(session.id)};
+  var initialPhase = ${JSON.stringify(phase)};
+  setInterval(function(){
+    if (window.__PEERPLAY_HYDRATED) return;
+    fetch('/api/session/' + encodeURIComponent(sid) + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.currentPhase && d.currentPhase !== initialPhase) {
+          window.location.reload();
+        }
+      })
+      .catch(function(){});
+  }, 2000);
+})();
+          `,
+        }}
+      />
     </div>
   )
 }

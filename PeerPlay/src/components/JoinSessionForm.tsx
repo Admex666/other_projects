@@ -1,23 +1,57 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
 
-export default function JoinSessionForm({ prefillCode }: { prefillCode?: string }) {
-  const [joinCode, setJoinCode] = useState(prefillCode || '')
+export default function JoinSessionForm({
+  prefillCode,
+  initialError,
+}: {
+  prefillCode?: string
+  initialError?: string
+}) {
+  const [joinCode, setJoinCode] = useState((prefillCode || 'DEMO01').toUpperCase())
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [gdprConsent, setGdprConsent] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(initialError || null)
 
-  const handleJoin = async () => {
+  const joinCodeRef = useRef<HTMLInputElement>(null)
+  const nameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const gdprRef = useRef<HTMLInputElement>(null)
+
+  // Ha a felhasználó már elkezdett gépelni a hidratáció előtt, tartsuk meg a beírt értékeket
+  useEffect(() => {
+    if (joinCodeRef.current?.value) {
+      setJoinCode(joinCodeRef.current.value.toUpperCase())
+    }
+    if (nameRef.current?.value) {
+      setName(nameRef.current.value)
+    }
+    if (emailRef.current?.value) {
+      setEmail(emailRef.current.value)
+    }
+    if (gdprRef.current?.checked) {
+      setGdprConsent(true)
+    }
+  }, [])
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     if (loading) return
     setErrorMessage(null)
 
-    const cleanCode = (joinCode || '').trim().toUpperCase()
-    const cleanName = (name || '').trim()
-    const cleanEmail = (email || '').trim().toLowerCase()
+    const formData = new FormData(e.currentTarget)
+    const rawCode = joinCode || (formData.get('joinCode') as string) || ''
+    const rawName = name || (formData.get('fullName') as string) || ''
+    const rawEmail = email || (formData.get('workEmail') as string) || ''
+    const hasGdpr = gdprConsent || formData.get('gdprConsent') === 'on'
+
+    const cleanCode = rawCode.trim().toUpperCase()
+    const cleanName = rawName.trim()
+    const cleanEmail = rawEmail.trim().toLowerCase()
 
     if (!cleanCode) {
       const msg = 'Kérlek add meg a munkamenet PIN kódot!'
@@ -40,7 +74,7 @@ export default function JoinSessionForm({ prefillCode }: { prefillCode?: string 
       return
     }
 
-    if (!gdprConsent) {
+    if (!hasGdpr) {
       const msg = 'A csatlakozáshoz kérlek pipáld be az adatkezelési hozzájárulást!'
       setErrorMessage(msg)
       toast.error(msg)
@@ -88,15 +122,8 @@ export default function JoinSessionForm({ prefillCode }: { prefillCode?: string 
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      handleJoin()
-    }
-  }
-
   return (
-    <div className="space-y-4 w-full">
+    <form method="POST" action="/api/join" onSubmit={handleSubmit} className="space-y-4 w-full">
       {/* Error Banner */}
       {errorMessage && (
         <div className="p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-xl flex items-center gap-2.5 animate-in fade-in slide-in-from-top-1 duration-200">
@@ -113,15 +140,16 @@ export default function JoinSessionForm({ prefillCode }: { prefillCode?: string 
           Munkamenet PIN Kód
         </label>
         <input
+          ref={joinCodeRef}
           id="joinCode"
           name="joinCode"
           type="text"
+          required
           value={joinCode}
           onChange={(e) => {
             setJoinCode(e.target.value.toUpperCase())
             if (errorMessage) setErrorMessage(null)
           }}
-          onKeyDown={handleKeyDown}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="characters"
@@ -138,15 +166,16 @@ export default function JoinSessionForm({ prefillCode }: { prefillCode?: string 
           Teljes Név
         </label>
         <input
+          ref={nameRef}
           id="fullName"
           name="fullName"
           type="text"
+          required
           value={name}
           onChange={(e) => {
             setName(e.target.value)
             if (errorMessage) setErrorMessage(null)
           }}
-          onKeyDown={handleKeyDown}
           autoComplete="name"
           autoCapitalize="words"
           placeholder="pl. Kovács Péter"
@@ -160,15 +189,16 @@ export default function JoinSessionForm({ prefillCode }: { prefillCode?: string 
           Munkahelyi E-mail Cím
         </label>
         <input
+          ref={emailRef}
           id="workEmail"
           name="workEmail"
           type="email"
+          required
           value={email}
           onChange={(e) => {
             setEmail(e.target.value)
             if (errorMessage) setErrorMessage(null)
           }}
-          onKeyDown={handleKeyDown}
           autoComplete="email"
           autoCapitalize="none"
           autoCorrect="off"
@@ -190,9 +220,11 @@ export default function JoinSessionForm({ prefillCode }: { prefillCode?: string 
           }`}
         >
           <input
+            ref={gdprRef}
             id="gdprConsent"
             name="gdprConsent"
             type="checkbox"
+            required
             checked={gdprConsent}
             onChange={(e) => {
               setGdprConsent(e.target.checked)
@@ -208,8 +240,7 @@ export default function JoinSessionForm({ prefillCode }: { prefillCode?: string 
 
       {/* 52px Touch-friendly CTA Button */}
       <button
-        type="button"
-        onClick={handleJoin}
+        type="submit"
         disabled={loading}
         className="w-full min-h-[52px] py-3.5 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 text-white font-bold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer mt-3 touch-manipulation active:scale-[0.98]"
       >
@@ -225,6 +256,6 @@ export default function JoinSessionForm({ prefillCode }: { prefillCode?: string 
           <span>Csatlakozás a Munkamenethez →</span>
         )}
       </button>
-    </div>
+    </form>
   )
 }

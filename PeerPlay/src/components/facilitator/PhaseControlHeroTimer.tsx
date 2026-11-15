@@ -1,15 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import {
-  advanceSessionPhase,
-  adjustPhaseTimer,
-} from '@/modules/session/actions'
+import { useState, useEffect, useRef } from 'react'
 import {
   WORKSHOP_PHASES,
-  WorkshopPhase,
+  getPhaseLabel,
 } from '@/modules/session/constants'
-
 import toast from 'react-hot-toast'
 
 interface PhaseControlHeroTimerProps {
@@ -19,6 +14,8 @@ interface PhaseControlHeroTimerProps {
   phaseDurationSeconds: number
   isTimerPaused: boolean
   timerRemainingSeconds: number
+  computedRemainingSeconds?: number
+  onMutate?: () => void
 }
 
 const PHASE_METADATA: Record<
@@ -36,11 +33,11 @@ const PHASE_METADATA: Record<
     ],
   },
   PHASE_1_PRE_SURVEY: {
-    name: '1. Pre-Game Pulse Felmérés',
+    name: '1. Kezdő Hangulatfelmérés',
     durationMin: 5,
     script: 'Kérd meg a résztvevőket, hogy a mobiljukon állítsák be a 2 csúszkát az érkezési energiaszintjükről és nyitottságukról.',
     instructions: [
-      'A mobil felületen a Pre-Game Pulse kérdőív automatikusan megjelenik.',
+      'A mobil felületen a kezdő hangulatfelmérés automatikusan megjelenik.',
       'A kitöltés mindössze 60 másodpercet vesz igénybe.',
       'Ne menj tovább, amíg a többség nem végzett.',
     ],
@@ -70,7 +67,7 @@ const PHASE_METADATA: Record<
     script: 'A piac megnyílt! Indulhat a cserekereskedelem és a formák gyártása.',
     instructions: [
       'A Bank átvételi pultja nyitva áll a kész formák leadására.',
-      'P2P ajánlatok a tableten futnak, azonnali letéti zárolással.',
+      'Csapatközi ajánlatok a tableten futnak, azonnali letéti zárolással.',
       'Figyeld a teremben kialakuló információs közvetítőket.',
     ],
   },
@@ -79,7 +76,7 @@ const PHASE_METADATA: Record<
     durationMin: 3,
     script: 'Rendkívüli gazdasági hírek érkeztek! Hirdesd ki az új felvásárlási árakat vagy korlátozásokat.',
     instructions: [
-      'Aktiváld a kívánt piaci eseményt a jobb oldali modulban.',
+      'Aktiváld a kívánt piaci eseményt a Piaci Események fülön.',
       'A csapatoknak azonnal alkalmazkodniuk kell az új árakhoz.',
     ],
   },
@@ -104,7 +101,7 @@ const PHASE_METADATA: Record<
   PHASE_8_ROUND_3: {
     name: '8. 3. Záró Termelési Hajrá',
     durationMin: 12,
-    script: 'Utolsó esély a formák eladására és a megmaradt javak monetizálására.',
+    script: 'Utolsó esély a formák eladására és a megmaradt javak értékesítésére.',
     instructions: [
       'Figyelmeztesd a csapatokat: a fel nem használt papírlap nem hoz bevételt!',
       'Az utolsó 2 percben a Bank előtt torlódás alakulhat ki.',
@@ -116,24 +113,24 @@ const PHASE_METADATA: Record<
     script: 'A Bank ablaka bezárult! Nincs több termékátvétel. Minden csapat rögzíti a végső egyenlegét.',
     instructions: [
       'A Bank leállítja a kifizetéseket.',
-      'Az összes nyitott P2P ajánlat automatikusan visszatérítésre került.',
+      'Az összes nyitott csereajánlat automatikusan visszatérítésre került.',
     ],
   },
   PHASE_10_POST_SURVEY: {
-    name: '10. Post-Game Peer Feedback',
+    name: '10. Záró Együttműködési Értékelés',
     durationMin: 10,
-    script: 'Kérd meg a résztvevőket, hogy a mobiljukon jelöljék a kulcsfontosságú koordinátorokat és belső támaszokat.',
+    script: 'Kérd meg a résztvevőket, hogy a mobiljukon jelöljék meg a kulcsfontosságú koordinátorokat és belső támaszokat.',
     instructions: [
-      'Mobil felületen: Broker (külső) és Enabler (belső) nominációk.',
-      'Záró energiaszint és kvalitatív felismerések rögzítése.',
+      'Mobil felületen: Külső koordinátor és belső támogató jelölések.',
+      'Záró energiaszint és szöveges felismerések rögzítése.',
     ],
   },
   PHASE_11_DEBRIEF: {
-    name: '11. Közös Teremi Debrief & Reflexió',
+    name: '11. Eredményhirdetés & Megbeszélés',
     durationMin: 7,
-    script: 'Kapcsold be a kivetítői nézetet! Elemezzétek a hálózati szociogramot és a viselkedési tanulságokat.',
+    script: 'Kapcsold be a kivetítői nézetet! Elemezzétek a hálózati együttműködést és a viselkedési tanulságokat.',
     instructions: [
-      'Kattints a "Debrief Kivetítő Megnyitása" gombra a teljes képernyős hatáshoz.',
+      'Kattints az "Eredmények" gombra a teljes képernyős kivetítőhöz.',
       'Vitassátok meg a facilitátori beszélgetésindító kérdéseket.',
     ],
   },
@@ -146,33 +143,59 @@ export default function PhaseControlHeroTimer({
   phaseDurationSeconds,
   isTimerPaused,
   timerRemainingSeconds,
+  computedRemainingSeconds,
+  onMutate,
 }: PhaseControlHeroTimerProps) {
-  const [remainingSec, setRemainingSec] = useState<number>(timerRemainingSeconds)
+  const initialRem =
+    typeof computedRemainingSeconds === 'number'
+      ? computedRemainingSeconds
+      : timerRemainingSeconds
+  const [remainingSec, setRemainingSec] = useState<number>(initialRem)
   const [loadingAction, setLoadingAction] = useState<boolean>(false)
+  const anchorRef = useRef<{ baseSec: number; syncedAtMs: number }>({
+    baseSec: initialRem,
+    syncedAtMs: Date.now(),
+  })
 
-  // Local live tick every 1000ms
+  // Update anchor whenever server state refreshes
   useEffect(() => {
     if (isTimerPaused) {
-      setRemainingSec(timerRemainingSeconds)
+      const pausedVal =
+        typeof computedRemainingSeconds === 'number'
+          ? computedRemainingSeconds
+          : timerRemainingSeconds
+      anchorRef.current = { baseSec: pausedVal, syncedAtMs: Date.now() }
+      setRemainingSec(pausedVal)
       return
     }
 
-    const calcRemaining = () => {
+    let freshSec: number
+    if (typeof computedRemainingSeconds === 'number') {
+      freshSec = computedRemainingSeconds
+    } else {
       const started = new Date(phaseStartedAt).getTime()
-      const now = Date.now()
-      const elapsed = Math.floor((now - started) / 1000)
-      const rem = Math.max(0, phaseDurationSeconds - elapsed)
-      return rem
+      const elapsed = Math.max(0, Math.floor((Date.now() - started) / 1000))
+      freshSec = Math.max(0, phaseDurationSeconds - elapsed)
     }
 
-    setRemainingSec(calcRemaining())
+    anchorRef.current = { baseSec: freshSec, syncedAtMs: Date.now() }
+    setRemainingSec(freshSec)
 
     const interval = setInterval(() => {
-      setRemainingSec(calcRemaining())
+      const elapsedSinceSync = Math.floor(
+        (Date.now() - anchorRef.current.syncedAtMs) / 1000
+      )
+      setRemainingSec(Math.max(0, anchorRef.current.baseSec - elapsedSinceSync))
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [phaseStartedAt, phaseDurationSeconds, isTimerPaused, timerRemainingSeconds])
+  }, [
+    phaseStartedAt,
+    phaseDurationSeconds,
+    isTimerPaused,
+    timerRemainingSeconds,
+    computedRemainingSeconds,
+  ])
 
   const currentIndex = WORKSHOP_PHASES.indexOf(currentPhase as any)
   const prevPhase = currentIndex > 0 ? WORKSHOP_PHASES[currentIndex - 1] : null
@@ -182,7 +205,7 @@ export default function PhaseControlHeroTimer({
       : null
 
   const meta = PHASE_METADATA[currentPhase] || {
-    name: currentPhase,
+    name: getPhaseLabel(currentPhase),
     durationMin: Math.round(phaseDurationSeconds / 60),
     script: 'Facilitátori teendők folyamatban.',
     instructions: ['Kövesd az ütemtervet.'],
@@ -198,13 +221,23 @@ export default function PhaseControlHeroTimer({
   const isWarning = remainingSec <= 120 && !isTimerPaused && remainingSec > 30
 
   const handleAdvance = async (phaseToGo: string) => {
-    if (remainingSec > 60 && !confirm(`Még ${minutes} perc van hátra a fázisból. Biztosan léptetni szeretnéd?`)) {
-      return
-    }
     setLoadingAction(true)
     try {
-      await advanceSessionPhase(sessionId, phaseToGo)
-      toast.success(`Fázis váltva: ${PHASE_METADATA[phaseToGo]?.name || phaseToGo}`)
+      const res = await fetch('/api/facilitator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'advancePhase',
+          sessionId,
+          nextPhase: phaseToGo,
+        }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Hiba a fázis léptetésekor')
+      }
+      onMutate?.()
+      toast.success(`Fázis váltva: ${PHASE_METADATA[phaseToGo]?.name || getPhaseLabel(phaseToGo)}`)
     } catch (e: any) {
       toast.error(e.message || 'Hiba a fázis léptetésekor')
     } finally {
@@ -216,7 +249,21 @@ export default function PhaseControlHeroTimer({
     setLoadingAction(true)
     try {
       const nextPaused = typeof pauseToggle === 'boolean' ? pauseToggle : undefined
-      await adjustPhaseTimer(sessionId, addSec, nextPaused)
+      const res = await fetch('/api/facilitator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'adjustTimer',
+          sessionId,
+          additionalSeconds: addSec,
+          isPaused: nextPaused,
+        }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Hiba az időzítő módosításakor')
+      }
+      onMutate?.()
       if (addSec > 0) toast.success(`+${addSec / 60} perc hozzáadva az időzítőhöz.`)
       if (pauseToggle !== undefined) {
         toast(pauseToggle ? 'Időzítő szüneteltetve' : 'Időzítő folytatva')
@@ -230,7 +277,7 @@ export default function PhaseControlHeroTimer({
 
   return (
     <div className="space-y-6">
-      {/* 1. Horizontal Stepped Progress Bar (11 Phases) */}
+      {/* 1. Horizontal Stepped Progress Bar (12 Phases) */}
       <div className="theme-card p-4 overflow-x-auto">
         <div className="flex items-center justify-between min-w-[760px] gap-2">
           {WORKSHOP_PHASES.map((p, idx) => {
@@ -241,7 +288,7 @@ export default function PhaseControlHeroTimer({
                 key={p}
                 onClick={() => handleAdvance(p)}
                 disabled={loadingAction}
-                title={PHASE_METADATA[p]?.name}
+                title={PHASE_METADATA[p]?.name || getPhaseLabel(p)}
                 className={`flex-1 flex flex-col items-center p-2 rounded-lg text-center transition cursor-pointer ${
                   isCurrent
                     ? 'bg-blue-50 border border-blue-400 text-blue-900 shadow-xs'
@@ -268,7 +315,7 @@ export default function PhaseControlHeroTimer({
                   )}
                 </div>
                 <span className="text-[11px] font-bold tracking-tight truncate max-w-[85px] leading-tight">
-                  {PHASE_METADATA[p]?.name.split('.')[1] || p}
+                  {getPhaseLabel(p)}
                 </span>
                 <span className="text-[10px] font-mono text-slate-400 mt-0.5">
                   {PHASE_METADATA[p]?.durationMin}p
@@ -352,7 +399,7 @@ export default function PhaseControlHeroTimer({
               disabled={loadingAction}
               className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Következő: {PHASE_METADATA[nextPhase]?.name.split('.')[1] || nextPhase}</span>
+              <span>Következő: {getPhaseLabel(nextPhase)}</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
@@ -367,7 +414,7 @@ export default function PhaseControlHeroTimer({
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
-              <span>Előző Fázis</span>
+              <span>Előző: {getPhaseLabel(prevPhase)}</span>
             </button>
           )}
         </div>

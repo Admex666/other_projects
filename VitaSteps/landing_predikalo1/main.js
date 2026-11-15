@@ -64,14 +64,14 @@ let mapInstance = null;
 let currentGpxLayer = null;
 
 const routeMap = {
-    'domos_10': 'assets/predikalo_dömös10.8.gpx',
-    'domos_15': 'assets/predikalo_dömös17.3.gpx',
-    'domos_20': 'assets/predikalo_dömös21.6.gpx',
-    'domos_25': 'assets/predikalo_dömös25.4.gpx',
-    'dobogoko_10': 'assets/predikalo_dobogoko9.5.gpx',
-    'dobogoko_15': 'assets/predikalo_dobogoko15.2.gpx',
-    'dobogoko_20': 'assets/predikalo_dobogoko21.2.gpx',
-    'dobogoko_25': 'assets/predikalo_dobogoko25.6.gpx'
+    'domos_10': 'assets/predikalo/predikalo_dömös10.8.gpx',
+    'domos_15': 'assets/predikalo/predikalo_dömös17.3.gpx',
+    'domos_20': 'assets/predikalo/predikalo_dömös21.6.gpx',
+    'domos_25': 'assets/predikalo/predikalo_dömös25.4.gpx',
+    'dobogoko_10': 'assets/predikalo/predikalo_dobogoko9.5.gpx',
+    'dobogoko_15': 'assets/predikalo/predikalo_dobogoko15.2.gpx',
+    'dobogoko_20': 'assets/predikalo/predikalo_dobogoko21.2.gpx',
+    'dobogoko_25': 'assets/predikalo/predikalo_dobogoko25.6.gpx'
 };
 
 let selectedStart = 'domos';

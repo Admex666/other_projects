@@ -1,10 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  triggerMarketEvent,
-  clearMarketEvents,
-} from '@/modules/bank/actions'
 import toast from 'react-hot-toast'
 
 interface ActiveMarketEvent {
@@ -20,6 +16,7 @@ interface ActiveMarketEvent {
 interface MarketEventsDispatcherProps {
   sessionId: string
   activeEvent?: ActiveMarketEvent | null
+  onMutate?: () => void
 }
 
 interface PresetEvent {
@@ -31,10 +28,9 @@ interface PresetEvent {
 }
 
 const PRESET_EVENTS: PresetEvent[] = [
-
   {
     code: 'SQUARE_BOOM',
-    title: 'Négyzet Boom (Építőipari Kereslet)',
+    title: 'Építőipari Fellendülés (Négyzet Felár)',
     description: 'Megnövekedett infrastruktúra-fejlesztések miatt a Bank 50%-os felárral, darabonként $450-ért vásárolja fel a szabályos négyzeteket!',
     multipliers: { SQUARE: 1.5 },
     badge: 'Árváltozás (+50%)',
@@ -65,6 +61,7 @@ const PRESET_EVENTS: PresetEvent[] = [
 export default function MarketEventsDispatcher({
   sessionId,
   activeEvent,
+  onMutate,
 }: MarketEventsDispatcherProps) {
   const [loading, setLoading] = useState(false)
   const [customTitle, setCustomTitle] = useState('')
@@ -75,14 +72,24 @@ export default function MarketEventsDispatcher({
   const handleTriggerPreset = async (preset: (typeof PRESET_EVENTS)[number]) => {
     setLoading(true)
     try {
-      await triggerMarketEvent(
-        sessionId,
-        preset.code,
-        preset.title,
-        preset.description,
-        preset.multipliers,
-        180
-      )
+      const res = await fetch('/api/facilitator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'triggerEvent',
+          sessionId,
+          code: preset.code,
+          title: preset.title,
+          description: preset.description,
+          multipliers: preset.multipliers,
+          durationSeconds: 180,
+        }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Hiba a piaci esemény indításakor')
+      }
+      onMutate?.()
       toast.success(`Piaci esemény kiküldve: ${preset.title}`)
     } catch (e: any) {
       toast.error(e.message || 'Hiba a piaci esemény indításakor')
@@ -100,14 +107,24 @@ export default function MarketEventsDispatcher({
 
     setLoading(true)
     try {
-      await triggerMarketEvent(
-        sessionId,
-        'CUSTOM_SHOCK',
-        customTitle,
-        customDescription,
-        { [customShape]: customMultiplier },
-        180
-      )
+      const res = await fetch('/api/facilitator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'triggerEvent',
+          sessionId,
+          code: 'CUSTOM_SHOCK',
+          title: customTitle,
+          description: customDescription,
+          multipliers: { [customShape]: customMultiplier },
+          durationSeconds: 180,
+        }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Hiba a piaci esemény mentésekor')
+      }
+      onMutate?.()
       toast.success(`Egyedi piaci esemény aktiválva!`)
       setCustomTitle('')
       setCustomDescription('')
@@ -121,7 +138,19 @@ export default function MarketEventsDispatcher({
   const handleClearEvents = async () => {
     setLoading(true)
     try {
-      await clearMarketEvents(sessionId)
+      const res = await fetch('/api/facilitator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'clearEvents',
+          sessionId,
+        }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Hiba a piac visszaállításakor')
+      }
+      onMutate?.()
       toast.success('Piac normalizálva! Minden árfolyam-módosító visszaállt alapszintre.')
     } catch (e: any) {
       toast.error(e.message || 'Hiba a piac visszaállításakor')
@@ -138,7 +167,7 @@ export default function MarketEventsDispatcher({
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs font-mono font-bold tracking-wider uppercase text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-300">
-                S-FAC-04 Piaci Események Dispatcher
+                Piaci Események Vezérlő
               </span>
             </div>
             <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
@@ -304,7 +333,7 @@ export default function MarketEventsDispatcher({
               disabled={loading}
               className="mt-3 w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Azonnali Broadcast Kiküldés</span>
+              <span>Azonnali Teremi Kiküldés</span>
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
               </svg>

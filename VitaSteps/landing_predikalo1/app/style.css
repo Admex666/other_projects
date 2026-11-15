@@ -28,7 +28,139 @@ body.theme-light {
   --leaflet-tiles-filter: none;
 }
 
-/* 2. ÉJSZAKAI: Dark Olive Forest */
+/* INTERAKTÍV TITOK KÁRTYÁK (EXKLUZÍV ACCORDION) */
+.secrets-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+}
+.secret-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.secret-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+.secret-card.open {
+  border-color: var(--accent);
+  background: var(--card-elevated);
+  box-shadow: 0 6px 22px rgba(54, 90, 69, 0.18);
+}
+.secret-header {
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  background: transparent;
+}
+.secret-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  flex: 1;
+}
+.secret-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.secret-card.open .secret-icon-box {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.secret-icon {
+  font-size: 19px;
+}
+.secret-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.secret-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13.8px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.secret-cta-hint {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.secret-card.open .secret-cta-hint {
+  display: none;
+}
+.secret-right-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.secret-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  white-space: nowrap;
+}
+.secret-chevron-circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease, background 0.2s ease, color 0.2s ease;
+}
+.secret-card:hover .secret-chevron-circle {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.secret-card.open .secret-chevron-circle {
+  transform: rotate(180deg);
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.secret-content {
+  display: none;
+  padding: 12px 15px 15px 15px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text);
+  opacity: 0.92;
+  border-top: 1px dashed var(--border);
+  background: var(--card-bg);
+}
+.secret-card.open .secret-content {
+  display: block;
+}
 body.theme-dark {
   --bg: #141815;
   --card-bg: #1D231F;
@@ -50,7 +182,7 @@ body.theme-dark {
   --track-base: #28332C;
   --track-active: #529B72;
   --radar-ring: rgba(82, 155, 114, 0.35);
-  --leaflet-tiles-filter: brightness(0.7) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3);
+  --leaflet-tiles-filter: none;
 }
 
 * {
@@ -819,6 +951,57 @@ html, body {
   line-height: 1.35;
 }
 
+/* HELYSZÍNI MEGFIGYELÉSI FÓKUSZ (DETAIL KÁRTYA) */
+.observation-focus-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 14px 16px;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.observation-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.observation-icon-wrap .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.observation-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.observation-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+.observation-text {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--text);
+}
+
 .story-paragraph {
   font-size: 14px;
   line-height: 1.65;
@@ -1185,29 +1368,135 @@ html, body {
   border: none;
 }
 
+/* ÉLŐ TEREPTESZT SZEKCIÓ ÉS TÉRKÉP KIJELÖLŐ BANNER */
+.field-test-section {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-test-heading {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.field-test-desc {
+  font-size: 11.5px;
+  color: var(--text);
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+.map-picker-banner {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 58px;
+  background: var(--card-bg);
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  padding: 10px 12px;
+  z-index: 460;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.map-picker-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.map-picker-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.picker-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--card-elevated);
+  color: var(--text);
+  transition: all 0.15s ease;
+}
+
+.picker-btn.primary {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+
+.picker-btn.primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.picker-btn.cancel {
+  background: var(--card-elevated);
+  color: var(--text);
+}
+
 /* ══════════════════════════════════════════════════════════════
-   LEBEGŐ GLOBÁLIS AUDIO LEJÁTSZÓ
+   LEBEGŐ GLOBÁLIS AUDIO LEJÁTSZÓ (Felső sáv alatt, átfedés nélkül)
    ══════════════════════════════════════════════════════════════ */
 .floating-global-player {
   position: absolute;
-  bottom: calc(var(--nav-height) + 12px);
-  left: 14px;
-  right: 14px;
+  top: 64px;
+  bottom: auto;
+  left: 12px;
+  right: 12px;
   background: var(--card-bg);
   border: 1px solid var(--accent);
   border-radius: 14px;
-  padding: 8px 12px;
+  padding: 8px 10px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   z-index: 1500;
-  animation: slideUpFloat 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideDownFloat 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes slideUpFloat {
-  from { transform: translateY(20px); opacity: 0; }
+@keyframes slideDownFloat {
+  from { transform: translateY(-12px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+.btn-story-global {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.btn-story-global:hover {
+  background: var(--accent);
+  color: var(--accent-text);
 }
 
 .btn-play-global {
@@ -1315,3 +1604,415 @@ html, body {
   font-weight: 600;
   color: var(--text);
 }
+
+/* ══════════════════════════════════════════════════════════════
+   SÉTAVÁLASZTÓ (TOUR SELECTOR) STÍLUSOK
+   ══════════════════════════════════════════════════════════════ */
+
+/* Fejléc Tour Switcher Gomb */
+.tour-switcher-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 4px 8px 4px 2px;
+  cursor: pointer;
+  color: var(--text);
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.tour-switcher-btn:hover {
+  background: var(--card-elevated);
+  border-color: var(--border);
+}
+
+.tour-switcher-btn .material-symbols-outlined {
+  color: var(--text-dim);
+  transition: transform 0.2s ease;
+}
+
+.tour-switcher-btn:hover .material-symbols-outlined {
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* Séta váltása pill a Brief képernyőn */
+.btn-switch-tour-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: var(--card-shadow);
+}
+
+.btn-switch-tour-pill:hover {
+  background: var(--card-elevated);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* Sétaválasztó Nézet (#screen-tours) */
+.tours-viewport {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 16px 36px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tours-header-wrap {
+  margin-bottom: 2px;
+}
+
+.tours-eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.tours-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.25;
+  margin: 0 0 6px 0;
+}
+
+.tours-subtitle {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Séta Kártyák */
+.tour-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.tour-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 26px rgba(36, 40, 32, 0.1);
+}
+
+.tour-card:active {
+  transform: scale(0.99);
+}
+
+.tour-card.active-tour {
+  border: 2px solid var(--accent);
+  box-shadow: 0 6px 24px var(--accent-soft);
+}
+
+.tour-card.coming-soon-card {
+  cursor: default;
+  user-select: auto;
+  opacity: 0.8;
+  border-style: dashed;
+}
+
+.tour-card.coming-soon-card:hover {
+  transform: none;
+  border-color: var(--border);
+  box-shadow: var(--card-shadow);
+}
+
+.tour-card.coming-soon-card:active {
+  transform: none;
+}
+
+.tour-card-media {
+  position: relative;
+  width: 100%;
+  height: 154px;
+  overflow: hidden;
+  background: var(--card-elevated);
+}
+
+.tour-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.tour-card:hover .tour-card-img {
+  transform: scale(1.03);
+}
+
+.tour-card-badges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.tour-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.badge-dest {
+  background: rgba(36, 40, 32, 0.75);
+  color: #FFFFFF;
+}
+
+.badge-cat {
+  background: rgba(54, 90, 69, 0.85);
+  color: #FFFFFF;
+}
+
+.badge-status {
+  background: #2E7D32;
+  color: #FFFFFF;
+  margin-left: auto;
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.4);
+}
+
+.tour-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tour-card-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.tour-card-title.small {
+  font-size: 15px;
+}
+
+.tour-card-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.tour-card-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.tour-metric-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.metric-icon {
+  font-size: 16px;
+  color: var(--accent);
+}
+
+.tour-card-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.tour-card-actions {
+  margin-top: 4px;
+}
+
+.btn-tour-cta {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--card-elevated);
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+
+.btn-tour-cta.primary {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+
+.btn-tour-cta.primary:hover {
+  background: var(--accent-hover);
+}
+
+/* Kártya 2: Terepteszt grafika és gombok */
+.test-media {
+  background: linear-gradient(135deg, rgba(54,90,69,0.15) 0%, rgba(82,155,114,0.3) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tour-test-pattern {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.test-radar-circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px dashed var(--accent);
+  opacity: 0.5;
+  animation: testRotate 12s linear infinite;
+}
+
+@keyframes testRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.test-hero-icon {
+  font-size: 36px;
+  color: var(--accent);
+}
+
+.badge-test {
+  background: rgba(220, 107, 34, 0.88);
+  color: #FFFFFF;
+}
+
+.badge-loc {
+  background: rgba(36, 40, 32, 0.75);
+  color: #FFFFFF;
+}
+
+.badge-voice {
+  background: rgba(54, 90, 69, 0.85);
+  color: #FFFFFF;
+}
+
+.tour-test-quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-test-quick {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--card-elevated);
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+
+.btn-test-quick.primary {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+
+.btn-test-quick.subtle {
+  background: transparent;
+  border-color: var(--border);
+}
+
+.btn-test-quick:hover {
+  filter: brightness(0.96);
+  transform: translateY(-1px);
+}
+
+/* Hamarosan kártyák */
+.tours-section-heading {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+.coming-soon-card {
+  opacity: 0.8;
+  border-style: dashed;
+}
+
+.tour-card-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.badge-soon {
+  background: var(--card-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+

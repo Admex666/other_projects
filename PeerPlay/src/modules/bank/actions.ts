@@ -2,11 +2,12 @@
 
 import prisma from '@/lib/prisma'
 import { safeRevalidatePath } from '@/lib/safeRevalidate'
+import { randomUUID } from 'crypto'
 import { BASE_PRICES } from './constants'
 import type { ShapeType, ShapeBatchItem } from './constants'
 
 /**
- * 1. Egyedi termékátvétel és banki kifizetés
+ * 1. Egyedi termékátvétel és banki kifizetés (Facilitátori azonnali rögzítés)
  */
 export async function executeBankSale(
   sessionId: string,
@@ -14,7 +15,9 @@ export async function executeBankSale(
   shapeType: ShapeType,
   quantity: number,
   qualityApproved: boolean,
-  notes?: string
+  notes?: string,
+  deliveredByName?: string,
+  deliveredByUserId?: string
 ) {
   if (quantity <= 0) {
     throw new Error('A mennyiségnek legalább 1-nek kell lennie.')
@@ -67,6 +70,7 @@ export async function executeBankSale(
       data: {
         sessionId,
         teamId,
+        batchId: randomUUID(),
         shapeType,
         quantity,
         unitBasePrice,
@@ -74,6 +78,10 @@ export async function executeBankSale(
         finalUnitPrice,
         totalPayout,
         qualityNotes: notes || null,
+        status: 'APPROVED',
+        submittedByName: deliveredByName || null,
+        submittedByUserId: deliveredByUserId || null,
+        approvedAt: new Date(),
         soldAt: new Date(),
       },
     })
@@ -87,12 +95,103 @@ export async function executeBankSale(
 }
 
 /**
- * 2. Kötegelt Banki Minőségátvétel (Batch Inspection Desk - S-FAC-03)
+ * 2. Kötegelt Banki Minőségátvétel & Pénztári Jóváírás (Batch Inspection Desk - Facilitátor manuális felvitele)
  */
 export async function executeBatchBankSale(
   sessionId: string,
   teamId: string,
   items: ShapeBatchItem[],
+  notes?: string,
+  deliveredByName?: string,
+  deliveredByUserId?: string
+) {
+  const validItems = items.filter((it) => it.quantity > 0)
+  if (validItems.length === 0) {
+    throw new Error('Legalább egy érvényes formát és darabszámot meg kell adni.')
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    const session = await tx.session.findUnique({
+      where: { id: sessionId },
+      include: {
+        marketEvents: {
+          where: { isActive: true },
+          orderBy: { triggeredAt: 'desc' },
+          take: 1,
+        },
+      },
+    })
+
+    if (!session) {
+      throw new Error('A munkamenet nem található.')
+    }
+
+    let modifiers: Record<string, number> = {}
+    if (session.marketEvents.length > 0) {
+      try {
+        modifiers = JSON.parse(session.marketEvents[0].priceMultipliers || '{}')
+      } catch (err) {
+        console.warn('Hiba a piaci esemény szorzóinak parszolásakor:', err)
+      }
+    }
+
+    const batchId = randomUUID()
+    let totalBatchPayout = 0
+    const saleRecords = []
+
+    for (const item of validItems) {
+      const multiplier = typeof modifiers[item.shapeType] === 'number' ? modifiers[item.shapeType] : 1.0
+      const unitBasePrice = BASE_PRICES[item.shapeType] || 0
+      const finalUnitPrice = Math.round(unitBasePrice * multiplier)
+      const totalPayout = finalUnitPrice * item.quantity
+      totalBatchPayout += totalPayout
+
+      const record = await tx.bankSale.create({
+        data: {
+          sessionId,
+          teamId,
+          batchId,
+          shapeType: item.shapeType,
+          quantity: item.quantity,
+          unitBasePrice,
+          multiplier,
+          finalUnitPrice,
+          totalPayout,
+          qualityNotes: notes || null,
+          status: 'APPROVED',
+          submittedByName: deliveredByName || null,
+          submittedByUserId: deliveredByUserId || null,
+          approvedAt: new Date(),
+          soldAt: new Date(),
+        },
+      })
+      saleRecords.push(record)
+    }
+
+    const updatedTeam = await tx.sessionTeam.update({
+      where: { id: teamId },
+      data: {
+        cashBalance: { increment: totalBatchPayout },
+      },
+    })
+
+    return { saleRecords, totalBatchPayout, newBalance: updatedTeam.cashBalance }
+  })
+
+  safeRevalidatePath(`/play/${sessionId}`)
+  safeRevalidatePath(`/sessions/${sessionId}`)
+  return result
+}
+
+/**
+ * 3. Játékos Eladási Igény Leadása (Kétlépcsős Banki Eladás: PENDING)
+ */
+export async function submitBankSaleRequest(
+  sessionId: string,
+  teamId: string,
+  items: ShapeBatchItem[],
+  submittedByUserId?: string,
+  submittedByName?: string,
   notes?: string
 ) {
   const validItems = items.filter((it) => it.quantity > 0)
@@ -125,6 +224,7 @@ export async function executeBatchBankSale(
       }
     }
 
+    const batchId = randomUUID()
     let totalBatchPayout = 0
     const saleRecords = []
 
@@ -139,6 +239,7 @@ export async function executeBatchBankSale(
         data: {
           sessionId,
           teamId,
+          batchId,
           shapeType: item.shapeType,
           quantity: item.quantity,
           unitBasePrice,
@@ -146,20 +247,119 @@ export async function executeBatchBankSale(
           finalUnitPrice,
           totalPayout,
           qualityNotes: notes || null,
+          status: 'PENDING',
+          submittedByName: submittedByName || null,
+          submittedByUserId: submittedByUserId || null,
           soldAt: new Date(),
         },
       })
       saleRecords.push(record)
     }
 
-    const updatedTeam = await tx.sessionTeam.update({
-      where: { id: teamId },
-      data: {
-        cashBalance: { increment: totalBatchPayout },
+    return { saleRecords, batchId, totalBatchPayout }
+  })
+
+  safeRevalidatePath(`/play/${sessionId}`)
+  safeRevalidatePath(`/sessions/${sessionId}`)
+  return result
+}
+
+/**
+ * 4. Facilitátori Jóváhagyás & Kifizetés (Batch vagy egyedi tétel)
+ */
+export async function approveBankSaleRequest(
+  sessionId: string,
+  batchIdOrSaleId: string,
+  qualityNotes?: string
+) {
+  const result = await prisma.$transaction(async (tx) => {
+    const pendingSales = await tx.bankSale.findMany({
+      where: {
+        sessionId,
+        status: 'PENDING',
+        OR: [
+          { batchId: batchIdOrSaleId },
+          { id: batchIdOrSaleId },
+        ],
       },
     })
 
-    return { saleRecords, totalBatchPayout, newBalance: updatedTeam.cashBalance }
+    if (pendingSales.length === 0) {
+      throw new Error('Nem található jóváhagyásra váró leadás ezzel az azonosítóval.')
+    }
+
+    const teamId = pendingSales[0].teamId
+    const totalPayout = pendingSales.reduce((acc, sale) => acc + sale.totalPayout, 0)
+
+    await tx.bankSale.updateMany({
+      where: {
+        id: { in: pendingSales.map((s) => s.id) },
+      },
+      data: {
+        status: 'APPROVED',
+        approvedAt: new Date(),
+        ...(qualityNotes !== undefined ? { qualityNotes } : {}),
+      },
+    })
+
+    const updatedTeam = await tx.sessionTeam.update({
+      where: { id: teamId },
+      data: {
+        cashBalance: { increment: totalPayout },
+      },
+    })
+
+    return {
+      approvedCount: pendingSales.length,
+      totalPayout,
+      teamId,
+      newBalance: updatedTeam.cashBalance,
+    }
+  })
+
+  safeRevalidatePath(`/play/${sessionId}`)
+  safeRevalidatePath(`/sessions/${sessionId}`)
+  return result
+}
+
+/**
+ * 5. Facilitátori Elutasítás / Selejt (Pénz nem kerül kifizetésre)
+ */
+export async function rejectBankSaleRequest(
+  sessionId: string,
+  batchIdOrSaleId: string,
+  qualityNotes?: string
+) {
+  const result = await prisma.$transaction(async (tx) => {
+    const pendingSales = await tx.bankSale.findMany({
+      where: {
+        sessionId,
+        status: 'PENDING',
+        OR: [
+          { batchId: batchIdOrSaleId },
+          { id: batchIdOrSaleId },
+        ],
+      },
+    })
+
+    if (pendingSales.length === 0) {
+      throw new Error('Nem található jóváhagyásra váró leadás ezzel az azonosítóval.')
+    }
+
+    await tx.bankSale.updateMany({
+      where: {
+        id: { in: pendingSales.map((s) => s.id) },
+      },
+      data: {
+        status: 'REJECTED',
+        approvedAt: new Date(),
+        qualityNotes: qualityNotes || 'Selejt minőségileg elutasítva',
+      },
+    })
+
+    return {
+      rejectedCount: pendingSales.length,
+    }
   })
 
   safeRevalidatePath(`/play/${sessionId}`)

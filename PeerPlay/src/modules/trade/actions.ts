@@ -40,7 +40,9 @@ export async function createTradeOffer(
   receiverTeamId: string,
   offeredInput: Partial<ResourceBundle>,
   requestedInput: Partial<ResourceBundle>,
-  notes?: string
+  notes?: string,
+  createdByName?: string,
+  createdByUserId?: string
 ) {
   if (senderTeamId === receiverTeamId) {
     throw new Error('Saját csapatoddal nem kereskedhetsz.')
@@ -59,9 +61,9 @@ export async function createTradeOffer(
       select: { currentPhase: true, status: true }
     })
 
-    const activeTradingPhases = ['PHASE_4_ROUND_1', 'PHASE_6_ROUND_2', 'PHASE_8_ROUND_3']
-    if (!session || !activeTradingPhases.includes(session.currentPhase)) {
-      throw new Error('A kereskedés jelenleg szünetel vagy le van zárva ebben a fázisban.')
+    const closedPhases = ['PHASE_9_BANK_SETTLEMENT', 'PHASE_10_POST_SURVEY', 'PHASE_11_DEBRIEF', 'POST_WORKPLACE_ONA']
+    if (!session || closedPhases.includes(session.currentPhase)) {
+      throw new Error('A kereskedés már lezárult ebben a munkamenetben.')
     }
 
     const sender = await tx.sessionTeam.findUnique({
@@ -103,6 +105,8 @@ export async function createTradeOffer(
         sessionId,
         senderTeamId,
         receiverTeamId,
+        createdByName: createdByName || null,
+        createdByUserId: createdByUserId || null,
         offeredItems: JSON.stringify(offered),
         requestedItems: JSON.stringify(requested),
         escrowedItems: JSON.stringify(offered),
@@ -125,7 +129,13 @@ export const sendTradeOffer = createTradeOffer
 /**
  * 2. Ajánlat elfogadása és atomi készletcsere
  */
-export async function acceptTradeOffer(sessionId: string, tradeId: string, receiverTeamId: string) {
+export async function acceptTradeOffer(
+  sessionId: string,
+  tradeId: string,
+  receiverTeamId: string,
+  acceptedByName?: string,
+  acceptedByUserId?: string
+) {
   const result = await prisma.$transaction(async (tx) => {
     const trade = await tx.tradeTransaction.findUnique({
       where: { id: tradeId }
@@ -182,7 +192,9 @@ export async function acceptTradeOffer(sessionId: string, tradeId: string, recei
       where: { id: tradeId },
       data: {
         status: 'ACCEPTED',
-        resolvedAt: new Date()
+        resolvedAt: new Date(),
+        acceptedByName: acceptedByName || null,
+        acceptedByUserId: acceptedByUserId || null,
       }
     })
 

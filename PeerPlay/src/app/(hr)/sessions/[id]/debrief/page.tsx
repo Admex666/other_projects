@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { getSessionDetails } from '@/modules/session/actions'
+import { getProfileLabel } from '@/modules/session/constants'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
@@ -61,45 +62,31 @@ export default async function DebriefPage({ params }: { params: Promise<{ id: st
 
   const energyDelta = Math.round((postEnergyAvg - (preEnergyAvg || 6.0)) * 10) / 10
 
-  // 4. Trade matrix between the 4 teams
-  const tradeMatrix: Record<string, Record<string, number>> = {}
-  session.teams.forEach((t1) => {
-    tradeMatrix[t1.name] = {}
-    session.teams.forEach((t2) => {
-      tradeMatrix[t1.name][t2.name] = 0
-    })
-  })
-
-  session.tradeTransactions.forEach((t) => {
-    if (t.status === 'ACCEPTED') {
-      const sender = session.teams.find((tm) => tm.id === t.senderTeamId)?.name
-      const receiver = session.teams.find((tm) => tm.id === t.receiverTeamId)?.name
-      if (sender && receiver && tradeMatrix[sender]) {
-        tradeMatrix[sender][receiver] = (tradeMatrix[sender][receiver] || 0) + 1
-      }
-    }
-  })
+  const team0 = session.teams[0]
+  const team1 = session.teams[1]
+  const team2 = session.teams[2]
+  const team3 = session.teams[3]
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-6 md:p-10 select-none">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Debrief Top Header (Kivetítő Kiemelés) */}
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 sm:p-8 select-none">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Top Header */}
+        <header className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-slate-200">
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">
-                S-FAC-05 Helyszíni Debrief Nézet (Kivetítő)
+                Helyszíni Eredményhirdetés Nézet (Kivetítő)
               </span>
               <span className="text-xs font-mono text-slate-500">
-                Munkamenet: {session.name} ({session.joinCode})
+                Munkamenet: {session.name} (PIN: {session.joinCode})
               </span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
-              The Trading Game · Eredményhirdetés & Hálózati Reflexió
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+              Eredményhirdetés &amp; Hálózati Értékelés
             </h1>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <div className="text-right">
               <span className="text-xs font-mono uppercase text-slate-400 font-semibold block">
                 Összes Banki Termelés
@@ -111,15 +98,15 @@ export default async function DebriefPage({ params }: { params: Promise<{ id: st
             <div className="h-8 w-px bg-slate-200 hidden md:block"></div>
             <div className="text-right">
               <span className="text-xs font-mono uppercase text-slate-400 font-semibold block">
-                Sikeres P2P Üzletek
+                Sikeres Csapatközi Üzletek
               </span>
               <span className="text-2xl font-mono font-black text-blue-600 tabular-nums">
-                {totalTradesCount} tranzakció
+                {totalTradesCount} ügylet
               </span>
             </div>
             <Link
               href={`/sessions/${session.id}`}
-              className="ml-2 px-3 py-1.5 border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold"
+              className="px-3 py-1.5 border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold"
             >
               Vissza a Konzolhoz
             </Link>
@@ -169,9 +156,6 @@ export default async function DebriefPage({ params }: { params: Promise<{ id: st
                           <div className="text-sm font-bold text-slate-900 truncate max-w-[150px]">
                             {team.name}
                           </div>
-                          <span className="text-[10px] font-mono text-slate-400 uppercase">
-                            {team.profileCode}
-                          </span>
                         </div>
                       </div>
 
@@ -203,10 +187,10 @@ export default async function DebriefPage({ params }: { params: Promise<{ id: st
                 2. Zóna
               </span>
               <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                Kereskedelmi Hálózati Topológia
+                Kereskedelmi Hálózati Térkép
               </h2>
               <p className="text-xs text-slate-500">
-                P2P csereügyletek és vállalatközi szövetségek mintázata
+                Csapatközi csereügyletek és vállalatközi szövetségek mintázata
               </p>
             </div>
 
@@ -215,45 +199,44 @@ export default async function DebriefPage({ params }: { params: Promise<{ id: st
               <div className="relative w-full max-w-[340px] h-[240px]">
                 {/* SVG connection lines */}
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 340 240">
-                  {/* Top-left to Top-right */}
                   <line x1="70" y1="50" x2="270" y2="50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4" />
-                  {/* Top-left to Bottom-left */}
                   <line x1="70" y1="50" x2="70" y2="190" stroke="#2563eb" strokeWidth="3" />
-                  {/* Top-right to Bottom-right */}
                   <line x1="270" y1="50" x2="270" y2="190" stroke="#059669" strokeWidth="3" />
-                  {/* Bottom-left to Bottom-right */}
                   <line x1="70" y1="190" x2="270" y2="190" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4" />
-                  {/* Cross diagonals */}
                   <line x1="70" y1="50" x2="270" y2="190" stroke="#2563eb" strokeWidth="2.5" />
                   <line x1="270" y1="50" x2="70" y2="190" stroke="#d97706" strokeWidth="2" />
                 </svg>
 
-                {/* Node 1: Alpha Corp (Top Left) */}
+                {/* Node 1 (Top Left) */}
                 <div className="absolute top-2 left-2 flex flex-col items-center bg-white border border-slate-300 rounded-lg p-2 shadow-xs text-center w-28">
                   <span className="w-3 h-3 rounded-full bg-blue-600 mb-1"></span>
-                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">Alpha Corp</span>
-                  <span className="text-[9px] font-mono text-slate-400">Tőkeerős</span>
+                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">
+                    {team0?.name || 'Alfa Vállalat'}
+                  </span>
                 </div>
 
-                {/* Node 2: Beta Industries (Top Right) */}
+                {/* Node 2 (Top Right) */}
                 <div className="absolute top-2 right-2 flex flex-col items-center bg-white border border-slate-300 rounded-lg p-2 shadow-xs text-center w-28">
                   <span className="w-3 h-3 rounded-full bg-emerald-600 mb-1"></span>
-                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">Beta Ind.</span>
-                  <span className="text-[9px] font-mono text-slate-400">Tech Bajnok</span>
+                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">
+                    {team1?.name || 'Béta Vállalat'}
+                  </span>
                 </div>
 
-                {/* Node 3: Gamma Resources (Bottom Left) */}
+                {/* Node 3 (Bottom Left) */}
                 <div className="absolute bottom-2 left-2 flex flex-col items-center bg-white border border-slate-300 rounded-lg p-2 shadow-xs text-center w-28">
                   <span className="w-3 h-3 rounded-full bg-amber-600 mb-1"></span>
-                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">Gamma Res.</span>
-                  <span className="text-[9px] font-mono text-slate-400">Nyersanyag</span>
+                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">
+                    {team2?.name || 'Gamma Vállalat'}
+                  </span>
                 </div>
 
-                {/* Node 4: Delta Ventures (Bottom Right) */}
+                {/* Node 4 (Bottom Right) */}
                 <div className="absolute bottom-2 right-2 flex flex-col items-center bg-white border border-slate-300 rounded-lg p-2 shadow-xs text-center w-28">
                   <span className="w-3 h-3 rounded-full bg-purple-600 mb-1"></span>
-                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">Delta Vent.</span>
-                  <span className="text-[9px] font-mono text-slate-400">Start-up</span>
+                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">
+                    {team3?.name || 'Delta Vállalat'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -261,7 +244,7 @@ export default async function DebriefPage({ params }: { params: Promise<{ id: st
             <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-500 pt-2 border-t border-slate-100">
               <div className="flex items-center gap-1.5">
                 <span className="w-3 h-0.5 bg-blue-600 inline-block"></span>
-                <span>Kétoldalú csereügylet (Reciprocitás)</span>
+                <span>Kétoldalú csereügylet</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-3 h-0.5 border-t border-dashed border-slate-400 inline-block"></span>
@@ -277,10 +260,10 @@ export default async function DebriefPage({ params }: { params: Promise<{ id: st
                 3. Zóna
               </span>
               <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                Energia & Élmény Delta
+                Energia &amp; Élmény Változás
               </h2>
               <p className="text-xs text-slate-500">
-                Pre vs Post felmérések átlaga
+                Kezdő és záró felmérések átlaga
               </p>
             </div>
 
@@ -322,11 +305,11 @@ export default async function DebriefPage({ params }: { params: Promise<{ id: st
                 Kitöltési Statisztikák
               </span>
               <div className="flex justify-between items-center text-xs font-mono">
-                <span className="text-slate-500">Pre-Game Pulse:</span>
+                <span className="text-slate-500">Kezdő felmérés:</span>
                 <span className="font-bold text-slate-800">{preSurveys.length} válasz</span>
               </div>
               <div className="flex justify-between items-center text-xs font-mono">
-                <span className="text-slate-500">Post-Game Peer:</span>
+                <span className="text-slate-500">Záró értékelés:</span>
                 <span className="font-bold text-slate-800">{postSurveys.length} válasz</span>
               </div>
             </div>
@@ -343,13 +326,13 @@ export default async function DebriefPage({ params }: { params: Promise<{ id: st
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium">
-              1. <em>„Hogyan alakult ki a függőség a nyersanyagot birtokló Gamma Resources körül a szimuláció elején?”</em>
+              1. <em>„Hogyan alakult ki a függőség a nyersanyagot birtokló vállalat körül a szimuláció elején?”</em>
             </div>
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium">
-              2. <em>„Miért tudott a technológiai dominanciájú Beta Industries prémium árat kérni a sablonjai bérletéért?”</em>
+              2. <em>„Miért tudott a technológiai dominanciájú vállalat felárat kérni a sablonjai bérletéért?”</em>
             </div>
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium">
-              3. <em>„Milyen párhuzamot láttok a játékbeli tárgyalások és a mindennapi munkahelyi együttműködés (silók) között?”</em>
+              3. <em>„Milyen párhuzamot láttok a játékbeli tárgyalások és a mindennapi munkahelyi együttműködés között?”</em>
             </div>
           </div>
         </div>
