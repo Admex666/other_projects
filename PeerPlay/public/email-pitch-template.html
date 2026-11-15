@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PeerPlay — B2B Vezetői Megkeresés Sablon</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background-color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #0f172a;
+      line-height: 1.6;
+    }
+    .email-container {
+      max-width: 620px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .email-header {
+      padding: 24px 32px 16px 32px;
+      border-bottom: 1px solid #f1f5f9;
+      background: #fafafa;
+    }
+    .subject-line {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    .subject-title {
+      font-weight: 800;
+      color: #0f172a;
+      font-size: 16px;
+    }
+    .email-body {
+      padding: 32px;
+      font-size: 15px;
+      color: #334155;
+    }
+    p {
+      margin: 0 0 16px 0;
+    }
+    .highlight-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #0f172a;
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .highlight-card strong {
+      color: #0f172a;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .highlight-card ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .highlight-card li {
+      margin-bottom: 6px;
+    }
+    .mockup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .mockup-card {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .mockup-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .tag-blue { background: #dbeafe; color: #1e40af; }
+    .tag-purple { background: #ede9fe; color: #6b21a8; }
+    .mockup-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .mockup-img-placeholder {
+      background: #f1f5f9;
+      border: 1px dashed #94a3b8;
+      border-radius: 6px;
+      padding: 20px 10px;
+      font-size: 11px;
+      color: #64748b;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .proposal-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: #166534;
+    }
+    .proposal-box strong {
+      color: #14532d;
+      font-size: 15px;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .action-cta {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 18px 20px;
+      border-radius: 8px;
+      margin: 24px 0;
+      text-align: center;
+    }
+    .action-cta-text {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .action-cta-sub {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    .signature {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 14px;
+      color: #64748b;
+    }
+    .signature strong {
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="email-container">
+    <div class="email-header">
+      <div class="subject-line">Tárgymező javaslat:</div>
+      <div class="subject-title">Alternatíva a hagyományos csapatépítőkre: valós hálózatelemzés (ONA) / [Cégnév]</div>
+    </div>
+
+    <div class="email-body">
+      <p>Kedves <strong>[Keresztnév]</strong>!</p>
+
+      <p>
+        A legtöbb szervezetnél a csapatépítőkre költött büdzsé után ritkán marad mérhető eredmény: a munkatársak jól érzik magukat, de a hétfői valóságban a részlegek közötti silók (pl. Pénzügy, Értékesítés, Gyártás súrlódásai) változatlanul fennmaradnak.
+      </p>
+
+      <p>
+        Egy olyan <strong>hibrid szimulációs keretrendszeren (Trading Game)</strong> dolgozunk, amely a 90 perces intenzív kereskedelmi játékélmény mellett egy azonnali, adatvezérelt vezetői diagnosztikát ad a menedzsment kezébe.
+      </p>
+
+      <div class="highlight-card">
+        <strong>Mit mutat meg a rendszer egyetlen délelőtt alatt?</strong>
+        <ul>
+          <li><strong>Szervezeti hálózati térkép (ONA):</strong> Objektíven kirajzolja, mely valós osztályok között akadt el a kommunikáció a döntéshozatal során.</li>
+          <li><strong>Informális közvetítők (Brokerek):</strong> Név szerint azonosítja azokat a kulcsembereket, akik természetes hidat képeznek a részlegek között.</li>
+          <li><strong>Energiaszint és elköteleződés:</strong> Számszerűsíti a csapatok mentális energiamozgását (&Delta; Energia) a workshop előtt és után.</li>
+        </ul>
+      </div>
+
+      <!-- Vizuális Mockupok (2 Kép) -->
+      <div class="mockup-grid">
+        <div class="mockup-card">
+          <span class="mockup-tag tag-blue">Munkavállalói Élmény</span>
+          <div class="mockup-title">Mobil Kísérő (No-Paper)</div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; margin-top: 6px;">
+            <img src="/images/mockup_mobile_hud.png" alt="PeerPlay Mobil Kísérő Felület" style="width: 100%; height: auto; display: block; border-radius: 6px;" />
+          </div>
+          <div style="font-size: 11px; color: #64748b; margin-top: 8px;">Valós idejű egyenleg, csere és 1 érintéses kérdőív</div>
+        </div>
+
+        <div class="mockup-card">
+          <span class="mockup-tag tag-purple">Vezetői Diagnosztika</span>
+          <div class="mockup-title">Hálózati Térkép (ONA)</div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; margin-top: 6px;">
+            <img src="/images/mockup_ona_network.png" alt="PeerPlay ONA Hálózati Térkép" style="width: 100%; height: auto; display: block; border-radius: 6px;" />
+          </div>
+          <div style="font-size: 11px; color: #64748b; margin-top: 8px;">Kapcsolatok a valós osztályok színei szerint</div>
+        </div>
+      </div>
+
+      <div class="proposal-box">
+        <strong>Miért kereslek most?</strong>
+        Nem dobozos szoftvert szeretnénk értékesíteni. A módszertan készen áll, és jelenleg <strong>2 hazai vállalatot választunk ki zárt pilot programunkhoz</strong>, ahol egy 8–16 fős csapaton (vagy keresztfunkcionális vezetői körön) önköltségi áron levezetjük a műhelyt, és átadjuk a teljes vezetői diagnosztikai elemzést egy szakmai esettanulmányért cserébe.
+      </div>
+
+      <div class="action-cta">
+        <div class="action-cta-text">Lenne értelme átküldenem a szimulált adatokból generált 2 oldalas vezetői mintariportot?</div>
+        <div class="action-cta-sub">Ha igen, egy rövid válaszlevélben szívesen megosztom a PDF összefoglalót.</div>
+      </div>
+
+      <div class="signature">
+        Üdvözlettel,<br><br>
+        <strong>[Neved]</strong><br>
+        Alapító · PeerPlay Szervezetfejlesztési Rendszer<br>
+        <span style="font-size: 12px; color: #94a3b8;">[Telefonszámod] · [Email címed] · [LinkedIn profilod]</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
