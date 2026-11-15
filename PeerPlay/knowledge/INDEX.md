@@ -36,6 +36,7 @@ Reusable operational insights, debugging solutions, and edge-case recoveries.
 - [escrow_and_survey_contract_patterns.md](file:///E:/Data/other_projects/PeerPlay/knowledge/learnings/escrow_and_survey_contract_patterns.md) — Architectural patterns for Immediate Escrow reservation, survey scale alignment, batch inspection, and $k$-anonymity.
 - [mobile_tunnel_and_realtime_sync.md](file:///C:/Users/Adam/Data/other_projects/PeerPlay/knowledge/learnings/mobile_tunnel_and_realtime_sync.md) — **Hungarian UI Terminology, Responsive Flex-Wrap Layouts, 2s No-Store Real-Time Phase Synchronization & Mobile Progressive Enhancement**.
 - [mobile_companion_hud_touch_and_input_patterns.md](file:///C:/Users/Adam/Data/other_projects/PeerPlay/knowledge/learnings/mobile_companion_hud_touch_and_input_patterns.md) — **Mobile Companion HUD Touch Target Sizing, Direct Numeric Inputs, and Pre/Post-Hydration Submit State Unlocking**.
+- [ona_and_economic_analytics_patterns.md](file:///C:/Users/Adam/Data/other_projects/PeerPlay/knowledge/learnings/ona_and_economic_analytics_patterns.md) — **ONA and Economic Analytics Patterns for Trading Game Debrief**: Centrality, brokerage roles, bank dependency, and shock elasticity.
 
 ### 5. Context Layer (`context/`)
 High-level overview and terminology.

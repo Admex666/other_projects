@@ -180,6 +180,12 @@ export default function MobileCompanionHUD({
       setRequested(preRequested)
     }
 
+    if (userId) {
+      try {
+        localStorage.setItem(`peerplay_userId_${sessionId}`, userId)
+      } catch {}
+    }
+
     const onTabEvent = (e: Event) => {
       const detail = (e as CustomEvent).detail
       if (detail === 'trade' || detail === 'bank') {
@@ -188,11 +194,17 @@ export default function MobileCompanionHUD({
     }
     window.addEventListener('hud-tab-change', onTabEvent)
 
+    const onTeamUpdate = () => {
+      onMutate?.()
+    }
+    window.addEventListener('hud-team-update', onTeamUpdate)
+
     return () => {
       ;(window as any).__reactHydratedHud = false
       window.removeEventListener('hud-tab-change', onTabEvent)
+      window.removeEventListener('hud-team-update', onTeamUpdate)
     }
-  }, [])
+  }, [sessionId, userId, onMutate])
 
   useEffect(() => {
     if (!targetTeamId && otherTeams.length > 0) {
@@ -546,6 +558,8 @@ export default function MobileCompanionHUD({
     <div
       id="mobile-companion-hud-root"
       data-active-tab={activeTab}
+      data-session-id={sessionId}
+      data-team-id={myTeam.id}
       className="space-y-4 font-sans select-none"
     >
       {/* Active Market Event Alert Banner */}
@@ -583,7 +597,7 @@ export default function MobileCompanionHUD({
             <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">
               Készpénz
             </span>
-            <span className="text-2xl font-mono font-black text-emerald-400">
+            <span id="hud-team-cash" className="text-2xl font-mono font-black text-emerald-400">
               ${myTeam.cashBalance}
             </span>
           </div>
@@ -593,25 +607,25 @@ export default function MobileCompanionHUD({
         <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-slate-800 text-center font-mono">
           <div className="bg-slate-800/80 rounded-lg p-1.5">
             <span className="text-[9px] uppercase text-slate-400 block">Papír</span>
-            <span className="text-xs font-bold text-slate-100">
+            <span id="hud-team-paper" className="text-xs font-bold text-slate-100">
               {myTeam.paperSheets}
             </span>
           </div>
           <div className="bg-slate-800/80 rounded-lg p-1.5">
             <span className="text-[9px] uppercase text-slate-400 block">Olló</span>
-            <span className="text-xs font-bold text-slate-100">
+            <span id="hud-team-scissors" className="text-xs font-bold text-slate-100">
               {myTeam.scissorsCount}
             </span>
           </div>
           <div className="bg-slate-800/80 rounded-lg p-1.5">
             <span className="text-[9px] uppercase text-slate-400 block">Vonalzó</span>
-            <span className="text-xs font-bold text-slate-100">
+            <span id="hud-team-rulers" className="text-xs font-bold text-slate-100">
               {myTeam.rulersCount}
             </span>
           </div>
           <div className="bg-slate-800/80 rounded-lg p-1.5">
             <span className="text-[9px] uppercase text-slate-400 block">Sablon</span>
-            <span className="text-xs font-bold text-slate-100">
+            <span id="hud-team-templates" className="text-xs font-bold text-slate-100">
               {myTeam.templatesCount}
             </span>
           </div>
@@ -1768,6 +1782,44 @@ export default function MobileCompanionHUD({
       return;
     }
   });
+
+  // Guaranteed 2s background auto-update for inventory & balances (Zero Manual Reload)
+  setInterval(function(){
+    var root = document.getElementById('mobile-companion-hud-root');
+    var sId = root ? root.getAttribute('data-session-id') : null;
+    var tId = root ? root.getAttribute('data-team-id') : null;
+    if (!sId || !tId) return;
+
+    fetch('/api/session/' + encodeURIComponent(sId) + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if (!data || !data.teams) return;
+        var myT = null;
+        for (var i = 0; i < data.teams.length; i++) {
+          if (data.teams[i].id === tId) {
+            myT = data.teams[i];
+            break;
+          }
+        }
+        if (!myT) return;
+
+        var elCash = document.getElementById('hud-team-cash');
+        if (elCash && myT.cashBalance != null) elCash.textContent = '$' + myT.cashBalance;
+        var elPaper = document.getElementById('hud-team-paper');
+        if (elPaper && myT.paperSheets != null) elPaper.textContent = String(myT.paperSheets);
+        var elScissors = document.getElementById('hud-team-scissors');
+        if (elScissors && myT.scissorsCount != null) elScissors.textContent = String(myT.scissorsCount);
+        var elRulers = document.getElementById('hud-team-rulers');
+        if (elRulers && myT.rulersCount != null) elRulers.textContent = String(myT.rulersCount);
+        var elTemplates = document.getElementById('hud-team-templates');
+        if (elTemplates && myT.templatesCount != null) elTemplates.textContent = String(myT.templatesCount);
+
+        try {
+          window.dispatchEvent(new CustomEvent('hud-team-update', { detail: myT }));
+        } catch(e){}
+      })
+      .catch(function(){});
+  }, 2000);
 })();
           `,
         }}

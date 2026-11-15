@@ -7,6 +7,7 @@ import PhaseControlHeroTimer from '@/components/facilitator/PhaseControlHeroTime
 import BankIntakeDesk from '@/components/facilitator/BankIntakeDesk'
 import MarketEventsDispatcher from '@/components/facilitator/MarketEventsDispatcher'
 import LiveLeaderboard from '@/components/facilitator/LiveLeaderboard'
+import TradeNetworkMap from '@/components/analytics/TradeNetworkMap'
 
 const fetcher = async (id: string) => {
   const res = await fetch(`/api/session/${encodeURIComponent(id)}?t=${Date.now()}`, {
@@ -24,7 +25,7 @@ export default function SessionDetailClient({ initialSessionData }: { initialSes
     revalidateOnFocus: true,
   })
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'bank' | 'market' | 'leaderboard'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'bank' | 'market' | 'leaderboard' | 'network'>('overview')
 
   if (!session) {
     return (
@@ -135,6 +136,21 @@ export default function SessionDetailClient({ initialSessionData }: { initialSes
           >
             Rangsor
           </button>
+          <button
+            onClick={() => setActiveTab('network')}
+            className={`py-2 px-3 text-xs font-bold border-b-2 transition cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'network'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <span>Kereskedelmi Térkép</span>
+            {session.tradeTransactions?.length > 0 && (
+              <span className="font-mono text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.2 rounded-full">
+                {session.tradeTransactions.filter((t: any) => t.status === 'ACCEPTED').length}
+              </span>
+            )}
+          </button>
         </div>
       </header>
 
@@ -176,6 +192,27 @@ export default function SessionDetailClient({ initialSessionData }: { initialSes
 
         {activeTab === 'leaderboard' && (
           <LiveLeaderboard teams={session.teams || []} />
+        )}
+
+        {activeTab === 'network' && (
+          <div className="theme-card p-4 sm:p-6 space-y-4">
+            <div>
+              <h3 className="text-base font-extrabold text-slate-900 tracking-tight">
+                Élő Kereskedelmi Hálózati Térkép &amp; Központi Bank
+              </h3>
+              <p className="text-xs text-slate-500">
+                Csapatok közötti valós idejű csereügyletek és Központi Banki termékértékesítések topológiája
+              </p>
+            </div>
+            <TradeNetworkMap
+              teams={session.teams || []}
+              tradeTransactions={session.tradeTransactions || []}
+              bankSales={session.bankSales || []}
+              surveyResponses={session.surveyResponses || []}
+              allowIndividualView={true}
+              initialView="macro"
+            />
+          </div>
         )}
       </main>
     </div>

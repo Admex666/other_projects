@@ -36,8 +36,38 @@ export default function SurveyPageClient({
     revalidateOnMount: true,
   })
 
+  const [currentUserId, setCurrentUserId] = useState<string>(initialUserId || '')
   const [hasPreGame, setHasPreGame] = useState(initialPreGameSubmitted)
   const [hasPostGame, setHasPostGame] = useState(initialPostGameSubmitted)
+
+  // Recover userId from localStorage if missing in URL query params
+  useEffect(() => {
+    const storageKey = `peerplay_userId_${sessionId}`
+    if (initialUserId) {
+      localStorage.setItem(storageKey, initialUserId)
+      setCurrentUserId(initialUserId)
+    } else {
+      const stored = localStorage.getItem(storageKey)
+      if (stored) {
+        setCurrentUserId(stored)
+        try {
+          const url = new URL(window.location.href)
+          if (!url.searchParams.get('userId')) {
+            url.searchParams.set('userId', stored)
+            window.history.replaceState({}, '', url.toString())
+          }
+        } catch {}
+      }
+    }
+  }, [sessionId, initialUserId])
+
+  // Explicit 2s interval poller for guaranteed Zero Manual Reload
+  useEffect(() => {
+    const timer = setInterval(() => {
+      mutate()
+    }, 2000)
+    return () => clearInterval(timer)
+  }, [mutate])
 
   // Mark window as hydrated so pre-hydration script knows SWR is active
   useEffect(() => {
@@ -53,19 +83,20 @@ export default function SurveyPageClient({
   }
 
   // Also check live surveyResponses from session data
+  const effectiveUserId = currentUserId || initialUserId || ''
   const serverPreSubmitted = Boolean(
-    initialUserId &&
+    effectiveUserId &&
       session.surveyResponses?.some(
         (r: any) =>
-          (r.userId === initialUserId || r.respondentUserId === initialUserId) &&
+          (r.userId === effectiveUserId || r.respondentUserId === effectiveUserId) &&
           r.phaseType === 'PRE_GAME'
       )
   )
   const serverPostSubmitted = Boolean(
-    initialUserId &&
+    effectiveUserId &&
       session.surveyResponses?.some(
         (r: any) =>
-          (r.userId === initialUserId || r.respondentUserId === initialUserId) &&
+          (r.userId === effectiveUserId || r.respondentUserId === effectiveUserId) &&
           r.phaseType === 'POST_GAME'
       )
   )
@@ -86,7 +117,9 @@ export default function SurveyPageClient({
         teamId: t.id,
         teamName: t.name,
       })
-      if (p.user?.id === initialUserId || p.userId === initialUserId) {
+      if (
+        (effectiveUserId && (p.user?.id === effectiveUserId || p.userId === effectiveUserId))
+      ) {
         participant = p
         userTeam = t
       }
@@ -166,7 +199,7 @@ export default function SurveyPageClient({
           ) : isPostSurveyPhase ? (
             <PostGamePeerFeedbackForm
               sessionId={session.id}
-              userId={initialUserId || ''}
+              userId={effectiveUserId}
               myTeamId={defaultTeam.id}
               allParticipants={allParticipantsList}
               onSubmitted={() => {
@@ -177,7 +210,7 @@ export default function SurveyPageClient({
           ) : isPreSurveyPhase && !effectiveHasPreGame ? (
             <PreGamePulseForm
               sessionId={session.id}
-              userId={initialUserId || ''}
+              userId={effectiveUserId}
               onSubmitted={() => {
                 setHasPreGame(true)
                 mutate()
@@ -186,7 +219,7 @@ export default function SurveyPageClient({
           ) : (
             <MobileCompanionHUD
               sessionId={session.id}
-              userId={initialUserId || ''}
+              userId={effectiveUserId}
               userName={participant?.user?.name || 'Játékos'}
               myTeam={defaultTeam}
               allTeams={session.teams || []}

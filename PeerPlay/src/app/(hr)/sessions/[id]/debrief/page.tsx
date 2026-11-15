@@ -4,6 +4,7 @@ import { getSessionDetails } from '@/modules/session/actions'
 import { getProfileLabel } from '@/modules/session/constants'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import TradeNetworkMap from '@/components/analytics/TradeNetworkMap'
 
 export default async function DebriefPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -180,7 +181,7 @@ export default async function DebriefPage({ params }: { params: Promise<{ id: st
             </div>
           </div>
 
-          {/* Zone 2: Sociogram / Network Topology (5 cols) */}
+          {/* Zone 2: Sociogram / Network Topology with Central Bank (5 cols) */}
           <div className="lg:col-span-5 theme-card p-6 space-y-4 flex flex-col justify-between">
             <div>
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 block">
@@ -190,67 +191,18 @@ export default async function DebriefPage({ params }: { params: Promise<{ id: st
                 Kereskedelmi Hálózati Térkép
               </h2>
               <p className="text-xs text-slate-500">
-                Csapatközi csereügyletek és vállalatközi szövetségek mintázata
+                Csapatközi csereügyletek és Központi Banki értékesítések topológiája
               </p>
             </div>
 
-            {/* SVG Visual Network of the 4 Teams */}
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center my-2 min-h-[300px]">
-              <div className="relative w-full max-w-[340px] h-[240px]">
-                {/* SVG connection lines */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 340 240">
-                  <line x1="70" y1="50" x2="270" y2="50" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4" />
-                  <line x1="70" y1="50" x2="70" y2="190" stroke="#2563eb" strokeWidth="3" />
-                  <line x1="270" y1="50" x2="270" y2="190" stroke="#059669" strokeWidth="3" />
-                  <line x1="70" y1="190" x2="270" y2="190" stroke="#94a3b8" strokeWidth="2" strokeDasharray="4" />
-                  <line x1="70" y1="50" x2="270" y2="190" stroke="#2563eb" strokeWidth="2.5" />
-                  <line x1="270" y1="50" x2="70" y2="190" stroke="#d97706" strokeWidth="2" />
-                </svg>
-
-                {/* Node 1 (Top Left) */}
-                <div className="absolute top-2 left-2 flex flex-col items-center bg-white border border-slate-300 rounded-lg p-2 shadow-xs text-center w-28">
-                  <span className="w-3 h-3 rounded-full bg-blue-600 mb-1"></span>
-                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">
-                    {team0?.name || 'Alfa Vállalat'}
-                  </span>
-                </div>
-
-                {/* Node 2 (Top Right) */}
-                <div className="absolute top-2 right-2 flex flex-col items-center bg-white border border-slate-300 rounded-lg p-2 shadow-xs text-center w-28">
-                  <span className="w-3 h-3 rounded-full bg-emerald-600 mb-1"></span>
-                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">
-                    {team1?.name || 'Béta Vállalat'}
-                  </span>
-                </div>
-
-                {/* Node 3 (Bottom Left) */}
-                <div className="absolute bottom-2 left-2 flex flex-col items-center bg-white border border-slate-300 rounded-lg p-2 shadow-xs text-center w-28">
-                  <span className="w-3 h-3 rounded-full bg-amber-600 mb-1"></span>
-                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">
-                    {team2?.name || 'Gamma Vállalat'}
-                  </span>
-                </div>
-
-                {/* Node 4 (Bottom Right) */}
-                <div className="absolute bottom-2 right-2 flex flex-col items-center bg-white border border-slate-300 rounded-lg p-2 shadow-xs text-center w-28">
-                  <span className="w-3 h-3 rounded-full bg-purple-600 mb-1"></span>
-                  <span className="text-[11px] font-bold text-slate-900 truncate max-w-[100px]">
-                    {team3?.name || 'Delta Vállalat'}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-500 pt-2 border-t border-slate-100">
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 bg-blue-600 inline-block"></span>
-                <span>Kétoldalú csereügylet</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 border-t border-dashed border-slate-400 inline-block"></span>
-                <span>Egyoldalú szállítás</span>
-              </div>
-            </div>
+            <TradeNetworkMap
+              teams={session.teams || []}
+              tradeTransactions={session.tradeTransactions || []}
+              bankSales={session.bankSales || []}
+              surveyResponses={session.surveyResponses || []}
+              allowIndividualView={true}
+              initialView="macro"
+            />
           </div>
 
           {/* Zone 3: Experience & Energy Dynamics (3 cols) */}

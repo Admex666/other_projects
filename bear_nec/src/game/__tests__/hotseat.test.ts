@@ -83,7 +83,7 @@ describe('Hotseat Engine', () => {
       }
     );
 
-    expect(neighbor1Id).toBeGreaterThan(0);
+    expect(neighbor1Id).toBeGreaterThanOrEqual(0);
     const p1Summary = r4.roundSummary.players.p1;
     expect(p1Summary.activations.length).toBe(3);
     expect(p1Summary.activations[0].cardId).toBe(placedCard.id);

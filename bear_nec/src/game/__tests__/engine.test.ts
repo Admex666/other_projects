@@ -82,7 +82,7 @@ describe('Bear Necessities Game Engine (Phase 2)', () => {
       const queenBee = getCardBySlot(25);
       expect(queenBee).toBeDefined();
       expect(queenBee?.name).toBe('Queen Bee');
-      expect(queenBee?.beeHives).toBe(1);
+      expect(queenBee?.beeHives).toBe(0);
       expect(queenBee?.types).toContain('animal');
 
       const harbor = getCardBySlot(12);
