@@ -8,7 +8,7 @@ const { handleFoxpostCreation } = require('../lib/admin/foxpost');
 const { handleGetLeadsData, handleSendLeadsEmail } = require('../lib/admin/leads-email');
 const { handleFinanceData, handleRevolutUpload, getCreativeCsvData } = require('../lib/admin/finance');
 const { handleAiAssistant } = require('../lib/admin/ai-assistant');
-const { fetchFacebookOrganicPosts, CACHE_FILE_PATH } = require('../scripts/fetch_facebook_organic');
+const { fetchFacebookOrganicPosts, CACHE_FILE_PATH } = require('../lib/admin/fetch_facebook_organic');
 const { getKiteroFunnelData } = require('../lib/admin/kitero-funnel');
 const { handleKpiDigest } = require('../lib/admin/kpi-digest');
 
