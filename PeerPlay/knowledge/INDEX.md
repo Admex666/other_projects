@@ -13,7 +13,8 @@ Agents must consult this map before making architectural assumptions.
 
 ### 1. Facts (`knowledge/facts/`)
 Canonical truth, runtime configuration, data sources, endpoints, ports, schemas.
-- [screens_specification.md](file:///E:/Data/other_projects/PeerPlay/knowledge/facts/screens_specification.md) — **UI & Screen Architecture Specification** (14 screens across 4 suites: Facilitator, Team Station, Player Mobile, Workplace ONA & Debrief, Stripe Enterprise 1A system).
+- [current_system_state_and_b2b_validation.md](file:///C:/Users/Adam/Data/other_projects/PeerPlay/knowledge/facts/current_system_state_and_b2b_validation.md) — **Faktuális Rendszerállapot & B2B Validációs Architektúra (2026-11-17)**: PeerPlay koncepció, ONA szociometria, reprodukálható szimuláció, PDF mintariport és lead motor.
+- [screens_specification.md](file:///C:/Users/Adam/Data/other_projects/PeerPlay/knowledge/facts/screens_specification.md) — **UI & Screen Architecture Specification** (14 screens across 4 suites: Facilitator, Team Station, Player Mobile, Workplace ONA & Debrief, Stripe Enterprise 1A system).
 - [backend_contracts_and_state_machine.md](file:///E:/Data/other_projects/PeerPlay/knowledge/facts/backend_contracts_and_state_machine.md) — **Backend Contracts, State Machine & ACID Transaction Engine** (11 workshop phases, P2P Escrow locking, Bank commodity sales, Survey & ONA engine, Prisma schema).
 - [qa_specifications_audit_report.md](file:///E:/Data/other_projects/PeerPlay/knowledge/facts/qa_specifications_audit_report.md) — **QA & Architectural Audit Report** for UI and Backend Specifications.
 - [qa_milestone2_audit_report.md](file:///E:/Data/other_projects/PeerPlay/knowledge/facts/qa_milestone2_audit_report.md) — **Milestone 2 Frontend QA & Validation Report** (Pages, Server Actions, Design System, Zero Emoji).
