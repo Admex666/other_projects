@@ -18,6 +18,8 @@ ACCOUNTS_YAML_PATH = BASE_DIR / "accounts.yaml"
 
 
 class AppSettings(BaseModel):
+    gemini_api_key: str = Field(default_factory=lambda: os.getenv("GEMINI_API_KEY", ""))
+    gemini_model: str = Field(default_factory=lambda: os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite"))
     groq_api_key: str = Field(default_factory=lambda: os.getenv("GROQ_API_KEY", ""))
     groq_model: str = Field(default_factory=lambda: os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"))
     pushbullet_access_token: str = Field(default_factory=lambda: os.getenv("PUSHBULLET_ACCESS_TOKEN", ""))

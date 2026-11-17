@@ -12,7 +12,7 @@ if sys.platform == "win32":
         pass
 
 from src.config import get_settings, load_accounts, ACCOUNTS_YAML_PATH, BASE_DIR
-from src.analyzer.groq_analyzer import GroqEmailAnalyzer
+from src.analyzer.gemini_analyzer import GeminiEmailAnalyzer
 from src.fetchers.imap_fetcher import ImapEmailFetcher
 from src.fetchers.graph_fetcher import GraphEmailFetcher
 from src.notifier.pushbullet import PushbulletNotifier
@@ -24,13 +24,13 @@ def test_connections() -> None:
     settings = get_settings()
     print("=== KAPCSOLÓDÁSI TESZTEK ===")
 
-    # 1. Groq API
-    print("\n1. Groq API ellenőrzése...")
-    analyzer = GroqEmailAnalyzer(api_key=settings.groq_api_key, model=settings.groq_model)
+    # 1. Google Gemini API
+    print("\n1. Google Gemini API (AI Studio) ellenőrzése...")
+    analyzer = GeminiEmailAnalyzer(api_key=settings.gemini_api_key, model=settings.gemini_model)
     if analyzer.test_connection():
-        print("   [OK] Groq API kapcsolat sikeres!")
+        print(f"   [OK] Gemini API kapcsolat sikeres ({settings.gemini_model})!")
     else:
-        print("   [FAIL] Nem sikerült elérni a Groq API-t. Ellenőrizd a GROQ_API_KEY változót.")
+        print("   [FAIL] Nem sikerült elérni a Gemini API-t. Ellenőrizd a GEMINI_API_KEY változót.")
 
     # 2. Pushbullet API
     print("\n2. Pushbullet ellenőrzése...")
@@ -86,25 +86,16 @@ def login_microsoft(account_id: str) -> None:
 
 
 def check_limits() -> None:
-    """Lekéri és kiírja a Groq API aktuális használati kereteit és limitjeit."""
+    """Lekéri és kiírja az AI konfigurációt és kapcsolatot."""
     settings = get_settings()
-    print("=== GROQ API KERETEK ÉS LIMITEK ===")
-    analyzer = GroqEmailAnalyzer(api_key=settings.groq_api_key, model=settings.groq_model)
-    limits = analyzer.get_rate_limits()
-
-    if not limits:
-        print("[FAIL] Nem sikerült lekérni a limiteket a Groq API-tól.")
-        return
-
-    print(f"Modell: {settings.groq_model}")
-    print("-" * 50)
-    print(f"Kérések száma (RPM):")
-    print(f"  • Hátralévő kérés: {limits.get('remaining_requests')} / {limits.get('limit_requests')}")
-    print(f"  • Visszaállási idő: {limits.get('reset_requests')}")
-    print(f"\nToken keret (TPM):")
-    print(f"  • Hátralévő token:  {limits.get('remaining_tokens')} / {limits.get('limit_tokens')}")
-    print(f"  • Visszaállási idő: {limits.get('reset_tokens')}")
-    print("-" * 50)
+    print("=== AI API STÁTUSZ ===")
+    print(f"Szolgáltató: Google AI Studio (Gemini)")
+    print(f"Modell: {settings.gemini_model}")
+    analyzer = GeminiEmailAnalyzer(api_key=settings.gemini_api_key, model=settings.gemini_model)
+    if analyzer.test_connection():
+        print("Állapot: [OK] Kapcsolat aktív, hívásra kész.")
+    else:
+        print("Állapot: [FAIL] Nem sikerült kapcsolatot létesíteni.")
 
 
 def send_test_push() -> None:
@@ -144,8 +135,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="LLM_email - Napi AI email figyelő és összesítő")
     parser.add_argument("--run-daily", action="store_true", help="Napi email figyelési és összefoglalási folyamat futtatása")
     parser.add_argument("--dry-run", action="store_true", help="Teszt futtatás: nem ment az adatbázisba és nem küld push értesítést")
-    parser.add_argument("--test-connections", action="store_true", help="Groq, Pushbullet és fiók kapcsolatok tesztelése")
-    parser.add_argument("--check-limits", action="store_true", help="Groq API limitek és hátralévő kvóta ellenőrzése")
+    parser.add_argument("--test-connections", action="store_true", help="Gemini, Pushbullet és fiók kapcsolatok tesztelése")
+    parser.add_argument("--check-limits", action="store_true", help="AI modell státusz ellenőrzése")
     parser.add_argument("--send-test-push", action="store_true", help="Teszt értesítés küldése a Pushbullet fiókra")
     parser.add_argument("--init-accounts", action="store_true", help="accounts.yaml létrehozása sablonból")
     parser.add_argument("--login-microsoft", type=str, metavar="ACCOUNT_ID", help="Egyszeri bejelentkezés Microsoft Graph fiókhoz (pl. mlsz vagy corvinus)")

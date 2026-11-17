@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from src.analyzer.groq_analyzer import GroqEmailAnalyzer
+from src.analyzer.gemini_analyzer import GeminiEmailAnalyzer
 from src.config import AppSettings, load_accounts
 from src.fetchers.base import BaseEmailFetcher
 from src.fetchers.imap_fetcher import ImapEmailFetcher
@@ -17,9 +17,9 @@ class EmailOrchestrator:
     def __init__(self, settings: AppSettings):
         self.settings = settings
         self.db = EmailDatabase(settings.db_path)
-        self.analyzer = GroqEmailAnalyzer(
-            api_key=settings.groq_api_key,
-            model=settings.groq_model,
+        self.analyzer = GeminiEmailAnalyzer(
+            api_key=settings.gemini_api_key,
+            model=settings.gemini_model,
         )
         self.notifier = PushbulletNotifier(access_token=settings.pushbullet_access_token)
 
@@ -68,19 +68,15 @@ class EmailOrchestrator:
         # AI Elemzés
         processed_emails: List[ProcessedEmail] = []
         if all_raw_emails:
-            print(f"\nAI elemzés indítása {len(all_raw_emails)} új levélre a Groq segítségével...")
+            print(f"\nAI elemzés és priorizálás indítása {len(all_raw_emails)} új levélre (Gemini)...")
             for i, raw in enumerate(all_raw_emails, 1):
                 print(f"  [{i}/{len(all_raw_emails)}] Elemzés: {raw.subject[:40]}...")
                 analysis = self.analyzer.analyze_email(raw)
                 processed_emails.append(ProcessedEmail(raw=raw, analysis=analysis))
 
             if self.analyzer.session_tokens_used > 0:
-                limits = self.analyzer.last_rate_limits
-                print(f"\n📊 Groq API felhasználás ebben a futásban:")
+                print(f"\n📊 Gemini API felhasználás:")
                 print(f"   • Felhasznált tokenek: {self.analyzer.session_tokens_used:,} token ({self.analyzer.session_requests_used} kérés)")
-                if limits:
-                    print(f"   • Hátralévő kérés keret: {limits.get('remaining_requests')}/{limits.get('limit_requests')} (reset: {limits.get('reset_requests')})")
-                    print(f"   • Hátralévő token/perc: {limits.get('remaining_tokens')}/{limits.get('limit_tokens')} (reset: {limits.get('reset_tokens')})")
 
         # Napi összesítő generálása
         digest_text = self.analyzer.generate_daily_digest(processed_emails)

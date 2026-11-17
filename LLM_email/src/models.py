@@ -3,7 +3,7 @@ from typing import List, Literal, Optional
 from pydantic import BaseModel, Field
 
 
-EmailCategory = Literal["személyes", "munka", "egyetem", "projekt", "egyéb"]
+EmailCategory = Literal["személyes", "munka", "egyetem", "projekt", "hírlevél/cikk", "értesítő", "egyéb"]
 UrgencyLevel = Literal["kritikus", "magas", "közepes", "alacsony"]
 ImportanceLevel = Literal["kiemelt", "normál", "alacsony"]
 
@@ -42,6 +42,9 @@ class EmailAnalysis(BaseModel):
     category: EmailCategory = "egyéb"
     urgency: UrgencyLevel = "közepes"
     importance: ImportanceLevel = "normál"
+    needs_reply: bool = Field(default=False, description="Szükséges-e kötelezően/fontosan válaszolni a levélre.")
+    is_interesting_news: bool = Field(default=False, description="Különösen érdekes, releváns szakmai hír, hírlevél vagy újdonság-e.")
+    priority_score: int = Field(default=5, ge=1, le=10, description="1-10 skálán prioritási pontszám (10 a legfontosabb).")
     summary: str = Field(description="Rövid, lényegretörő magyar nyelvű összefoglaló 1-2 mondatban.")
     action_items: List[str] = Field(default_factory=list, description="A levélből kinyert konkrét teendők.")
     deadlines: List[str] = Field(default_factory=list, description="A levélben említett konkrét határidők vagy időpontok.")

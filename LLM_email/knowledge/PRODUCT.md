@@ -7,32 +7,34 @@
 
 ## 2. Functional Spec
 * **Must-have features:**
-  * Több email fiók figyelése (személyes, munka, egyetem, projekt, egyéb).
+  * Több email fiók figyelése (személyes, munka, egyetem, projekt, hírlevelek, egyéb).
   * Új emailek begyűjtése és feldolgozása.
-  * Emailek kategorizálása: személyes, munka, egyetem, projekt, egyéb.
+  * Emailek kategorizálása és prioritási pontozása (1-10 skála).
+  * Válaszkötelezettség felismerése (`needs_reply`: true/false) – a választ igénylő levelek előre vétele.
+  * Releváns, érdekes hírek és cikkek felismerése (`is_interesting_news`: true/false) és szekcióba gyűjtése.
   * Sürgősség és fontosság meghatározása.
-  * Teendők felismerése (`action items`).
-  * Határidők felismerése (`deadlines`).
-  * Rövid email-összefoglalók készítése.
-  * Napi összesített jelentés készítése.
+  * Teendők felismerése (`action items`) és határidők kinyerése (`deadlines`).
+  * Rövid, 1-2 mondatos magyar kivonatok készítése.
+  * Napi priorizált Daily Digest készítése (Választ igénylő levelek -> Sürgős ügyek -> Határidők -> Teendők -> Releváns hírek).
   * Push értesítés küldése Pushbulleten keresztül.
-  * Groq API használata az AI-alapú elemzéshez.
+  * Google AI Studio (Gemini API) használata strukturált JSON elemzéshez és intelligens fallbackhez.
 * **Out of scope:**
   * Email reply draftok készítése.
   * Automatikus email-küldés.
 
 ## 3. Technical Constraints
 * Python 3.10+
-* Groq API (felhő alapú ingyenes/gyors LLM következtetés).
+* Google Gemini API (`google-genai` SDK, `gemini-3.5-flash-lite` és fallback modellek).
 * Pushbullet API.
-* `.env` fájlban tárolt tokenek.
+* `.env` és Doppler konfigurációkezelés (`GEMINI_API_KEY`, `PUSHBULLET_ACCESS_TOKEN`).
 * IMAP over SSL / Microsoft Graph fiók csatlakozáshoz.
 * Napi egy futás elegendő.
-* Nincs erős lokális LLM vagy fizetős API.
+* Nincs fizetős API kényszer (Google AI Studio ingyenes keret).
 
 ## 4. Decision Log
 * **Explicit döntések:**
-  * Több fiók kezelése független konfigurációval.
-  * Idempotens állapotkezelés helyi SQLite adatbázissal (`data/emails.db`).
-  * Pushbullet értesítés küldése az aggregált teendőkről és sürgős elemekről.
+  * Több fiók kezelése független konfigurációval (`accounts.yaml`).
+  * Idempotens állapotkezelés helyi SQLite adatbázissal (`data/emails.db`), kibővítve prioritási és válaszkötelezettségi oszlopokkal.
+  * Groq helyett Google AI Studio Gemini API használata strukturált outputtal és fallback mechanizmussal.
+  * Pushbullet értesítés aggregált, priorizált Daily Digestként működik (kiemelve: választ igénylő levelek, releváns szakmai hírek, határidők).
   * Reply draftok és automatikus küldés elutasítva.

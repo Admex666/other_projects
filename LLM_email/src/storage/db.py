@@ -36,10 +36,24 @@ class EmailDatabase:
                     summary TEXT,
                     action_items_json TEXT,
                     deadlines_json TEXT,
-                    processed_at TEXT NOT NULL
+                    processed_at TEXT NOT NULL,
+                    needs_reply INTEGER DEFAULT 0,
+                    is_interesting_news INTEGER DEFAULT 0,
+                    priority_score INTEGER DEFAULT 5
                 )
                 """
             )
+            # Meglévő séma bővítése, ha korábbi tábláról futna
+            for col, col_type, default_val in [
+                ("needs_reply", "INTEGER", "0"),
+                ("is_interesting_news", "INTEGER", "0"),
+                ("priority_score", "INTEGER", "5"),
+            ]:
+                try:
+                    cursor.execute(f"ALTER TABLE processed_emails ADD COLUMN {col} {col_type} DEFAULT {default_val}")
+                except sqlite3.OperationalError:
+                    pass
+
             cursor.execute(
                 """
                 CREATE INDEX IF NOT EXISTS idx_account_date 
@@ -95,6 +109,9 @@ class EmailDatabase:
                 json.dumps(item.analysis.action_items, ensure_ascii=False),
                 json.dumps(item.analysis.deadlines, ensure_ascii=False),
                 now_str,
+                1 if item.analysis.needs_reply else 0,
+                1 if item.analysis.is_interesting_news else 0,
+                item.analysis.priority_score,
             )
             for item in items
         ]
@@ -106,8 +123,9 @@ class EmailDatabase:
                 INSERT OR REPLACE INTO processed_emails (
                     message_id, account_id, account_name, sender, subject,
                     email_date, category, urgency, importance, summary,
-                    action_items_json, deadlines_json, processed_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    action_items_json, deadlines_json, processed_at,
+                    needs_reply, is_interesting_news, priority_score
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 records,
             )
