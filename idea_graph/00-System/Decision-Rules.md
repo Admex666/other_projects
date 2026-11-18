@@ -1,33 +1,54 @@
-# Döntési Szabályrendszer (Decision Rules & Gates)
+# Döntési Szabályrendszer (Decision Rules & Gates) — VIS 2.0
 
-> **Verzió:** 1.0  
-> **Dátum:** 2026-11-17  
-
----
-
-## 1. Döntési Állapotok
-
-A rendszer a vizsgálat végén az alábbi 6 állapot egyikét rendeli a projekthez:
-
-1. **STOP:** A projekt leállítása javasolt. (Végzetes hiba, nem létező igény, jogi tilalom vagy elviselhetetlen CAC).
-2. **RESEARCH:** Újabb asztali vagy szekunder kutatás szükséges a kritikus ismeretlenek tisztázására.
-3. **VALIDATE:** A hipotézisek logikusak, de valós viselkedési tesztek szükségesek (interjú, landing page, előregisztráció).
-4. **PILOT:** A modell készen áll az első fizetős vagy ingyenes éles tesztre 1-3 cégnél.
-5. **BUILD:** A pilot visszaigazolta a koncepciót, indokolt a digitális termék és a facilitátori hálózat felépítése.
-6. **SCALE:** A Go-To-Market és az unit economics bizonyított, jöhet a skálázás és terjeszkedés.
+> **Verzió:** 2.0 (Evidence-Driven Venture Validation frissítés)  
+> **Dátum:** 2026-11-18  
+> **Vezérelv:** *„Maximize Decision Confidence per Unit of Time and Money Invested.”*
 
 ---
 
-## 2. Kritikus Döntési Kapuk (Decision Gates) a PeerPlay esetében
+## 1. A 4 Központi Döntési Kimenet
 
-* **Gate 1: The Buyer Gate (Vevői Kapu)**
-  * *Feltétel:* Van-e konkrét, megnevezett gazdasági vevő (pl. HR vezető, Operatív igazgató), akinek rendelkezésére áll a 400-600e Ft-os büdzsé, és aki hajlandó ezért fizetni?
-  * *Ha NEM:* -> **PIVOT / STOP**.
+A rendszer szándékosan **nem használ univerzális 80/100-as pontszámokat**. A döntés mindig a **kritikus túlélési feltételekre megszerzett bizonyítékok minőségéhez** kötődik:
 
-* **Gate 2: The Moat Gate (Másolhatósági Kapu)**
-  * *Feltétel:* Védhető-e a formátum? Ha egy tapasztalt tréner részt vesz a játékon, lemásolhatja-e 2 hét múlva egy Google Formmal és papírokkal?
-  * *Ha IGEN (könnyen másolható):* -> A digitális szoftver / ONA motor / benchmarking adatbázis értékét kell növelni!
+```mermaid
+stateDiagram-v2
+    [*] --> TEST_FURTHER: Új ötlet / Bizonytalanság
+    TEST_FURTHER --> PROCEED: Kritikus feltételek igazolva (L4/L5)
+    TEST_FURTHER --> PIVOT: Alapmodell megbukott, van alternatíva
+    TEST_FURTHER --> STOP: Alaptétel megdőlt, nincs kiút
+    PIVOT --> TEST_FURTHER: Módosított hipotézis tesztelése
+    PROCEED --> [*]: Nagyobb tőkebefektetés / Építés
+    STOP --> [*]: Projekt lezárva
+```
 
-* **Gate 3: The Scaling Gate (Skálázási Kapu)**
-  * *Feltétel:* Képes-e a modell működni az alapító személyes fizikai jelenléte nélkül (külsős trénerek hálózatával / Train-the-trainer modell)?
-  * *Ha NEM:* -> Ez egy prémium tanácsadó cég (Boutique Consulting), nem skálázható venture.
+| Döntési Állapot | Jelentése és Szabálya | Megengedett Következő Lépés |
+| :---: | :--- | :--- |
+| **`PROCEED`** | A kritikus feltételezések elegendően alátámasztottak **saját elsődleges (L4) vagy gazdasági (L5) bizonyítékokkal**. | Indokolt a következő, nagyobb idő- és pénzbefektetéssel járó fázis (pl. kódolt MVP, sales csapat, skálázás). |
+| **`TEST FURTHER`** | Az ötlet ígéretes, de maradt tisztázatlan kritikus bizonytalanság. | **Tilos fejleszteni!** Az Adaptive Validation Plan alapján újabb, alacsony költségű célzott kísérletet kell futtatni. |
+| **`PIVOT`** | Az eredeti modell egy eleme (árazás, célcsoport, facilitáció, csatorna) megbukott, de az adatok egy működőképes alternatívát mutatnak. | A feltételezés- és kérdésgráf módosítása, majd célzott teszt. |
+| **`STOP`** | Egy kritikus feltételezés megbukott, és nincs gazdaságos alternatíva. | A projekt azonnali lezárása (bukás korai, olcsó szakaszban = tőkemegtakarítás). |
+
+---
+
+## 2. A Döntéshozatal 5 Vizsgálati Kérdése
+
+Minden döntési kapunál az alábbi 5 kérdésre kell választ adni:
+
+```mermaid
+flowchart TD
+    Q1["1. Mit nem tudunk pontosan?<br/>(Bizonytalanság azonosítása)"] --> Q2["2. Melyik feltételezés bukása ölné meg az ötletet?<br/>(Kritikus kockázat)"]
+    Q2 --> Q3["3. Milyen bizonyíték változtatná meg a döntést?<br/>(Tesztelhetőség)"]
+    Q3 --> Q4["4. Hogyan szerezhető meg ez a bizonyíték?<br/>(Teszt kiválasztása)"]
+    Q4 --> Q5["5. Mi a legolcsóbb, leggyorsabb megbízható teszt?<br/>(Erőforrás-optimalizálás)"]
+```
+
+---
+
+## 3. Kapuátlépési Feltételek (Gate Passage Criteria)
+
+1. **A „Szekunder Nem Elég” Korlát:**  
+   Pusztán másodlagos adatokkal (L1–L3) a projekt soha nem kaphat `PROCEED` minősítést nagybefektetéshez (kódolás, fizetett hirdetések, irodabérlet). Legfeljebb `TEST FURTHER` vagy pilot engedélyezés lehetséges.
+2. **A Fizetési Hajlandóság Kapuja (Skin-in-the-game Gate):**  
+   Nem fogadható el validáltnak a kereslet szóbeli dicséretek alapján. Kötelező az idő (pl. 60 perces interjú), az adat (pl. belső folyamatok átadása) vagy a pénz (előleg, LoI, pilot megrendelés) bevonása.
+3. **A Megvalósíthatósági Kapu:**  
+   Ha a termék működéséhez harmadik fél (pl. belső HR facilitátor) közreműködése kell, a modellt tilos validáltnak tekinteni mindaddig, amíg legalább egy ilyen partner sikeresen és önállóan le nem vezényelte a folyamatot.
