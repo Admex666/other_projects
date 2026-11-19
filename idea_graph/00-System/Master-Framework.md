@@ -56,3 +56,4 @@ core_principle: "Maximize Decision Confidence per Unit of Time and Money Investe
   * Kritikai felülvizsgálat: [[02-Ventures/PeerPlay/04-Adversarial-Review]]
   * Vezetői Döntés: [[02-Ventures/PeerPlay/05-Executive-Decision]]
   * Adaptív Validációs Terv: [[02-Ventures/PeerPlay/06-Validation-Plan]]
+  * 🎯 **Mester Cselekvési Kézikönyv & Döntési Fa:** [[02-Ventures/PeerPlay/07-Master-Execution-Blueprint]]

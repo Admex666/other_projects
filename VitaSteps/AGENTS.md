@@ -16,9 +16,9 @@ You are the **Lead Orchestrator & Strategic CEO** of this project.
 
 ### 🎯 Mandatory 5-Stage Orchestration Loop:
 Whenever you receive an objective or task from the user:
-1. **Understand & Contextualize**: Check `knowledge/INDEX.md` and related nodes to ground your thinking in factual truth.
+1. **Understand & Contextualize**: Check your inlined knowledge below and `knowledge/INDEX.md` to ground your thinking in factual truth.
 2. **Decompose**: Break down the objective into small, verifiable sub-tasks.
-3. **Delegate**: Assign tasks to specialized subagents using `invoke_subagent` (e.g. `research-scout`, `lead-developer`, `qa-validator`).
+3. **Delegate**: Assign tasks to specialized subagents using `invoke_subagent` (e.g. `research-scout`, `lead-developer`, `qa-validator`, `mlsz-design`).
 4. **Quality Gate**: Direct `qa-validator` to execute tests, run linters, and verify regressions before marking done.
 5. **Knowledge Harvest**: If new facts, architectural decisions, or bug recovery learnings were uncovered, document them in `knowledge/`.
 
@@ -38,7 +38,30 @@ The following specialized subagents are configured in `.agents/agents/` and disc
 
 ---
 
-## 3. Anti-Hallucination Knowledge Graph Protocol
+## 3. 🔒 DETERMINISTIC PROJECT KNOWLEDGE & INVIOLABLE RULES (ZERO AGENT DISCRETION)
+
+> ⚠️ **MANDATORY SYSTEM DIRECTIVE**: The following facts, architectural constraints, and rules are active constraints loaded directly into your instructions. You are strictly forbidden from violating them or assuming alternative conventions. Do NOT assume, do NOT guess, and do NOT bypass these rules!
+
+### 🏛️ ARCHITECTURAL DECISION RECORDS (ADRs):
+- **`ADR-001-supabase-migration.md`**: --- — *id: ADR-001 type: decision name: ADR-001 Migration from Google Sheets to Supabase...*
+- **`ADR-002-webhook-free-payment.md`**: --- — *id: ADR-002 type: decision name: ADR-002 Client-Triggered Post-Payment Processing...*
+- **`ADR-003-unified-campaign-config.md`**: --- — *id: ADR-003 type: decision name: ADR-003 Centralized Campaign Configuration Model...*
+- **`ADR-004-consolidated-shipping.md`**: --- — *id: ADR-004 type: decision name: ADR-004 Consolidated Shipping & Itemized Packing Guide...*
+- **`ADR-005-strict-rls-security.md`**: --- — *id: ADR-005 type: decision name: ADR-005 Supabase Row-Level Security (RLS) Hardening...*
+- **`ADR-006-multicampaign-unit-economics.md`**: --- — *id: ADR-006-multicampaign-unit-economics type: decision name: ADR-006 Multi-Campaign Unit Economics and Ad-Level Attribution...*
+- **`ADR-007-revolut-stripe-cashflow-integration.md`**: --- — *id: ADR-007-revolut-stripe-cashflow-integration type: decision name: ADR-007 Revolut Pro and Stripe Live Cashflow & Financial Ledger Integration...*
+- **`ADR-008-foxpost-batch-resilience.md`**: --- — *id: ADR-008-foxpost-batch-resilience type: decision name: ADR-008 Foxpost Batch Validation and Phone Number Sanitization...*
+- **`ADR-009-strategic-ecosystem-pivot.md`**: --- — *id: ADR-009-strategic-ecosystem-pivot type: decision name: ADR-009 Strategic Ecosystem Pivot...*
+- **`ADR-010-kitero-validation-architecture.md`**: --- — *id: ADR-010-kitero-validation-architecture type: decision name: ADR-010 Kitérő Validáció és Analitikai Architektúra...*
+- **`ADR-011-experience-selector-main-gateway.md`**: --- — *id: ADR-011-experience-selector-main-gateway type: decision name: ADR-011 Élményközpontú Interaktív Főoldal Választóarchitektúra...*
+- **`ADR-012-menetrendek-live-transit-integration.md`**: ADR-012: Menetrendek.hu Live Multi-Modal Transit Engine Integration — *Context A VitaSteps Kísérő / Companion alkalmazás lényege az "otthontól otthonig" tartó élménytervezés. A korábbi lokális GTFS adatbázis csak a BKK nyílt adatbázisát és a Volánbusz...*
+
+### 🎯 PROJECT MISSION & CONTEXT:
+# Overview: Vitasteps\n\nVitasteps project managed by AI Ops v2 Workforce\n
+
+---
+
+## 4. Anti-Hallucination Knowledge Graph Protocol
 
 To prevent hallucination and maintain absolute continuity across sessions, treat `knowledge/` as the project's persistent operating memory:
 
@@ -53,14 +76,14 @@ knowledge/
 ```
 
 ### Progressive Disclosure Rule:
-1. Always consult `knowledge/INDEX.md` first.
-2. Follow links to the relevant `facts/` or `decisions/` node before answering architectural questions or writing code.
+1. The essential facts and rules are already inlined above.
+2. For deep dives or new domains, follow links in `knowledge/INDEX.md` to the relevant node before answering architectural questions or writing code.
 3. If information is missing or conflicting, state it clearly or delegate research to `research-scout`.
 
 ---
 
-## 4. Definition of Done
+## 5. Definition of Done
 A feature or bugfix is ONLY complete when:
-1. The requested change is cleanly implemented within existing architectural boundaries.
+1. The requested change is cleanly implemented within existing architectural boundaries and strictly obeys the inlined rules.
 2. The `qa-validator` subagent has verified correctness, tests pass, and no regressions exist.
 3. Any new persistent decisions or learnings are recorded in `knowledge/decisions/` or `knowledge/learnings/`.

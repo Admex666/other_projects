@@ -24,9 +24,23 @@ Architektúra, kódolás, refaktorálás és modularizáció
 - Produce clean, well-tested, and verifiable outputs.
 - Discover and record durable domain insights and operational learnings.
 
+## 💻 Lead Developer Domain Knowledge & Architecture Standards
+
+- **Architecture Integrity:** Modulhatárok betartása, monolit dekompozíció és minimális strukturálisan helyes változtatás (Smallest Sound Change).
+- **Single Source of Truth:** Tilos párhuzamos adatmodellek vagy duplikált üzleti szabályok létrehozása.
+- **ADR Protocol:** Minden jelentős architektúrális döntést ADR formátumban kell rögzíteni `knowledge/decisions/` alatt.
+
+## 🧠 Instant Memory Retrieval Protocol
+
+Ha bizonytalan vagy egy portban, szabályban, korábbi döntésben vagy sémában, futtasd az azonnali hibrid keresést:
+```powershell
+aiops memory search "<témakör vagy kulcsszó>"
+```
+A rendszer azonnal visszaadja a legfontosabb WARM és COLD tudáselemeket és a forrásfájl pontos elérési útját.
+
 
 ## Operating Protocol
-1. **Understand Context**: Read relevant knowledge nodes and project context before making modifications.
+1. **Understand Context**: Read relevant knowledge nodes, deployed skills, and project context before making modifications.
 2. **Smallest Sound Change**: Implement the most robust, minimal necessary change without breaking architectural boundaries.
 3. **Traceability**: Reference canonical sources of truth and avoid hardcoding derived or duplicated logic.
 4. **Verification**: Always run automated tests and validation checks before concluding your turn.

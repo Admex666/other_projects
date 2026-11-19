@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PeerPlay — B2B Aszinkron Validációs Csomag & Pszichológiai Kézikönyv</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F1F5F9;
+      --border-color: #E2E8F0;
+      --border-strong: #CBD5E1;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --text-soft: #94A3B8;
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --accent-green: #059669;
+      --accent-green-bg: #ECFDF5;
+      --accent-amber: #D97706;
+      --accent-amber-bg: #FFFBEB;
+      --accent-purple: #7C3AED;
+      --accent-purple-bg: #F5F3FF;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 13.5px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 32px 24px 80px 24px;
+    }
+
+    /* Top Navigation / Hero */
+    .hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #1D4ED8;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .brand-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+    }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 4px;
+      max-width: 680px;
+    }
+    .meta-pills {
+      display: flex;
+      gap: 10px;
+    }
+    .meta-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-muted);
+    }
+
+    /* Tab Controls */
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-subtle);
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 28px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.6);
+    }
+    .tab-btn.active {
+      background: var(--bg-surface);
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    .tab-badge {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+    }
+    .tab-btn.active .tab-badge {
+      background: #DBEAFE;
+      color: #1D4ED8;
+    }
+
+    /* Tab Contents */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Two-Column Grid: Left Artifact, Right Reasoning Sidebar */
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    /* Left Card: Artifact View */
+    .artifact-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      overflow: hidden;
+    }
+    .artifact-header {
+      padding: 16px 20px;
+      background: #FAFAFA;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .artifact-title-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .artifact-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .artifact-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+    .tag-blue { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+    .tag-green { background: var(--accent-green-bg); color: var(--accent-green); border: 1px solid #A7F3D0; }
+    .tag-purple { background: var(--accent-purple-bg); color: var(--accent-purple); border: 1px solid #DDD6FE; }
+    .tag-amber { background: var(--accent-amber-bg); color: var(--accent-amber); border: 1px solid #FDE68A; }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .copy-btn:hover {
+      border-color: var(--border-strong);
+      color: var(--text-main);
+    }
+    .copy-btn.copied {
+      background: var(--accent-green-bg);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    /* Variant Switcher Control */
+    .variant-control-bar {
+      display: flex;
+      gap: 6px;
+      background: #F1F5F9;
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 16px;
+    }
+    .variant-btn {
+      flex: 1;
+      padding: 6px 10px;
+      border: none;
+      background: transparent;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+    .variant-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.7);
+    }
+    .variant-btn.active {
+      background: #FFFFFF;
+      color: var(--primary);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+
+    /* Matrix Table for Alternatives */
+    .matrix-card {
+      margin-top: 24px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
+    }
+    .matrix-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .matrix-table th {
+      background: #F8FAFC;
+      border-bottom: 1px solid var(--border-color);
+      padding: 8px 10px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .matrix-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #F1F5F9;
+      vertical-align: middle;
+    }
+    .matrix-table tr:hover td {
+      background: #F8FAFC;
+    }
+    .badge-pill {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .artifact-body {
+      padding: 24px;
+    }
+
+    /* Email Simulation Mock */
+    .email-field {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 0;
+      font-size: 13px;
+    }
+    .email-field:last-of-type {
+      margin-bottom: 20px;
+    }
+    .email-field-label {
+      width: 70px;
+      color: var(--text-soft);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+      padding-top: 1px;
+    }
+    .email-field-val {
+      flex: 1;
+      color: var(--text-main);
+      font-weight: 600;
+    }
+    .email-content {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #334155;
+    }
+    .email-content p {
+      margin-bottom: 14px;
+    }
+
+    /* Interactive Info Highlights */
+    .annotated-text {
+      background: #FEF9C3;
+      padding: 1px 4px;
+      border-radius: 3px;
+      border-bottom: 1.5px solid #F59E0B;
+      cursor: pointer;
+      position: relative;
+      font-weight: 500;
+      color: #78350F;
+      transition: all 0.15s;
+    }
+    .annotated-text:hover {
+      background: #FDE047;
+    }
+    .annotated-box {
+      border: 1px solid #BFDBFE;
+      background: #F8FAFC;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 16px 0;
+      position: relative;
+    }
+    .annotated-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--primary);
+      border-radius: 8px 0 0 8px;
+    }
+
+    /* Right Sidebar: Strategic Reasoning & Tooltips */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .reasoning-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .reasoning-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .reasoning-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .reasoning-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .reasoning-metric {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: var(--bg-subtle);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .metric-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+    }
+
+    /* Info Trigger Icon Button */
+    .info-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #1D4ED8;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      cursor: pointer;
+      margin-left: 4px;
+      vertical-align: middle;
+      transition: all 0.15s;
+    }
+    .info-pill-btn:hover {
+      background: #DBEAFE;
+      transform: translateY(-1px);
+    }
+
+    /* Embedded PDF Simulation Card */
+    .pdf-preview-box {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      background: #FFFFFF;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+    }
+    .pdf-header-mini {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--text-main);
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+    }
+    .pdf-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .pdf-kpi-card {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+    }
+    .pdf-kpi-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .pdf-kpi-lbl {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Script Timeline */
+    .script-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .script-step {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 16px;
+      padding: 16px;
+      border-radius: 8px;
+      background: #F8FAFC;
+      border: 1px solid var(--border-color);
+    }
+    .script-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: #EFF6FF;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-align: center;
+      height: fit-content;
+      border: 1px solid #BFDBFE;
+    }
+    .script-cue {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .script-voice {
+      font-size: 13.5px;
+      color: var(--text-main);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    /* Tooltip Popup */
+    .tooltip-popup {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      max-width: 360px;
+      background: var(--text-main);
+      color: #FFFFFF;
+      padding: 16px 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+      font-size: 12.5px;
+      line-height: 1.5;
+      z-index: 1000;
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+    .tooltip-popup.show {
+      display: block;
+    }
+    .tooltip-popup-title {
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #93C5FD;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tooltip-close {
+      cursor: pointer;
+      color: #94A3B8;
+      font-size: 16px;
+      border: none;
+      background: transparent;
+    }
+    .tooltip-close:hover { color: #FFF; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 960px) {
+      .layout-grid {
+        grid-template-columns: 1fr;
+      }
+      .tab-bar {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Hero Header -->
+    <header class="hero-header">
+      <div>
+        <div class="brand-badge">
+          <span class="brand-badge-dot"></span>
+          PeerPlay Enterprise Outreach Lab
+        </div>
+        <h1>B2B Aszinkron Validációs Master Suite</h1>
+        <p class="hero-sub">
+          A teljes, 100%-ban aszinkron és felnőtt hangvételű döntéshozói tölcsér 4 kulcseleme. Minden szövegrészlet mellett beépített pszichológiai és döntéselméleti indoklással.
+        </p>
+      </div>
+      <div class="meta-pills">
+        <span class="meta-pill">Zéró Élő Hívás</span>
+        <span class="meta-pill">Loom + PDF Tölcsér</span>
+        <span class="meta-pill">Stripe 1A Standard</span>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('reachout')">
+        <span>1. Első Megkeresés (Email)</span>
+        <span class="tab-badge">Ajtónyitó</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('followup')">
+        <span>2. Nyomásmentes Follow-up</span>
+        <span class="tab-badge">4. Nap</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('pdf')">
+        <span>3. Vezetői PDF Mintariport</span>
+        <span class="tab-badge">Bizonyíték</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('loom')">
+        <span>4. 3 Perces Loom Script</span>
+        <span class="tab-badge">Konverzió</span>
+      </button>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 1: ELSŐ MEGKERESÉS (COLD EMAIL)                                  -->
+    <!-- =================================================================== -->
+    <div id="tab-reachout" class="tab-content active">
+      <div class="layout-grid">
+        <!-- Artifact View -->
+        <div class="artifact-card">
+          <div class="artifact-header">
+            <div class="artifact-title-box">
+              <span class="artifact-title">Email Kliens Előnézet (Desktop / Mobil)</span>
+              <span class="artifact-tag tag-blue">Első Kapcsolatfelvétel</span>
+            </div>
+            <button class="copy-btn" onclick="copyText('reachout-copy-target', this)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              Szöveg Másolása
+            </button>
+          </div>
+          <div class="artifact-body">
+            <!-- Dynamic Variant Selector Bar -->
+            <div class="variant-control-bar">
+              <button class="variant-btn active" id="btn-var-pain" onclick="switchEmailVariant('pain')">
+                A) Fájdalompont & Provokatív
+              </button>
+              <button class="variant-btn" id="btn-var-roi" onclick="switchEmailVariant('roi')">
+                B) Megtérülés & Haszon (ROI)
+              </button>
+              <button class="variant-btn" id="btn-var-diag" onclick="switchEmailVariant('diag')">
+                C) Ultra-rövid & Diagnosztika
+              </button>
+            </div>
+
+            <div id="reachout-copy-target">
+              <div class="email-field">
+                <span class="email-field-label">Tárgy:</span>
+                <span class="email-field-val">
+                  <span id="reachout-subject-text">Pénzkidobás a csapatépítő? / [Cégnév]</span>
+                  <button class="info-pill-btn" onclick="showTip('Kemény Tárgymező Pszichológia', 'Rövid (<40 karakter), nem vágja le a mobil kliens. Azonnal a vezérigazgató legbelső kételyét célozza meg: vajon feleslegesen égeti-e a milliókat a HR a hagyományos csapatépítőkre. Semmi sallang, nulla emoji, kőkemény üzleti relevanciával.')">Miért ez a tárgy?</button>
+                </span>
+              </div>
+              <div class="email-field">
+                <span class="email-field-label">Címzett:</span>
+                <span class="email-field-val">[Keresztnév] [Vezetéknév] &lt;vezeto@cegnev.hu&gt;</span>
+              </div>
+
+              <div class="email-content">
+                <p>Kedves [Keresztnév]!</p>
+
+                <p>
+                  <span class="annotated-text" onclick="showTip('Azonnali Fájdalompont-Nyitás', 'A vezetők 90%-a egyetért azzal, hogy a csapatépítő hétfőre elillan. Ha azonnal ezzel nyitsz, a vezető látja, hogy érted a valóságát, és nem egy újabb tréningügynökség vagy, aki csapatjátékokat akar rájuk tukmálni.')">A legtöbb szervezetnél a csapatépítőkre költött büdzsé után ritkán marad mérhető eredmény: a munkatársak jól érzik magukat, de a hétfői valóságban a részlegek közötti silók (pl. Pénzügy, Értékesítés, Gyártás súrlódásai) változatlanul fennmaradnak.</span>
+                </p>
+
+                <p>
+                  Egy olyan <strong>hibrid szimulációs keretrendszeren (Trading Game)</strong> dolgozunk, amely a 90 perces intenzív kereskedelmi játékélmény mellett egy azonnali, adatvezérelt vezetői diagnosztikát ad a menedzsment kezébe.
+                </p>
+
+                <div class="annotated-box">
+                  <div style="font-weight: 700; color: var(--text-main); margin-bottom: 8px;">
+                    Mit mutat meg a rendszer egyetlen délelőtt alatt?
+                    <button class="info-pill-btn" onclick="showTip('Objektív Mérési Pontok', 'A 3 pont szigorúan konkrét kimeneteleket sorol fel: nem \'jobb hangulatot\', hanem hálózati térképet, kulcsembereket és mentális energiamozgást ígér. Ez a C-level szintű értékesítés alapja.')">Miért ez a 3 pont?</button>
+                  </div>
+                  <ul style="padding-left: 18px; font-size: 13px; color: #334155; line-height: 1.6;">
+                    <li><strong>Szervezeti hálózati térkép (ONA):</strong> Objektíven kirajzolja, mely valós osztályok között akadt el a kommunikáció a döntéshozatal során.</li>
+                    <li><strong>Informális közvetítők (Brokerek):</strong> Név szerint azonosítja azokat a kulcsembereket, akik természetes hidat képeznek a részlegek között.</li>
+                    <li><strong>Energiaszint és elköteleződés:</strong> Számszerűsíti a csapatok mentális energiamozgását (&Delta; Energia) a workshop előtt és után.</li>
+                  </ul>
+                </div>
+
+                <!-- Mini Képi Bizonyíték -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0;">
+                  <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; background: #FFF; text-align: center;">
+                    <div style="font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase;">Munkavállalói Élmény</div>
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-main);">Mobil PWA HUD (No-Paper)</div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Valós idejű egyenleg és peer visszajelzés</div>
+                  </div>
+                  <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; background: #FFF; text-align: center;">
+                    <div style="font-size: 10px; font-weight: 700; color: var(--accent-purple); text-transform: uppercase;">Vezetői Diagnosztika</div>
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-main);">ONA Hálózati Gráf</div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Kapcsolatok valós osztályok szerint</div>
+                  </div>
+                </div>
+
+                <p>
+                  <span class="annotated-text" onclick="showTip('A Pilot Partnerré Pozicionálás', 'Nem szoftvert adunk el, hanem esettanulmányhoz keresünk partnert. Ez azonnal megfordítja a dinamikát: nem te könyörögsz nekik, hanem egy exkluzív szakmai lehetőséghez csatlakozhatnak.')">Nem dobozos szoftvert szeretnénk értékesíteni. A módszertan készen áll, és jelenleg <strong>2 hazai vállalatot választunk ki zárt pilot programunkhoz</strong>, ahol egy 8–16 fős csapaton (vagy keresztfunkcionális vezetői körön) önköltségi áron levezetjük a műhelyt, és átadjuk a teljes vezetői diagnosztikai elemzést egy szakmai esettanulmányért cserébe.</span>
+                </p>
+
+                <!-- Határozott Mikrodöntési CTA -->
+                <div style="background: #0F172A; color: #FFF; border-radius: 8px; padding: 18px 20px; text-align: center; margin: 22px 0;">
+                  <div style="font-size: 14.5px; font-weight: 700; margin-bottom: 6px;">
+                    <span id="reachout-cta-text">Átküldöm a 2 oldalas vezetői mintariportot, hogy lásd a gyakorlatban. Mehet?</span>
+                    <button class="info-pill-btn" style="background: #1E293B; border-color: #334155; color: #93C5FD;" onclick="showTip('Határozott CTA Szabály', 'Szigorúan elhagytuk a megalázkodó \'Lenne értelme?\' fordulatot. A feltételes mód bizonytalanságot sugároz. Ehelyett felnőtt, egyenrangú kijelentést teszünk (\'Átküldöm a riportot\') és csak egy gyors zöld utat kérünk (\'Mehet?\'). Mobilon 1 szóval válaszolható: \'Mehet\' vagy \'Igen\'.')">Miért ez a CTA?</button>
+                  </div>
+                  <div id="reachout-cta-sub" style="font-size: 12px; color: #94A3B8;">(Egyetlen 'Mehet' válaszra küldöm a szimulált vezetői PDF-et.)</div>
+                </div>
+
+                <p style="margin-top: 24px; font-size: 13px; color: var(--text-muted);">
+                  Üdvözlettel,<br>
+                  <strong style="color: var(--text-main);">[Neved]</strong><br>
+                  Alapító · PeerPlay Vállalati Szimulációk<br>
+                  <span style="font-size: 11px; font-family: monospace;">[Telefonszám] · [LinkedIn Profil Link]</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Tárgymező és CTA Arzenál Mátrix -->
+            <div class="matrix-card">
+              <div class="matrix-title">
+                <span>Vezetői Tárgymező és CTA Arzenál (A/B Tesztelési Mátrix)</span>
+                <span class="badge-pill" style="background: #EFF6FF; color: #1D4ED8;">10 Tárgy · 5 CTA</span>
+              </div>
+              <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                Az alábbi alternatívák mind megfelelnek a 45 karakter alatti mobilos levágási szabálynak és a partneri határozottságnak:
+              </p>
+              <table class="matrix-table">
+                <thead>
+                  <tr>
+                    <th style="width: 25%;">Kategória</th>
+                    <th style="width: 45%;">Tárgymező Alternatíva</th>
+                    <th style="width: 30%;">Pszichológiai Mechanizmus</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="badge-pill" style="background: #FEF2F2; color: #DC2626;">Fájdalompont</span></td>
+                    <td><strong>Pénzkidobás a csapatépítő? / [Cégnév]</strong></td>
+                    <td>A legbelső kételyt aktiválja: a büdzsé felesleges elégetését.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-pill" style="background: #FEF2F2; color: #DC2626;">Fájdalompont</span></td>
+                    <td><strong>Miért nem működik a csapatépítő hétfőn? / [Cégnév]</strong></td>
+                    <td>Megfogalmazza az örök igazságot: a buli véget ér, a silók maradnak.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-pill" style="background: #FEF2F2; color: #DC2626;">Provokatív</span></td>
+                    <td><strong>Unalmas csapatépítők helyett / [Cégnév]</strong></td>
+                    <td>Brutálisan őszinte, 4 szó, azonnal kitűnik a sablonok közül.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-pill" style="background: #ECFDF5; color: #059669;">Megtérülés (ROI)</span></td>
+                    <td><strong>Haszon a csapatépítőből / [Cégnév]</strong></td>
+                    <td>Erőteljes kontraszt: a csapatépítést haszontermelő eszközzé emeli.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-pill" style="background: #ECFDF5; color: #059669;">Megtérülés (ROI)</span></td>
+                    <td><strong>Mérhető haszon a csapatépítőből / [Cégnév]</strong></td>
+                    <td>A "mérhető" kulcsszó azonnal megszólítja a CEO / COO gondolkodást.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-pill" style="background: #EFF6FF; color: #1D4ED8;">Ultra-rövid</span></td>
+                    <td><strong>Csapatépítés helyett diagnosztika / [Cégnév]</strong></td>
+                    <td>Új kategóriát teremt: szórakoztatás helyett szervezeti röntgen.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge-pill" style="background: #EFF6FF; color: #1D4ED8;">Belső Feljegyzés</span></td>
+                    <td><strong>[Cégnév] · silók és csapatépítés</strong></td>
+                    <td>Nem reklámnak tűnik, hanem stratégiai belső észrevételnek.</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div style="margin-top: 16px;">
+                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-soft); margin-bottom: 6px;">
+                  Határozott CTA Alternatívák (Nulla megalázkodás · 1 szavas válaszok):
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px;">
+                  <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 10px;">
+                    <strong style="color: var(--primary);">1. Direkt & Egyenrangú:</strong><br>
+                    <em>„Átküldöm a 2 oldalas vezetői mintariportot, hogy lásd a gyakorlatban. Mehet?”</em>
+                  </div>
+                  <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 10px;">
+                    <strong style="color: var(--primary);">2. Pragmatikus & Tömör:</strong><br>
+                    <em>„Küldhetem a 2 oldalas vezetői mintariportot?”</em>
+                  </div>
+                  <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 10px;">
+                    <strong style="color: var(--primary);">3. Szakértői & Partneri:</strong><br>
+                    <em>„Érdemes ránézned a 2 oldalas mintariportra. Átdobjam ide?”</em>
+                  </div>
+                  <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 10px;">
+                    <strong style="color: var(--primary);">4. Eredményfókuszú:</strong><br>
+                    <em>„Átdobom a mintariportot, hogy lásd, mi az, ami hétfőn is mérhető marad. Mehet?”</em>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar: Strategic Rationale -->
+        <div class="sidebar">
+          <div class="reasoning-card" style="border-left: 3px solid var(--primary);">
+            <span class="reasoning-badge" style="color: var(--accent-red);">Stratégiai Korrekció</span>
+            <div class="reasoning-title">Miért bukik el a „Lenne értelme?”</div>
+            <div class="reasoning-desc">
+              A <em>„Lenne értelme átküldenem...?”</em> feltételes módja behódoló és önbizalomhiányos. Azt sugározza a felsővezető felé, hogy maga az alapító sem hisz az értékében. Egy felsővezető nem tiszteli a bizonytalankodó értékesítőt.
+              <br><br>
+              <strong>Az egyenrangú partner receptje:</strong> Határozott állítás (<em>„Átküldöm a mintariportot, hogy lásd a gyakorlatban”</em>) + egyetlen rövid kérdés a technikai zöld útra (<em>„Mehet?”</em> vagy <em>„Küldhetem?”</em>).
+            </div>
+            <div class="reasoning-metric">
+              <span class="metric-dot"></span> Megtartott Mikrodöntés: 1 szavas válasz mobilon
+            </div>
+          </div>
+
+          <div class="reasoning-card">
+            <span class="reasoning-badge">Tárgymező Törvény</span>
+            <div class="reasoning-title">A 40 Karakteres Mobil Határ & Polarizáció</div>
+            <div class="reasoning-desc">
+              A vezetők 70%-a okostelefonon (Outlook/Apple Mail) látja meg a levelet. A 60+ karakteres udvarias tárgyak végéről levágódik a lényeg.
+              A <strong>„Pénzkidobás a csapatépítő?”</strong> vagy a <strong>„Haszon a csapatépítőből”</strong> nem vágódik le, azonnal érzelmi és racionális feszültséget kelt, ami megállítja a hüvelykujjat a törlés gomb előtt.
+            </div>
+          </div>
+
+          <div class="reasoning-card">
+            <span class="reasoning-badge">Pozicionálási Szabály</span>
+            <div class="reasoning-title">Az "Esettanulmány / Pilot Partner" Pszichológia</div>
+            <div class="reasoning-desc">
+              Nem szoftverlicencet kínálunk, mert azt azonnal átpasszolnák az IT vagy a beszerzési osztály labirintusába. Ehelyett <strong>stratégiai partnerként</strong> pozicionáljuk a céget: 2 céget választunk ki a negyedévre. Ez felébreszti a szűkösség (scarcity) és a szakmai presztízs érzetét.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 2: FOLLOW-UP SABLON                                             -->
+    <!-- =================================================================== -->
+    <div id="tab-followup" class="tab-content">
+      <div class="layout-grid">
+        <div class="artifact-card">
+          <div class="artifact-header">
+            <div class="artifact-title-box">
+              <span class="artifact-title">4 Napos Nyomásmentes Emlékeztető</span>
+              <span class="artifact-tag tag-amber">2. Kapcsolatfelvétel (Csend esetén)</span>
+            </div>
+            <button class="copy-btn" onclick="copyText('followup-copy-target', this)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              Szöveg Másolása
+            </button>
+          </div>
+          <div class="artifact-body" id="followup-copy-target">
+            <div class="email-field">
+              <span class="email-field-label">Tárgy:</span>
+              <span class="email-field-val"><span id="followup-subject-text">Re: Pénzkidobás a csapatépítő? / [Cégnév]</span></span>
+            </div>
+            <div class="email-field">
+              <span class="email-field-label">Címzett:</span>
+              <span class="email-field-val">[Keresztnév] [Vezetéknév]</span>
+            </div>
+
+            <div class="email-content">
+              <p>Kedves [Keresztnév]!</p>
+
+              <p>
+                <span class="annotated-text" onclick="showTip('A Felnőtt Időelismerés', 'Az elnyűtt \'Láttad a levelemet?\' vagy \'Gondoltam rákérdezek\' helyett azonnal elismerjük, hogy a vezető ideje a legszűkebb erőforrás. Ezzel azonnal tiszteletet váltunk ki.')">Tudom, hogy rendkívül sűrűek a napjaid, ezért csak egyetlen rövid mondatban jelentkezem.</span>
+              </p>
+
+              <p>
+                <span class="annotated-text" onclick="showTip('Természetes Határidő (Scarcity)', 'A \'zárt pilot keret lezárása\' egy racionális, természetes határidő. Nem mesterséges sürgetés, hanem valós folyamat.')">A héten véglegesítjük a zárt pilot programunk partnerségi körét a következő időszakra.</span> Ha releváns lehet a [Cégnév]-nél a belső silók objektív felmérése és a mérhető hálózati diagnosztika, szívesen átküldöm a 2 oldalas szimulált mintariportot.
+              </p>
+
+              <p>
+                <span class="annotated-text" onclick="showTip('A Nyomásmentes Kilépő (The Easy Exit)', 'Pszichológiai aranyszabály: ha adsz a másiknak egy tiszteletteljes, elegáns kilépőt (\'ha most nem időszerű, megértem\'), azonnal megszűnik a védekező reflexe. A vezetők ezt a felnőtt hozzáállást díjazzák a leginkább.')">Ha most nem időszerű a téma, természetesen teljesen megértem, és köszönöm az eddigi figyelmedet!</span>
+              </p>
+
+              <p style="margin-top: 24px; font-size: 13px; color: var(--text-muted);">
+                Üdvözlettel,<br>
+                <strong style="color: var(--text-main);">[Neved]</strong><br>
+                PeerPlay Vállalati Szimulációk
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <div class="reasoning-card">
+            <span class="reasoning-badge">Követési Szabály #1</span>
+            <div class="reasoning-title">Miért kötelező a 4 napos Follow-up?</div>
+            <div class="reasoning-desc">
+              A B2B válaszok <strong>több mint 45%-a nem az első levélre, hanem a follow-upra érkezik</strong>. Nem azért, mert az első nem tetszett a vezetőnek, hanem mert éppen értekezleten ült, a repülőtéren volt, vagy a telefonján elolvasta, de nem volt ideje válaszolni. A tiszteletteljes emlékeztető visszahozza a levelet a postafiók tetejére.
+            </div>
+          </div>
+
+          <div class="reasoning-card">
+            <span class="reasoning-badge">Követési Szabály #2</span>
+            <div class="reasoning-title">A "Zero Passive-Aggressive" Elv</div>
+            <div class="reasoning-desc">
+              Soha ne használj olyan számonkérő fordulatokat, mint: <em>"Nem kaptam választ az előző levelemre..."</em> vagy <em>"Gondolom elkerülte a figyelmedet..."</em>. Ezek azonnal passzív-agresszív érzetet keltenek. Az elegáns follow-up <strong>mindössze 3 mondat</strong>, és tiszteli a vezető naptárát.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 3: VEZETŐI PDF MINTARIPORT                                      -->
+    <!-- =================================================================== -->
+    <div id="tab-pdf" class="tab-content">
+      <div class="layout-grid">
+        <div class="artifact-card">
+          <div class="artifact-header">
+            <div class="artifact-title-box">
+              <span class="artifact-title">Vezetői Diagnosztikai Riport (DEMO01 PDF Architektúra)</span>
+              <span class="artifact-tag tag-green">A Megdönthetetlen Bizonyíték</span>
+            </div>
+            <a href="/PeerPlay_Vezetoi_Mintariport_DEMO01.pdf" target="_blank" class="copy-btn">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Eredeti PDF Megnyitása
+            </a>
+          </div>
+          <div class="artifact-body">
+            <!-- Simulated PDF Page 1 -->
+            <div class="pdf-preview-box">
+              <div class="pdf-header-mini">
+                <div>
+                  <div style="font-size: 15px; font-weight: 800; color: var(--text-main);">PeerPlay Vállalati Diagnosztika</div>
+                  <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">Zárt Munkamenet Riport · Session #DEMO01</div>
+                </div>
+                <div style="text-align: right; font-family: monospace; font-size: 10px; color: var(--text-soft);">
+                  2026.11.15 · 90 Perc · 16 Résztvevő
+                </div>
+              </div>
+
+              <!-- Key Metrics -->
+              <div class="pdf-kpi-grid">
+                <div class="pdf-kpi-card">
+                  <div class="pdf-kpi-val">$3,050</div>
+                  <div class="pdf-kpi-lbl">Termelt Érték</div>
+                </div>
+                <div class="pdf-kpi-card">
+                  <div class="pdf-kpi-val">83.3%</div>
+                  <div class="pdf-kpi-lbl">Hálózati Sűrűség</div>
+                </div>
+                <div class="pdf-kpi-card">
+                  <div class="pdf-kpi-val" style="color: var(--accent-green);">+1.75</div>
+                  <div class="pdf-kpi-lbl">&Delta; Energiaszint</div>
+                </div>
+                <div class="pdf-kpi-card">
+                  <div class="pdf-kpi-val" style="color: var(--accent-amber);">2 Siló</div>
+                  <div class="pdf-kpi-lbl">Kritikus Akadály</div>
+                </div>
+              </div>
+
+              <!-- Narrative Executive Summary -->
+              <div style="background: var(--bg-canvas); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; margin-bottom: 16px;">
+                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-main); margin-bottom: 4px;">
+                  1. Vezetői Összefoglaló (Executive Summary)
+                  <button class="info-pill-btn" onclick="showTip('Vezetői Diagnosztikai Tónus', 'A szöveg nem szociológiai tanulmány, hanem döntési memo: konkrétan megmondja, hol akadt el a pénz és az információ, és ki mentette meg a helyzetet.')">Hogyan fogalmaz?</button>
+                </div>
+                <div style="font-size: 12px; color: #334155; line-height: 1.5;">
+                  A 90 perces kereskedelmi szimuláció során a 4 aszimmetrikus vállalat intenzív P2P kooperációba kezdett. A hálózatelemzés kimutatta, hogy miközben a csapatok átlagos energiaszintje <strong>+1.75 ponttal emelkedett</strong>, a <strong>Gyártási és a K+F osztályok között 0 tranzakció valósult meg</strong>, ami a termelési kapacitás 26%-os veszteségét okozta a 2. körben.
+                </div>
+              </div>
+
+              <!-- ONA Gráf Szimuláció (2. Oldal Kiemelés) -->
+              <div style="border: 1px solid var(--border-color); border-radius: 6px; padding: 14px; background: #FFF;">
+                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-main); margin-bottom: 6px; display: flex; justify-content: space-between;">
+                  <span>2. Szociometriai ONA Hálózati Térkép</span>
+                  <span style="font-size: 9px; color: var(--accent-purple); font-weight: 700;">VALÓS OSZTÁLYOK SZERINTI SZÍNEZÉS</span>
+                </div>
+                <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.45; margin-bottom: 10px;">
+                  A gráf csomópontjai a résztvevőket jelölik a valós vállalati részlegük színei szerint (Kék: Pénzügy, Zöld: Gyártás, Lila: K+F, Narancs: Értékesítés). Az élek vastagsága a valós döntéshozatali és kereskedelmi forgalmat tükrözi.
+                </div>
+                <div style="background: #F1F5F9; border: 1px dashed var(--border-strong); border-radius: 6px; padding: 24px; text-align: center; font-size: 12px; color: var(--text-muted);">
+                  [ Vektoros Gráf Helye: Látható az izolált Gyártás-blokk, és a 2 kulcs-broker (Horváth Anna & Kovács Péter) mint egyedüli átkötő híd ]
+                </div>
+              </div>
+
+              <!-- 4 Akciójavaslat -->
+              <div style="margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-main); margin-bottom: 6px;">
+                  3. Vezetői Akcióterv (HR & Operációs Intervenció)
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px;">
+                  <div style="background: var(--bg-canvas); padding: 8px; border-radius: 4px; border-left: 2px solid var(--primary);">
+                    <strong>1. Silóbontó Sprint:</strong> Heti 1x 15p szinkron a Gyártás és K+F között.
+                  </div>
+                  <div style="background: var(--bg-canvas); padding: 8px; border-radius: 4px; border-left: 2px solid var(--accent-green);">
+                    <strong>2. Broker Megerősítés:</strong> A 2 közvetítő kulcsember hivatalos kinevezése.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <div class="reasoning-card">
+            <span class="reasoning-badge">Riport Szabály #1</span>
+            <div class="reasoning-title">Miért nem elég egy szöveges összefoglaló?</div>
+            <div class="reasoning-desc">
+              Egy CEO vagy CHRO nem olvas el 20 oldalas tanulmányokat. A <strong>2 oldalas, feszes vektoros PDF formátum</strong> azonnal jelzi, hogy a módszertan készen van, kiforrott, és a diagnózis a workshop zárása után 10 perccel a vezetőség asztalán lehet.
+            </div>
+          </div>
+
+          <div class="reasoning-card">
+            <span class="reasoning-badge">Riport Szabály #2</span>
+            <div class="reasoning-title">A "Valós Osztályok" szerinti színezés ereje</div>
+            <div class="reasoning-desc">
+              Ha a hálózati térkép csak a játékbeli csapatokat (Alfa, Béta) mutatná, az csak egy játék lenne. De mivel a PeerPlay a <strong>valós részlegeket</strong> (Pénzügy, Gyártás, K+F) mutatja be színekkel, a vezető azonnal a saját cégét látja a képen: <em>"Nézd, a Gyártás megint nem beszél a K+F-fel!"</em>. Ez az igazi termékérték.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 4: 3 PERCES LOOM SCRIPT                                         -->
+    <!-- =================================================================== -->
+    <div id="tab-loom" class="tab-content">
+      <div class="layout-grid">
+        <div class="artifact-card">
+          <div class="artifact-header">
+            <div class="artifact-title-box">
+              <span class="artifact-title">3 Perces Loom / Tella Aszinkron Video Walkthrough Script</span>
+              <span class="artifact-tag tag-purple">A Döntő Konverziós Lépés</span>
+            </div>
+            <button class="copy-btn" onclick="copyText('loom-copy-target', this)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              Script Másolása
+            </button>
+          </div>
+          <div class="artifact-body" id="loom-copy-target">
+            <div class="script-timeline">
+              <!-- Block 1 -->
+              <div class="script-step">
+                <div class="script-time">0:00 – 0:45</div>
+                <div>
+                  <div class="script-cue">Kamera: Arc a sarokban, képernyőn a PDF fedőlapja</div>
+                  <div class="script-voice">
+                    „Szia [Név]! Köszönöm, hogy megnyitottad a videót. Azért készítettem ezt a 3 perces összefoglalót, hogy ne raboljam az idődet egy újabb 30 perces Teams vagy Zoom megbeszéléssel.
+                    <br><br>
+                    A legtöbb 80–250 fős növekvő vállalatnál a vezetés évente milliókat költ csapatépítőkre. A kollégák jól érzik magukat, de hétfő reggel a silók – a Fejlesztés és az Értékesítés, vagy a Gyártás és a Pénzügy közötti információs elakadások – változatlanul megmaradnak, és lassítják a projekteket.”
+                  </div>
+                </div>
+              </div>
+
+              <!-- Block 2 -->
+              <div class="script-step">
+                <div class="script-time">0:45 – 1:30</div>
+                <div>
+                  <div class="script-cue">Képernyő: Átváltás a Mobil HUD-ra és az Élő Pultra</div>
+                  <div class="script-voice">
+                    „A PeerPlay egy 90 perces hibrid szimuláció. A résztvevők fizikai eszközökkel termelnek egy aszimmetrikus piacon, miközben a mobiltelefonjukon futó kísérő felület valós időben, papírmentesen rögzíti a tranzakciókat, az alkukat és az együttműködési döntéseket.
+                    <br><br>
+                    Nincsenek pontatlan megfigyelések: a rendszer percre pontosan méri, ki kivel kooperál, hol akad el a döntéshozatal, és hogyan mozdul el a csapatok mentális energiaszintje.”
+                  </div>
+                </div>
+              </div>
+
+              <!-- Block 3 -->
+              <div class="script-step">
+                <div class="script-time">1:30 – 2:15</div>
+                <div>
+                  <div class="script-cue">Képernyő: Zoom a PDF 2. oldalán lévő ONA Hálózati Gráfra</div>
+                  <div class="script-voice">
+                    „A workshop végén azonnal előáll ez az objektív hálózati térkép. Nem azt mutatja, ki mit mond magáról, hanem hogy a valóságban hogyan áramlott az információ a részlegek között.
+                    <br><br>
+                    Például itt a DEMO01-ben tisztán látszik: a Gyártás és a K+F között teljes funkcionális siló alakult ki, és mindössze ez a két ember tudott hidat képezni a döntésekben. A vezetés egyből látja, hol vannak a valódi szűk keresztmetszetek a szervezetben.”
+                  </div>
+                </div>
+              </div>
+
+              <!-- Block 4 -->
+              <div class="script-step">
+                <div class="script-time">2:15 – 3:00</div>
+                <div>
+                  <div class="script-cue">Képernyő: Megmutatja a 3 kérdéses űrlapot a videó alatt</div>
+                  <div class="script-voice">
+                    „A módszertan készen áll. Jelenleg 2 hazai növekvő céget választunk ki a következő negyedévre zárt pilot partnerként, ahol egy 8–16 fős csapatnál díjmentesen lefuttatjuk a műhelyt és átadjuk a teljes vezetői diagnosztikát egy szakmai esettanulmányért cserébe.
+                    <br><br>
+                    Ha szeretnéd, hogy nálatok is megcsináljuk, <strong>a videó alatt mindössze 3 mezőt kell kitöltened</strong>: a csapat létszámát, az érintett osztályokat és a megcélzott hónapot. 30 másodperc az egész, és azonnal visszajelzünk, hogy befért-e a csapatod a zárt pilot keretbe. Köszönöm az idődet!”
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <div class="reasoning-card">
+            <span class="reasoning-badge">Videó Szabály #1</span>
+            <div class="reasoning-title">Miért pont 3 perc a limit?</div>
+            <div class="reasoning-desc">
+              A Wistia és Loom B2B statisztikái szerint az 5 percnél hosszabb videók megtekintési aránya 40% alá esik a C-level vezetőknél. A <strong>2:45 – 3:00 perces sáv</strong> az abszolút optimális: elég hosszú a szakmai mélység bizonyításához, de elég rövid ahhoz, hogy egy kávé mellett végignézzék.
+            </div>
+            <div class="reasoning-metric">
+              <span class="metric-dot"></span> Befejezési Arány: 78% (3 perces limitnél)
+            </div>
+          </div>
+
+          <div class="reasoning-card">
+            <span class="reasoning-badge">Videó Szabály #2</span>
+            <div class="reasoning-title">A "Zero Meeting" Ígéret Feloldása</div>
+            <div class="reasoning-desc">
+              A videó első 15 másodpercében expliciten kimondjuk: <em>"Azért csináltam videót, hogy ne raboljam az idődet egy hívással"</em>. Ez azonnal eloszlatja a vezető legnagyobb félelmét (hogy a videó végén ráerőltetsz egy értékesítési beszélgetést). Helyette az űrlap önkiszolgáló kitöltését kínáljuk fel.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Floating Tooltip Popup -->
+  <div id="tooltip-popup" class="tooltip-popup">
+    <div class="tooltip-popup-title">
+      <span id="tooltip-title-text">Stratégiai Indoklás</span>
+      <button class="tooltip-close" onclick="closeTip()">&times;</button>
+    </div>
+    <div id="tooltip-body-text">Indoklás szövege...</div>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+
+    function showTip(title, text) {
+      const popup = document.getElementById('tooltip-popup');
+      document.getElementById('tooltip-title-text').innerText = title;
+      document.getElementById('tooltip-body-text').innerText = text;
+      popup.classList.add('show');
+    }
+
+    function closeTip() {
+      document.getElementById('tooltip-popup').classList.remove('show');
+    }
+
+    const emailVariants = {
+      pain: {
+        subject: "Pénzkidobás a csapatépítő? / [Cégnév]",
+        cta: "Átküldöm a 2 oldalas vezetői mintariportot, hogy lásd a gyakorlatban. Mehet?",
+        sub: "(Egyetlen 'Mehet' válaszra küldöm a szimulált vezetői PDF-et.)",
+        followupSub: "Re: Pénzkidobás a csapatépítő? / [Cégnév]"
+      },
+      roi: {
+        subject: "Haszon a csapatépítőből / [Cégnév]",
+        cta: "Küldhetem a 2 oldalas vezetői mintariportot?",
+        sub: "(Egyetlen 'Igen' vagy 'Küldd' válaszra átküldöm a szimulált riportot.)",
+        followupSub: "Re: Haszon a csapatépítőből / [Cégnév]"
+      },
+      diag: {
+        subject: "Csapatépítés helyett diagnosztika / [Cégnév]",
+        cta: "Érdemes ránézned a 2 oldalas mintariportra. Átdobjam ide?",
+        sub: "(Ha látni szeretnéd az ONA diagnosztikát, azonnal átküldöm.)",
+        followupSub: "Re: Csapatépítés helyett diagnosztika / [Cégnév]"
+      }
+    };
+
+    function switchEmailVariant(varKey) {
+      const v = emailVariants[varKey];
+      if (!v) return;
+
+      document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById('btn-var-' + varKey);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const subjEl = document.getElementById('reachout-subject-text');
+      if (subjEl) subjEl.innerText = v.subject;
+
+      const ctaEl = document.getElementById('reachout-cta-text');
+      if (ctaEl) ctaEl.innerText = v.cta;
+
+      const subEl = document.getElementById('reachout-cta-sub');
+      if (subEl) subEl.innerText = v.sub;
+
+      const fSubEl = document.getElementById('followup-subject-text');
+      if (fSubEl) fSubEl.innerText = v.followupSub;
+    }
+
+    function copyText(elementId, btn) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerHTML;
+        btn.classList.add('copied');
+        btn.innerHTML = '✓ Kimásolva!';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = originalText;
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

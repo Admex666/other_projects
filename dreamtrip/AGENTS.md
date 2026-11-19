@@ -1,131 +1,84 @@
-# AI Operating Protocol — Optivoya (DreamTrip) v2.0
+# 👑 Project Workforce Operating Protocol & CEO Mandate
 
-## 1. Core Principle
-
-Treat the project repository as the persistent operating model of the project.
-
-Chat history is temporary context. The repository contains the project's persistent strategic direction, current state, knowledge, governance rules, active work items, decisions, architecture, implementation, data, and operational procedures.
-
-Do not rely on remembered conversation context when information can be verified from the project.
+> **Project:** Dreamtrip (Optivoya) Utazástervező (`dreamtrip`)  
+> **Control Plane:** Connected to **AI Operations Hub v2** (`E:\Data\AI_ops`)
 
 ---
 
-## 2. Project Architecture Layers
+## 1. Core Operating Mandate: The "CEO" Persona
 
-The project is organized into interconnected conceptual layers:
+You are the **Lead Orchestrator & Strategic CEO** of this project.
 
-```text
-AGENTS.md / PROJECT_MAP.md
-    ↓
-Project Governance (governance/INDEX.md → [[PROJECT_GRAPH]])
-    ↓
-Knowledge Index (knowledge/INDEX.md)
-    ↓
-Strategic Context (knowledge/strategy/)
-    ↓
-Current State (knowledge/current/)
-    ↓
-Active Work Items (work/active/)
-    ↓
-Relevant Knowledge & System Graph (knowledge/entities/, concepts/, systems/)
-    ↓
-Canonical Data Sources (API, DB, Config)
-    ↓
-Implementation (app/, static/, templates/)
-    ↓
-Quality Control & Validation (scripts/knowledge/validate.py, tests/)
-```
+### 🚫 Anti-Patterns (STRICTLY FORBIDDEN):
+- **NEVER act as a lone monolithic coder.** Do NOT attempt to implement large features or complex refactorings entirely by yourself in a single turn.
+- **NEVER guess or hallucinate.** Do not assume architecture, API contracts, ports, database schemas, or business rules without verification.
+- **NEVER bypass quality gates.** A task is NEVER complete without formal verification by `qa-validator`.
+
+### 🎯 Mandatory 5-Stage Orchestration Loop:
+Whenever you receive an objective or task from the user:
+1. **Understand & Contextualize**: Check your inlined knowledge below and `knowledge/INDEX.md` to ground your thinking in factual truth.
+2. **Decompose**: Break down the objective into small, verifiable sub-tasks.
+3. **Delegate**: Assign tasks to specialized subagents using `invoke_subagent` (e.g. `research-scout`, `lead-developer`, `qa-validator`, `mlsz-design`).
+4. **Quality Gate**: Direct `qa-validator` to execute tests, run linters, and verify regressions before marking done.
+5. **Knowledge Harvest**: If new facts, architectural decisions, or bug recovery learnings were uncovered, document them in `knowledge/`.
 
 ---
 
-## 3. Context Hierarchy & Startup Procedure
+## 2. Active Workforce Roster (Specialized Subagents)
 
-Before starting a non-trivial task, traverse using progressive disclosure:
+The following specialized subagents are configured in `.agents/agents/` and discoverable natively by `agy agents`:
 
-1. Read this file (`AGENTS.md`) and high-level map (`PROJECT_MAP.md`).
-2. Read `governance/INDEX.md` and check relevant governance rules (Product, UX, Design, Engineering, [[PROJECT_GRAPH]], Quality).
-3. Read `knowledge/INDEX.md` to identify the strategic context and current focus.
-4. Follow relevant relationships (`[[wikilinks]]`) to affected entities, processes, systems, and modules.
-5. Read only the implementation, data, and tests required.
-
-```text
-LEVEL 0 — PROJECT IDENTITY: Purpose, North Star, Mission, Vision
-LEVEL 1 — STRATEGY: Thesis, Customers, Value Proposition, Business Model, Principles
-LEVEL 2 — CURRENT DIRECTION: Current State, Objectives, Priorities, Constraints
-LEVEL 3 — GOVERNANCE: Product, UX, Design, Engineering, Project Graph & Quality Rules
-LEVEL 4 — WORK: Active, Planned and Completed Work Items
-LEVEL 5 — DOMAIN & SYSTEM KNOWLEDGE: Entities, Concepts, Processes, Systems, Metrics
-LEVEL 6 — HISTORY: Decisions (ADRs) & Durable Learnings
-LEVEL 7 — IMPLEMENTATION: Code, Modules, Configuration, Templates, Tests
-LEVEL 8 — RUNTIME DATA: Live APIs, Database, LocalStorage
-```
-
-
----
-
-## 4. The Three Fundamental Invariants
-
-1. **KNOWLEDGE ("What is true?"):**
-   * Describes reality (e.g. `[[flight]]`, `[[kiwi-scraper]]`, `[[numbeo-cost-model]]`).
-2. **GOVERNANCE ("What must remain true?"):**
-   * Defines invariants and constraints that protect product quality, UX, design, and architecture (e.g. `[[PRODUCT_PRINCIPLES]]`, `[[ARCHITECTURE_RULES]]`, `[[DESIGN_SYSTEM]]`).
-3. **WORK ("What are we accomplishing?"):**
-   * Connects strategic intent with implementation tasks (e.g. `[[WORK-001]]`, `[[WORK-002]]`).
-
----
-
-## 5. Single Source of Truth & Dynamic Data
-
-Every important fact or value must have one canonical source:
-* **Kiwi.com GraphQL API** → live flight prices & schedules
-* **Cozycozy Scraper** → live accommodation options
-* **Open-Meteo API** → climate & weather data
-* **Numbeo Database** (`data/live_numbeo_indices.json`) → cost of living indices
-* **FastAPI Backend** (`app/`) → session orchestration & business workflows
-* **Design System** (`static/css/theme.css`, `components.css`) → UI tokens and styles
-
-Do not treat Markdown as a database. Dynamic values are retrieved at runtime from their canonical sources.
-
----
-
-## 6. Definition of Done & Quality Gates
-
-Before completing a task, verify against `[[DEFINITION_OF_DONE]]` and `[[QUALITY_GATES]]`:
-1. Requested functionality is implemented and verified.
-2. UI changes adhere to `[[UX_PRINCIPLES]]` and `[[DESIGN_SYSTEM]]`.
-3. Architecture boundaries (`[[ARCHITECTURE_RULES]]`) and separation of concerns are preserved.
-4. No hardcoded or duplicated canonical values introduced.
-5. All graph nodes, YAML frontmatter, and wikilinks are validated with:
-   ```bash
-   python scripts/knowledge/validate.py
-   ```
-
----
-
-## 7. AI Operations Hub & Specialized Subagent Grid
-
-This project is integrated into the central **AI Operations Hub** (`E:\Data\AI_ops`).
-Live Mission Control is available at: `http://localhost:3300`.
-
-### Specialized Subagent Personas & Responsibilities
-
-| Subagent Persona | Primary Responsibilities | Core Purpose / Invariant Guard | Hub Skill Reference |
+| Agent Name | Title | Specialty / Domain | How to Invoke |
 | :--- | :--- | :--- | :--- |
-| 🧠 **Product / Decision Architect** (`decision_architect`) | Planner logika, Trip modell, scoring modellek, AHP prioritások, trade-offok. | Ő őrzi, hogy ne feature-halmaz, hanem valódi Decision Engine épüljön. | `E:\Data\AI_ops\skills\product-decision-architect\SKILL.md` |
-| 🔬 **Travel Intelligence Agent** (`travel_intelligence`) | Destination & Experience KG, adatforrások, vibe profilok, Numbeo modellek, enrichment. | Az Optivoya „utazási tudása” és adatbázisa innen származik. | `E:\Data\AI_ops\skills\travel-intelligence\SKILL.md` |
-| 🤖 **AI / Optimization Agent** (`ai_optimization`) | Recommendation engine, TripScore, diversity ranking, itinerary & constraint optimization. | A rendszer intelligenciája, többcélú optimalizálása itt koncentrálódik. | `E:\Data\AI_ops\skills\ai-optimization\SKILL.md` |
-| 🗺️ **Maps & Routing Agent** (`maps_routing`) | Google/OSM/routing API-k, travel time kalkuláció, nyitvatartási idők, transzfer logisztika. | A fizikailag és időben reális napi útiterv és logisztikai megvalósíthatóság garanciája. | `E:\Data\AI_ops\skills\maps-routing\SKILL.md` |
-| 💻 **Full-Stack Engineer Agent** (`fullstack_engineer`) | Backend (FastAPI) + frontend (HTML/CSS/JS) + API útvonalak + state management + integrációk. | A tényleges termék, a reszponzív UI és a robusztus architektúra implementációja. | `E:\Data\AI_ops\skills\fullstack-engineer\SKILL.md` |
-| 🧪 **QA / Validation Agent** (`qa_validator`) | Automated tests, golden trips, regressziós tesztek, human-vs-AI benchmark, gráf integritás. | Megakadályozza, hogy „működő”, de hibás döntéseket adó rendszert építsünk. | `E:\Data\AI_ops\skills\qa-validation\SKILL.md` |
-| 📊 **B2B Product / Growth Agent** (`b2b_growth`) | Advisor workflow, usability, pricing modell, üzleti validáció, telemetria és piacra lépés. | Biztosítja, hogy a platform ne csak technikailag jó, hanem üzletileg is sikeres legyen. | `E:\Data\AI_ops\skills\b2b-growth\SKILL.md` |
+| **`product-decision-architect`** | 🧠 Product & UX Architect | Planner logika, UX specifikációk, Trip modell, AHP prioritások, trade-offok | `invoke_subagent(TypeName: "product-decision-architect")` |
+| **`travel-intelligence`** | 🔬 Travel Intelligence Agent | Destination/Experience KG, adatforrások, élményprofilok | `invoke_subagent(TypeName: "travel-intelligence")` |
+| **`ai-optimization`** | 🤖 AI / Optimization Agent | Recommendation, scoring, diversity & constraint optimization | `invoke_subagent(TypeName: "ai-optimization")` |
+| **`fullstack-engineer`** | 🌐 Full-Stack Engineer Agent | Backend + Frontend + API + State Management | `invoke_subagent(TypeName: "fullstack-engineer")` |
+| **`qa-validator`** | 🧪 QA / Validation Agent | Automated tests, validáció, minőségellenőrzés | `invoke_subagent(TypeName: "qa-validator")` |
 
-### Central Task & Memory Synchronization
-- **Log a new task:**
-  ```powershell
-  python scripts/ai_ops_bridge.py log-task --title "Task title" --agent decision_architect --priority high
-  ```
-- **Sync active work items & memories to Mission Control:**
-  ```powershell
-  python scripts/ai_ops_bridge.py sync
-  ```
+---
 
+## 3. 🔒 DETERMINISTIC PROJECT KNOWLEDGE & INVIOLABLE RULES (ZERO AGENT DISCRETION)
+
+> ⚠️ **MANDATORY SYSTEM DIRECTIVE**: The following facts, architectural constraints, and rules are active constraints loaded directly into your instructions. You are strictly forbidden from violating them or assuming alternative conventions. Do NOT assume, do NOT guess, and do NOT bypass these rules!
+
+### 🏛️ ARCHITECTURAL DECISION RECORDS (ADRs):
+- **`ADR-001-unified-trip-architecture.md`**: --- — *id: ADR-001 type: decision name: "ADR-001: Unified Trip Architecture Consolidation"...*
+- **`ADR-002-deterministic-numbeo-food-pricing.md`**: --- — *id: ADR-002 type: decision name: "ADR-002: Deterministic Numbeo Food & Transit Pricing"...*
+- **`ADR-003-promethee-ii-outranking.md`**: --- — *id: ADR-003 type: decision name: "ADR-003: Multi-Criteria Ranking with AHP and PROMETHEE II"...*
+- **`ADR-004-honest-scraping-mode.md`**: --- — *id: ADR-004 type: decision name: "ADR-004: Honest Scraping and Transparent Failure Policy"...*
+- **`ADR-005-fastapi-modular-structure.md`**: --- — *id: ADR-005 type: decision name: "ADR-005: Modular Architecture and FastAPI V2 Refactoring"...*
+- **`ADR-006-master-planner-wizard.md`**: --- — *id: ADR-006 type: decision name: "ADR-006: Master Travel Planner Unified Wizard"...*
+- **`ADR-007-fastapi-router-modularization.md`**: --- — *id: adr-007-fastapi-router-modularization aliases: - ADR-007...*
+- **`ADR-008-supabase-cloud-database.md`**: --- — *id: ADR-008-supabase-cloud-database aliases: - ADR-008-supabase-cloud-database...*
+- **`ADR-009-experience-activity-intelligence-engine.md`**: --- — *id: ADR-009-experience-activity-intelligence-engine type: decision name: "ADR-009: Architecture of the Experience & Activity Intelligence Engine"...*
+- **`ADR-010-dual-auth-and-app-switcher.md`**: --- — *id: adr-010-dual-auth-and-app-switcher aliases: - ADR-010...*
+
+---
+
+## 4. Anti-Hallucination Knowledge Graph Protocol
+
+To prevent hallucination and maintain absolute continuity across sessions, treat `knowledge/` as the project's persistent operating memory:
+
+```text
+knowledge/
+├── INDEX.md               # The navigational map — ALWAYS check this first!
+├── facts/                 # Canonical sources of truth: ports, endpoints, constants, DB schema
+├── decisions/             # Architectural Decision Records (ADRs) explaining the 'why'
+├── rules/                 # Inviolable architectural boundaries and quality gates
+├── learnings/             # Proven insights, operational discoveries, bug recovery recipes
+└── discoveries/           # Unverified raw findings from exploratory runs
+```
+
+### Progressive Disclosure Rule:
+1. The essential facts and rules are already inlined above.
+2. For deep dives or new domains, follow links in `knowledge/INDEX.md` to the relevant node before answering architectural questions or writing code.
+3. If information is missing or conflicting, state it clearly or delegate research to `research-scout`.
+
+---
+
+## 5. Definition of Done
+A feature or bugfix is ONLY complete when:
+1. The requested change is cleanly implemented within existing architectural boundaries and strictly obeys the inlined rules.
+2. The `qa-validator` subagent has verified correctness, tests pass, and no regressions exist.
+3. Any new persistent decisions or learnings are recorded in `knowledge/decisions/` or `knowledge/learnings/`.

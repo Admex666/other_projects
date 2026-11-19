@@ -18,8 +18,9 @@
 
 ### ✅ A Nyertes Vezetői Pozicionálás:
 - **Tiszteletteljes, de egyenes:** Elismeri, hogy a vezető ideje drága, és azonnal a megtérülésre és a szervezeti fájdalomra (silók, felesleges csapatépítő büdzsé) mutat rá.
+- **Kemény, rövid tárgymező (<45 karakter):** Nem vágja le a mobil kliens (pl. *„Pénzkidobás a csapatépítő? / [Cégnév]”* vagy *„Haszon a csapatépítőből / [Cégnév]”*).
 - **Nem dobozos terméket ad el, hanem Pilot Partnert keres:** 2 kiválasztott céget von be esettanulmány-alapon.
-- **Egyetlen mikrodöntés a végén:** Nem hívást kér, csak annyit: *„Lenne értelme átküldenem a 2 oldalas vezetői mintariportot?”* Erre 3 másodperc válaszolni.
+- **Határozott mikrodöntés a végén (zéró megalázkodás):** Nem kér bocsánatot a létezéséért (*„Lenne értelme...?”* = tilos!), hanem egyenrangú kijelentést tesz és zöld utat kér: *„Átküldöm a 2 oldalas vezetői mintariportot, hogy lásd a gyakorlatban. Mehet?”* Erre 1 szóval válaszolhat mobilon (*„Mehet”* / *„Küldd”*).
 
 ---
 

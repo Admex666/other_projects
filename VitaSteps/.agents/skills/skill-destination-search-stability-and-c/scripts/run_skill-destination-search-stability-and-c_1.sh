@@ -1,0 +1,3 @@
+[INFO] Using real Optivoya Experience Engine activities for New York (21 places)!
+[WARN] Experience Engine POI lookup fallback: name 'standard_hours' is not defined
+[INFO] Mock POI adatok generálása ehhez a városhoz: New York (ny_us)...
