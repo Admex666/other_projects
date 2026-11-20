@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const { getLiveRoutes } = require('./menetrendek-client');
+const https = require('https');
+const { getLiveRoutes, searchStation } = require('./menetrendek-client');
 
 const COMPANION_DIR = path.resolve(__dirname, '../companion');
 
@@ -286,6 +287,138 @@ function resolveStopCoordinate(stopName, fallbackLat, fallbackLon) {
 }
 
 /**
+ * Dinamikus megálló-koordináta feloldás Photon API-val
+ */
+async function geocodeStopName(stopName, latHint = 47.5, lonHint = 19.1) {
+    if (!stopName) return null;
+    let url = 'https://photon.komoot.io/api/?q=' + encodeURIComponent(stopName) + '&limit=1';
+    if (latHint && lonHint) {
+        url += `&lat=${latHint}&lon=${lonHint}`;
+    }
+    return new Promise(r => {
+        const req = https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, res => {
+            let d = '';
+            res.on('data', c => d += c);
+            res.on('end', () => {
+                try {
+                    const j = JSON.parse(d);
+                    if (j.features && j.features[0]) {
+                        const [lon, lat] = j.features[0].geometry.coordinates;
+                        // Csak akkor fogadjuk el, ha Magyarországon (vagy Pest térségében) van!
+                        if (lat >= 45.5 && lat <= 48.8 && lon >= 16.0 && lon <= 23.0) {
+                            r([lat, lon]);
+                            return;
+                        }
+                    }
+                } catch(e) {}
+                r(null);
+            });
+        });
+        req.on('error', () => r(null));
+        req.setTimeout(2500, () => { req.destroy(); r(null); });
+    });
+}
+
+/**
+ * Automatikusan feloldja a lakóhelyhez legközelebbi valós BKK / helyi megállót
+ * 1. Nominatim bus_stop keresés a pontos koordináta körzetében
+ * 2. Photon Reverse Geocoding fallback
+ * 3. Menetrendek.hu állomás feloldása
+ */
+async function resolveDirectNearbyStop(lat, lon, rawAddress) {
+    if (!lat || !lon) return null;
+    const candidates = [];
+
+    // 1. Nominatim megállókeresés a lakóhely körül (0.015 fokos körzet ~1.2 km)
+    try {
+        const delta = 0.015;
+        const viewbox = (lon - delta) + ',' + (lat + delta) + ',' + (lon + delta) + ',' + (lat - delta);
+        const url = 'https://nominatim.openstreetmap.org/search?format=json&q=bus_stop&bounded=1&viewbox=' + viewbox;
+        const nomData = await new Promise((resolve) => {
+            const req = https.get(url, { headers: { 'User-Agent': 'VitaSteps-App/1.0' } }, (res) => {
+                let d = '';
+                res.on('data', c => d += c);
+                res.on('end', () => {
+                    try { resolve(JSON.parse(d)); } catch(e) { resolve([]); }
+                });
+            });
+            req.on('error', () => resolve([]));
+            req.setTimeout(2500, () => { req.destroy(); resolve([]); });
+        });
+
+        if (Array.isArray(nomData) && nomData.length > 0) {
+            const sortedStops = nomData.map(e => {
+                const sLat = parseFloat(e.lat), sLon = parseFloat(e.lon);
+                const dist = Math.hypot((sLat - lat) * 111, (sLon - lon) * 75);
+                const cleanName = (e.display_name || '').split(',')[0].trim();
+                return { name: cleanName, lat: sLat, lon: sLon, distKm: dist };
+            }).sort((a, b) => a.distKm - b.distKm);
+
+            for (const s of sortedStops.slice(0, 5)) {
+                candidates.push({ query: 'Budapest, ' + s.name, coord: [s.lat, s.lon] });
+                candidates.push({ query: s.name, coord: [s.lat, s.lon] });
+            }
+        }
+    } catch (e) {}
+
+    // 2. Photon Reverse Geocoding fallback
+    try {
+        const url = 'https://photon.komoot.io/reverse?lon=' + lon + '&lat=' + lat;
+        const photonData = await new Promise((resolve) => {
+            const req = https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (res) => {
+                let d = '';
+                res.on('data', c => d += c);
+                res.on('end', () => {
+                    try { resolve(JSON.parse(d)); } catch(e) { resolve(null); }
+                });
+            });
+            req.on('error', () => resolve(null));
+            req.setTimeout(2000, () => { req.destroy(); resolve(null); });
+        });
+
+        if (photonData && photonData.features && photonData.features[0]) {
+            const p = photonData.features[0].properties;
+            if (p.street) {
+                candidates.push({ query: 'Budapest, ' + p.street, coord: [lat, lon] });
+                candidates.push({ query: p.street, coord: [lat, lon] });
+            }
+            if (p.name && p.name !== p.street) {
+                candidates.push({ query: 'Budapest, ' + p.name, coord: [lat, lon] });
+                candidates.push({ query: p.name, coord: [lat, lon] });
+            }
+        }
+    } catch (e) {}
+
+    if (rawAddress) {
+        const clean = rawAddress.replace(/\s+\d+[\/\w\.-]*.*$/, '').trim();
+        candidates.push({ query: clean, coord: [lat, lon] });
+        if (!clean.toLowerCase().includes('budapest')) candidates.push({ query: 'Budapest, ' + clean, coord: [lat, lon] });
+    }
+
+    for (const c of candidates) {
+        try {
+            const st = await searchStation(c.query);
+            if (st && st.lsname) {
+                let stopCoord = c.coord;
+                if (!stopCoord || (stopCoord[0] === lat && stopCoord[1] === lon)) {
+                    stopCoord = await geocodeStopName(st.lsname, lat, lon);
+                    if (!stopCoord && st.geomEov && st.geomEov.coordinates) {
+                        const [eovX, eovY] = st.geomEov.coordinates;
+                        stopCoord = [47.143 + ((eovY - 200000) / 111180), 19.048 + ((eovX - 650000) / 75500)];
+                    }
+                }
+                return {
+                    name: st.lsname,
+                    coord: stopCoord || [lat, lon],
+                    queryName: c.query
+                };
+            }
+        } catch(e) {}
+    }
+    return null;
+}
+
+/**
  * Intelligens címjelöltek felépítése a Menetrendek.hu hivatalos megálló-adatbázisához
  */
 function buildAddressCandidates(rawAddress, homeLat, homeLon) {
@@ -411,6 +544,29 @@ async function planTripFromLocation({
     // Intelligens kiindulási címjelöltek összeállítása
     let originCandidates = buildAddressCandidates(homeAddress, homeLat, homeLon);
 
+    // 0. DINAMIKUS HELYI MEGÁLLÓ FELOLDÁSA (Bárhol is dobja le a felhasználó a pontot)
+    const directStop = await resolveDirectNearbyStop(homeLat, homeLon, homeAddress);
+    let directStopWalkLeg = null;
+
+    if (directStop) {
+        originCandidates = [directStop.name, ...originCandidates];
+        if (directStop.coord) {
+            KNOWN_STATION_COORDS[directStop.name] = directStop.coord;
+            const dLat = (directStop.coord[0] - homeLat) * 111;
+            const dLon = (directStop.coord[1] - homeLon) * 111 * Math.cos(homeLat * Math.PI / 180);
+            const distToStopKm = parseFloat(Math.hypot(dLat, dLon).toFixed(2));
+            if (distToStopKm >= 0.1) {
+                const walkMins = Math.max(2, Math.round((distToStopKm / 4.0) * 60));
+                directStopWalkLeg = {
+                    stopName: directStop.name,
+                    stopCoord: directStop.coord,
+                    distKm: distToStopKm,
+                    walkMins
+                };
+            }
+        }
+    }
+
     // Megvizsgáljuk, hogy közvetlenül elérhető-e helyi kötöttpályás ráhordó (pl. 59-es villamos Farkasrétről)
     const localFeeder = findNearbyLocalFeeder(homeLat, homeLon, 0.8);
     let feederOutboundLeg = null;
@@ -432,12 +588,16 @@ async function planTripFromLocation({
             feederArrMins,
             feeder: localFeeder
         };
+    } else if (directStopWalkLeg) {
+        // Ha nem villamos ráhordó, de van séta a helyi BKK megállóig, a menetrendi keresést a gyaloglás után indítjuk
+        effectiveDepartureStr = minutesToTimeStr(parseTimeToMinutes(homeDeparture) + directStopWalkLeg.walkMins);
     }
 
     // 1. ODAÚT LEKÉRDEZÉSE AZ ÉLŐ MENETRENDEKBŐL (MÁV + HÉV + Volán)
     let outboundLegs = [];
     let trailArrivalMins = parseTimeToMinutes(effectiveDepartureStr) + 40; // fallback
     let liveOutboundFound = false;
+    let alternativeRoutes = [];
 
     // Célállomás keresési jelöltek: a legközelebbi hegyi/külterületi megálló ÉS a központi településnév
     const targetCandidates = [trailhead.search_query];
@@ -449,116 +609,196 @@ async function planTripFromLocation({
         targetCandidates.push('Szentendre vá.');
     }
 
+    // Segédfüggvény: egy adott nyers útvonalból összeállítja az odaút szakaszait (legs)
+    function buildOutboundLegs(rawRoute) {
+        const legs = [];
+        let curTrailArrivalMins = parseTimeToMinutes(rawRoute.arrivalTime);
+
+        if (feederOutboundLeg) {
+            const { walkMins, feeder } = feederOutboundLeg;
+            const transitFirstDepMins = parseTimeToMinutes(rawRoute.legs[0]?.depTime || rawRoute.departureTime);
+            const tramArrMins = transitFirstDepMins - 5;
+            const tramDepMins = tramArrMins - feeder.durationMin;
+            const walkDepMins = Math.max(parseTimeToMinutes(homeDeparture), tramDepMins - walkMins);
+
+            if (walkMins > 0) {
+                legs.push({
+                    legIndex: 1,
+                    legType: 'walk_to_stop',
+                    badgeType: 'SÉTA',
+                    badgeColor: '#0ea5e9',
+                    lineName: `Séta a villamosig (~${(feeder.distKm * 1000).toFixed(0)}m)`,
+                    directionText: `${feeder.name} felé`,
+                    depTime: minutesToTimeStr(walkDepMins),
+                    arrTime: minutesToTimeStr(tramDepMins),
+                    durationMin: walkMins,
+                    fromStop: homeAddress,
+                    toStop: feeder.name,
+                    fromCoord: [homeLat, homeLon],
+                    toCoord: [feeder.lat, feeder.lon],
+                    note: 'Gyalogos eljutás a járat indulásához igazítva'
+                });
+            }
+            legs.push({
+                legIndex: legs.length + 1,
+                legType: 'local_feeder',
+                badgeType: feeder.badgeType,
+                badgeColor: feeder.badgeColor,
+                lineName: feeder.lineName,
+                directionText: `${feeder.hubTarget} felé`,
+                depTime: minutesToTimeStr(tramDepMins),
+                arrTime: minutesToTimeStr(tramArrMins),
+                durationMin: feeder.durationMin,
+                fromStop: feeder.name,
+                toStop: feeder.hubTarget,
+                fromCoord: [feeder.lat, feeder.lon],
+                toCoord: feeder.hubCoord,
+                note: 'Közvetlen helyi villamosjárat a csomópontig'
+            });
+        } else if (directStopWalkLeg && rawRoute.legs[0]?.fromStop.includes(directStopWalkLeg.stopName.split(',')[0])) {
+            const transitFirstDepMins = parseTimeToMinutes(rawRoute.legs[0]?.depTime || rawRoute.departureTime);
+            const walkArrMins = transitFirstDepMins - 2; // 2 perc átszállási puffer
+            const walkDepMins = Math.max(parseTimeToMinutes(homeDeparture), walkArrMins - directStopWalkLeg.walkMins);
+
+            legs.push({
+                legIndex: 1,
+                legType: 'walk_to_stop',
+                badgeType: 'SÉTA',
+                badgeColor: '#0ea5e9',
+                lineName: `Séta a megállóig (~${(directStopWalkLeg.distKm * 1000).toFixed(0)}m)`,
+                directionText: `${directStopWalkLeg.stopName} felé`,
+                depTime: minutesToTimeStr(walkDepMins),
+                arrTime: minutesToTimeStr(walkArrMins),
+                durationMin: directStopWalkLeg.walkMins,
+                fromStop: homeAddress,
+                toStop: directStopWalkLeg.stopName,
+                fromCoord: [homeLat, homeLon],
+                toCoord: directStopWalkLeg.stopCoord,
+                note: 'Gyalogos indulás pontosan a járat érkezéséhez hangolva'
+            });
+        }
+
+        rawRoute.legs.forEach((l) => {
+            const fromCoord = resolveStopCoordinate(l.fromStop, homeLat, homeLon);
+            const toCoord = resolveStopCoordinate(l.toStop, trailhead.lat, trailhead.lon);
+            legs.push({
+                legIndex: legs.length + 1,
+                legType: 'transit',
+                badgeType: l.badgeType,
+                badgeColor: l.badgeColor,
+                lineName: l.lineName,
+                directionText: `${l.toStop} felé`,
+                depTime: l.depTime,
+                arrTime: l.arrTime,
+                durationMin: l.durationMin,
+                fromStop: l.fromStop,
+                toStop: l.toStop,
+                fromCoord,
+                toCoord,
+                note: l.note || 'Menetrendek.hu élő hivatalos járat'
+            });
+        });
+
+        // Séta a célállomástól a túra rajtjáig (>200m esetén)
+        const lastLeg = legs[legs.length - 1];
+        if (lastLeg && lastLeg.toCoord) {
+            const endTransitCoord = lastLeg.toCoord;
+            const dLat = (trailhead.lat - endTransitCoord[0]) * 111;
+            const dLon = (trailhead.lon - endTransitCoord[1]) * 75;
+            const distToTrailKm = parseFloat(Math.hypot(dLat, dLon).toFixed(2));
+
+            if (distToTrailKm >= 0.2) {
+                const walkMins = Math.max(3, Math.round((distToTrailKm / 4.0) * 60));
+                const walkDepMins = curTrailArrivalMins;
+                const walkArrMins = curTrailArrivalMins + walkMins;
+                curTrailArrivalMins = walkArrMins;
+
+                legs.push({
+                    legIndex: legs.length + 1,
+                    legType: 'walk_to_trail',
+                    badgeType: 'SÉTA',
+                    badgeColor: '#0ea5e9',
+                    lineName: `Séta a túra rajtjáig (~${(distToTrailKm * 1000).toFixed(0)}m)`,
+                    directionText: `${trail.name} rajtja felé`,
+                    depTime: minutesToTimeStr(walkDepMins),
+                    arrTime: minutesToTimeStr(walkArrMins),
+                    durationMin: walkMins,
+                    fromStop: lastLeg.toStop,
+                    toStop: `${trail.name} rajtja`,
+                    fromCoord: endTransitCoord,
+                    toCoord: [trailhead.lat, trailhead.lon],
+                    note: 'Gyalogos eljutás az állomástól a túra rajtjáig'
+                });
+            }
+        }
+
+        return { legs, trailArrivalMins: curTrailArrivalMins };
+    }
+
     try {
         let bestOut = null;
+        const allOutboundCandidates = [];
+
         for (const target of targetCandidates) {
             for (const cand of originCandidates) {
                 try {
                     const res = await getLiveRoutes(cand, target, travelDate, effectiveDepartureStr);
                     if (res && res.routes && res.routes.length > 0) {
-                        bestOut = findBestUpcomingRoute(res.routes, effectiveDepartureStr) || res.routes[0];
-                        if (bestOut) break;
+                        const minMins = parseTimeToMinutes(effectiveDepartureStr);
+                        const upcoming = res.routes.filter(r => {
+                            const [h, m] = r.departureTime.split(':').map(Number);
+                            const mins = h * 60 + m;
+                            return mins >= minMins && (mins - minMins) < 240;
+                        });
+                        upcoming.forEach(r => allOutboundCandidates.push(r));
+                        if (allOutboundCandidates.length >= 3) break;
                     }
                 } catch (e) {}
             }
-            if (bestOut) break;
+            if (allOutboundCandidates.length >= 3) break;
         }
 
-        if (bestOut) {
-            // Ha volt helyi ráhordó (pl. 59-es villamos), beszúrjuk az elejére
-            if (feederOutboundLeg) {
-                const { walkMins, feederDepMins, feederArrMins, feeder } = feederOutboundLeg;
-                if (walkMins > 0) {
-                    outboundLegs.push({
-                        legIndex: 1,
-                        legType: 'walk_to_stop',
-                        badgeType: 'SÉTA',
-                        badgeColor: '#0ea5e9',
-                        lineName: `Séta a villamosig (~${(feeder.distKm * 1000).toFixed(0)}m)`,
-                        directionText: `${feeder.name} felé`,
-                        depTime: homeDeparture,
-                        arrTime: minutesToTimeStr(feederDepMins),
-                        durationMin: walkMins,
-                        fromStop: homeAddress,
-                        toStop: feeder.name,
-                        fromCoord: [homeLat, homeLon],
-                        toCoord: [feeder.lat, feeder.lon],
-                        note: 'Gyalogos eljutás az otthontól a villamosmegállóig'
-                    });
+        if (allOutboundCandidates.length > 0) {
+            // Egyedi útvonalak szűrése indulási és érkezési idő szerint
+            const seen = new Set();
+            const uniqueRoutes = [];
+            for (const r of allOutboundCandidates) {
+                const key = r.departureTime + '_' + r.arrivalTime;
+                if (!seen.has(key)) {
+                    seen.add(key);
+                    uniqueRoutes.push(r);
                 }
-                outboundLegs.push({
-                    legIndex: outboundLegs.length + 1,
-                    legType: 'local_feeder',
-                    badgeType: feeder.badgeType,
-                    badgeColor: feeder.badgeColor,
-                    lineName: feeder.lineName,
-                    directionText: `${feeder.hubTarget} felé`,
-                    depTime: minutesToTimeStr(feederDepMins),
-                    arrTime: minutesToTimeStr(feederArrMins),
-                    durationMin: feeder.durationMin,
-                    fromStop: feeder.name,
-                    toStop: feeder.hubTarget,
-                    fromCoord: [feeder.lat, feeder.lon],
-                    toCoord: feeder.hubCoord,
-                    note: 'Közvetlen helyi villamosjárat a csomópontig'
-                });
             }
+            uniqueRoutes.sort((a, b) => parseTimeToMinutes(a.departureTime) - parseTimeToMinutes(b.departureTime));
 
-            bestOut.legs.forEach((l) => {
-                const fromCoord = resolveStopCoordinate(l.fromStop, homeLat, homeLon);
-                const toCoord = resolveStopCoordinate(l.toStop, trailhead.lat, trailhead.lon);
-                outboundLegs.push({
-                    legIndex: outboundLegs.length + 1,
-                    legType: 'transit',
-                    badgeType: l.badgeType,
-                    badgeColor: l.badgeColor,
-                    lineName: l.lineName,
-                    directionText: `${l.toStop} felé`,
-                    depTime: l.depTime,
-                    arrTime: l.arrTime,
-                    durationMin: l.durationMin,
-                    fromStop: l.fromStop,
-                    toStop: l.toStop,
-                    fromCoord,
-                    toCoord,
-                    note: l.note || 'Menetrendek.hu élő hivatalos járat'
-                });
-            });
-            trailArrivalMins = parseTimeToMinutes(bestOut.arrivalTime);
+            bestOut = uniqueRoutes[0];
+            const primaryBuilt = buildOutboundLegs(bestOut);
+            outboundLegs = primaryBuilt.legs;
+            trailArrivalMins = primaryBuilt.trailArrivalMins;
             liveOutboundFound = true;
 
-            // 1/B. SÉTA HOZZÁADÁSA: Ha a tömegközlekedési célállomás és a túra rajtja között >200 méter van
-            const lastOutboundLeg = outboundLegs[outboundLegs.length - 1];
-            if (lastOutboundLeg && lastOutboundLeg.toCoord) {
-                const endTransitCoord = lastOutboundLeg.toCoord;
-                const dLat = (trailhead.lat - endTransitCoord[0]) * 111;
-                const dLon = (trailhead.lon - endTransitCoord[1]) * 75;
-                const distToTrailKm = parseFloat(Math.hypot(dLat, dLon).toFixed(2));
+            // 3 alternatív útvonal (Google Maps jellegű választóhoz)
+            alternativeRoutes = uniqueRoutes.slice(0, 3).map((r, idx) => {
+                const built = buildOutboundLegs(r);
+                const firstDep = built.legs[0]?.depTime || r.departureTime;
+                const arrTime = minutesToTimeStr(built.trailArrivalMins);
+                const durMin = built.trailArrivalMins - parseTimeToMinutes(firstDep);
+                const transCount = r.transfersCount !== undefined ? r.transfersCount : (r.legs.length - 1);
+                const mainLines = r.legs.map(l => ({ badgeType: l.badgeType, badgeColor: l.badgeColor, lineName: l.lineName }));
 
-                if (distToTrailKm >= 0.2) {
-                    const walkMins = Math.max(3, Math.round((distToTrailKm / 4.0) * 60)); // 4 km/h gyaloglási tempó
-                    const walkDepMins = trailArrivalMins;
-                    const walkArrMins = trailArrivalMins + walkMins;
-                    trailArrivalMins = walkArrMins; // A túra a séta befejezésekor indul
-
-                    outboundLegs.push({
-                        legIndex: outboundLegs.length + 1,
-                        legType: 'walk_to_trail',
-                        badgeType: 'SÉTA',
-                        badgeColor: '#0ea5e9',
-                        lineName: `Séta a túra rajtjáig (~${(distToTrailKm * 1000).toFixed(0)}m)`,
-                        directionText: `${trail.name} rajtja felé`,
-                        depTime: minutesToTimeStr(walkDepMins),
-                        arrTime: minutesToTimeStr(walkArrMins),
-                        durationMin: walkMins,
-                        fromStop: lastOutboundLeg.toStop,
-                        toStop: `${trail.name} rajtja`,
-                        fromCoord: endTransitCoord,
-                        toCoord: [trailhead.lat, trailhead.lon],
-                        note: 'Gyalogos eljutás az állomástól a túra rajtjáig'
-                    });
-                }
-            }
+                return {
+                    id: idx,
+                    title: `Útvonal ${idx + 1}`,
+                    departureTime: firstDep,
+                    arrivalTime: arrTime,
+                    durationMin: durMin,
+                    durationStr: `${Math.floor(durMin / 60)}ó ${durMin % 60}p`,
+                    transfersCount: transCount,
+                    mainLines,
+                    legs: built.legs,
+                    trailArrivalMins: built.trailArrivalMins
+                };
+            });
         }
     } catch (err) {
         console.warn('Live outbound transit query fallback:', err.message);
@@ -808,6 +1048,7 @@ async function planTripFromLocation({
             start_stop: trail.start_stop,
             coordinates: trail.coordinates || []
         },
+        alternatives: alternativeRoutes,
         scenarios
     };
 }

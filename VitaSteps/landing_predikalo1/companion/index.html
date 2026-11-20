@@ -335,6 +335,19 @@
                     </button>
                 </div>
 
+                <!-- Google Maps Stílusú Alternatív Útvonal Választó (3 Opció) -->
+                <div id="routeAlternativesCard" class="hidden glass-card rounded-2xl p-4 shadow-xl space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
+                            <i class="ph-bold ph-path"></i> Választható Útvonalak (Google Maps stílus)
+                        </span>
+                        <span class="text-[10px] text-slate-400 font-medium">Kattints egy opcióra a váltáshoz</span>
+                    </div>
+                    <div id="routeAlternativesContainer" class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+                        <!-- JS dinamikusan tölti fel a 3 alternatívát -->
+                    </div>
+                </div>
+
                 <!-- BudapestGO Stílusú Részletes Idővonal Kártya -->
                 <div class="glass-card rounded-2xl p-6 shadow-xl space-y-6">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -373,6 +386,7 @@
         let currentPlan = null;
         let selectedScenario = 'normal';
         let activeCustomTrail = null;
+        let selectedAlternativeIdx = 0;
 
         // Alapértelmezett kiindulópont (Deák Ferenc tér)
         let currentLat = 47.4979;
@@ -677,6 +691,7 @@
                 const data = await res.json();
                 if (data.success && data.plan) {
                     currentPlan = data.plan;
+                    selectedAlternativeIdx = 0;
                     renderPlan();
                 }
             } catch (err) {
@@ -721,6 +736,80 @@
             const plan = currentPlan;
             const sc = plan.scenarios[selectedScenario];
 
+            // 1. Google Maps stílusú Alternatív Útvonal Választó Kártyák Kirajzolása
+            const altCard = document.getElementById('routeAlternativesCard');
+            const altContainer = document.getElementById('routeAlternativesContainer');
+            
+            if (plan.alternatives && plan.alternatives.length > 1) {
+                altCard.classList.remove('hidden');
+                altContainer.innerHTML = '';
+
+                plan.alternatives.forEach((alt, idx) => {
+                    const isSelected = (idx === selectedAlternativeIdx);
+                    const btn = document.createElement('div');
+                    btn.className = `p-3 rounded-xl border cursor-pointer transition-all ${
+                        isSelected 
+                            ? 'bg-indigo-600/20 border-indigo-500 ring-2 ring-indigo-500/50 shadow-lg shadow-indigo-500/20' 
+                            : 'bg-slate-900/70 border-slate-800 hover:border-slate-700 hover:bg-slate-800/60'
+                    }`;
+
+                    // Járat badge-ek összefűzése
+                    const badgesHtml = (alt.mainLines || []).map(l => `
+                        <span class="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded text-white shadow-sm" style="background-color: ${l.badgeColor};">
+                            ${l.badgeType} ${l.lineName}
+                        </span>
+                    `).join('<i class="ph-bold ph-caret-right text-[10px] text-slate-500 mx-0.5"></i>');
+
+                    btn.innerHTML = `
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-extrabold ${isSelected ? 'text-indigo-300' : 'text-white'}">
+                                ${alt.title}
+                            </span>
+                            <span class="text-xs font-extrabold font-mono text-emerald-400">
+                                ${alt.durationStr}
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-xs text-slate-300 font-mono mb-2">
+                            <span>${alt.departureTime}</span>
+                            <i class="ph-bold ph-arrow-right text-[10px] text-slate-500"></i>
+                            <span>${alt.arrivalTime}</span>
+                            <span class="text-[10px] font-sans text-slate-400 ml-auto">(${alt.transfersCount} átszállás)</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1 pt-1.5 border-t border-slate-800/80">
+                            ${badgesHtml}
+                        </div>
+                    `;
+
+                    btn.addEventListener('click', () => {
+                        selectedAlternativeIdx = idx;
+                        renderPlan();
+                    });
+
+                    altContainer.appendChild(btn);
+                });
+            } else {
+                altCard.classList.add('hidden');
+            }
+
+            // Ha kiválasztottunk egy alternatív útvonalat, az odaúti szakaszokat abból vesszük át
+            let activeLegs = [...sc.legs];
+            let activeDepTime = sc.home_departure_time;
+
+            if (plan.alternatives && plan.alternatives[selectedAlternativeIdx]) {
+                const alt = plan.alternatives[selectedAlternativeIdx];
+                // Kicseréljük az odaúti szakaszokat (a túra szakasz előttieket)
+                const hikeIndex = activeLegs.findIndex(l => l.legType === 'hiking_trail');
+                if (hikeIndex !== -1) {
+                    const returnLegsPart = activeLegs.slice(hikeIndex);
+                    // A túra indulási idejét hozzáigazítjuk az alternatíva célbaérkezéséhez
+                    if (returnLegsPart[0]) {
+                        returnLegsPart[0].depTime = minutesToTimeStr(alt.trailArrivalMins);
+                    }
+                    activeLegs = [...alt.legs, ...returnLegsPart];
+                    activeDepTime = alt.departureTime;
+                }
+            }
+
             // Statisztikák
             document.getElementById('statDist').textContent = `${plan.trail.distance_km} km`;
             document.getElementById('statEle').textContent = `+${plan.trail.elevation_gain_m} m`;
@@ -729,7 +818,7 @@
 
             document.getElementById('distToHubBadge').textContent = `~${plan.home.dist_to_hub_km} km a hubig`;
 
-            document.getElementById('summaryDepTime').textContent = sc.home_departure_time;
+            document.getElementById('summaryDepTime').textContent = activeDepTime;
             document.getElementById('summaryArrTime').textContent = sc.home_arrival_time;
             document.getElementById('summaryTotalDuration').textContent = `(${sc.total_door_to_door_str} otthontól otthonig)`;
 
@@ -737,7 +826,7 @@
             const container = document.getElementById('bkkLegsContainer');
             container.innerHTML = '';
 
-            sc.legs.forEach(leg => {
+            activeLegs.forEach(leg => {
                 const legDiv = document.createElement('div');
                 legDiv.className = 'bkk-leg';
 
@@ -806,7 +895,7 @@
             // Otthon marker feliratozása tervezett indulási idővel
             if (homeMarker) {
                 homeMarker.unbindTooltip();
-                homeMarker.bindTooltip(`<div class="font-bold text-xs">🏠 Otthon<br><span class="text-indigo-400 font-mono">Indulás: ${sc.home_departure_time}</span></div>`, {
+                homeMarker.bindTooltip(`<div class="font-bold text-xs">🏠 Otthon<br><span class="text-indigo-400 font-mono">Indulás: ${activeDepTime}</span></div>`, {
                     permanent: true,
                     direction: 'top',
                     className: 'map-time-label'
@@ -814,8 +903,8 @@
             }
 
             // 1. Tömegközlekedési és Helyi Szakaszok (Oda- és Visszaút) Kirajzolása Valós Nyomvonallal
-            if (sc.legs && sc.legs.length > 0) {
-                for (const leg of sc.legs) {
+            if (activeLegs && activeLegs.length > 0) {
+                for (const leg of activeLegs) {
                     if (leg.fromCoord && leg.toCoord && Array.isArray(leg.fromCoord) && Array.isArray(leg.toCoord)) {
                         allBoundsPoints.push(leg.fromCoord);
                         allBoundsPoints.push(leg.toCoord);
