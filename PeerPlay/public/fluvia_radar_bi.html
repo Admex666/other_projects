@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fluvia Radar — Szervezeti Hálózati BI Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas: #FBFBFA;
+      --bg-surface: #FFFFFF;
+      --border-color: #E7E5E4;
+      --border-subtle: #F0EFEA;
+      --border-strong: #A8A29E;
+      --text-main: #0F172A;
+      --text-forest: #0d4638;
+      --text-muted: #57534E;
+      --text-soft: #78716C;
+      --primary: #0d4638;
+      --primary-hover: #082d24;
+      --accent-green: #61f27e;
+      --accent-red: #B91C1C;
+      --color-penzugy: #2563EB;
+      --color-gyartas: #059669;
+      --color-kfejl: #7C3AED;
+      --color-ertek: #D97706;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: #1C1917;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      font-size: 13px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bi-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 30px 36px 60px 36px;
+    }
+
+    /* Editorial Header */
+    .bi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 24px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .bi-title {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 34px;
+      font-weight: 400;
+      color: var(--text-forest);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .bi-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* Hierarchical Dual Engine Switch */
+    .engine-switcher-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .engine-switcher-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-soft);
+    }
+    .engine-switch {
+      display: inline-flex;
+      background: #EFEFEA;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 3px;
+      gap: 3px;
+    }
+    .engine-tab {
+      padding: 7px 16px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .engine-tab:hover {
+      color: var(--text-main);
+    }
+    .engine-tab.active {
+      background: #FFFFFF;
+      color: var(--text-forest);
+      font-weight: 700;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .engine-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* KPI Strip */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 28px;
+      background: #FFFFFF;
+    }
+    .kpi-cell {
+      padding: 16px 22px;
+      border-right: 1px solid var(--border-color);
+    }
+    .kpi-cell:last-child {
+      border-right: none;
+    }
+    .kpi-lbl {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+    .kpi-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 25px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.1;
+      margin-bottom: 4px;
+      letter-spacing: -0.03em;
+    }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* Main Workspace Layout */
+    .bi-workspace {
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      gap: 30px;
+      align-items: start;
+    }
+
+    /* Canvas Section */
+    .canvas-section {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      padding: 22px 26px;
+    }
+    .canvas-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .canvas-title-box h3 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 23px;
+      font-weight: 400;
+      color: var(--text-forest);
+    }
+    .canvas-title-box p {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 5px 11px;
+      border: 1px solid var(--border-color);
+      background: #FFFFFF;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .filter-btn:hover {
+      border-color: var(--text-main);
+      color: var(--text-main);
+    }
+    .filter-btn.active {
+      background: var(--text-forest);
+      color: #FFFFFF;
+      border-color: var(--text-forest);
+    }
+
+    /* Legend Bar */
+    .legend-bar {
+      display: flex;
+      gap: 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* SVG Viewport - Drafting Canvas */
+    .graph-viewport {
+      width: 100%;
+      height: 540px;
+      background: #FCFCFB;
+      border: 1px solid var(--border-subtle);
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+    }
+    svg.ona-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Edges */
+    .edge-line {
+      stroke: #A8A29E;
+      transition: stroke 0.15s ease, opacity 0.15s ease;
+    }
+    .edge-line.internal {
+      stroke: #D6D3D1;
+      stroke-dasharray: 3 3;
+    }
+    .edge-line.trade {
+      stroke: #57534E;
+    }
+    .edge-line.silo {
+      stroke: var(--accent-red);
+      stroke-dasharray: 6 4;
+      stroke-width: 2.8px;
+    }
+    .edge-line.workplace {
+      stroke: #2563EB;
+      stroke-opacity: 0.75;
+    }
+    .edge-line.highlighted {
+      stroke: var(--text-forest) !important;
+      stroke-width: 4px !important;
+      opacity: 1 !important;
+    }
+    .edge-line.dimmed {
+      opacity: 0.10 !important;
+    }
+
+    /* Nodes - Pure Crisp Stroke on Hover & Active */
+    .node-group {
+      cursor: pointer;
+    }
+    .node-circle {
+      stroke: #FFFFFF;
+      stroke-width: 2.5px;
+      transition: stroke 0.12s ease, stroke-width 0.12s ease;
+    }
+    .node-group:hover .node-circle {
+      stroke: var(--text-main);
+      stroke-width: 3.5px;
+    }
+    .node-group.active .node-circle {
+      stroke: var(--text-forest);
+      stroke-width: 4px;
+    }
+    .node-group.dimmed {
+      opacity: 0.18;
+    }
+
+    /* Inspector Panel */
+    .inspector-section {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      padding: 22px 24px;
+    }
+    .inspector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 16px;
+    }
+    .inspector-title {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 21px;
+      font-weight: 400;
+      color: var(--text-forest);
+    }
+
+    /* Person Profile Sheet */
+    .person-sheet {
+      margin-bottom: 22px;
+    }
+    .person-name-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    .person-name {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+    .person-dept-tag {
+      font-size: 11px;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+    .person-bio {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      padding: 11px 13px;
+      background: #F7F6F3;
+      border-left: 2px solid var(--text-forest);
+      margin-bottom: 16px;
+    }
+
+    /* Stat Table */
+    .stat-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 22px;
+    }
+    .stat-table tr {
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .stat-table td {
+      padding: 7px 0;
+      font-size: 11.5px;
+    }
+    .stat-table td.stat-lbl {
+      color: var(--text-soft);
+      font-weight: 500;
+    }
+    .stat-table td.stat-val {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Action List */
+    .action-header {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .action-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .action-item {
+      padding-left: 11px;
+      border-left: 2px solid #D6D3D1;
+    }
+    .action-item.priority {
+      border-left-color: var(--text-forest);
+    }
+    .action-item h4 {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .action-item p {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Telemetry Ribbon */
+    .telemetry-strip {
+      margin-top: 28px;
+      padding: 12px 18px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+    .telemetry-log {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-forest);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bi-container">
+    <!-- Personalized Executive Welcome Banner (Dynamic via URL Params) -->
+    <div id="lead-welcome-banner" style="display: none; background: #ECFDF5; border: 1px solid #A7F3D0; border-left: 4px solid #0d4638; padding: 12px 18px; border-radius: 6px; margin-bottom: 20px; font-size: 12.5px; color: #0d4638; justify-content: space-between; align-items: center;">
+      <div>
+        <strong id="lead-greeting-name" style="font-size: 13.5px; display: block; margin-bottom: 2px;">Tisztelt Vezérigazgató Úr!</strong>
+        <span id="lead-greeting-desc" style="color: #082d24;">Az alábbi interaktív felületen a vállalati silók és informális hálózati hidak szerkezetét vizsgálhatja meg. Az Önök egyedi sessionje aktív.</span>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: #FFFFFF; padding: 5px 12px; border-radius: 4px; border: 1px solid #A7F3D0; color: #0d4638; font-weight: 700;" id="lead-tag-badge">
+        CÉLVEZETŐ: MASTERPLAST
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bi-header">
+      <div>
+        <div class="bi-title">Fluvia Radar — Szervezeti Hálózati BI Dashboard</div>
+        <div class="bi-sub" id="header-subtitle">15 Fős Bipoláris Súly-Ellensúly Modell (Workshop Szimuláció)</div>
+      </div>
+      <div class="bi-meta-bar">
+        <div class="bi-meta-item">Session: DEMO15 · 15 Fő · 90 Perc</div>
+        <div class="bi-meta-item">Bipoláris Szervezetdiagnosztika</div>
+        <div class="bi-meta-item">Fluvia Systems</div>
+      </div>
+    </header>
+
+    <!-- KPI Strip -->
+    <div class="kpi-strip" id="kpi-strip">
+      <div class="kpi-cell">
+        <div class="kpi-lbl" id="kpi-lbl-1">Hálózati Sűrűség</div>
+        <div class="kpi-val" id="kpi-val-1">78.6%</div>
+        <div class="kpi-sub" id="kpi-sub-1">11 / 14 lehetséges keresztfunkcionális csatorna aktív</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-lbl" id="kpi-lbl-2">Kritikus Részlegi Siló</div>
+        <div class="kpi-val" id="kpi-val-2" style="color: var(--accent-red);">0 Tranzakció</div>
+        <div class="kpi-sub" id="kpi-sub-2">Gyártás (Szabó T.) ↔ K+F (Horváth B.) között 100% elutasítás</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-lbl" id="kpi-lbl-3">Kulcsember Kitettség (SPOF)</div>
+        <div class="kpi-val" id="kpi-val-3">82.4%</div>
+        <div class="kpi-sub" id="kpi-sub-3">Kovács Péter és Kiss Gergely közvetíti a döntési forgalmat</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-lbl" id="kpi-lbl-4">Döntési Reakcióidő</div>
+        <div class="kpi-val" id="kpi-val-4">&lt; 3.8 perc</div>
+        <div class="kpi-sub" id="kpi-sub-4">Átlagos P2P szerződéskötési és ellenőrzési sebesség</div>
+      </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="bi-workspace">
+      <!-- Left Canvas Section -->
+      <div class="canvas-section">
+        <div class="canvas-header">
+          <div class="canvas-title-box">
+            <h3 id="canvas-headline">Bipoláris Szervezeti Erőtér (Workshop Szimuláció)</h3>
+            <p id="canvas-desc">Kattints a csomópontokra az egyéni kapcsolatokhoz, vagy az üres háttérre az összes kapcsolat teljes megjelenítéséhez (senki sem halvány)!</p>
+          </div>
+          <div style="font-size: 11px; font-weight: 700; color: #0d4638; font-family: 'JetBrains Mono', monospace;" id="graph-stats-badge">
+            15 Csomópont · 22 Tranzakciós Él
+          </div>
+        </div>
+
+        <!-- Primary Layer Switcher (Directly above filters) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-soft);">Diagnosztikai Réteg:</span>
+            <div class="engine-switch">
+              <button class="engine-tab active" id="btn-engine-sim" onclick="switchEngine('simulation')">
+                <span class="engine-indicator" style="background: var(--text-forest);"></span>
+                1. Workshop Szimuláció (90p)
+              </button>
+              <button class="engine-tab" id="btn-engine-real" onclick="switchEngine('workplace')">
+                <span class="engine-indicator" style="background: #2563EB;"></span>
+                2. Valós Munkahelyi ONA (Felmérés)
+              </button>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted); font-style: italic;" id="engine-layer-desc">
+            Kereskedelmi tranzakciók, alkudozások és szimulált döntések
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <button class="filter-btn active" id="filter-all-btn" onclick="clearDimming(this)">Teljes Hálózat (Mindenki Aktív)</button>
+          <button class="filter-btn" id="filter-silo-btn" onclick="setGraphFilter('silo', this)" style="border-color: #FCA5A5; color: #B91C1C;">Siló Fókusz (Elakadás)</button>
+          <button class="filter-btn" id="filter-broker-btn" onclick="setGraphFilter('broker', this)" style="border-color: #61f27e; color: #0d4638;">Broker Fókusz (Kulcsemberek)</button>
+          <button class="filter-btn" onclick="setGraphFilter('Pénzügy', this)">Pénzügy (Alfa)</button>
+          <button class="filter-btn" onclick="setGraphFilter('Gyártás', this)">Gyártás (Béta)</button>
+          <button class="filter-btn" onclick="setGraphFilter('K+F', this)">K+F (Gamma)</button>
+          <button class="filter-btn" onclick="setGraphFilter('Értékesítés', this)">Értékesítés (Delta)</button>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend-bar" id="legend-bar">
+          <div class="legend-item"><span class="legend-dot" style="background: var(--color-penzugy);"></span> Pénzügy (Alfa)</div>
+          <div class="legend-item"><span class="legend-dot" style="background: var(--color-gyartas);"></span> Gyártás (Béta)</div>
+          <div class="legend-item"><span class="legend-dot" style="background: var(--color-kfejl);"></span> K+F (Gamma)</div>
+          <div class="legend-item"><span class="legend-dot" style="background: var(--color-ertek);"></span> Értékesítés (Delta)</div>
+          <div class="legend-item" id="legend-edge-style"><span style="width: 14px; height: 2px; background: #57534E; display: inline-block;"></span> Sikeres Tranzakció</div>
+          <div class="legend-item" id="legend-silo-style"><span style="width: 14px; height: 2px; border-bottom: 2px dashed #B91C1C; display: inline-block;"></span> Megszakadt Siló</div>
+        </div>
+
+        <!-- Stable Graph Viewport (Click on background clears dimming) -->
+        <div class="graph-viewport" id="graph-viewport" onclick="onCanvasBackgroundClick(event)">
+          <svg class="ona-svg" viewBox="0 0 800 540" id="ona-svg">
+            <defs>
+              <filter id="subtle-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/>
+              </filter>
+            </defs>
+
+            <!-- Background Axis & Field Architecture -->
+            <line x1="140" y1="260" x2="660" y2="260" stroke="#E7E5E4" stroke-width="1.5" stroke-dasharray="4 4" />
+            <line x1="400" y1="100" x2="400" y2="420" stroke="#E7E5E4" stroke-width="1.5" stroke-dasharray="4 4" />
+
+            <!-- Pole Annotations -->
+            <text x="140" y="490" font-family="'Instrument Serif', Georgia, serif" font-size="14" fill="#059669" text-anchor="middle" letter-spacing="0.05em">BAL PÓLUS: OPERATÍV GYÁRTÁS</text>
+            <text x="660" y="490" font-family="'Instrument Serif', Georgia, serif" font-size="14" fill="#7C3AED" text-anchor="middle" letter-spacing="0.05em">JOBB PÓLUS: K+F INNOVÁCIÓ</text>
+            <text x="400" y="40" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700" fill="#2563EB" text-anchor="middle">FELSŐ MÉRLEGKAR: PÉNZÜGYI TŐKEHÍD</text>
+            <text x="400" y="525" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700" fill="#D97706" text-anchor="middle">ALSÓ MÉRLEGKAR: PIACI ÉRTÉKESÍTÉSI HÍD</text>
+
+            <!-- Edges Container -->
+            <g id="edges-group">
+              <!-- Rendered via JS dynamically for both Simulation and Workplace ONA -->
+            </g>
+
+            <!-- Silo Badge on Horizontal Equilibrium Line -->
+            <g id="silo-tag-group" style="cursor: pointer;" onclick="highlightSilo(); event.stopPropagation();">
+              <rect x="310" y="248" width="180" height="24" rx="3" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1.2"/>
+              <text x="400" y="264" font-family="'JetBrains Mono', monospace" font-size="9.5" font-weight="700" fill="#B91C1C" text-anchor="middle">SZERKEZETI SILÓ (0 tranzakció)</text>
+            </g>
+
+            <!-- 15 Participant Nodes (Static Stable Layout) -->
+            <!-- Left Pole: Gyártás (Béta) -->
+            <g class="node-group" id="node-p_szabo" onclick="selectPerson('p_szabo', event)">
+              <circle class="node-circle" cx="140" cy="260" r="26" fill="var(--color-gyartas)" filter="url(#subtle-shadow)" />
+              <text x="140" y="257" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle">Szabó</text>
+              <text x="140" y="269" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle">Tamás</text>
+              <rect x="110" y="292" width="60" height="14" rx="2" fill="#ECFDF5" stroke="#61f27e" stroke-width="1"/>
+              <text x="140" y="302" font-family="'JetBrains Mono', monospace" font-size="7.5" font-weight="700" fill="#0d4638" text-anchor="middle">HORGONY</text>
+            </g>
+
+            <g class="node-group" id="node-p_toth" onclick="selectPerson('p_toth', event)">
+              <circle class="node-circle" cx="90" cy="170" r="20" fill="#34D399" filter="url(#subtle-shadow)" />
+              <text x="90" y="168" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" text-anchor="middle">Tóth</text>
+              <text x="90" y="178" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" text-anchor="middle">Eszter</text>
+              <text x="90" y="198" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="500" fill="#78716C" text-anchor="middle">Beszerzés</text>
+            </g>
+
+            <g class="node-group" id="node-p_varga_adam" onclick="selectPerson('p_varga_adam', event)">
+              <circle class="node-circle" cx="190" cy="370" r="19" fill="#6EE7B7" filter="url(#subtle-shadow)" />
+              <text x="190" y="368" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#064E3B" text-anchor="middle">Varga</text>
+              <text x="190" y="378" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#064E3B" text-anchor="middle">Ádám</text>
+              <text x="190" y="397" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="500" fill="#78716C" text-anchor="middle">Műszak</text>
+            </g>
+
+            <g class="node-group" id="node-p_kovacs_ildiko" onclick="selectPerson('p_kovacs_ildiko', event)">
+              <circle class="node-circle" cx="90" cy="380" r="18" fill="#A7F3D0" filter="url(#subtle-shadow)" />
+              <text x="90" y="378" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.5" font-weight="700" fill="#064E3B" text-anchor="middle">Kovács</text>
+              <text x="90" y="388" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.5" font-weight="700" fill="#064E3B" text-anchor="middle">Ildikó</text>
+              <text x="90" y="406" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="500" fill="#78716C" text-anchor="middle">Raktár</text>
+            </g>
+
+            <!-- Right Pole: K+F (Gamma) -->
+            <g class="node-group" id="node-p_horvath" onclick="selectPerson('p_horvath', event)">
+              <circle class="node-circle" cx="660" cy="260" r="26" fill="var(--color-kfejl)" filter="url(#subtle-shadow)" />
+              <text x="660" y="257" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle">Horváth</text>
+              <text x="660" y="269" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle">Balázs</text>
+              <text x="660" y="296" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="600" fill="#57534E" text-anchor="middle">K+F Főmérnök</text>
+            </g>
+
+            <g class="node-group" id="node-p_varga_dora" onclick="selectPerson('p_varga_dora', event)">
+              <circle class="node-circle" cx="710" cy="170" r="20" fill="#A78BFA" filter="url(#subtle-shadow)" />
+              <text x="710" y="168" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" text-anchor="middle">Varga</text>
+              <text x="710" y="178" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" text-anchor="middle">Dóra</text>
+              <text x="710" y="198" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="500" fill="#78716C" text-anchor="middle">QA Auditor</text>
+            </g>
+
+            <g class="node-group" id="node-p_szilagyi" onclick="selectPerson('p_szilagyi', event)">
+              <circle class="node-circle" cx="610" cy="370" r="19" fill="#C4B5FD" filter="url(#subtle-shadow)" />
+              <text x="610" y="368" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#3B0764" text-anchor="middle">Szilágyi</text>
+              <text x="610" y="378" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#3B0764" text-anchor="middle">Márk</text>
+              <text x="610" y="397" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="500" fill="#78716C" text-anchor="middle">Prototípus</text>
+            </g>
+
+            <g class="node-group" id="node-p_farkas" onclick="selectPerson('p_farkas', event)">
+              <circle class="node-circle" cx="710" cy="380" r="18" fill="#DDD6FE" filter="url(#subtle-shadow)" />
+              <text x="710" y="378" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.5" font-weight="700" fill="#3B0764" text-anchor="middle">Farkas</text>
+              <text x="710" y="388" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.5" font-weight="700" fill="#3B0764" text-anchor="middle">Laura</text>
+              <text x="710" y="406" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="500" fill="#78716C" text-anchor="middle">Tesztmérnök</text>
+            </g>
+
+            <!-- Upper Fulcrum: Pénzügy (Alfa) -->
+            <g class="node-group" id="node-p_kovacs" onclick="selectPerson('p_kovacs', event)">
+              <circle class="node-circle" cx="400" cy="100" r="26" fill="var(--color-penzugy)" filter="url(#subtle-shadow)" />
+              <text x="400" y="97" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle">Kovács</text>
+              <text x="400" y="109" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle">Péter</text>
+              <rect x="372" y="132" width="56" height="14" rx="2" fill="#ECFDF5" stroke="#61f27e" stroke-width="1"/>
+              <text x="400" y="142" font-family="'JetBrains Mono', monospace" font-size="7.5" font-weight="700" fill="#0d4638" text-anchor="middle">BROKER</text>
+            </g>
+
+            <g class="node-group" id="node-p_nagy" onclick="selectPerson('p_nagy', event)">
+              <circle class="node-circle" cx="290" cy="90" r="20" fill="#60A5FA" filter="url(#subtle-shadow)" />
+              <text x="290" y="88" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" text-anchor="middle">Nagy</text>
+              <text x="290" y="98" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" text-anchor="middle">Anna</text>
+              <text x="290" y="118" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="500" fill="#78716C" text-anchor="middle">Elemző</text>
+            </g>
+
+            <g class="node-group" id="node-p_nemeth" onclick="selectPerson('p_nemeth', event)">
+              <circle class="node-circle" cx="510" cy="90" r="19" fill="#93C5FD" filter="url(#subtle-shadow)" />
+              <text x="510" y="88" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#1E3A8A" text-anchor="middle">Németh</text>
+              <text x="510" y="98" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#1E3A8A" text-anchor="middle">Zoltán</text>
+              <text x="510" y="117" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="500" fill="#78716C" text-anchor="middle">Kockázat</text>
+            </g>
+
+            <g class="node-group" id="node-p_meszaros" onclick="selectPerson('p_meszaros', event)">
+              <circle class="node-circle" cx="400" cy="175" r="18" fill="#BFDBFE" filter="url(#subtle-shadow)" />
+              <text x="400" y="173" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.5" font-weight="700" fill="#1E3A8A" text-anchor="middle">Mészáros</text>
+              <text x="400" y="183" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.5" font-weight="700" fill="#1E3A8A" text-anchor="middle">Bence</text>
+              <text x="400" y="201" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="500" fill="#78716C" text-anchor="middle">Kontroller</text>
+            </g>
+
+            <!-- Lower Fulcrum: Értékesítés (Delta) -->
+            <g class="node-group" id="node-p_kiss" onclick="selectPerson('p_kiss', event)">
+              <circle class="node-circle" cx="400" cy="420" r="26" fill="var(--color-ertek)" filter="url(#subtle-shadow)" />
+              <text x="400" y="417" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle">Kiss</text>
+              <text x="400" y="429" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle">Gergely</text>
+              <rect x="372" y="452" width="56" height="14" rx="2" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1"/>
+              <text x="400" y="462" font-family="'JetBrains Mono', monospace" font-size="7.5" font-weight="700" fill="#78350F" text-anchor="middle">KAPUŐR</text>
+            </g>
+
+            <g class="node-group" id="node-p_molnar" onclick="selectPerson('p_molnar', event)">
+              <circle class="node-circle" cx="290" cy="450" r="20" fill="#FBBF24" filter="url(#subtle-shadow)" />
+              <text x="290" y="448" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" text-anchor="middle">Molnár</text>
+              <text x="290" y="458" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" text-anchor="middle">Zsófia</text>
+              <text x="290" y="478" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="500" fill="#78716C" text-anchor="middle">Termékfelelős</text>
+            </g>
+
+            <g class="node-group" id="node-p_takacs" onclick="selectPerson('p_takacs', event)">
+              <circle class="node-circle" cx="510" cy="450" r="19" fill="#FDE68A" filter="url(#subtle-shadow)" />
+              <text x="510" y="448" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#78350F" text-anchor="middle">Takács</text>
+              <text x="510" y="458" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="#78350F" text-anchor="middle">Roland</text>
+              <text x="510" y="477" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="500" fill="#78716C" text-anchor="middle">KAM</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Right Editorial Inspector Panel -->
+      <div class="inspector-section" id="inspector-section">
+        <div class="inspector-header">
+          <div class="inspector-title" id="inspector-headline">Szervezeti Áttekintés</div>
+          <button class="filter-btn" style="padding: 3px 8px; font-size: 10px;" onclick="clearDimming()">Mindenki Aktív</button>
+        </div>
+
+        <!-- Dynamic Profile Sheet -->
+        <div class="person-sheet" id="profile-box">
+          <div class="person-name-row">
+            <div class="person-name" id="person-name">Teljes Vállalati Hálózat</div>
+            <span id="person-avatar" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-forest); font-weight: 700;">ONA</span>
+          </div>
+          <div class="person-dept-tag" id="person-dept">15 Fő · 4 Szervezeti Részleg</div>
+          
+          <div class="person-bio" id="person-bio">
+            <strong>Globális Diagnózis:</strong> A hálózat stabilan működik, de erős bipoláris feszültség figyelhető meg az Operatív Gyártás (Béta) és a K+F (Gamma) között. A kommunikáció és termékátadás 82.4%-ban két kulcsfontosságú közvetítőn fut keresztül.
+          </div>
+
+          <table class="stat-table">
+            <tbody>
+              <tr>
+                <td class="stat-lbl" id="table-lbl-1">Hálózati Sűrűség</td>
+                <td class="stat-val" id="person-centrality">78.6% (11/14 csatorna)</td>
+              </tr>
+              <tr>
+                <td class="stat-lbl" id="table-lbl-2">Átlagos Szervezeti Bizalom</td>
+                <td class="stat-val" id="person-trust">86.4% / 15 válaszadó</td>
+              </tr>
+              <tr>
+                <td class="stat-lbl" id="table-lbl-3">Azonosított Silók</td>
+                <td class="stat-val" id="person-degree">1 kritikus strukturális blokk</td>
+              </tr>
+              <tr>
+                <td class="stat-lbl" id="table-lbl-4">Döntési Reakcióidő</td>
+                <td class="stat-val" id="person-deals">&lt; 3.8 perc / tranzakció</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Action Plan Section -->
+        <div>
+          <div class="action-header" id="action-header-title">Vezetői Beavatkozási Prioritások</div>
+          <div class="action-list" id="action-list-container">
+            <div class="action-item priority">
+              <h4>1. Gyártás &amp; K+F Közvetlen Csatorna</h4>
+              <p>A 3.8x-os közvetítői átfutási késleltetés megszüntetésére heti közvetlen release-szinkron bevezetése Szabó Tamás és Horváth Balázs között.</p>
+            </div>
+            <div class="action-item">
+              <h4>2. SPOF Kitettség Csökkentése</h4>
+              <p>Kovács Péter és Kiss Gergely mellé helyettesítési protokoll felállítása a döntési torlódások megelőzésére.</p>
+            </div>
+            <div class="action-item">
+              <h4>3. Belső Erőforrás-megosztási SLA</h4>
+              <p>A szimulációban mért 76%-os belső alkudozási idő leszorítása standard belső elszámolási szabályzattal.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Telemetry Tracker Ribbon -->
+    <div class="telemetry-strip">
+      <div>Vezetői Telemetria Aktív · A döntéshozói rétegváltások és nézettartam valós időben aggregálódnak</div>
+      <div class="telemetry-log" id="telemetry-log">[Esemény: dashboard_initialized]</div>
+    </div>
+  </div>
+
+  <script>
+    // Dual Data Model: Simulation vs Real Workplace ONA
+    let currentEngine = 'simulation'; // 'simulation' | 'workplace'
+    let selectedPersonId = null;
+
+    // Node coordinate map for SVG edge rendering
+    const nodeCoords = {
+      p_szabo: { x: 140, y: 260 },
+      p_toth: { x: 90, y: 170 },
+      p_varga_adam: { x: 190, y: 370 },
+      p_kovacs_ildiko: { x: 90, y: 380 },
+
+      p_horvath: { x: 660, y: 260 },
+      p_varga_dora: { x: 710, y: 170 },
+      p_szilagyi: { x: 610, y: 370 },
+      p_farkas: { x: 710, y: 380 },
+
+      p_kovacs: { x: 400, y: 100 },
+      p_nagy: { x: 290, y: 90 },
+      p_nemeth: { x: 510, y: 90 },
+      p_meszaros: { x: 400, y: 175 },
+
+      p_kiss: { x: 400, y: 420 },
+      p_molnar: { x: 290, y: 450 },
+      p_takacs: { x: 510, y: 450 }
+    };
+
+    // Edge Sets
+    const simulationEdges = [
+      // Left Pole Internal
+      { s: 'p_szabo', t: 'p_toth', type: 'internal', w: 2.5 },
+      { s: 'p_szabo', t: 'p_varga_adam', type: 'internal', w: 2.5 },
+      { s: 'p_toth', t: 'p_kovacs_ildiko', type: 'internal', w: 1.8 },
+      { s: 'p_varga_adam', t: 'p_kovacs_ildiko', type: 'internal', w: 1.5 },
+      // Right Pole Internal
+      { s: 'p_horvath', t: 'p_varga_dora', type: 'internal', w: 2.5 },
+      { s: 'p_horvath', t: 'p_szilagyi', type: 'internal', w: 2.0 },
+      { s: 'p_varga_dora', t: 'p_farkas', type: 'internal', w: 2.0 },
+      { s: 'p_szilagyi', t: 'p_farkas', type: 'internal', w: 1.5 },
+      // Upper Fulcrum Internal
+      { s: 'p_kovacs', t: 'p_nagy', type: 'internal', w: 2.2 },
+      { s: 'p_kovacs', t: 'p_meszaros', type: 'internal', w: 2.0 },
+      { s: 'p_nagy', t: 'p_nemeth', type: 'internal', w: 1.5 },
+      // Lower Fulcrum Internal
+      { s: 'p_kiss', t: 'p_molnar', type: 'internal', w: 2.2 },
+      { s: 'p_kiss', t: 'p_takacs', type: 'internal', w: 2.0 },
+      { s: 'p_molnar', t: 'p_takacs', type: 'internal', w: 1.8 },
+
+      // Cross Bridges
+      { s: 'p_szabo', t: 'p_kovacs', type: 'trade', w: 4.8 },
+      { s: 'p_nagy', t: 'p_varga_dora', type: 'trade', w: 2.8 },
+      { s: 'p_nemeth', t: 'p_szilagyi', type: 'trade', w: 2.0 },
+      { s: 'p_meszaros', t: 'p_varga_adam', type: 'trade', w: 2.2 },
+      { s: 'p_kovacs', t: 'p_kiss', type: 'trade', w: 4.5 },
+      { s: 'p_kiss', t: 'p_horvath', type: 'trade', w: 4.2 },
+      { s: 'p_molnar', t: 'p_toth', type: 'trade', w: 3.2 },
+      { s: 'p_takacs', t: 'p_farkas', type: 'trade', w: 2.2 },
+
+      // The Critical Broken Silo (Dashed Red)
+      { s: 'p_szabo', t: 'p_horvath', type: 'silo', w: 3.0, id: 'silo-edge' }
+    ];
+
+    // Real Workplace ONA Edges (Informális Tanácskérés, Valós Munkahelyi Email & Együttműködés)
+    const workplaceEdges = [
+      // Intracluster
+      { s: 'p_szabo', t: 'p_toth', type: 'workplace', w: 3.0 },
+      { s: 'p_szabo', t: 'p_varga_adam', type: 'workplace', w: 3.5 },
+      { s: 'p_toth', t: 'p_kovacs_ildiko', type: 'workplace', w: 2.0 },
+      { s: 'p_varga_adam', t: 'p_kovacs_ildiko', type: 'workplace', w: 2.0 },
+
+      { s: 'p_horvath', t: 'p_varga_dora', type: 'workplace', w: 3.5 },
+      { s: 'p_horvath', t: 'p_szilagyi', type: 'workplace', w: 3.0 },
+      { s: 'p_varga_dora', t: 'p_farkas', type: 'workplace', w: 2.5 },
+      { s: 'p_szilagyi', t: 'p_farkas', type: 'workplace', w: 2.0 },
+
+      { s: 'p_kovacs', t: 'p_nagy', type: 'workplace', w: 3.5 },
+      { s: 'p_kovacs', t: 'p_nemeth', type: 'workplace', w: 2.5 },
+      { s: 'p_kovacs', t: 'p_meszaros', type: 'workplace', w: 3.0 },
+      { s: 'p_nagy', t: 'p_nemeth', type: 'workplace', w: 2.0 },
+
+      { s: 'p_kiss', t: 'p_molnar', type: 'workplace', w: 3.5 },
+      { s: 'p_kiss', t: 'p_takacs', type: 'workplace', w: 3.0 },
+      { s: 'p_molnar', t: 'p_takacs', type: 'workplace', w: 2.5 },
+
+      // Cross-Departmental Informal Advice Network
+      { s: 'p_szabo', t: 'p_kovacs', type: 'workplace', w: 4.5 },
+      { s: 'p_kovacs', t: 'p_kiss', type: 'workplace', w: 4.0 },
+      { s: 'p_kiss', t: 'p_horvath', type: 'workplace', w: 3.8 },
+      { s: 'p_toth', t: 'p_molnar', type: 'workplace', w: 3.0 },
+      { s: 'p_varga_dora', t: 'p_nagy', type: 'workplace', w: 2.5 },
+      { s: 'p_nemeth', t: 'p_szilagyi', type: 'workplace', w: 2.0 },
+      { s: 'p_varga_adam', t: 'p_meszaros', type: 'workplace', w: 2.0 },
+      { s: 'p_takacs', t: 'p_farkas', type: 'workplace', w: 2.0 },
+
+      // NOTE: In real workplace ONA, Horváth and Szabó DO have an official administrative reporting link, but 0 informal advice flow!
+      { s: 'p_szabo', t: 'p_horvath', type: 'silo', w: 2.5, id: 'silo-edge' }
+    ];
+
+    const personsData = {
+      p_kovacs: {
+        name: "Kovács Péter",
+        initials: "KP",
+        dept: "Pénzügy & Kontrolling · Alfa Vállalat",
+        bio_sim: "Kiemelt Piacszervező Broker. A 15 fős szimuláció legaktívabb tranzakciós csomópontja. Tőkét nyújtott a Gyártásnak sablonokért és közvetített a Delta és Gamma felé.",
+        bio_real: "Informális Kulcsfigura (Workplace ONA). A szervezeti tanácskérési hálózat legfőbb központja: a vezetők 73%-a fordul hozzá költségvetési és erőforrás-allokációs jóváhagyásért.",
+        centrality_sim: "0.91 / 1.0 (Legmagasabb)",
+        centrality_real: "0.89 / 1.0 (Top Centrality)",
+        trust_sim: "100% (14 / 14 szavazat)",
+        trust_real: "93.3% (Munkahelyi bizalmi index)",
+        degree_sim: "4 részleg · 5 aktív partner",
+        degree_real: "4 részleg · 6 informális kapcsolat",
+        deals_sim: "37 szerződés / 90 perc",
+        deals_real: "Napi 42 közvetlen megkeresés",
+        connections_sim: ["p_szabo", "p_kiss", "p_nagy", "p_meszaros"],
+        connections_real: ["p_szabo", "p_kiss", "p_nagy", "p_nemeth", "p_meszaros"]
+      },
+      p_nagy: {
+        name: "Nagy Anna",
+        initials: "NA",
+        dept: "Pénzügy & Kontrolling · Alfa Vállalat",
+        bio_sim: "Likviditási koordinátor. Varga Dórával (K+F QA) tartott közvetlen ellenőrzési és pénzügyi garancialáncot.",
+        bio_real: "Pénzügyi Elemző & Híd. A K+F projektek pénzügyi elszámolását menedzseli közvetlenül a QA osztállyal.",
+        centrality_sim: "0.52 / 1.0",
+        centrality_real: "0.58 / 1.0",
+        trust_sim: "92.8% (13 / 14 szavazat)",
+        trust_real: "86.7% (13 / 15 válaszadó)",
+        degree_sim: "2 részleg · 3 partner",
+        degree_real: "2 részleg · 3 kapcsolat",
+        deals_sim: "18 szerződés / 90 perc",
+        deals_real: "Napi 14 jóváhagyás",
+        connections_sim: ["p_kovacs", "p_varga_dora", "p_nemeth"],
+        connections_real: ["p_kovacs", "p_varga_dora", "p_nemeth"]
+      },
+      p_nemeth: {
+        name: "Németh Zoltán",
+        initials: "NZ",
+        dept: "Belső Ellenőrzés & Kockázat · Alfa Vállalat",
+        bio_sim: "Kockázati ellenőr. Az escrow letétek és a prototípus sablonok hitelesítéséért felelt Szilágyi Márkkal.",
+        bio_real: "Kockázatkezelési Koordinátor. Szabályozási megfelelőséget auditál a fejlesztési prototípusoknál.",
+        centrality_sim: "0.38 / 1.0",
+        centrality_real: "0.42 / 1.0",
+        trust_sim: "85.7% (12 / 14 szavazat)",
+        trust_real: "80.0% (12 / 15 válaszadó)",
+        degree_sim: "2 részleg · 2 partner",
+        degree_real: "2 részleg · 2 kapcsolat",
+        deals_sim: "12 szerződés / 90 perc",
+        deals_real: "Heti 8 ellenőrzési audit",
+        connections_sim: ["p_nagy", "p_szilagyi"],
+        connections_real: ["p_kovacs", "p_szilagyi"]
+      },
+      p_meszaros: {
+        name: "Mészáros Bence",
+        initials: "MB",
+        dept: "Pénzügy & Kontrolling · Alfa Vállalat",
+        bio_sim: "Tranzakciós operátor. A szerszámbérleti és gyártási kapacitáselszámolást koordinálta Varga Ádámmal.",
+        bio_real: "Működési Kontroller. A műszakok és üzemek közvetlen kapacitáselszámolását auditálja.",
+        centrality_sim: "0.41 / 1.0",
+        centrality_real: "0.44 / 1.0",
+        trust_sim: "85.7% (12 / 14 szavazat)",
+        trust_real: "80.0% (12 / 15 válaszadó)",
+        degree_sim: "2 részleg · 2 partner",
+        degree_real: "2 részleg · 2 kapcsolat",
+        deals_sim: "15 szerződés / 90 perc",
+        deals_real: "Napi 9 belső elszámolás",
+        connections_sim: ["p_kovacs", "p_varga_adam"],
+        connections_real: ["p_kovacs", "p_varga_adam"]
+      },
+      p_szabo: {
+        name: "Szabó Tamás",
+        initials: "SZT",
+        dept: "Termelés & Gyártás · Béta Vállalat",
+        bio_sim: "Operatív Horgony Broker. A gyártási kapacitások és fizikai vágási eszközök kulcsbirtokosa. Horváth Balázzsal (K+F) megszakadt az együttműködése az árazási vita miatt.",
+        bio_real: "Gyártási Igazgató (Működési Horgony). Az üzem 100%-os irányítója. A K+F vezetővel (Horváth B.) a valóságban is mély szakmai és kommunikációs szakadék választja el egymástól.",
+        centrality_sim: "0.86 / 1.0 (Kiemelkedő)",
+        centrality_real: "0.84 / 1.0 (Helyi Monopólium)",
+        trust_sim: "100% (14 / 14 szavazat)",
+        trust_real: "93.3% (Operatív tekintély)",
+        degree_sim: "2 részleg · 4 aktív partner",
+        degree_real: "2 részleg · 4 közvetlen partner",
+        deals_sim: "34 szerződés / 90 perc",
+        deals_real: "Napi 38 műszaki döntés",
+        connections_sim: ["p_kovacs", "p_toth", "p_varga_adam"],
+        connections_real: ["p_kovacs", "p_toth", "p_varga_adam"]
+      },
+      p_toth: {
+        name: "Tóth Eszter",
+        initials: "TE",
+        dept: "Beszerzés & Logisztika · Béta Vállalat",
+        bio_sim: "Anyagáramlási felelős. Molnár Zsófiával (Értékesítés) valósított meg közvetlen nyersanyag- és ollóbérlet cserét.",
+        bio_real: "Beszerzési Vezető. A beszállítói lánc és a készletgazdálkodás operatív gazdája a termékfelelősökkel.",
+        centrality_sim: "0.48 / 1.0",
+        centrality_real: "0.52 / 1.0",
+        trust_sim: "85.7% (12 / 14 szavazat)",
+        trust_real: "86.7% (13 / 15 válaszadó)",
+        degree_sim: "2 részleg · 3 partner",
+        degree_real: "2 részleg · 3 partner",
+        deals_sim: "21 szerződés / 90 perc",
+        deals_real: "Napi 18 megrendelés",
+        connections_sim: ["p_szabo", "p_molnar", "p_kovacs_ildiko"],
+        connections_real: ["p_szabo", "p_molnar", "p_kovacs_ildiko"]
+      },
+      p_varga_adam: {
+        name: "Varga Ádám",
+        initials: "VÁ",
+        dept: "Termelés & Gyártás · Béta Vállalat",
+        bio_sim: "Műszakvezető mérnök. A papír-kihasználtságot optimalizálta és Mészáros Bencével egyeztetett bérleti díjakat.",
+        bio_real: "Üzemmérnök. Az operatív folyamatokért és a gépkihasználtságért felel.",
+        centrality_sim: "0.42 / 1.0",
+        centrality_real: "0.45 / 1.0",
+        trust_sim: "85.7% (12 / 14 szavazat)",
+        trust_real: "80.0% (12 / 15 válaszadó)",
+        degree_sim: "2 részleg · 3 partner",
+        degree_real: "2 részleg · 3 partner",
+        deals_sim: "19 szerződés / 90 perc",
+        deals_real: "Napi 15 műszakjelentés",
+        connections_sim: ["p_szabo", "p_meszaros", "p_kovacs_ildiko"],
+        connections_real: ["p_szabo", "p_meszaros", "p_kovacs_ildiko"]
+      },
+      p_kovacs_ildiko: {
+        name: "Kovács Ildikó",
+        initials: "KI",
+        dept: "Beszerzés & Logisztika · Béta Vállalat",
+        bio_sim: "Raktárlogisztikus. A belső gyártási szerszámok körforgását biztosította a Béta csapatban.",
+        bio_real: "Raktárkoordinátor. Alapanyag-nyilvántartás és belső szerszámkiadás gazdája.",
+        centrality_sim: "0.29 / 1.0",
+        centrality_real: "0.33 / 1.0",
+        trust_sim: "78.5% (11 / 14 szavazat)",
+        trust_real: "73.3% (11 / 15 válaszadó)",
+        degree_sim: "1 részleg · 2 partner",
+        degree_real: "1 részleg · 2 partner",
+        deals_sim: "14 szerződés / 90 perc",
+        deals_real: "Napi 12 készletmozgás",
+        connections_sim: ["p_toth", "p_varga_adam"],
+        connections_real: ["p_toth", "p_varga_adam"]
+      },
+      p_horvath: {
+        name: "Horváth Balázs",
+        initials: "HB",
+        dept: "Kutatás-Fejlesztés (K+F) · Gamma Vállalat",
+        bio_sim: "K+F Főmérnök. Kiváló formai sablonokat birtokolt, de a Gyártás felé a merev árazás miatt megszakadt a kapcsolat (100% REJECTED), így kizárólag Kiss Gergelyen keresztül tudott értékesíteni.",
+        bio_real: "Technológiai Főmérnök (Innovációs Sziget). A szervezet legmagasabb műszaki tudású szakembere. A valós munkahelyi ONA igazolja a szimuláció eredményét: az üzemmel kizárólag formális jegyzőkönyveken keresztül tartja a kapcsolatot.",
+        centrality_sim: "0.72 / 1.0",
+        centrality_real: "0.75 / 1.0 (Technológiai Horgony)",
+        trust_sim: "85.7% (12 / 14 szavazat)",
+        trust_real: "86.7% (Műszaki elismerés)",
+        degree_sim: "2 részleg · 3 aktív partner",
+        degree_real: "2 részleg · 3 partner",
+        deals_sim: "26 szerződés / 90 perc",
+        deals_real: "Heti 11 release specifikáció",
+        connections_sim: ["p_kiss", "p_varga_dora", "p_szilagyi"],
+        connections_real: ["p_kiss", "p_varga_dora", "p_szilagyi"]
+      },
+      p_varga_dora: {
+        name: "Varga Dóra",
+        initials: "VD",
+        dept: "Minőségbiztosítás (QA) · Gamma Vállalat",
+        bio_sim: "Vezető Minőségügyi Auditor. Nagy Annával (Pénzügy) tartott közvetlen certifikációs kapcsolatot.",
+        bio_real: "Minőségirányítási Vezető. ISO és termékbiztonsági tanúsítványok felelőse.",
+        centrality_sim: "0.49 / 1.0",
+        centrality_real: "0.54 / 1.0",
+        trust_sim: "85.7% (12 / 14 szavazat)",
+        trust_real: "80.0% (12 / 15 válaszadó)",
+        degree_sim: "2 részleg · 3 partner",
+        degree_real: "2 részleg · 3 partner",
+        deals_sim: "17 szerződés / 90 perc",
+        deals_real: "Heti 16 minőségi audit",
+        connections_sim: ["p_horvath", "p_nagy", "p_farkas"],
+        connections_real: ["p_horvath", "p_nagy", "p_farkas"]
+      },
+      p_szilagyi: {
+        name: "Szilágyi Márk",
+        initials: "SZM",
+        dept: "Kutatás-Fejlesztés (K+F) · Gamma Vállalat",
+        bio_sim: "Prototípus tervező. Németh Zoltánnal kötött letéti megállapodásokat a formátumok védelmére.",
+        bio_real: "Ipari Formatervező. Új geometriai minták és digitális sablonok tervezője.",
+        centrality_sim: "0.36 / 1.0",
+        centrality_real: "0.40 / 1.0",
+        trust_sim: "78.5% (11 / 14 szavazat)",
+        trust_real: "73.3% (11 / 15 válaszadó)",
+        degree_sim: "2 részleg · 3 partner",
+        degree_real: "2 részleg · 3 partner",
+        deals_sim: "13 szerződés / 90 perc",
+        deals_real: "Heti 6 prototípus teszt",
+        connections_sim: ["p_horvath", "p_nemeth", "p_farkas"],
+        connections_real: ["p_horvath", "p_nemeth", "p_farkas"]
+      },
+      p_farkas: {
+        name: "Farkas Laura",
+        initials: "FL",
+        dept: "Minőségbiztosítás (QA) · Gamma Vállalat",
+        bio_sim: "Tesztmérnök. Takács Rolanddal (Értékesítés) biztosította a késztermékek minőségi átvételi igazolását.",
+        bio_real: "Laboratóriumi Tesztelő. Anyagvizsgálatokat és tűrésméréseket végez a vevői mintákon.",
+        centrality_sim: "0.39 / 1.0",
+        centrality_real: "0.42 / 1.0",
+        trust_sim: "78.5% (11 / 14 szavazat)",
+        trust_real: "73.3% (11 / 15 válaszadó)",
+        degree_sim: "2 részleg · 3 partner",
+        degree_real: "2 részleg · 3 partner",
+        deals_sim: "15 szerződés / 90 perc",
+        deals_real: "Napi 10 laborvizsgálat",
+        connections_sim: ["p_varga_dora", "p_szilagyi", "p_takacs"],
+        connections_real: ["p_varga_dora", "p_szilagyi", "p_takacs"]
+      },
+      p_kiss: {
+        name: "Kiss Gergely",
+        initials: "KG",
+        dept: "Értékesítés & Ügyfélkapcsolatok · Delta Vállalat",
+        bio_sim: "Piaci Kapuőr Broker. Kétirányú csatornát működtetett Kovács Péter (Pénzügy) és Horváth Balázs (K+F) között a legyártott termékek felvásárlására.",
+        bio_real: "Kereskedelmi Igazgató (Kapuőr). Az ügyféligények és piaci visszajelzések becsatornázója a termelés és K+F felé.",
+        centrality_sim: "0.84 / 1.0 (Magas)",
+        centrality_real: "0.86 / 1.0 (Kulcsember)",
+        trust_sim: "92.8% (13 / 14 szavazat)",
+        trust_real: "86.7% (13 / 15 válaszadó)",
+        degree_sim: "3 részleg · 4 aktív partner",
+        degree_real: "3 részleg · 4 partner",
+        deals_sim: "31 szerződés / 90 perc",
+        deals_real: "Napi 28 vevői megrendelés",
+        connections_sim: ["p_kovacs", "p_horvath", "p_molnar", "p_takacs"],
+        connections_real: ["p_kovacs", "p_horvath", "p_molnar", "p_takacs"]
+      },
+      p_molnar: {
+        name: "Molnár Zsófia",
+        initials: "MZS",
+        dept: "Termékmenedzsment · Delta Vállalat",
+        bio_sim: "Termékmenedzser. Tóth Eszterrel kötött kétoldalú papír- és ollóbérleti megállapodásokat a termelés támogatására.",
+        bio_real: "Termékfelelős Koordinátor. Kapcsolatot tart az üzem beszerzésével az anyagok időzítésére.",
+        centrality_sim: "0.45 / 1.0",
+        centrality_real: "0.48 / 1.0",
+        trust_sim: "85.7% (12 / 14 szavazat)",
+        trust_real: "80.0% (12 / 15 válaszadó)",
+        degree_sim: "2 részleg · 3 partner",
+        degree_real: "2 részleg · 3 partner",
+        deals_sim: "19 szerződés / 90 perc",
+        deals_real: "Heti 12 termékterv",
+        connections_sim: ["p_kiss", "p_toth", "p_takacs"],
+        connections_real: ["p_kiss", "p_toth", "p_takacs"]
+      },
+      p_takacs: {
+        name: "Takács Roland",
+        initials: "TR",
+        dept: "Értékesítés & Ügyfélkapcsolatok · Delta Vállalat",
+        bio_sim: "KAM. Farkas Laurával (QA) és a Bankkal tartotta a kapcsolatot az áremelési fázisok optimális kihasználásához.",
+        bio_real: "Key Account Manager. Kiemelt vevők szerződéseit és szállítási határidőit egyezteti a tesztmérnökökkel.",
+        centrality_sim: "0.41 / 1.0",
+        centrality_real: "0.46 / 1.0",
+        trust_sim: "78.5% (11 / 14 szavazat)",
+        trust_real: "73.3% (11 / 15 válaszadó)",
+        degree_sim: "2 részleg · 3 partner",
+        degree_real: "2 részleg · 3 partner",
+        deals_sim: "16 szerződés / 90 perc",
+        deals_real: "Napi 7 vevői audit",
+        connections_sim: ["p_kiss", "p_molnar", "p_farkas"],
+        connections_real: ["p_kiss", "p_molnar", "p_farkas"]
+      }
+    };
+
+        // URL Telemetry & Personalization
+    let activeLeadId = "DEMO_GUEST";
+    let activeLeadName = "Vezető";
+    let activeCompany = "Vállalat";
+
+    function initUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      const lead = params.get('lead');
+      const name = params.get('name');
+      const comp = params.get('company');
+
+      if (lead || name || comp) {
+        activeLeadId = lead || "TARGET_LEAD";
+        activeLeadName = name || "Döntéshozó";
+        activeCompany = comp || "Szervezet";
+
+        const banner = document.getElementById('lead-welcome-banner');
+        if (banner) {
+          banner.style.display = 'flex';
+          document.getElementById('lead-greeting-name').innerText = `Tisztelt ${activeLeadName} (${activeCompany})!`;
+          document.getElementById('lead-greeting-desc').innerText = `Az alábbi interaktív felületen a(z) ${activeCompany} szervezeti silóit, kulcsember-kitettségét és informális tanácskérési hálózatát vizsgálhatja meg.`;
+          document.getElementById('lead-tag-badge').innerText = `KLIENS: ${activeCompany.toUpperCase()}`;
+        }
+
+        logTelemetry(`Session megnyitva egyedi lead linkkel: ID=${activeLeadId}, Név=${activeLeadName}, Cég=${activeCompany}`);
+        saveTelemetryEvent('session_open', { lead: activeLeadId, name: activeLeadName, company: activeCompany });
+      }
+    }
+
+    function saveTelemetryEvent(type, details) {
+      try {
+        const events = JSON.parse(localStorage.getItem('fluvia_radar_telemetry') || '[]');
+        events.push({
+          timestamp: new Date().toISOString(),
+          lead: activeLeadId,
+          type: type,
+          details: details
+        });
+        localStorage.setItem('fluvia_radar_telemetry', JSON.stringify(events));
+      } catch (e) {
+        console.warn('Telemetry storage warning:', e);
+      }
+    }
+
+    // Wrap logTelemetry to also persist
+    const originalLogTelemetry = logTelemetry;
+    logTelemetry = function(event) {
+      originalLogTelemetry(event);
+      saveTelemetryEvent('user_interaction', { event: event });
+    };
+
+    function logTelemetry(event) {
+      const el = document.getElementById('telemetry-log');
+      const time = new Date().toLocaleTimeString();
+      el.innerText = `[${time}] ${event}`;
+      console.log(`[Fluvia Telemetry] ${event}`);
+    }
+
+    function renderEdges() {
+      const container = document.getElementById('edges-group');
+      const edges = currentEngine === 'simulation' ? simulationEdges : workplaceEdges;
+      
+      let html = '';
+      edges.forEach(e => {
+        const p1 = nodeCoords[e.s];
+        const p2 = nodeCoords[e.t];
+        if (!p1 || !p2) return;
+
+        const idAttr = e.id ? `id="${e.id}"` : '';
+        html += `<line class="edge-line ${e.type}" ${idAttr} data-source="${e.s}" data-target="${e.t}" x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke-width="${e.w}" />`;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // Switch between Simulation and Real Workplace ONA
+    function switchEngine(engine) {
+      currentEngine = engine;
+      logTelemetry(`Diagnosztikai réteg váltva: ${engine === 'simulation' ? '1. Workshop Szimuláció' : '2. Valós Munkahelyi ONA'}`);
+
+      // Update button classes
+      document.getElementById('btn-engine-sim').classList.toggle('active', engine === 'simulation');
+      document.getElementById('btn-engine-real').classList.toggle('active', engine === 'workplace');
+
+      // Update Header Subtitles & Canvas Titles
+      const layerDesc = document.getElementById('engine-layer-desc');
+      if (engine === 'simulation') {
+        if (layerDesc) layerDesc.innerText = "Kereskedelmi tranzakciók, alkudozások és szimulált döntések";
+        document.getElementById('header-subtitle').innerText = "15 Fős Bipoláris Súly-Ellensúly Modell (Workshop Szimuláció)";
+        document.getElementById('canvas-headline').innerText = "Bipoláris Szervezeti Erőtér (Workshop Szimuláció)";
+        document.getElementById('graph-stats-badge').innerText = "15 Csomópont · 22 Tranzakciós Él";
+
+        document.getElementById('kpi-lbl-1').innerText = "Hálózati Sűrűség";
+        document.getElementById('kpi-val-1').innerText = "78.6%";
+        document.getElementById('kpi-sub-1').innerText = "11 / 14 lehetséges kereskedelmi csatorna aktív";
+
+        document.getElementById('kpi-lbl-2').innerText = "Kritikus Részlegi Siló";
+        document.getElementById('kpi-val-2').innerText = "0 Tranzakció";
+        document.getElementById('kpi-sub-2').innerText = "Gyártás (Szabó T.) ↔ K+F (Horváth B.) között 100% elutasítás";
+
+        document.getElementById('kpi-lbl-3').innerText = "Kulcsember Kitettség (SPOF)";
+        document.getElementById('kpi-val-3').innerText = "82.4%";
+        document.getElementById('kpi-sub-3').innerText = "Kovács Péter és Kiss Gergely közvetíti a forgalmat";
+
+        document.getElementById('kpi-lbl-4').innerText = "Döntési Reakcióidő";
+        document.getElementById('kpi-val-4').innerText = "< 3.8 perc";
+        document.getElementById('kpi-sub-4').innerText = "Átlagos P2P szerződéskötési és ellenőrzési sebesség";
+
+        document.getElementById('legend-edge-style').innerHTML = '<span style="width: 14px; height: 2px; background: #57534E; display: inline-block;"></span> Sikeres Tranzakció';
+      } else {
+        if (layerDesc) layerDesc.innerText = "Valós munkahelyi tanácskérési felmérés és együttműködési hálózat";
+        document.getElementById('header-subtitle').innerText = "15 Fős Munkahelyi Együttműködési & Tanácskérési Hálózat (Valós ONA)";
+        document.getElementById('canvas-headline').innerText = "Munkahelyi Informális Tanácskérési Erőtér (Valós ONA)";
+        document.getElementById('graph-stats-badge').innerText = "15 Csomópont · 23 Informális Kapcsolat";
+
+        document.getElementById('kpi-lbl-1').innerText = "Informális Hálózati Sűrűség";
+        document.getElementById('kpi-val-1').innerText = "71.4%";
+        document.getElementById('kpi-sub-1').innerText = "Tanácskérési kapcsolatok aránya a formális láncon túl";
+
+        document.getElementById('kpi-lbl-2').innerText = "Munkahelyi Információs Szakadás";
+        document.getElementById('kpi-val-2').innerText = "Súlyos Siló";
+        document.getElementById('kpi-sub-2').innerText = "A valóságban is 0 közvetlen szakmai tanácskérés Gyártás ↔ K+F között";
+
+        document.getElementById('kpi-lbl-3').innerText = "Véleményvezér Terhelés";
+        document.getElementById('kpi-val-3').innerText = "73.3%";
+        document.getElementById('kpi-sub-3').innerText = "Kovács Péter pénzügyi jóváhagyása nélkül a projektek 70%-a áll";
+
+        document.getElementById('kpi-lbl-4').innerText = "Informális Válaszidő";
+        document.getElementById('kpi-val-4').innerText = "4.2 óra";
+        document.getElementById('kpi-sub-4').innerText = "Átlagos keresztfunkcionális megkeresési átfutás";
+
+        document.getElementById('legend-edge-style').innerHTML = '<span style="width: 14px; height: 2px; background: #2563EB; display: inline-block;"></span> Valós Informális Tanácskérés';
+      }
+
+      renderEdges();
+      clearDimming();
+    }
+
+    // Clear all dimming so NO ONE is dim (senki sem halvány)
+    function clearDimming(btn) {
+      logTelemetry('Nézet frissítve: Teljes hálózat aktív (senki sem halvány)');
+      selectedPersonId = null;
+
+      // Update button highlights
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = btn || document.getElementById('filter-all-btn');
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // Clear all dimmed classes
+      document.querySelectorAll('.node-group').forEach(el => el.classList.remove('active', 'dimmed'));
+      document.querySelectorAll('.edge-line').forEach(el => el.classList.remove('highlighted', 'dimmed'));
+
+      // Set Inspector to General Network Overview
+      document.getElementById('inspector-headline').innerText = currentEngine === 'simulation' ? "Szervezeti Áttekintés" : "Munkahelyi ONA Áttekintés";
+      document.getElementById('person-name').innerText = currentEngine === 'simulation' ? "Teljes Vállalati Hálózat" : "Valós Munkahelyi Diagnózis";
+      document.getElementById('person-avatar').innerText = "ONA";
+      document.getElementById('person-dept').innerText = "15 Fő · 4 Szervezeti Részleg";
+      
+      if (currentEngine === 'simulation') {
+        document.getElementById('person-bio').innerHTML = "<strong>Globális Szimulációs Diagnózis:</strong> A hálózat stabilan működik, de erős bipoláris feszültség figyelhető meg az Operatív Gyártás (Béta) és a K+F (Gamma) között. A kommunikáció és termékátadás 82.4%-ban két kulcsfontosságú közvetítőn fut keresztül.";
+        document.getElementById('person-centrality').innerText = "78.6% (11/14 csatorna)";
+        document.getElementById('person-trust').innerText = "86.4% / 15 válaszadó";
+        document.getElementById('person-degree').innerText = "1 kritikus strukturális blokk";
+        document.getElementById('person-deals').innerText = "< 3.8 perc / tranzakció";
+      } else {
+        document.getElementById('person-bio').innerHTML = "<strong>Valós Munkahelyi Korreláció:</strong> A digitális kérdőíves felmérés és az email metaadatok igazolják a szimulációban tapasztalt elakadást: a Gyártási Igazgató (Szabó Tamás) és a K+F Vezető (Horváth Balázs) között a mindennapokban sincs informális kapcsolat, a munkatársak kizárólag eszkaláció után kommunikálnak.";
+        document.getElementById('person-centrality').innerText = "71.4% (Munkahelyi sűrűség)";
+        document.getElementById('person-trust').innerText = "82.1% (Szervezeti átlag)";
+        document.getElementById('person-degree').innerText = "1 krónikus részlegi siló";
+        document.getElementById('person-deals').innerText = "4.2 óra informális átfutás";
+      }
+    }
+
+    // Canvas Background Click Handler: Clears dimming when clicking outside nodes!
+    function onCanvasBackgroundClick(event) {
+      // If clicked directly on the svg background or viewport
+      if (event.target.id === 'graph-viewport' || event.target.id === 'ona-svg' || event.target.tagName === 'svg' || event.target.tagName === 'line') {
+        clearDimming();
+      }
+    }
+
+    // Select individual person
+    function selectPerson(id, event) {
+      if (event) event.stopPropagation();
+      selectedPersonId = id;
+      const p = personsData[id];
+      if (!p) return;
+
+      logTelemetry(`Személy kiválasztva: ${p.name} (${p.dept})`);
+
+      // Update Inspector fields based on current engine
+      document.getElementById('person-name').innerText = p.name;
+      document.getElementById('person-avatar').innerText = p.initials;
+      document.getElementById('person-dept').innerText = p.dept;
+      document.getElementById('inspector-headline').innerText = `${p.name} Profilja`;
+
+      if (currentEngine === 'simulation') {
+        document.getElementById('person-bio').innerHTML = p.bio_sim;
+        document.getElementById('person-centrality').innerText = p.centrality_sim;
+        document.getElementById('person-trust').innerText = p.trust_sim;
+        document.getElementById('person-degree').innerText = p.degree_sim;
+        document.getElementById('person-deals').innerText = p.deals_sim;
+      } else {
+        document.getElementById('person-bio').innerHTML = p.bio_real;
+        document.getElementById('person-centrality').innerText = p.centrality_real;
+        document.getElementById('person-trust').innerText = p.trust_real;
+        document.getElementById('person-degree').innerText = p.degree_real;
+        document.getElementById('person-deals').innerText = p.deals_real;
+      }
+
+      // Visual highlighting on SVG
+      document.querySelectorAll('.node-group').forEach(el => el.classList.remove('active', 'dimmed'));
+      document.querySelectorAll('.edge-line').forEach(el => el.classList.remove('highlighted', 'dimmed'));
+
+      const activeNode = document.getElementById(`node-${id}`);
+      if (activeNode) activeNode.classList.add('active');
+
+      const connections = currentEngine === 'simulation' ? p.connections_sim : p.connections_real;
+      const connectedIds = new Set([id, ...connections]);
+
+      document.querySelectorAll('.node-group').forEach(el => {
+        const nodeId = el.id.replace('node-', '');
+        if (!connectedIds.has(nodeId)) {
+          el.classList.add('dimmed');
+        }
+      });
+
+      document.querySelectorAll('.edge-line').forEach(el => {
+        const src = el.getAttribute('data-source');
+        const tgt = el.getAttribute('data-target');
+        if (src === id || tgt === id) {
+          el.classList.add('highlighted');
+        } else {
+          el.classList.add('dimmed');
+        }
+      });
+    }
+
+    function highlightSilo() {
+      logTelemetry('Sziló kiemelve: Gyártás (Szabó) ↔ K+F (Horváth)');
+      document.querySelectorAll('.node-group').forEach(el => el.classList.add('dimmed'));
+      document.querySelectorAll('.edge-line').forEach(el => el.classList.add('dimmed'));
+
+      const szabo = document.getElementById('node-p_szabo');
+      const horvath = document.getElementById('node-p_horvath');
+      const siloEdge = document.getElementById('silo-edge');
+
+      if (szabo) szabo.classList.remove('dimmed');
+      if (horvath) horvath.classList.remove('dimmed');
+      if (siloEdge) {
+        siloEdge.classList.remove('dimmed');
+        siloEdge.classList.add('highlighted');
+      }
+
+      document.getElementById('inspector-headline').innerText = "Strukturális Siló Elemzés";
+      document.getElementById('person-name').innerText = "Gyártás ↔ K+F Siló";
+      document.getElementById('person-avatar').innerText = "SILÓ";
+      document.getElementById('person-dept').innerText = "Béta Vállalat ⇎ Gamma Vállalat";
+
+      if (currentEngine === 'simulation') {
+        document.getElementById('person-bio').innerHTML = "<strong>Diagnosztizált Szimulációs Elakadás:</strong> A szimuláció 90 perce alatt a Gyártási vezető (Szabó Tamás) és a K+F vezető (Horváth Balázs) között egyetlen sikeres tranzakció sem valósult meg (100% REJECTED). A felek kizárólag a Pénzügyön (Kovács P.) és Értékesítésen (Kiss G.) keresztül kommunikáltak, ami 3.8x-os átfutási késleltetést okozott.";
+        document.getElementById('person-centrality').innerText = "0 Tranzakció (Kritikus Hiány)";
+        document.getElementById('person-trust').innerText = "35.0% (Kölcsönös elutasítás)";
+        document.getElementById('person-degree').innerText = "Közvetlen híd hiányzik";
+        document.getElementById('person-deals').innerText = "1 kísérlet / 0 elfogadva";
+      } else {
+        document.getElementById('person-bio').innerHTML = "<strong>Valós Munkahelyi Megerősítés:</strong> A munkahelyi ONA adatok szerint Szabó Tamás és Horváth Balázs csapatai a mindennapi munkában is párhuzamos valóságokban élnek: az informális tanácskérési index közöttük 0%, a hibákat és igényeket egymásnak közvetlenül nem jelzik.";
+        document.getElementById('person-centrality').innerText = "0 Informális Kapcsolat";
+        document.getElementById('person-trust').innerText = "38.2% (Munkahelyi bizalmi vákuum)";
+        document.getElementById('person-degree').innerText = "Formális eszkalációra szorul";
+        document.getElementById('person-deals').innerText = "Napi 0 közvetlen egyeztetés";
+      }
+    }
+
+    function setGraphFilter(type, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (type === 'all') {
+        clearDimming(btn);
+      } else if (type === 'silo') {
+        highlightSilo();
+      } else if (type === 'broker') {
+        logTelemetry('Nézet szűrve: Broker Fókusz');
+        document.querySelectorAll('.node-group').forEach(el => el.classList.add('dimmed'));
+        document.querySelectorAll('.edge-line').forEach(el => el.classList.add('dimmed'));
+
+        ['node-p_kovacs', 'node-p_szabo', 'node-p_kiss'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove('dimmed');
+        });
+
+        document.querySelectorAll('.edge-line').forEach(el => {
+          const src = el.getAttribute('data-source');
+          const tgt = el.getAttribute('data-target');
+          if (['p_kovacs', 'p_szabo', 'p_kiss'].includes(src) && ['p_kovacs', 'p_szabo', 'p_kiss'].includes(tgt)) {
+            el.classList.remove('dimmed');
+            el.classList.add('highlighted');
+          }
+        });
+        selectPerson('p_kovacs');
+      } else {
+        logTelemetry(`Részleg szűrve: ${type}`);
+        document.querySelectorAll('.node-group').forEach(el => {
+          const p = personsData[el.id.replace('node-', '')];
+          if (p && p.dept.includes(type)) {
+            el.classList.remove('dimmed');
+          } else {
+            el.classList.add('dimmed');
+          }
+        });
+
+        document.querySelectorAll('.edge-line').forEach(el => el.classList.add('dimmed'));
+      }
+    }
+
+    // Initialize Dashboard
+    window.addEventListener('DOMContentLoaded', () => {
+      initUrlParams();
+      renderEdges();
+      clearDimming();
+    });
+  </script>
+</body>
+</html>

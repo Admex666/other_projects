@@ -35,11 +35,82 @@ module.exports = async (req, res) => {
             return res.status(200).json({ success: true, ...result });
         }
 
+        if (action === 'water_sources' || action === 'pois') {
+            const south = parseFloat(req.query?.south || req.body?.south);
+            const west = parseFloat(req.query?.west || req.body?.west);
+            const north = parseFloat(req.query?.north || req.body?.north);
+            const east = parseFloat(req.query?.east || req.body?.east);
+
+            if (isNaN(south) || isNaN(west) || isNaN(north) || isNaN(east)) {
+                return res.status(400).json({ success: false, error: 'Hiányzó koordináta határok (south, west, north, east)' });
+            }
+
+            // Bbox méretkorlát (max 0.5 fok (~40km)), hogy gyors maradjon
+            const latDiff = Math.abs(north - south);
+            const lonDiff = Math.abs(east - west);
+            if (latDiff > 0.6 || lonDiff > 0.8) {
+                return res.status(400).json({ success: false, error: 'A térképnézet túl nagy, nagyíts közelebb a forrásokhoz!' });
+            }
+
+            const overpassQuery = `[out:json][timeout:15];(node["amenity"="drinking_water"](${south},${west},${north},${east});node["natural"="spring"](${south},${west},${north},${east});node["man_made"="water_tap"](${south},${west},${north},${east}););out center 80;`;
+
+            // Overpass tükörszerverek listája redundanciához
+            const mirrors = [
+                'https://overpass-api.de/api/interpreter',
+                'https://overpass.kumi.systems/api/interpreter',
+                'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
+            ];
+
+            let overpassData = null;
+            for (const mirror of mirrors) {
+                try {
+                    const fetchRes = await fetch(`${mirror}?data=${encodeURIComponent(overpassQuery)}`, {
+                        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) VitaStepsCompanion/1.0' }
+                    });
+                    if (fetchRes.ok) {
+                        overpassData = await fetchRes.json();
+                        if (overpassData && overpassData.elements) break;
+                    }
+                } catch (e) {
+                    // Try next mirror
+                }
+            }
+
+            if (!overpassData || !overpassData.elements) {
+                return res.status(200).json({ success: true, elements: [], note: 'Overpass API ideiglenesen nem elérhető' });
+            }
+            const elements = (overpassData.elements || []).map(el => {
+                const tags = el.tags || {};
+                const isSpring = tags.natural === 'spring';
+                const isDrinkingWater = tags.amenity === 'drinking_water' || tags.drinking_water === 'yes';
+                
+                let typeName = isSpring ? 'Természetes forrás' : 'Közkút / Ivóvízvételi hely';
+                let name = tags.name || (isSpring ? 'Névtelen erdei forrás' : 'Közkút');
+                let desc = isDrinkingWater ? 'Ivóvíz elérhető' : (tags.drinking_water === 'no' ? 'Nem bevizsgált / Nem ivóvíz' : 'Természetes víz');
+
+                return {
+                    id: el.id,
+                    lat: el.lat,
+                    lon: el.lon,
+                    name,
+                    typeName,
+                    desc,
+                    isSpring,
+                    isDrinkingWater,
+                    icon: isSpring ? 'ph-tree' : 'ph-drop',
+                    color: isDrinkingWater ? '#38bdf8' : '#94a3b8'
+                };
+            });
+
+            return res.status(200).json({ success: true, count: elements.length, elements });
+        }
+
         const params = {
             homeLat: parseFloat(req.body?.homeLat || req.query?.homeLat || 47.4979),
             homeLon: parseFloat(req.body?.homeLon || req.query?.homeLon || 19.0402),
             homeAddress: req.body?.homeAddress || req.query?.homeAddress || 'Budapest belváros',
             trailId: req.body?.trailId || req.query?.trailId || 'kevely_klasszik',
+            customTrail: req.body?.customTrail || null, // Egyénileg tervezett vagy GPX-ből feltöltött túra
             homeDeparture: req.body?.homeDeparture || req.query?.homeDeparture || '08:00',
             paceKmh: parseFloat(req.body?.paceKmh || req.query?.paceKmh || 4.0),
             breaksCount: parseInt(req.body?.breaksCount || req.query?.breaksCount || 2, 10),

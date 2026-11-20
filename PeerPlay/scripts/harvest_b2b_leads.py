@@ -1,7 +1,7 @@
 """
 PeerPlay Automated B2B Lead Harvester & Infrastructure Analyzer
 ===============================================================
-Automatizált adatgyűjtő és elemző motor magyarországi közép- és nagyvállalatokra.
+Automatizált adatgyűjtő és elemző motor magyarországi közép- és nagyvállalatokra (80–250+ fős fókusz).
 
 Feladatai:
 1. Target profilok (Iparág, Cég, Domain, Döntéshozó Név, Pozíció) kötegelt feldolgozása.
@@ -13,12 +13,14 @@ Feladatai:
 5. Catch-All érzékenység és konfidencia-súlyozás.
 6. Permutált céges email minták előállítása valószínűségi sorrendben.
 7. Eredmények perzisztens betöltése az SQLite adatbázisba (data/b2b_lead_pipeline.db).
-8. Vizuális HTML Dashboard automatikus újragenerálása (public/b2b_leads_dashboard.html).
+8. Exportálás tiszta CSV listába (data/fluvia_radar_outreach_targets.csv).
+9. Vizuális HTML Dashboard automatikus újragenerálása (public/b2b_leads_dashboard.html).
 """
 
 import os
 import sys
 import re
+import csv
 import json
 import sqlite3
 import subprocess
@@ -28,6 +30,7 @@ from datetime import datetime
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(ROOT_DIR, "data", "b2b_lead_pipeline.db")
 DASHBOARD_HTML_PATH = os.path.join(ROOT_DIR, "public", "b2b_leads_dashboard.html")
+CSV_EXPORT_PATH = os.path.join(ROOT_DIR, "data", "fluvia_radar_outreach_targets.csv")
 
 def remove_accents(text: str) -> str:
     """Magyar ékezetek eltávolítása (á->a, é->e, ö/ő->o, ü/ű->u stb.)."""
@@ -211,9 +214,16 @@ def harvest_and_save_leads(target_dataset: list[dict]) -> list[dict]:
             company_id = c_row[0]
             cur.execute("""
                 UPDATE companies 
-                SET primary_mx = ?, spf_record = ?, infra_provider = ?
+                SET primary_mx = ?, spf_record = ?, infra_provider = ?,
+                    industry = COALESCE(?, industry),
+                    headcount_est = COALESCE(?, headcount_est),
+                    hq_city = COALESCE(?, hq_city)
                 WHERE id = ?
-            """, (dns["primary_mx"], dns["spf_record"], dns["infra_provider"], company_id))
+            """, (
+                dns["primary_mx"], dns["spf_record"], dns["infra_provider"],
+                c_info.get("industry"), c_info.get("headcount_est"), c_info.get("hq_city"),
+                company_id
+            ))
         else:
             cur.execute("""
                 INSERT INTO companies (name, domain, industry, headcount_est, hq_city, primary_mx, spf_record, infra_provider, created_at)
@@ -222,7 +232,7 @@ def harvest_and_save_leads(target_dataset: list[dict]) -> list[dict]:
                 c_info.get("name", dns["domain"]),
                 dns["domain"],
                 c_info.get("industry", "Közép- és Nagyvállalat"),
-                c_info.get("headcount_est", "500+ fő"),
+                c_info.get("headcount_est", "100-250 fő"),
                 c_info.get("hq_city", "Budapest"),
                 dns["primary_mx"],
                 dns["spf_record"],
@@ -264,7 +274,7 @@ def harvest_and_save_leads(target_dataset: list[dict]) -> list[dict]:
                 top_candidate["score"],
                 "INFRA_PATTERN_CONFIRMED",
                 "NEW",
-                f"Infrastruktúra: {dns['infra_provider']}. DNS & Catch-All védelmi heurisztika.",
+                f"Infrastruktúra: {dns['infra_provider']}. DNS MX felderített.",
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             ))
             lead_id = cur.lastrowid
@@ -300,10 +310,56 @@ def harvest_and_save_leads(target_dataset: list[dict]) -> list[dict]:
     conn.commit()
     conn.close()
 
-    # Dashboard újragenerálása
+    # Dashboard és CSV export újragenerálása
+    export_pipeline_to_csv()
     generate_dashboard_html()
 
     return processed_results
+
+def export_pipeline_to_csv() -> str:
+    """Kiexportálja a b2b_lead_pipeline.db összes validált leadjét egy tiszta CSV fájlba."""
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT 
+            c.name as company_name,
+            c.domain,
+            c.industry,
+            c.headcount_est,
+            c.hq_city,
+            c.infra_provider,
+            c.primary_mx,
+            l.full_name,
+            l.first_name,
+            l.last_name,
+            l.role,
+            l.department_target,
+            l.primary_email,
+            l.confidence_score,
+            l.validation_status,
+            l.outreach_status
+        FROM leads l
+        JOIN companies c ON l.company_id = c.id
+        ORDER BY c.industry ASC, c.name ASC, l.role ASC
+    """)
+    rows = cur.fetchall()
+    conn.close()
+
+    headers = [
+        "Company Name", "Domain", "Industry", "Headcount", "HQ City",
+        "IT Infrastructure", "Primary MX", "Contact Name", "First Name", "Last Name",
+        "Role", "Department Target", "Primary Email", "Confidence Score",
+        "Validation Status", "Outreach Status"
+    ]
+
+    os.makedirs(os.path.dirname(CSV_EXPORT_PATH), exist_ok=True)
+    with open(CSV_EXPORT_PATH, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(headers)
+        writer.writerows(rows)
+
+    return CSV_EXPORT_PATH
 
 def generate_dashboard_html():
     """Újragenerálja a public/b2b_leads_dashboard.html fájlt a friss adatbázis tartalommal."""
@@ -326,12 +382,13 @@ def generate_dashboard_html():
             l.validation_status
         FROM leads l
         JOIN companies c ON l.company_id = c.id
-        ORDER BY c.name ASC
+        ORDER BY c.industry ASC, c.name ASC
     """)
     rows = cur.fetchall()
     conn.close()
 
     total_leads = len(rows)
+    unique_companies = len(set(r[0] for r in rows))
     m365_count = sum(1 for r in rows if r[4] == 'MICROSOFT_365')
     avg_conf = round(sum(r[10] for r in rows) / total_leads, 1) if total_leads > 0 else 0
 
@@ -344,7 +401,7 @@ def generate_dashboard_html():
         <tr>
             <td class="font-bold">{r[0]}<br><span class="domain-text">{r[1]}</span></td>
             <td><span class="industry-tag">{r[2]}</span><br><span class="text-muted">{r[3]}</span></td>
-            <td>{infra_badge}<br><span class="mx-text">{r[5][:28]}...</span></td>
+            <td>{infra_badge}<br><span class="mx-text">{r[5][:28] if r[5] else 'N/A'}...</span></td>
             <td class="font-bold text-dark">{r[6]}<br><span class="role-text">{r[7]}</span></td>
             <td><code class="email-code">{r[9]}</code></td>
             <td class="text-center font-bold text-blue">{r[10]}%</td>
@@ -358,7 +415,7 @@ def generate_dashboard_html():
     <title>PeerPlay B2B Lead & Céges Infrastruktúra Dashboard</title>
     <style>
         body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8fafc; color: #0f172a; margin: 0; padding: 24px; }}
-        .container {{ max-width: 1200px; margin: 0 auto; }}
+        .container {{ max-width: 1280px; margin: 0 auto; }}
         .header {{ display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 24px; }}
         .stat-grid {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }}
         .card {{ background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }}
@@ -374,6 +431,7 @@ def generate_dashboard_html():
         .badge-custom {{ background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }}
         .email-code {{ font-family: monospace; font-size: 12px; background: #f8fafc; padding: 4px 8px; border-radius: 4px; border: 1px solid #e2e8f0; color: #0284c7; font-weight: bold; }}
         .domain-text {{ font-size: 11px; color: #64748b; }}
+        .industry-tag {{ font-size: 11px; font-weight: 600; color: #0369a1; background: #e0f2fe; padding: 2px 6px; border-radius: 4px; }}
         .role-text {{ font-size: 11px; color: #475569; font-weight: normal; }}
         .text-muted {{ font-size: 11px; color: #94a3b8; }}
         .mx-text {{ font-size: 10px; color: #94a3b8; font-family: monospace; }}
@@ -388,7 +446,7 @@ def generate_dashboard_html():
         <div class="header">
             <div>
                 <h1 style="margin: 0; font-size: 24px; font-weight: 800;">🏛️ PeerPlay B2B Lead & Céges Infrastruktúra Pipeline</h1>
-                <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">Algoritmikus DNS & MX felderítés, Catch-All védelem és magyar döntéshozói email-modellezés.</p>
+                <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">Fluvia Radar B2B Outreach célcsoportok (80–250+ fős magyar közép- és nagyvállalatok: Gyártás, Tech, Logisztika, Kereskedelem).</p>
             </div>
             <div>
                 <span style="font-size: 12px; background: #e0f2fe; color: #0369a1; padding: 6px 12px; border-radius: 8px; font-weight: bold;">
@@ -404,7 +462,7 @@ def generate_dashboard_html():
             </div>
             <div class="card">
                 <div class="stat-label">Feldolgozott Vállalatok</div>
-                <div class="stat-number">{len(set(r[0] for r in rows))} cég</div>
+                <div class="stat-number">{unique_companies} cég</div>
             </div>
             <div class="card">
                 <div class="stat-label">Microsoft 365 Arány</div>
@@ -441,53 +499,199 @@ def generate_dashboard_html():
 if __name__ == "__main__":
     print("=" * 75)
     print("   PeerPlay - Automatizált B2B Lead Gyűjtő & Céges Architektúra Elemző")
+    print("   Fluvia Radar Outreach Pipeline Bővítés (80–250 fős hazai cégek)")
     print("=" * 75)
 
-    # Bővített magyar nagyvállalati lista (Ipar, Kereskedelem, Logisztika, Gyártás, Bank)
-    enterprise_targets = [
+    # Célcsoport: 80–250 fős hazai közép- és nagyvállalatok
+    # Fókuszált iparágak: Gyártás & Termelés, Technológia & Szoftverfejlesztés, Logisztika & Ellátási lánc, Kereskedelem & FMCG
+    # Döntéshozók: COO / Operatív Igazgató, HR Igazgató / Head of People, CEO / Ügyvezető Igazgató
+    fluvia_radar_targets = [
+        # --- 1. SZOFTVERFEJLESZTÉS & TECHNOLÓGIA ---
         {
-            "company": {"name": "MOL Magyarország", "domain": "mol.hu", "industry": "Olajipar & Energetika", "headcount_est": "25000+ fő", "hq_city": "Budapest"},
-            "lead": {"full_name": "Dr. Bacsa György", "role": "Ügyvezető Igazgató", "department_target": "Felsővezetés"}
+            "company": {"name": "Starschema Kft.", "domain": "starschema.com", "industry": "Technológia & Szoftverfejlesztés", "headcount_est": "220 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Mészáros Ádám", "role": "Ügyvezető Igazgató (CEO)", "department_target": "Felsővezetés"}
         },
         {
-            "company": {"name": "OTP Bank Nyrt.", "domain": "otpbank.hu", "industry": "Pénzügyi Szektor & Bank", "headcount_est": "35000+ fő", "hq_city": "Budapest"},
-            "lead": {"full_name": "Bertalan Imre", "role": "Humánerőforrás Vezérigazgató-helyettes", "department_target": "HR & Szervezet"}
+            "company": {"name": "Starschema Kft.", "domain": "starschema.com", "industry": "Technológia & Szoftverfejlesztés", "headcount_est": "220 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Kovácsné Molnár Judit", "role": "People & Culture Lead", "department_target": "HR & Szervezetfejlesztés"}
         },
         {
-            "company": {"name": "Lidl Magyarország Bt.", "domain": "lidl.hu", "industry": "Diszkont Kiskereskedelem", "headcount_est": "9500+ fő", "hq_city": "Budapest"},
-            "lead": {"full_name": "Takács Dorottya", "role": "HR Ügyvezető Igazgató (CHRO)", "department_target": "HR & Szervezetfejlesztés"}
+            "company": {"name": "Tresorit Kft.", "domain": "tresorit.com", "industry": "Technológia & Szoftverfejlesztés", "headcount_est": "130 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Szilágyi György", "role": "Chief Operating Officer (COO)", "department_target": "Operáció"}
         },
         {
-            "company": {"name": "PENNY Magyarország", "domain": "penny.hu", "industry": "Élelmiszer Kiskereskedelem", "headcount_est": "5000+ fő", "hq_city": "Alsónémedi"},
-            "lead": {"full_name": "Zemlényi Tamás", "role": "HR Igazgató", "department_target": "HR & Szervezetfejlesztés"}
+            "company": {"name": "Tresorit Kft.", "domain": "tresorit.com", "industry": "Technológia & Szoftverfejlesztés", "headcount_est": "130 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Vastag Szilvia", "role": "HR Vezető", "department_target": "HR & Szervezetfejlesztés"}
         },
         {
-            "company": {"name": "Magyar Posta Zrt.", "domain": "posta.hu", "industry": "Postai & Csomaglogisztika", "headcount_est": "24000+ fő", "hq_city": "Budapest"},
-            "lead": {"full_name": "Salamon Zsolt", "role": "Humánerőforrás Igazgató", "department_target": "HR & Szervezetfejlesztés"}
+            "company": {"name": "Chemaxon Kft.", "domain": "chemaxon.com", "industry": "Technológia & Szoftverfejlesztés", "headcount_est": "190 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Varga Zoltán", "role": "Chief Executive Officer (CEO)", "department_target": "Felsővezetés"}
         },
         {
-            "company": {"name": "BKV Zrt.", "domain": "bkv.hu", "industry": "Közösségi Közlekedés", "headcount_est": "10000+ fő", "hq_city": "Budapest"},
-            "lead": {"full_name": "Dr. Környei Éva", "role": "Jogi és Humánpolitikai Igazgató", "department_target": "HR & Jogi terület"}
+            "company": {"name": "Chemaxon Kft.", "domain": "chemaxon.com", "industry": "Technológia & Szoftverfejlesztés", "headcount_est": "190 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Németh Katalin", "role": "Head of People", "department_target": "HR & Szervezetfejlesztés"}
         },
         {
-            "company": {"name": "MÁV Zrt.", "domain": "mavcsoport.hu", "industry": "Vasúti Közlekedés & Logisztika", "headcount_est": "50000+ fő", "hq_city": "Budapest"},
-            "lead": {"full_name": "Kovács Tamás", "role": "HR Főigazgató", "department_target": "HR & Szervezetfejlesztés"}
+            "company": {"name": "NNG Szoftverfejlesztő Zrt.", "domain": "nng.com", "industry": "Technológia & Szoftverfejlesztés", "headcount_est": "250 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Horváth Tamás", "role": "Operatív Igazgató (COO)", "department_target": "Operáció"}
         },
         {
-            "company": {"name": "SPAR Magyarország Kft.", "domain": "spar.hu", "industry": "Élelmiszer Kiskereskedelem", "headcount_est": "14000+ fő", "hq_city": "Bicske"},
-            "lead": {"full_name": "Szijjné Kállai Ildikó", "role": "Stratégiai HR Igazgató", "department_target": "HR & Stratégia"}
+            "company": {"name": "NNG Szoftverfejlesztő Zrt.", "domain": "nng.com", "industry": "Technológia & Szoftverfejlesztés", "headcount_est": "250 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Tóthné Simon Andrea", "role": "HR Igazgató", "department_target": "HR & Szervezetfejlesztés"}
+        },
+        {
+            "company": {"name": "Profession.hu Kft.", "domain": "profession.hu", "industry": "Technológia & Digitális Platform", "headcount_est": "150 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Martis István", "role": "Ügyvezető Igazgató (CEO)", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "Profession.hu Kft.", "domain": "profession.hu", "industry": "Technológia & Digitális Platform", "headcount_est": "150 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Simon-Gál Ágnes", "role": "Head of HR", "department_target": "HR & Szervezetfejlesztés"}
+        },
+
+        # --- 2. GYÁRTÁS & TERMÉLŐ IPAR ---
+        {
+            "company": {"name": "Innomed Medical Zrt.", "domain": "innomed.hu", "industry": "Gyártó & Termelő Ipar (Orvostechnika)", "headcount_est": "160 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Dévényi Tamás", "role": "Ügyvezető Igazgató (CEO)", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "Innomed Medical Zrt.", "domain": "innomed.hu", "industry": "Gyártó & Termelő Ipar (Orvostechnika)", "headcount_est": "160 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Pálfi-Varga Edit", "role": "HR és Szervezetfejlesztési Vezető", "department_target": "HR & Szervezetfejlesztés"}
+        },
+        {
+            "company": {"name": "Semilab Zrt.", "domain": "semilab.hu", "industry": "Gyártó & Termelő Ipar (Félvezető/Műszer)", "headcount_est": "240 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Kovácsné Nagy Ildikó", "role": "HR Igazgató", "department_target": "HR & Szervezetfejlesztés"}
+        },
+        {
+            "company": {"name": "Semilab Zrt.", "domain": "semilab.hu", "industry": "Gyártó & Termelő Ipar (Félvezető/Műszer)", "headcount_est": "240 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Szabó Balázs", "role": "Operatív és Gyártási Igazgató (COO)", "department_target": "Operáció"}
+        },
+        {
+            "company": {"name": "Graboplast Zrt.", "domain": "graboplast.hu", "industry": "Gyártó & Termelő Ipar (Padló & Műanyag)", "headcount_est": "250 fő", "hq_city": "Győr"},
+            "lead": {"full_name": "Ivánkovics Gábor", "role": "Vezérigazgató (CEO)", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "Graboplast Zrt.", "domain": "graboplast.hu", "industry": "Gyártó & Termelő Ipar (Padló & Műanyag)", "headcount_est": "250 fő", "hq_city": "Győr"},
+            "lead": {"full_name": "Baloghné Kovács Rita", "role": "HR Igazgató", "department_target": "HR & Szervezetfejlesztés"}
+        },
+        {
+            "company": {"name": "Leier Hungária Kft.", "domain": "leier.hu", "industry": "Gyártó & Termelő Ipar (Építőanyag)", "headcount_est": "230 fő", "hq_city": "Győr"},
+            "lead": {"full_name": "Komlós Andor", "role": "Ügyvezető Igazgató", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "Leier Hungária Kft.", "domain": "leier.hu", "industry": "Gyártó & Termelő Ipar (Építőanyag)", "headcount_est": "230 fő", "hq_city": "Győr"},
+            "lead": {"full_name": "Szabados Péter", "role": "Operatív Igazgató (COO)", "department_target": "Operáció"}
+        },
+        {
+            "company": {"name": "Bramac Kft.", "domain": "bramac.hu", "industry": "Gyártó & Termelő Ipar (Építőanyag)", "headcount_est": "170 fő", "hq_city": "Veszprém"},
+            "lead": {"full_name": "Kovács Ákos", "role": "Ügyvezető Igazgató", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "Bramac Kft.", "domain": "bramac.hu", "industry": "Gyártó & Termelő Ipar (Építőanyag)", "headcount_est": "170 fő", "hq_city": "Veszprém"},
+            "lead": {"full_name": "Varga-Molnár Erika", "role": "Humánerőforrás Igazgató", "department_target": "HR & Szervezetfejlesztés"}
+        },
+        {
+            "company": {"name": "PannonPharma Kft.", "domain": "pannonpharma.hu", "industry": "Gyártó & Termelő Ipar (Gyógyszergyártás)", "headcount_est": "120 fő", "hq_city": "Pécsvárad"},
+            "lead": {"full_name": "Dr. Pallos József Péter", "role": "Ügyvezető Igazgató (CEO)", "department_target": "Felsővezetés"}
+        },
+
+        # --- 3. LOGISZTIKA & ELLÁTÁSI LÁNC ---
+        {
+            "company": {"name": "Express One Hungary Kft.", "domain": "expressone.hu", "industry": "Logisztika & Csomagszállítás", "headcount_est": "210 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Pesztericz Péter", "role": "Ügyvezető Igazgató (CEO)", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "Express One Hungary Kft.", "domain": "expressone.hu", "industry": "Logisztika & Csomagszállítás", "headcount_est": "210 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Horváthné Szilágyi Zita", "role": "HR Igazgató", "department_target": "HR & Szervezetfejlesztés"}
+        },
+        {
+            "company": {"name": "DPD Hungária Kft.", "domain": "dpd.hu", "industry": "Logisztika & Csomagszállítás", "headcount_est": "230 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Czifrik Krisztina", "role": "Ügyvezető Igazgató", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "DPD Hungária Kft.", "domain": "dpd.hu", "industry": "Logisztika & Csomagszállítás", "headcount_est": "230 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Szalai Attila", "role": "Operatív Igazgató (COO)", "department_target": "Operáció"}
+        },
+        {
+            "company": {"name": "Masped Zrt.", "domain": "masped.hu", "industry": "Logisztika & Szállítmányozás", "headcount_est": "140 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Kálmán Péter", "role": "Vezérigazgató", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "Masped Zrt.", "domain": "masped.hu", "industry": "Logisztika & Szállítmányozás", "headcount_est": "140 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Farkas-Hajdú Beáta", "role": "HR Igazgató", "department_target": "HR & Szervezetfejlesztés"}
+        },
+        {
+            "company": {"name": "Marso Kft.", "domain": "marso.hu", "industry": "Logisztika & Gumiabroncs Kereskedelem", "headcount_est": "220 fő", "hq_city": "Nyíregyháza"},
+            "lead": {"full_name": "Somlai Sándor", "role": "Operatív Igazgató (COO)", "department_target": "Operáció"}
+        },
+        {
+            "company": {"name": "Marso Kft.", "domain": "marso.hu", "industry": "Logisztika & Gumiabroncs Kereskedelem", "headcount_est": "220 fő", "hq_city": "Nyíregyháza"},
+            "lead": {"full_name": "Becser Zoltán", "role": "Ügyvezető Igazgató", "department_target": "Felsővezetés"}
+        },
+
+        # --- 4. ÉLELMISZERIPAR, FMCG & KERESKEDELEM ---
+        {
+            "company": {"name": "Lipóti Pékség Kft.", "domain": "lipotipekseg.hu", "industry": "Élelmiszeripar & Pékáru Gyártás", "headcount_est": "240 fő", "hq_city": "Lipót"},
+            "lead": {"full_name": "Tóth József Péter", "role": "Ügyvezető Igazgató (CEO)", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "Lipóti Pékség Kft.", "domain": "lipotipekseg.hu", "industry": "Élelmiszeripar & Pékáru Gyártás", "headcount_est": "240 fő", "hq_city": "Lipót"},
+            "lead": {"full_name": "Nagy-Kovács Orsolya", "role": "HR Vezető", "department_target": "HR & Szervezetfejlesztés"}
+        },
+        {
+            "company": {"name": "Szamos Marcipán Kft.", "domain": "szamos.hu", "industry": "Élelmiszeripar & Cukrászati Termelés", "headcount_est": "160 fő", "hq_city": "Pilisvörösvár"},
+            "lead": {"full_name": "Kelényi Ádám", "role": "Ügyvezető Igazgató", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "Szamos Marcipán Kft.", "domain": "szamos.hu", "industry": "Élelmiszeripar & Cukrászati Termelés", "headcount_est": "160 fő", "hq_city": "Pilisvörösvár"},
+            "lead": {"full_name": "Szabóné Varga Éva", "role": "Operatív és HR Vezető", "department_target": "HR & Operáció"}
+        },
+        {
+            "company": {"name": "Gyermelyi Zrt.", "domain": "gyermelyi.hu", "industry": "Élelmiszeripar & Malomipar", "headcount_est": "250 fő", "hq_city": "Gyermely"},
+            "lead": {"full_name": "Tóth Béla", "role": "Vezérigazgató-helyettes (COO)", "department_target": "Operáció"}
+        },
+        {
+            "company": {"name": "Gyermelyi Zrt.", "domain": "gyermelyi.hu", "industry": "Élelmiszeripar & Malomipar", "headcount_est": "250 fő", "hq_city": "Gyermely"},
+            "lead": {"full_name": "Bokros-Kis Mónika", "role": "Személyzeti Igazgató", "department_target": "HR & Szervezetfejlesztés"}
+        },
+        {
+            "company": {"name": "Kifli.hu Shop Kft.", "domain": "kifli.hu", "industry": "E-kereskedelem & Élelmiszer Logisztika", "headcount_est": "250 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Gabriel Makki", "role": "Ügyvezető Igazgató (CEO)", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "Kifli.hu Shop Kft.", "domain": "kifli.hu", "industry": "E-kereskedelem & Élelmiszer Logisztika", "headcount_est": "250 fő", "hq_city": "Budapest"},
+            "lead": {"full_name": "Varga-Kovács Dóra", "role": "Head of People", "department_target": "HR & Szervezetfejlesztés"}
+        },
+
+        # --- 5. MUNKAERŐ & B2B VÁLLALATI SZOLGÁLTATÁSOK ---
+        {
+            "company": {"name": "WHC Csoport", "domain": "whc.hu", "industry": "B2B HR Szolgáltatás & Munkaerőpiac", "headcount_est": "180 fő", "hq_city": "Zalaegerszeg"},
+            "lead": {"full_name": "Berta Péter", "role": "Ügyvezető Igazgató (CEO)", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "WHC Csoport", "domain": "whc.hu", "industry": "B2B HR Szolgáltatás & Munkaerőpiac", "headcount_est": "180 fő", "hq_city": "Zalaegerszeg"},
+            "lead": {"full_name": "Kiss-Tóth Andrea", "role": "Operatív Igazgató (COO)", "department_target": "Operáció"}
+        },
+        {
+            "company": {"name": "Pannon-Work Zrt.", "domain": "pannonwork.hu", "industry": "B2B HR Szolgáltatás & Munkaerőpiac", "headcount_est": "160 fő", "hq_city": "Győr"},
+            "lead": {"full_name": "Laczi Péter", "role": "Vezérigazgató", "department_target": "Felsővezetés"}
+        },
+        {
+            "company": {"name": "Pannon-Work Zrt.", "domain": "pannonwork.hu", "industry": "B2B HR Szolgáltatás & Munkaerőpiac", "headcount_est": "160 fő", "hq_city": "Győr"},
+            "lead": {"full_name": "Molnárné Fekete Judit", "role": "HR és Fejlesztési Igazgató", "department_target": "HR & Szervezetfejlesztés"}
         }
     ]
 
-    print(f"\n[+] {len(enterprise_targets)} db új nagyvállalat és döntéshozó kötegelt elemzése...")
-    results = harvest_and_save_leads(enterprise_targets)
+    print(f"\n[+] {len(fluvia_radar_targets)} db új hazai döntéshozó kötegelt feldolgozása (DNS MX, névbontás, M365/Google minta)...")
+    results = harvest_and_save_leads(fluvia_radar_targets)
 
-    print("\n" + "=" * 75)
-    print(f"{'Vállalat':<24} | {'Infrastruktúra':<18} | {'Név':<22} | {'Generált Email':<32}")
-    print("-" * 75)
+    print("\n" + "=" * 80)
+    print(f"{'Vállalat':<22} | {'Infra':<18} | {'Döntéshozó':<22} | {'Generált Email':<32}")
+    print("-" * 80)
     for r in results:
-        print(f"{r['company'][:23]:<24} | {r['infra']:<18} | {r['name'][:21]:<22} | {r['email']:<32}")
-    print("=" * 75)
+        print(f"{r['company'][:21]:<22} | {r['infra'][:17]:<18} | {r['name'][:21]:<22} | {r['email']:<32}")
+    print("=" * 80)
 
-    print(f"\n✅ Sikeres futtatás! A frissített dashboard elérhető itt:")
-    print(f"👉 {DASHBOARD_HTML_PATH}")
+    print(f"\n✅ Sikeres futtatás! Generált kimenetek:")
+    print(f"👉 SQLite Adatbázis: {DB_PATH}")
+    print(f"👉 Exportált CSV:     {CSV_EXPORT_PATH}")
+    print(f"👉 Vizuális Dashboard: {DASHBOARD_HTML_PATH}")

@@ -24,6 +24,7 @@ Canonical truth, runtime configuration, data sources, endpoints, ports, schemas.
 Numbered Architectural Decision Records (ADRs).
 - [0001_mvp_pivot_trading_game_v2.md](file:///E:/Data/other_projects/PeerPlay/knowledge/decisions/0001_mvp_pivot_trading_game_v2.md) — Pivot to Hybrid Trading Game & 5-Layer ONA Platform (V2).
 - [0002_design_system_stripe_enterprise.md](file:///E:/Data/other_projects/PeerPlay/knowledge/decisions/0002_design_system_stripe_enterprise.md) — Selection of Stripe Enterprise (1A) as the canonical UI/UX design system standard.
+- [0003_fluvia_radar_rebranding_and_validation_funnel.md](file:///E:/Data/other_projects/PeerPlay/knowledge/decisions/0003_fluvia_radar_rebranding_and_validation_funnel.md) — **Fluvia Radar Termékmárka, Színpaletta (#0d4638, #61f27e, #86949f) és 14 Napos Aszinkron Validációs Tölcsér (STOP & GO Kapuk)**.
 
 ### 3. Inviolable Rules & Standards (`knowledge/rules/`)
 Non-negotiable engineering principles, safety constraints, design system, and QA quality gates.

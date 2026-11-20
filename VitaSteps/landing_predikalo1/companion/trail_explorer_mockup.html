@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaSteps Trail Explorer & Komoot-Style Route Planner</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet & Phosphor Icons -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Chart.js for Interactive Elevation Profile -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1120;
+            color: #f1f5f9;
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        #planner-map {
+            height: calc(100vh - 240px);
+            min-height: 520px;
+            width: 100%;
+            border-radius: 1.25rem;
+            z-index: 10;
+        }
+        /* Custom POI & Waypoint Leaflet Markers */
+        .poi-marker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 9999px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            border: 2px solid #ffffff;
+            font-size: 14px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .poi-marker:hover {
+            transform: scale(1.22);
+            z-index: 1000 !important;
+        }
+        .waypoint-pin {
+            width: 26px;
+            height: 26px;
+            border-radius: 9999px;
+            background: #6366f1;
+            border: 3px solid #ffffff;
+            color: white;
+            font-weight: 800;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.6);
+        }
+        .waypoint-pin.start { background: #10b981; }
+        .waypoint-pin.end { background: #f43f5e; }
+        
+        /* Elevation Chart cursor indicator */
+        .chart-cursor-line {
+            width: 2px;
+            background: #f43f5e;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 sm:p-6 lg:p-8">
+
+    <!-- Felső Fejléc & Vezérlősáv -->
+    <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+        <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                Intelligens Ösvénytervező • Komoot UX & Turistatérkép
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+                <i class="ph-bold ph-mountains text-indigo-400"></i>
+                VitaSteps Trail Explorer
+            </h1>
+        </div>
+
+        <!-- Rétegkapcsolók & Műveletek -->
+        <div class="flex items-center flex-wrap gap-2.5">
+            <!-- Turistajelzések réteg toggle -->
+            <button id="toggleTrailsLayer" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border bg-emerald-500/20 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/30">
+                <i class="ph-bold ph-path"></i> Turistajelzések
+            </button>
+            <!-- Közkutak toggle -->
+            <button id="toggleWaterLayer" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border bg-sky-500/20 text-sky-300 border-sky-500/30 hover:bg-sky-500/30">
+                <i class="ph-bold ph-drop"></i> Közkutak
+            </button>
+            <!-- Látványosságok toggle -->
+            <button id="togglePoisLayer" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border bg-amber-500/20 text-amber-300 border-amber-500/30 hover:bg-amber-500/30">
+                <i class="ph-bold ph-binoculars"></i> Látnivalók
+            </button>
+            
+            <div class="h-5 w-[1px] bg-slate-800 mx-1"></div>
+
+            <!-- GPX Exportálás -->
+            <button id="exportGpxBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-95">
+                <i class="ph-bold ph-download-simple"></i> GPX Letöltése
+            </button>
+
+            <!-- Terv mentése -->
+            <button id="saveRouteBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 active:scale-95">
+                <i class="ph-bold ph-floppy-disk"></i> Mentés
+            </button>
+
+            <!-- Terv törlése -->
+            <button id="clearRouteBtn" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 border border-slate-700 hover:border-rose-500/30">
+                <i class="ph-bold ph-trash"></i> Törlés
+            </button>
+
+            <!-- Vissza a Companion főoldalra -->
+            <a href="/companion" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">
+                <i class="ph-bold ph-arrow-left"></i> Companion
+            </a>
+        </div>
+    </header>
+
+    <!-- Fő Layout: Bal oldali vezérlő panel + Térkép & Szintmetszet -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+        
+        <!-- Bal Oldali Sáv: Útvonal pontok, felület-bontás, statisztikák (4 oszlop) -->
+        <div class="lg:col-span-4 flex flex-col gap-4">
+            
+            <!-- Útvonal Statisztikák Kártya -->
+            <div class="glass-panel rounded-2xl p-4 shadow-xl border border-slate-800">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <span class="text-xs uppercase font-extrabold tracking-wider text-slate-400">Tervezett Útvonal</span>
+                    <span id="routeStatusBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Hivatalos Kevély Kör
+                    </span>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-2 py-3 text-center">
+                    <div>
+                        <div class="text-[10px] uppercase font-bold text-slate-400">Távolság</div>
+                        <div id="statDistance" class="text-xl font-extrabold text-white mono mt-0.5">8.95 km</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] uppercase font-bold text-slate-400">Szint fel / le</div>
+                        <div id="statElevation" class="text-xl font-extrabold text-emerald-400 mono mt-0.5">+363 m</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] uppercase font-bold text-slate-400">Menetidő</div>
+                        <div id="statDuration" class="text-xl font-extrabold text-indigo-400 mono mt-0.5">2ó 45p</div>
+                    </div>
+                </div>
+
+                <!-- Komoot-stílusú Felület & Úttípus Bontás (Dinamikus Surface breakdown) -->
+                <div class="pt-3 border-t border-slate-800 space-y-2">
+                    <div class="flex justify-between text-xs font-semibold text-slate-300">
+                        <span>Útvonal összetétele</span>
+                        <span id="surfaceNaturePercent" class="text-[11px] text-emerald-400 font-bold">92% Természetes</span>
+                    </div>
+                    <div class="h-2 rounded-full overflow-hidden flex bg-slate-800" id="surfaceProgressBar">
+                        <div id="barTrail" class="bg-emerald-500 h-full transition-all duration-500" style="width: 68%" title="Ösvény"></div>
+                        <div id="barTrack" class="bg-amber-500 h-full transition-all duration-500" style="width: 22%" title="Erdei út"></div>
+                        <div id="barPaved" class="bg-slate-400 h-full transition-all duration-500" style="width: 10%" title="Aszfalt"></div>
+                    </div>
+                    <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                        <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span> <span id="labelTrail">Ösvény (6.1 km)</span></div>
+                        <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-amber-500"></span> <span id="labelTrack">Erdei út (2.0 km)</span></div>
+                        <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-slate-400"></span> <span id="labelPaved">Aszfalt (0.9 km)</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interaktív Érintőpontok (Waypoints) Lista Komoot stílusban -->
+            <div class="glass-panel rounded-2xl p-4 shadow-xl border border-slate-800 flex-1 flex flex-col">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs uppercase font-extrabold tracking-wider text-slate-300 flex items-center gap-2">
+                        <i class="ph-bold ph-list-numbers text-indigo-400"></i>
+                        Útvonal Érintőpontjai
+                    </h3>
+                    <span class="text-[10px] text-slate-500">Kattints a pontra a térképen a törléshez!</span>
+                </div>
+
+                <div id="waypointsContainer" class="space-y-2 overflow-y-auto max-h-[180px] pr-1">
+                    <!-- JS generálja a pontokat -->
+                </div>
+
+                <!-- Mentett Útvonalak Gyorslista -->
+                <div class="mt-3 pt-3 border-t border-slate-800">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                            <i class="ph-bold ph-bookmark-simple text-indigo-400"></i> Mentett Egyéni Tervek
+                        </div>
+                        <span id="savedRoutesCount" class="text-[10px] text-slate-500 font-mono">0 mentve</span>
+                    </div>
+                    <div id="savedRoutesContainer" class="space-y-1.5 max-h-[110px] overflow-y-auto pr-1">
+                        <!-- JS tölti be -->
+                    </div>
+                </div>
+
+                <!-- Gyors Kitérő Javaslatok (POIs on route) -->
+                <div class="mt-4 pt-3 border-t border-slate-800">
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+                        <i class="ph-bold ph-sparkle text-amber-400"></i> Érdemes beiktatni a közelben:
+                    </div>
+                    <div class="grid grid-cols-2 gap-2" id="suggestedPoisContainer">
+                        <!-- POI kártyák -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Jobb Oldali Térkép & Alatta az Interaktív Szintprofil (8 oszlop) -->
+        <div class="lg:col-span-8 flex flex-col gap-4">
+            
+            <!-- Fő Térkép Konténer -->
+            <div class="relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
+                <div id="planner-map"></div>
+
+                <!-- Lebegő Térkép Mód Választó & Turistautak kapcsoló -->
+                <div class="absolute top-4 right-4 z-20 flex flex-wrap items-center gap-1.5 bg-slate-900/95 backdrop-blur-md p-1.5 rounded-xl border border-slate-700 shadow-xl max-w-[calc(100%-2rem)]">
+                    <button onclick="setBaseMap('osm')" id="mapBtnOsm" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-500 text-white transition">
+                        OSM Outdoor
+                    </button>
+                    <button onclick="setBaseMap('topo')" id="mapBtnTopo" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition">
+                        OpenTopo
+                    </button>
+                    <button onclick="setBaseMap('esriTopo')" id="mapBtnEsriTopo" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition">
+                        Esri Topo
+                    </button>
+                    <button onclick="setBaseMap('esriGray')" id="mapBtnEsriGray" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition">
+                        Minimál
+                    </button>
+                    <button onclick="setBaseMap('satellite')" id="mapBtnSat" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition">
+                        Műhold
+                    </button>
+                    
+                    <div class="h-4 w-[1px] bg-slate-700 mx-0.5"></div>
+
+                    <!-- Turistautak ON/OFF Toggle -->
+                    <button onclick="toggleHikingOverlay()" id="hikingToggleBtn" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 flex items-center gap-1.5 transition">
+                        <i class="ph-bold ph-path"></i>
+                        <span>Turistautak: BE</span>
+                    </button>
+                </div>
+
+                <!-- Térképre kattintási segédlet badge -->
+                <div class="absolute bottom-4 left-4 z-20 pointer-events-none bg-slate-950/80 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-700/80 text-[11px] text-slate-300 flex items-center gap-2">
+                    <i class="ph-bold ph-cursor-click text-indigo-400"></i>
+                    <span>Kattints a térképre egyedi útvonalponthoz (az algoritmus automatikusan a turistautakra igazítja)!</span>
+                </div>
+            </div>
+
+            <!-- Komoot-Stílusú Interaktív Szintmetszet (Elevation Profile) -->
+            <div class="glass-panel rounded-2xl p-4 border border-slate-800 shadow-xl relative">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs uppercase font-extrabold tracking-wider text-slate-400 flex items-center gap-1.5">
+                            <i class="ph-bold ph-chart-line-up text-emerald-400"></i> Magassági Profil
+                        </span>
+                        <div id="elevationHoverInfo" class="text-xs font-mono text-emerald-300 font-bold hidden">
+                            <span id="hoverDist">0.0 km</span> • <span id="hoverEle">0 m</span>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-slate-400 flex items-center gap-2">
+                        <span>Legalacsonyabb: <strong class="text-white">218 m</strong></span>
+                        <span>•</span>
+                        <span>Csúcs: <strong class="text-emerald-400">534 m</strong></span>
+                    </div>
+                </div>
+
+                <div class="h-28 w-full relative">
+                    <canvas id="elevationChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Script: Leaflet, BRouter Hiking Engine & Interactive Komoot UX -->
+    <script>
+        // Pilis és Kevély POI adatbázis (Közkutak, Források, Látnivalók)
+        const PILIS_POIS = [
+            {
+                id: 'poi_1',
+                type: 'water',
+                name: 'Kevély-nyergi Természetbarát Forrás',
+                desc: 'Hideg, tiszta erdei forrásvíz közvetlenül a piros jelzés mellett.',
+                lat: 47.6258,
+                lon: 18.9778,
+                icon: 'ph-drop',
+                color: '#0ea5e9'
+            },
+            {
+                id: 'poi_2',
+                type: 'water',
+                name: 'Pilisborosjenő közkút (Fő tér)',
+                desc: 'Megbízható ivóvízkút a buszforduló közelében.',
+                lat: 47.6087,
+                lon: 18.9902,
+                icon: 'ph-drop',
+                color: '#0ea5e9'
+            },
+            {
+                id: 'poi_3',
+                type: 'viewpoint',
+                name: 'Nagy-Kevély Csúcs (534 m)',
+                desc: '360 fokos panoráma a Pilisre, a Budai-hegyekre és a Dunakanyarra.',
+                lat: 47.6238,
+                lon: 18.9842,
+                icon: 'ph-binoculars',
+                color: '#f59e0b'
+            },
+            {
+                id: 'poi_4',
+                type: 'historic',
+                name: 'Egri Vár Díszlet',
+                desc: 'Az 1968-as Egri csillagok film forgatási helyszíne és romjai.',
+                lat: 47.6186,
+                lon: 18.9718,
+                icon: 'ph-castle-turret',
+                color: '#ec4899'
+            },
+            {
+                id: 'poi_5',
+                type: 'historic',
+                name: 'Kevélyi Kőfülke (Barlang)',
+                desc: 'Őskori régészeti leleteiről híres védett sziklabarlang.',
+                lat: 47.6198,
+                lon: 18.9772,
+                icon: 'ph-mountains',
+                color: '#8b5cf6'
+            },
+            {
+                id: 'poi_6',
+                type: 'water',
+                name: 'Gyopár-forrás',
+                desc: 'Időszakos forrás és csendes pihenőhely a hegy északi oldalán.',
+                lat: 47.6312,
+                lon: 18.9815,
+                icon: 'ph-drop',
+                color: '#0ea5e9'
+            }
+        ];
+
+        let map, elevationChart;
+        let routePolyline = null;
+        let hoverMarker = null;
+        let poiMarkersGroup = L.layerGroup();
+        let waypointMarkersGroup = L.layerGroup();
+        let trailsLayerGroup = L.layerGroup();
+
+        // Rétegek definíciója
+        let tileLayers = {
+            osm: L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team',
+                maxZoom: 19
+            }),
+            topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenTopoMap contributors',
+                maxZoom: 17
+            }),
+            esriTopo: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+                maxZoom: 19
+            }),
+            esriGray: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; DeLorme, NAVTEQ',
+                maxZoom: 16
+            }),
+            satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '&copy; Esri World Imagery',
+                maxZoom: 18
+            })
+        };
+
+        // Waymarked Trails Hiking Overlay (piros sáv, kék túra stb. turistajelzések rétege)
+        let hikingOverlay = L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
+            opacity: 0.85,
+            maxZoom: 18,
+            attribution: '&copy; <a href="https://hiking.waymarkedtrails.org">Waymarked Trails</a>'
+        });
+        let hikingOverlayActive = true;
+        let currentBaseMap = 'osm';
+
+        // Waypoints az útvonalhoz (Kezdetben nulláról indítható vagy alapértelmezett)
+        let waypoints = [
+            { name: 'Pilisborosjenő, aut.-ford. (Rajt)', lat: 47.6091, lon: 18.9897 },
+            { name: 'Egri Vár díszlet romjai', lat: 47.6186, lon: 18.9718 },
+            { name: 'Nagy-Kevély csúcs (534m)', lat: 47.6238, lon: 18.9842 },
+            { name: 'Pilisborosjenő (Cél)', lat: 47.6091, lon: 18.9897 }
+        ];
+
+        let dynamicWaterMarkersGroup = L.layerGroup();
+        let dynamicWaterLayerActive = true;
+        let waterFetchTimeout = null;
+
+        // 1. Térkép inicializálása
+        function initMap() {
+            map = L.map('planner-map', { zoomControl: false }).setView([47.618, 18.982], 14);
+            
+            // Alapréteg bekapcsolása (OSM Outdoor)
+            tileLayers.osm.addTo(map);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+            // Turistajelzések réteg bekapcsolása (Waymarked Trails Hiking Overlay)
+            hikingOverlay.addTo(map);
+
+            poiMarkersGroup.addTo(map);
+            dynamicWaterMarkersGroup.addTo(map);
+            waypointMarkersGroup.addTo(map);
+
+            renderPois();
+            renderWaypointsList();
+            renderSuggestedPois();
+
+            // Interaktív útvonalkattintás: új pont hozzáadása a térképen
+            map.on('click', async (e) => {
+                const { lat, lng } = e.latlng;
+                const pointName = waypoints.length === 0 ? 'Rajtpont (A)' : (waypoints.length === 1 ? 'Célpont (B)' : `Érintőpont #${waypoints.length}`);
+                addWaypoint(pointName, lat, lng);
+            });
+
+            // Térkép mozgatásakor dinamikus vízvételi helyek újratöltése a látható területre
+            map.on('moveend', debounceFetchWaterSources);
+
+            // Első betöltéskor is lekérjük az aktuális térképnézet vízvételi helyeit
+            fetchWaterSourcesForCurrentView();
+
+            // Alapértelmezett útvonal kiszámítása BRouter túra-motorral
+            calculateRoute();
+        }
+
+        // Térkép alaprész cseréje
+        function setBaseMap(type) {
+            currentBaseMap = type;
+            // Csak az alaptérképeket vesszük le, az overlay és a markerek érintetlenek maradnak!
+            Object.values(tileLayers).forEach(l => {
+                if (map.hasLayer(l)) {
+                    map.removeLayer(l);
+                }
+            });
+            tileLayers[type].addTo(map);
+
+            // Ha be van kapcsolva a turistautak réteg, visszük a legfelső csempesíkra
+            if (hikingOverlayActive && !map.hasLayer(hikingOverlay)) {
+                hikingOverlay.addTo(map);
+            }
+            if (hikingOverlayActive) {
+                hikingOverlay.bringToFront();
+            }
+
+            const mapButtons = [
+                { id: 'mapBtnOsm', key: 'osm' },
+                { id: 'mapBtnTopo', key: 'topo' },
+                { id: 'mapBtnEsriTopo', key: 'esriTopo' },
+                { id: 'mapBtnEsriGray', key: 'esriGray' },
+                { id: 'mapBtnSat', key: 'satellite' }
+            ];
+
+            mapButtons.forEach(b => {
+                const btn = document.getElementById(b.id);
+                if (btn) {
+                    if (b.key === type) {
+                        btn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-500 text-white transition';
+                    } else {
+                        btn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition';
+                    }
+                }
+            });
+        }
+
+        // Turistautak réteg Ki/Be kapcsolása
+        function toggleHikingOverlay() {
+            hikingOverlayActive = !hikingOverlayActive;
+            const btn = document.getElementById('hikingToggleBtn');
+
+            if (hikingOverlayActive) {
+                if (!map.hasLayer(hikingOverlay)) {
+                    hikingOverlay.addTo(map);
+                }
+                hikingOverlay.bringToFront();
+                btn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 flex items-center gap-1.5 transition';
+                btn.innerHTML = '<i class="ph-bold ph-path"></i><span>Turistautak: BE</span>';
+            } else {
+                if (map.hasLayer(hikingOverlay)) {
+                    map.removeLayer(hikingOverlay);
+                }
+                btn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700 hover:text-slate-200 flex items-center gap-1.5 transition';
+                btn.innerHTML = '<i class="ph-bold ph-eye-slash"></i><span>Turistautak: KI</span>';
+            }
+        }
+
+        // 2. Dinamikus Vízvételi Helyek Betöltése az aktuális térképnézet alapján (Overpass API)
+        function debounceFetchWaterSources() {
+            if (!dynamicWaterLayerActive) return;
+            clearTimeout(waterFetchTimeout);
+            waterFetchTimeout = setTimeout(fetchWaterSourcesForCurrentView, 400);
+        }
+
+        async function fetchWaterSourcesForCurrentView() {
+            if (!map || !dynamicWaterLayerActive) return;
+            const zoom = map.getZoom();
+            if (zoom < 12) {
+                // Túl távoli nézetben ne terheljük feleslegesen
+                return;
+            }
+
+            const bounds = map.getBounds();
+            const south = bounds.getSouth().toFixed(5);
+            const west = bounds.getWest().toFixed(5);
+            const north = bounds.getNorth().toFixed(5);
+            const east = bounds.getEast().toFixed(5);
+
+            try {
+                const res = await fetch(`/api/companion?action=water_sources&south=${south}&west=${west}&north=${north}&east=${east}`);
+                const data = await res.json();
+
+                if (data.success && Array.isArray(data.elements)) {
+                    renderDynamicWaterMarkers(data.elements);
+                }
+            } catch (err) {
+                console.warn('Vízvételi helyek betöltési hiba:', err);
+            }
+        }
+
+        function renderDynamicWaterMarkers(elements) {
+            dynamicWaterMarkersGroup.clearLayers();
+
+            elements.forEach(w => {
+                const iconClass = w.isSpring ? 'ph-tree text-emerald-300' : 'ph-drop text-sky-300';
+                const bgClass = w.isSpring ? 'bg-emerald-700/90' : 'bg-sky-600/90';
+
+                const iconHtml = `
+                    <div class="poi-marker ${bgClass} border-2 border-white flex items-center justify-center rounded-full shadow-lg" title="${w.name}">
+                        <i class="ph-bold ${w.isSpring ? 'ph-tree' : 'ph-drop'} text-sm text-white"></i>
+                    </div>
+                `;
+
+                const customIcon = L.divIcon({
+                    html: iconHtml,
+                    className: 'custom-poi',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14]
+                });
+
+                const marker = L.marker([w.lat, w.lon], { icon: customIcon });
+                marker.bindPopup(`
+                    <div class="p-1 text-slate-900 font-sans text-xs">
+                        <div class="font-bold text-sm mb-0.5">${w.name}</div>
+                        <div class="text-xs text-sky-700 font-semibold mb-1">${w.typeName}</div>
+                        <div class="text-[11px] text-slate-600 mb-2">${w.desc}</div>
+                        <button onclick="addWaypoint('${w.name.replace(/'/g, "\\'")}', ${w.lat}, ${w.lon})" 
+                                class="w-full py-1.5 px-3 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                            <i class="ph-bold ph-plus-circle"></i> Hozzáadás az útvonalhoz
+                        </button>
+                    </div>
+                `);
+                marker.addTo(dynamicWaterMarkersGroup);
+            });
+        }
+
+        // 3. POI-k kirajzolása (Kiemelt Látnivalók)
+        function renderPois() {
+            poiMarkersGroup.clearLayers();
+            PILIS_POIS.forEach(poi => {
+                const iconHtml = `
+                    <div class="poi-marker" style="background-color: ${poi.color};" title="${poi.name}">
+                        <i class="ph-bold ${poi.icon}"></i>
+                    </div>
+                `;
+                const customIcon = L.divIcon({
+                    html: iconHtml,
+                    className: 'custom-poi',
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
+                });
+
+                const marker = L.marker([poi.lat, poi.lon], { icon: customIcon });
+                marker.bindPopup(`
+                    <div class="p-1 text-slate-900 font-sans">
+                        <div class="font-extrabold text-sm mb-0.5">${poi.name}</div>
+                        <div class="text-xs text-slate-600 mb-2">${poi.desc}</div>
+                        <button onclick="addWaypoint('${poi.name.replace(/'/g, "\\'")}', ${poi.lat}, ${poi.lon})" 
+                                class="w-full py-1.5 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                            <i class="ph-bold ph-plus-circle"></i> Hozzáadás az útvonalhoz
+                        </button>
+                    </div>
+                `);
+                marker.addTo(poiMarkersGroup);
+            });
+        }
+
+        // Globális állapot a mentéshez és GPX exporthoz
+        let currentRouteData = null; // { coords, distanceKm, elevationGainM, durationStr, waypoints }
+
+        // 3. Intelligens Tervező: BRouter Hegyitúra (Hiking) API hívás & Dinamikus Útfelület-analízis
+        async function calculateRoute() {
+            if (waypoints.length < 2) {
+                if (routePolyline) {
+                    map.removeLayer(routePolyline);
+                    routePolyline = null;
+                }
+                currentRouteData = null;
+                if (waypoints.length === 1) {
+                    document.getElementById('routeStatusBadge').textContent = 'Rajtpont kijelölve (Kattints a célhoz)';
+                }
+                return;
+            }
+
+            // Formátum a BRouter felé: lon,lat|lon,lat|lon,lat
+            const lonlats = waypoints.map(w => `${w.lon.toFixed(5)},${w.lat.toFixed(5)}`).join('|');
+            const url = `https://brouter.de/brouter?lonlats=${lonlats}&profile=hiking-mountain&alternativeidx=0&format=geojson`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.features && data.features.length > 0) {
+                    const feature = data.features[0];
+                    const coords = feature.geometry.coordinates; // [lon, lat, ele]
+
+                    // Térkép vonal frissítése
+                    if (routePolyline) map.removeLayer(routePolyline);
+
+                    const latlngs = coords.map(c => [c[1], c[0]]);
+                    routePolyline = L.polyline(latlngs, {
+                        color: '#6366f1',
+                        weight: 5,
+                        opacity: 0.9,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    }).addTo(map);
+
+                    // Statisztikák kinyerése
+                    const distKm = (feature.properties['track-length'] / 1000).toFixed(2);
+                    const ascendM = Math.round(feature.properties['filtered ascend']);
+                    const hours = Math.floor(feature.properties['total-time'] / 3600);
+                    const mins = Math.round((feature.properties['total-time'] % 3600) / 60);
+                    const durStr = `${hours}ó ${mins}p`;
+
+                    document.getElementById('statDistance').textContent = `${distKm} km`;
+                    document.getElementById('statElevation').textContent = `+${ascendM} m`;
+                    document.getElementById('statDuration').textContent = durStr;
+
+                    // Dinamikus Felület & Úttípus Bontás (Surface breakdown) kiszámítása a BRouter üzenetekből
+                    updateSurfaceBreakdown(feature.properties.messages, parseFloat(distKm));
+
+                    // Mentési állapot tárolása
+                    currentRouteData = {
+                        coords,
+                        distanceKm: distKm,
+                        elevationGainM: ascendM,
+                        durationStr: durStr,
+                        waypoints: JSON.parse(JSON.stringify(waypoints))
+                    };
+
+                    // Magassági profil elkészítése
+                    updateElevationChart(coords);
+
+                    // Waypoint pontjelölők frissítése a térképen
+                    renderWaypointPins();
+                }
+            } catch (err) {
+                console.error('BRouter útvonalszámítási hiba:', err);
+            }
+        }
+
+        // BRouter messages alapján pontos útfelület statisztika
+        function updateSurfaceBreakdown(messages, totalDistKm) {
+            let pathMeters = 0;
+            let trackMeters = 0;
+            let pavedMeters = 0;
+
+            if (messages && messages.length > 1) {
+                // Header: ["Longitude", "Latitude", "Elevation", "Distance", "CostPerKm", "ElevCost", "TurnCost", "NodeCost", "InitialCost", "WayTags", "NodeTags", "Time", "Energy"]
+                for (let i = 1; i < messages.length; i++) {
+                    const row = messages[i];
+                    const dist = parseFloat(row[3]) || 0;
+                    const wayTags = (row[9] || '').toLowerCase();
+
+                    if (wayTags.includes('surface=asphalt') || wayTags.includes('surface=paved') || wayTags.includes('highway=residential') || wayTags.includes('highway=tertiary') || wayTags.includes('highway=secondary') || wayTags.includes('highway=primary')) {
+                        pavedMeters += dist;
+                    } else if (wayTags.includes('highway=path') || wayTags.includes('highway=footway') || wayTags.includes('sac_scale')) {
+                        pathMeters += dist;
+                    } else {
+                        trackMeters += dist;
+                    }
+                }
+            }
+
+            const totalMeters = (pathMeters + trackMeters + pavedMeters) || (totalDistKm * 1000);
+            if (totalMeters > 0) {
+                const pathPercent = Math.round((pathMeters / totalMeters) * 100);
+                const trackPercent = Math.round((trackMeters / totalMeters) * 100);
+                const pavedPercent = Math.max(0, 100 - pathPercent - trackPercent);
+
+                const pathKm = (pathMeters / 1000).toFixed(1);
+                const trackKm = (trackMeters / 1000).toFixed(1);
+                const pavedKm = (pavedMeters / 1000).toFixed(1);
+
+                document.getElementById('surfaceNaturePercent').textContent = `${pathPercent + trackPercent}% Természetes`;
+                
+                document.getElementById('barTrail').style.width = `${pathPercent}%`;
+                document.getElementById('barTrail').title = `Ösvény (${pathPercent}%)`;
+                
+                document.getElementById('barTrack').style.width = `${trackPercent}%`;
+                document.getElementById('barTrack').title = `Erdei út (${trackPercent}%)`;
+                
+                document.getElementById('barPaved').style.width = `${pavedPercent}%`;
+                document.getElementById('barPaved').title = `Aszfalt (${pavedPercent}%)`;
+
+                document.getElementById('labelTrail').textContent = `Ösvény (${pathKm} km)`;
+                document.getElementById('labelTrack').textContent = `Erdei út (${trackKm} km)`;
+                document.getElementById('labelPaved').textContent = `Aszfalt (${pavedKm} km)`;
+            }
+        }
+
+        // 4. Waypoint pontok kezelése & Lista (Nulláról tervezhető, rajt és cél is törölhető)
+        function addWaypoint(name, lat, lon) {
+            // Ha van célpont (>= 2 pont), a cél elé szúrjuk be, különben a végére
+            if (waypoints.length >= 2) {
+                waypoints.splice(waypoints.length - 1, 0, { name, lat, lon });
+            } else {
+                waypoints.push({ name, lat, lon });
+            }
+            renderWaypointsList();
+            calculateRoute();
+        }
+
+        function removeWaypoint(index) {
+            waypoints.splice(index, 1);
+            renderWaypointsList();
+            calculateRoute();
+        }
+
+        function clearAllWaypoints() {
+            waypoints = [];
+            if (routePolyline) {
+                map.removeLayer(routePolyline);
+                routePolyline = null;
+            }
+            currentRouteData = null;
+            renderWaypointsList();
+            renderWaypointPins();
+            
+            document.getElementById('statDistance').textContent = '0.00 km';
+            document.getElementById('statElevation').textContent = '+0 m';
+            document.getElementById('statDuration').textContent = '0ó 0p';
+            document.getElementById('routeStatusBadge').textContent = 'Tervezés folyamatban (Kattints a rajthoz)';
+            document.getElementById('surfaceNaturePercent').textContent = '-';
+            
+            if (elevationChart) {
+                elevationChart.destroy();
+                elevationChart = null;
+            }
+        }
+
+        function renderWaypointsList() {
+            const container = document.getElementById('waypointsContainer');
+            container.innerHTML = '';
+
+            if (waypoints.length === 0) {
+                container.innerHTML = `
+                    <div class="p-3 rounded-xl border border-dashed border-slate-700 text-center text-xs text-slate-400 space-y-1">
+                        <div class="font-bold text-slate-200">Üres az útiterv (Nulláról indítás)</div>
+                        <div class="text-[11px] text-slate-500">Kattints a térképen a rajtpont kijelöléséhez!</div>
+                    </div>
+                `;
+                return;
+            }
+
+            waypoints.forEach((wp, idx) => {
+                const isStart = idx === 0;
+                const isEnd = idx === waypoints.length - 1 && waypoints.length > 1;
+                const pinClass = isStart ? 'bg-emerald-500' : isEnd ? 'bg-rose-500' : 'bg-indigo-500';
+                const label = isStart ? 'Rajt' : isEnd ? 'Cél' : `${idx}`;
+
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-200';
+                div.innerHTML = `
+                    <div class="flex items-center gap-2.5 truncate">
+                        <span class="w-5 h-5 rounded-full ${pinClass} text-white font-extrabold flex items-center justify-center text-[10px] flex-shrink-0">
+                            ${label}
+                        </span>
+                        <span class="font-semibold truncate">${wp.name}</span>
+                    </div>
+                    <button onclick="removeWaypoint(${idx})" class="text-slate-500 hover:text-rose-400 p-1 transition" title="Pont törlése">
+                        <i class="ph-bold ph-trash"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderWaypointPins() {
+            waypointMarkersGroup.clearLayers();
+            waypoints.forEach((wp, idx) => {
+                const isStart = idx === 0;
+                const isEnd = idx === waypoints.length - 1 && waypoints.length > 1;
+                const pinType = isStart ? 'start' : isEnd ? 'end' : '';
+                const label = isStart ? 'A' : isEnd ? 'B' : `${idx}`;
+
+                const icon = L.divIcon({
+                    html: `<div class="waypoint-pin ${pinType}" title="${wp.name}">${label}</div>`,
+                    className: 'wp-icon',
+                    iconSize: [26, 26],
+                    iconAnchor: [13, 13]
+                });
+
+                const marker = L.marker([wp.lat, wp.lon], { icon, draggable: true });
+                
+                // Kattintásra törlés vagy szerkesztés popup
+                marker.bindPopup(`
+                    <div class="p-1 text-slate-900 font-sans text-xs">
+                        <div class="font-bold text-sm mb-0.5">${wp.name}</div>
+                        <div class="text-slate-500 mb-2">${isStart ? '🏁 Rajtpont' : isEnd ? '🎯 Célpont' : `#${idx}. érintőpont`}</div>
+                        <button onclick="removeWaypoint(${idx})" class="w-full py-1 px-2.5 rounded bg-rose-600 hover:bg-rose-700 text-white font-bold flex items-center justify-center gap-1 transition">
+                            <i class="ph-bold ph-trash"></i> Pont törlése
+                        </button>
+                    </div>
+                `);
+
+                marker.on('dragend', (e) => {
+                    const pos = e.target.getLatLng();
+                    wp.lat = pos.lat;
+                    wp.lon = pos.lng;
+                    calculateRoute();
+                });
+                marker.addTo(waypointMarkersGroup);
+            });
+        }
+
+        // 5. Interaktív Komoot-stílusú Magassági Profil (Chart.js)
+        function updateElevationChart(coordinates) {
+            // Mintavételezés a folyamatos profilhoz
+            let runningDist = 0;
+            const labels = [];
+            const data = [];
+            const points = [];
+
+            for (let i = 0; i < coordinates.length; i++) {
+                const curr = coordinates[i];
+                if (i > 0) {
+                    const prev = coordinates[i - 1];
+                    const d = map.distance([prev[1], prev[0]], [curr[1], curr[0]]) / 1000;
+                    runningDist += d;
+                }
+                labels.push(runningDist.toFixed(1));
+                data.push(curr[2]); // elevation meter
+                points.push([curr[1], curr[0]]); // latlng for map hover
+            }
+
+            const ctx = document.getElementById('elevationChart').getContext('2d');
+            if (elevationChart) elevationChart.destroy();
+
+            elevationChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        borderColor: '#10b981',
+                        borderWidth: 2,
+                        backgroundColor: (context) => {
+                            const chart = context.chart;
+                            const { ctx, chartArea } = chart;
+                            if (!chartArea) return null;
+                            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                            gradient.addColorStop(0, 'rgba(16, 185, 129, 0.45)');
+                            gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+                            return gradient;
+                        },
+                        fill: true,
+                        tension: 0.25,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#f43f5e',
+                        pointHoverBorderColor: '#ffffff',
+                        pointHoverBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: false,
+                            external: (context) => {
+                                const hoverInfo = document.getElementById('elevationHoverInfo');
+                                if (!context.tooltip || context.tooltip.opacity === 0) {
+                                    hoverInfo.classList.add('hidden');
+                                    if (hoverMarker) map.removeLayer(hoverMarker);
+                                    return;
+                                }
+                                hoverInfo.classList.remove('hidden');
+                                const idx = context.tooltip.dataPoints[0].dataIndex;
+                                const dist = labels[idx];
+                                const ele = data[idx];
+                                document.getElementById('hoverDist').textContent = `${dist} km`;
+                                document.getElementById('hoverEle').textContent = `${Math.round(ele)} m`;
+
+                                // Pötty a térképen az egér pozíciójának megfelelően (Komoot map-sync!)
+                                const p = points[idx];
+                                if (!hoverMarker) {
+                                    hoverMarker = L.circleMarker(p, {
+                                        radius: 7,
+                                        color: '#ffffff',
+                                        weight: 2,
+                                        fillColor: '#f43f5e',
+                                        fillOpacity: 1
+                                    }).addTo(map);
+                                } else {
+                                    hoverMarker.setLatLng(p);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: { color: 'rgba(255,255,255,0.04)' },
+                            ticks: { color: '#64748b', font: { size: 10 }, maxTicksLimit: 8 }
+                        },
+                        y: {
+                            display: true,
+                            grid: { color: 'rgba(255,255,255,0.06)' },
+                            ticks: { color: '#64748b', font: { size: 10 }, callback: v => `${v}m` }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 6. Ajánlott POI kártyák
+        function renderSuggestedPois() {
+            const container = document.getElementById('suggestedPoisContainer');
+            container.innerHTML = '';
+            PILIS_POIS.slice(0, 4).forEach(poi => {
+                const btn = document.createElement('button');
+                btn.className = 'flex items-center gap-2 p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-left transition';
+                btn.onclick = () => addWaypoint(poi.name, poi.lat, poi.lon);
+                btn.innerHTML = `
+                    <div class="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: ${poi.color}20; color: ${poi.color};">
+                        <i class="ph-bold ${poi.icon} text-xs"></i>
+                    </div>
+                    <div class="truncate">
+                        <div class="text-[11px] font-bold text-slate-200 truncate">${poi.name}</div>
+                        <div class="text-[9px] text-slate-500 uppercase tracking-wider">${poi.type}</div>
+                    </div>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        // 7. GPX Exportálás
+        function exportRouteGpx() {
+            if (!currentRouteData || !currentRouteData.coords || currentRouteData.coords.length === 0) {
+                alert('Nincs még kiszámított útvonal az exporthoz!');
+                return;
+            }
+
+            const name = `VitaSteps_Tura_${new Date().toISOString().split('T')[0]}`;
+            const timeIso = new Date().toISOString();
+
+            let trkpts = '';
+            currentRouteData.coords.forEach(c => {
+                const lon = c[0].toFixed(6);
+                const lat = c[1].toFixed(6);
+                const ele = c[2] ? `<ele>${c[2].toFixed(1)}</ele>` : '';
+                trkpts += `      <trkpt lat="${lat}" lon="${lon}">${ele}</trkpt>\n`;
+            });
+
+            let wptElements = '';
+            currentRouteData.waypoints.forEach((wp, i) => {
+                wptElements += `  <wpt lat="${wp.lat.toFixed(6)}" lon="${wp.lon.toFixed(6)}"><name>${wp.name}</name></wpt>\n`;
+            });
+
+            const gpxContent = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="VitaSteps Trail Explorer - https://vitasteps.hu"
+     xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <name>${name}</name>
+    <time>${timeIso}</time>
+  </metadata>
+${wptElements}  <trk>
+    <name>${name}</name>
+    <trkseg>
+${trkpts}    </trkseg>
+  </trk>
+</gpx>`;
+
+            const blob = new Blob([gpxContent], { type: 'application/gpx+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${name}.gpx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 8. Útvonal mentése & Betöltése (LocalStorage)
+        function saveCurrentRoute() {
+            if (!currentRouteData) {
+                alert('Nincs még menthető útvonal!');
+                return;
+            }
+
+            const defaultTitle = waypoints.length > 2 
+                ? `Kevély kör kitérőkkel (${currentRouteData.distanceKm} km)`
+                : `Kevély túraterv (${currentRouteData.distanceKm} km)`;
+
+            const routeTitle = prompt('Add meg a mentett útvonal nevét:', defaultTitle);
+            if (!routeTitle) return;
+
+            const savedRoutes = getSavedRoutes();
+            const newRoute = {
+                id: 'custom_' + Date.now(),
+                title: routeTitle,
+                savedAt: new Date().toLocaleDateString('hu-HU'),
+                distanceKm: currentRouteData.distanceKm,
+                elevationGainM: currentRouteData.elevationGainM,
+                durationStr: currentRouteData.durationStr,
+                waypoints: currentRouteData.waypoints
+            };
+
+            savedRoutes.unshift(newRoute);
+            localStorage.setItem('vitasteps_saved_routes', JSON.stringify(savedRoutes));
+            renderSavedRoutesList();
+            alert(`A(z) "${routeTitle}" sikeresen elmentve a böngésződben!`);
+        }
+
+        function getSavedRoutes() {
+            try {
+                return JSON.parse(localStorage.getItem('vitasteps_saved_routes')) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function loadSavedRoute(id) {
+            const routes = getSavedRoutes();
+            const target = routes.find(r => r.id === id);
+            if (!target) return;
+
+            waypoints = JSON.parse(JSON.stringify(target.waypoints));
+            renderWaypointsList();
+            calculateRoute();
+        }
+
+        function deleteSavedRoute(id, e) {
+            if (e) e.stopPropagation();
+            if (!confirm('Biztosan törölni szeretnéd ezt a mentett útvonalat?')) return;
+            let routes = getSavedRoutes();
+            routes = routes.filter(r => r.id !== id);
+            localStorage.setItem('vitasteps_saved_routes', JSON.stringify(routes));
+            renderSavedRoutesList();
+        }
+
+        function renderSavedRoutesList() {
+            const container = document.getElementById('savedRoutesContainer');
+            const countBadge = document.getElementById('savedRoutesCount');
+            const routes = getSavedRoutes();
+
+            countBadge.textContent = `${routes.length} mentve`;
+            container.innerHTML = '';
+
+            if (routes.length === 0) {
+                container.innerHTML = '<div class="text-[11px] text-slate-500 italic py-1">Nincs még mentett terved. Kattints a fejlécben a "Mentés" gombra!</div>';
+                return;
+            }
+
+            routes.forEach(r => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 cursor-pointer transition text-xs';
+                div.onclick = () => loadSavedRoute(r.id);
+                div.innerHTML = `
+                    <div class="truncate mr-2">
+                        <div class="font-bold text-slate-200 truncate">${r.title}</div>
+                        <div class="text-[10px] text-slate-400 font-mono">${r.distanceKm} km • +${r.elevationGainM}m • ${r.durationStr}</div>
+                    </div>
+                    <button onclick="deleteSavedRoute('${r.id}', event)" class="text-slate-500 hover:text-rose-400 p-1 transition" title="Mentett terv törlése">
+                        <i class="ph-bold ph-trash"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Gombok kezelése
+        document.getElementById('exportGpxBtn').addEventListener('click', exportRouteGpx);
+        document.getElementById('saveRouteBtn').addEventListener('click', saveCurrentRoute);
+
+        document.getElementById('toggleTrailsLayer').addEventListener('click', (e) => {
+            if (map.hasLayer(trailsLayerGroup)) {
+                map.removeLayer(trailsLayerGroup);
+                e.currentTarget.classList.replace('bg-emerald-500/20', 'bg-slate-800');
+            } else {
+                map.addLayer(trailsLayerGroup);
+                e.currentTarget.classList.replace('bg-slate-800', 'bg-emerald-500/20');
+            }
+        });
+
+        document.getElementById('toggleWaterLayer').addEventListener('click', (e) => {
+            dynamicWaterLayerActive = !dynamicWaterLayerActive;
+            if (!dynamicWaterLayerActive) {
+                if (map.hasLayer(dynamicWaterMarkersGroup)) map.removeLayer(dynamicWaterMarkersGroup);
+                e.currentTarget.classList.replace('bg-sky-500/20', 'bg-slate-800');
+            } else {
+                if (!map.hasLayer(dynamicWaterMarkersGroup)) map.addLayer(dynamicWaterMarkersGroup);
+                e.currentTarget.classList.replace('bg-slate-800', 'bg-sky-500/20');
+                fetchWaterSourcesForCurrentView();
+            }
+        });
+
+        document.getElementById('clearRouteBtn').addEventListener('click', () => {
+            if (confirm('Teljesen törölni szeretnéd az útitervet, és nulláról kezdeni?')) {
+                clearAllWaypoints();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            renderSavedRoutesList();
+        });
+    </script>
+</body>
+</html>

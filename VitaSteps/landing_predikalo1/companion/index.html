@@ -24,10 +24,40 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         #map {
-            height: 320px;
+            height: 340px;
             width: 100%;
             border-radius: 1rem;
             z-index: 10;
+            transition: all 0.3s ease;
+        }
+        /* Teljes képernyős / kibővített térkép */
+        .map-expanded {
+            position: fixed !important;
+            top: 20px !important;
+            bottom: 20px !important;
+            left: 20px !important;
+            right: 20px !important;
+            height: calc(100vh - 40px) !important;
+            z-index: 9999 !important;
+            border-radius: 1.25rem !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
+            border: 2px solid rgba(99, 102, 241, 0.5) !important;
+        }
+        /* Állandó időpont és megálló címkék a térképen */
+        .map-time-label {
+            background: rgba(15, 23, 42, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .map-time-label::before {
+            display: none !important;
         }
         /* BudapestGO timeline styles */
         .bkk-leg {
@@ -58,6 +88,21 @@
             max-height: 200px;
             overflow-y: auto;
         }
+
+        /* Loading & Skeleton Shimmer Stílusok */
+        .plan-loading {
+            opacity: 0.42;
+            pointer-events: none;
+            filter: blur(1px);
+            transition: opacity 0.3s ease, filter 0.3s ease;
+        }
+        @keyframes pulse-shimmer {
+            0%, 100% { opacity: 0.35; transform: scale(0.995); }
+            50% { opacity: 0.75; transform: scale(1); }
+        }
+        .animate-shimmer {
+            animation: pulse-shimmer 1.5s ease-in-out infinite;
+        }
     </style>
 </head>
 <body class="min-h-screen py-6 px-4 sm:px-6 lg:px-8">
@@ -80,8 +125,11 @@
                 </p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="/portal.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
-                    <i class="ph-bold ph-arrow-left"></i> Vissza a Portálra
+                <a href="/companion/trail_explorer_mockup" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/25 transition">
+                    <i class="ph-bold ph-mountains"></i> Útvonal Tervező & GPX
+                </a>
+                <a href="/portal.html" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                    <i class="ph-bold ph-arrow-left"></i> Portál
                 </a>
             </div>
         </header>
@@ -123,16 +171,20 @@
                     </div>
 
                     <!-- Térkép -->
-                    <div class="relative">
+                    <div class="relative" id="mapContainer">
                         <div id="map"></div>
                         <div class="absolute bottom-2 left-2 bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] text-slate-400 border border-slate-800 z-20 pointer-events-none">
                             📍 Kattints a térképen bárhova a kiindulóponthoz!
                         </div>
+                        <button id="toggleMapExpandBtn" type="button" class="absolute top-2 right-2 bg-slate-900/90 hover:bg-slate-800 text-white p-2 rounded-xl border border-slate-700 shadow-lg text-xs font-bold flex items-center gap-1.5 transition z-20" title="Térkép kinagyítása / normál méret">
+                            <i class="ph-bold ph-arrows-out-simple text-sm" id="mapExpandIcon"></i>
+                            <span id="mapExpandText">Nagyobb Térkép</span>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Túra & Időzítés Beállítások -->
-                <div class="glass-card rounded-2xl p-5 shadow-xl space-y-4">
+                <div class="glass-card rounded-2xl p-5 shadow-xl space-y-4" id="planningControlsCard">
                     <div class="border-b border-slate-800 pb-2">
                         <h2 class="text-sm font-bold text-white flex items-center gap-2">
                             <i class="ph-bold ph-sliders text-indigo-400"></i>
@@ -141,14 +193,31 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-                            Cél Túraútvonal
-                        </label>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                Cél Túraútvonal
+                            </label>
+                            <!-- GPX Feltöltés Gomb -->
+                            <label class="cursor-pointer text-[11px] font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition">
+                                <i class="ph-bold ph-upload-simple"></i>
+                                <span>GPX Feltöltése</span>
+                                <input type="file" id="gpxFileInput" accept=".gpx" class="hidden">
+                            </label>
+                        </div>
                         <select id="trailSelect" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500">
-                            <option value="kevely_klasszik">Nagy-Kevély Klasszik (8.95 km, +363m)</option>
-                            <option value="kevely_felmaraton">Nagy-Kevély Félmaraton (20.99 km, +672m)</option>
-                            <option value="predikalo_domos_14">Prédikálószék Körtúra (14.61 km, +835m)</option>
+                            <optgroup label="Hivatalos VitaSteps Túrák">
+                                <option value="kevely_klasszik">Nagy-Kevély Klasszik (8.95 km, +363m)</option>
+                                <option value="kevely_felmaraton">Nagy-Kevély Félmaraton (20.99 km, +672m)</option>
+                                <option value="predikalo_domos_14">Prédikálószék Körtúra (14.61 km, +835m)</option>
+                            </optgroup>
+                            <optgroup id="savedCustomTrailsGroup" label="⭐ Saját Mentett Túráid (Trail Explorer)">
+                                <!-- JS automatikusan feltölti a localStorage-ból -->
+                            </optgroup>
                         </select>
+                        <div id="activeCustomTrailBadge" class="hidden mt-1.5 p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-xs text-indigo-300 flex items-center justify-between">
+                            <span class="truncate" id="activeCustomTrailName">Saját túra aktív</span>
+                            <span class="font-mono text-[10px] text-slate-400" id="activeCustomTrailStats"></span>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
@@ -163,7 +232,10 @@
                                 <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                     Sétatempó
                                 </label>
-                                <span id="paceDisplay" class="text-xs font-bold text-indigo-400">4.0 km/h</span>
+                                <div class="text-right">
+                                    <span id="paceDisplay" class="text-xs font-bold text-indigo-400">4.0 km/h</span>
+                                    <span id="pacePaceDisplay" class="text-[11px] font-mono text-slate-400 ml-1.5">(15:00/km)</span>
+                                </div>
                             </div>
                             <input type="range" id="paceRange" min="2.5" max="6.0" step="0.1" value="4.0" class="w-full accent-indigo-500">
                         </div>
@@ -216,7 +288,19 @@
             </div>
 
             <!-- Jobb oldal: BudapestGO stílusú Menetrend & Időzítés (7 oszlop) -->
-            <div class="lg:col-span-7 space-y-6">
+            <div class="lg:col-span-7 space-y-6 relative" id="resultsSection">
+                
+                <!-- Lebegő Betöltő Állapot Jelző (Loading Overlay) -->
+                <div id="planLoadingOverlay" class="hidden absolute inset-0 z-30 bg-slate-950/60 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 border border-indigo-500/30 transition-all duration-300">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center mb-3 shadow-xl shadow-indigo-500/20 animate-bounce">
+                        <i class="ph-bold ph-arrows-clockwise text-2xl text-indigo-400 animate-spin"></i>
+                    </div>
+                    <div class="text-base font-extrabold text-white tracking-tight">Útiterv Generálása...</div>
+                    <div class="text-xs text-slate-400 mt-1 flex items-center gap-1.5 font-medium">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span>MÁV, Volánbusz, BKK és túraidőpontok összehangolása</span>
+                    </div>
+                </div>
                 
                 <!-- Felső Gyors Összegző Kártyák -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -285,8 +369,10 @@
         let map = null;
         let homeMarker = null;
         let trailPolyline = null;
+        let transitPolylineGroup = L.layerGroup();
         let currentPlan = null;
         let selectedScenario = 'normal';
+        let activeCustomTrail = null;
 
         // Alapértelmezett kiindulópont (Deák Ferenc tér)
         let currentLat = 47.4979;
@@ -297,13 +383,13 @@
             if (map) return;
             map = L.map('map', { zoomControl: false }).setView([currentLat, currentLon], 12);
             
-            // CartoDB Voyager / Positron - Megbízható, modern és nincs 'Access Denied' blokkolás
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                subdomains: 'abcd',
+            // Esri World Topo Map - Megbízható, kulcsmentes, modern és nincs 'API KEY REQUIRED' vagy 'Access Denied' blokkolás
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
                 maxZoom: 19
             }).addTo(map);
 
+            transitPolylineGroup.addTo(map);
             L.control.zoom({ position: 'bottomright' }).addTo(map);
 
             // Alapértelmezett otthon marker
@@ -399,14 +485,175 @@
             }, 300);
         });
 
+        function setFormDisabledState(disabled) {
+            const controlsCard = document.getElementById('planningControlsCard');
+            if (!controlsCard) return;
+            const inputs = controlsCard.querySelectorAll('input, select');
+            inputs.forEach(el => {
+                el.disabled = disabled;
+            });
+            if (disabled) {
+                controlsCard.classList.add('opacity-75');
+            } else {
+                controlsCard.classList.remove('opacity-75');
+            }
+        }
+
+        // Mentett túrák betöltése a select mezőbe
+        function populateSavedCustomTrails() {
+            const group = document.getElementById('savedCustomTrailsGroup');
+            group.innerHTML = '';
+            let saved = [];
+            try {
+                saved = JSON.parse(localStorage.getItem('vitasteps_saved_routes')) || [];
+            } catch (e) {
+                saved = [];
+            }
+
+            if (saved.length === 0) {
+                const opt = document.createElement('option');
+                opt.disabled = true;
+                opt.textContent = '(Nincs még mentett túraterved)';
+                group.appendChild(opt);
+                return;
+            }
+
+            saved.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = `custom_${r.id}`;
+                opt.textContent = `⭐ ${r.title} (${r.distanceKm} km, +${r.elevationGainM}m)`;
+                opt.dataset.custom = JSON.stringify(r);
+                group.appendChild(opt);
+            });
+        }
+
+        // GPX Fájl feltöltése és feldolgozása kliensoldalon
+        document.getElementById('gpxFileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(text, 'text/xml');
+                
+                const trkpts = Array.from(xml.querySelectorAll('trkpt'));
+                if (trkpts.length === 0) {
+                    alert('Nem található útvonal (trkpt) a feltöltött GPX fájlban!');
+                    return;
+                }
+
+                // Koordináták és távolság számítása
+                let totalDistM = 0;
+                let totalElevM = 0;
+                const coords = [];
+
+                for (let i = 0; i < trkpts.length; i++) {
+                    const lat = parseFloat(trkpts[i].getAttribute('lat'));
+                    const lon = parseFloat(trkpts[i].getAttribute('lon'));
+                    const eleNode = trkpts[i].querySelector('ele');
+                    const ele = eleNode ? parseFloat(eleNode.textContent) : 200;
+
+                    if (i > 0) {
+                        const prevLat = coords[i - 1][0];
+                        const prevLon = coords[i - 1][1];
+                        const prevEle = coords[i - 1][2];
+                        totalDistM += map.distance([prevLat, prevLon], [lat, lon]);
+                        if (ele > prevEle) totalElevM += (ele - prevEle);
+                    }
+                    coords.push([lat, lon, ele]);
+                }
+
+                const distKm = parseFloat((totalDistM / 1000).toFixed(2));
+                const elevM = Math.round(totalElevM);
+                const title = file.name.replace(/\.gpx$/i, '');
+
+                activeCustomTrail = {
+                    id: 'uploaded_' + Date.now(),
+                    name: title,
+                    distance_km: distKm,
+                    elevation_gain_m: elevM,
+                    energy_km: parseFloat((distKm + (elevM / 100)).toFixed(2)),
+                    start_stop: `Rajt: ${coords[0][0].toFixed(4)}, ${coords[0][1].toFixed(4)}`,
+                    coordinates: coords
+                };
+
+                // Új option beszúrása és kiválasztása
+                const group = document.getElementById('savedCustomTrailsGroup');
+                const opt = document.createElement('option');
+                opt.value = activeCustomTrail.id;
+                opt.textContent = `📁 Feltöltve: ${title} (${distKm} km, +${elevM}m)`;
+                opt.selected = true;
+                group.appendChild(opt);
+
+                document.getElementById('activeCustomTrailBadge').classList.remove('hidden');
+                document.getElementById('activeCustomTrailName').textContent = `Feltöltve: ${title}`;
+                document.getElementById('activeCustomTrailStats').textContent = `${distKm} km • +${elevM}m`;
+
+                fetchPlan();
+            } catch (err) {
+                console.error('GPX hiba:', err);
+                alert('Hiba történt a GPX fájl feldolgozása közben!');
+            }
+        });
+
         async function fetchPlan() {
-            const trailId = document.getElementById('trailSelect').value;
+            const selectEl = document.getElementById('trailSelect');
+            const selectedVal = selectEl.value;
+            let customPayload = null;
+
+            // Ellenőrizzük, hogy mentett vagy frissen feltöltött túrát választott-e
+            if (activeCustomTrail && selectedVal === activeCustomTrail.id) {
+                customPayload = activeCustomTrail;
+            } else if (selectedVal.startsWith('custom_')) {
+                const opt = selectEl.selectedOptions[0];
+                if (opt && opt.dataset.custom) {
+                    const r = JSON.parse(opt.dataset.custom);
+                    // Koordináták konvertálása waypointokból vagy fallback
+                    const startWp = r.waypoints[0];
+                    const coords = r.waypoints.map(w => [w.lat, w.lon, 250]);
+                    customPayload = {
+                        id: r.id,
+                        name: r.title,
+                        distance_km: parseFloat(r.distanceKm),
+                        elevation_gain_m: parseInt(r.elevationGainM, 10),
+                        energy_km: parseFloat((parseFloat(r.distanceKm) + (parseInt(r.elevationGainM, 10)/100)).toFixed(2)),
+                        start_stop: startWp ? startWp.name : 'Egyéni rajt',
+                        coordinates: coords
+                    };
+                    document.getElementById('activeCustomTrailBadge').classList.remove('hidden');
+                    document.getElementById('activeCustomTrailName').textContent = r.title;
+                    document.getElementById('activeCustomTrailStats').textContent = `${r.distanceKm} km • +${r.elevationGainM}m`;
+                }
+            } else {
+                document.getElementById('activeCustomTrailBadge').classList.add('hidden');
+                activeCustomTrail = null;
+            }
+
             const homeDeparture = document.getElementById('homeDeparture').value;
             const paceKmh = document.getElementById('paceRange').value;
             const breaksCount = document.getElementById('breaksCount').value;
             const breakDurationMin = document.getElementById('breakDuration').value;
             const useLiveTransit = document.getElementById('liveTransitCheckbox')?.checked || false;
             const travelDate = document.getElementById('travelDate')?.value || new Date().toISOString().split('T')[0];
+
+            // 1. UI Töltési Állapot Aktiválása (Halványítás & Spinner animáció & Űrlap letiltás)
+            setFormDisabledState(true);
+            const calcBtn = document.getElementById('calculateBtn');
+            const resultsSection = document.getElementById('resultsSection');
+            const loadingOverlay = document.getElementById('planLoadingOverlay');
+
+            if (calcBtn) {
+                calcBtn.disabled = true;
+                calcBtn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Tervezés Folyamatban...';
+                calcBtn.classList.add('opacity-80', 'cursor-not-allowed');
+            }
+            if (resultsSection) {
+                resultsSection.classList.add('plan-loading');
+            }
+            if (loadingOverlay) {
+                loadingOverlay.classList.remove('hidden');
+            }
 
             try {
                 const res = await fetch('/api/companion', {
@@ -416,7 +663,8 @@
                         homeLat: currentLat,
                         homeLon: currentLon,
                         homeAddress: currentAddress,
-                        trailId,
+                        trailId: selectedVal,
+                        customTrail: customPayload,
                         homeDeparture,
                         paceKmh,
                         breaksCount,
@@ -433,10 +681,42 @@
                 }
             } catch (err) {
                 console.error('Plan fetch error:', err);
+            } finally {
+                // 2. UI Töltési Állapot Visszaállítása & Űrlap engedélyezése
+                setFormDisabledState(false);
+                if (calcBtn) {
+                    calcBtn.disabled = false;
+                    calcBtn.innerHTML = '<i class="ph-bold ph-arrows-clockwise"></i> Útiterv Generálása';
+                    calcBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+                }
+                if (resultsSection) {
+                    resultsSection.classList.remove('plan-loading');
+                }
+                if (loadingOverlay) {
+                    loadingOverlay.classList.add('hidden');
+                }
             }
         }
 
-        function renderPlan() {
+        // OSRM Valós Utcahálózati Útvonalkereső (Gyalogos és Járműves)
+        async function fetchRealRouteGeometry(fromCoord, toCoord, profile = 'foot') {
+            try {
+                // profile: 'foot' (gyalog) vagy 'driving' (jármű / busz / közút)
+                const url = `https://router.project-osrm.org/route/v1/${profile}/${fromCoord[1]},${fromCoord[0]};${toCoord[1]},${toCoord[0]}?overview=full&geometries=geojson`;
+                const res = await fetch(url);
+                if (!res.ok) return [fromCoord, toCoord];
+                const data = await res.json();
+                if (data.routes && data.routes[0] && data.routes[0].geometry && data.routes[0].geometry.coordinates) {
+                    // GeoJSON: [lon, lat] -> Leaflet: [lat, lon]
+                    return data.routes[0].geometry.coordinates.map(pt => [pt[1], pt[0]]);
+                }
+            } catch (e) {
+                console.warn('OSRM route fallback:', e);
+            }
+            return [fromCoord, toCoord];
+        }
+
+        async function renderPlan() {
             if (!currentPlan) return;
             const plan = currentPlan;
             const sc = plan.scenarios[selectedScenario];
@@ -519,7 +799,89 @@
                 container.appendChild(legDiv);
             });
 
-            // Térkép Nyomvonal Frissítése
+            // Térkép Rétegek Frissítése (Tömegközlekedési Vonalak & Túra Nyomvonal)
+            transitPolylineGroup.clearLayers();
+            const allBoundsPoints = [[currentLat, currentLon]];
+
+            // Otthon marker feliratozása tervezett indulási idővel
+            if (homeMarker) {
+                homeMarker.unbindTooltip();
+                homeMarker.bindTooltip(`<div class="font-bold text-xs">🏠 Otthon<br><span class="text-indigo-400 font-mono">Indulás: ${sc.home_departure_time}</span></div>`, {
+                    permanent: true,
+                    direction: 'top',
+                    className: 'map-time-label'
+                });
+            }
+
+            // 1. Tömegközlekedési és Helyi Szakaszok (Oda- és Visszaút) Kirajzolása Valós Nyomvonallal
+            if (sc.legs && sc.legs.length > 0) {
+                for (const leg of sc.legs) {
+                    if (leg.fromCoord && leg.toCoord && Array.isArray(leg.fromCoord) && Array.isArray(leg.toCoord)) {
+                        allBoundsPoints.push(leg.fromCoord);
+                        allBoundsPoints.push(leg.toCoord);
+
+                        const isTrain = leg.badgeType === 'VONAT';
+                        const isHev = leg.badgeType === 'HÉV';
+                        const isLocal = leg.badgeType === 'HELYI';
+                        const color = leg.badgeColor || '#3b82f6';
+
+                        // Valós utcahálózat / úthálózat lekérdezése OSRM-ből (HELYI eljutásnál gyalogos, busznál közúti)
+                        const profile = isLocal ? 'foot' : (isTrain || isHev ? 'driving' : 'driving');
+                        const routeCoords = await fetchRealRouteGeometry(leg.fromCoord, leg.toCoord, profile);
+
+                        // Szakasz vonal
+                        const poly = L.polyline(routeCoords, {
+                            color: color,
+                            weight: isLocal ? 4 : 5,
+                            opacity: 0.9,
+                            dashArray: isLocal ? '4, 6' : (isTrain ? '8, 8' : (isHev ? '12, 6' : null))
+                        });
+
+                        poly.bindPopup(`
+                            <div class="text-xs space-y-1">
+                                <div class="font-bold flex items-center gap-1.5" style="color: ${color};">
+                                    <span class="px-1.5 py-0.5 rounded text-[10px] text-white font-bold" style="background-color: ${color};">${leg.badgeType}</span>
+                                    <span>${leg.lineName}</span>
+                                </div>
+                                <div class="text-slate-600 font-medium">➡️ Irány: ${leg.directionText || ''}</div>
+                                <div class="text-slate-500 text-[11px]">${leg.fromStop} (${leg.depTime}) &rarr; ${leg.toStop} (${leg.arrTime})</div>
+                            </div>
+                        `);
+                        transitPolylineGroup.addLayer(poly);
+
+                        // Megállók jelölése kis pontokkal és állandó időpont-címkével
+                        const startCircle = L.circleMarker(leg.fromCoord, {
+                            radius: 5,
+                            fillColor: '#ffffff',
+                            color: color,
+                            weight: 2.5,
+                            fillOpacity: 1
+                        });
+                        startCircle.bindTooltip(`<span class="font-mono text-emerald-400 font-bold">${leg.depTime}</span> ${leg.lineName}`, {
+                            permanent: true,
+                            direction: 'top',
+                            className: 'map-time-label'
+                        });
+                        transitPolylineGroup.addLayer(startCircle);
+
+                        const endCircle = L.circleMarker(leg.toCoord, {
+                            radius: 5,
+                            fillColor: color,
+                            color: '#ffffff',
+                            weight: 2,
+                            fillOpacity: 0.9
+                        });
+                        endCircle.bindTooltip(`<span class="font-mono text-amber-400 font-bold">${leg.arrTime}</span> ${leg.toStop}`, {
+                            permanent: false,
+                            direction: 'bottom',
+                            className: 'map-time-label'
+                        });
+                        transitPolylineGroup.addLayer(endCircle);
+                    }
+                }
+            }
+
+            // 2. Túra Nyomvonal Frissítése
             if (plan.trail.coordinates && plan.trail.coordinates.length > 0) {
                 if (trailPolyline) {
                     map.removeLayer(trailPolyline);
@@ -527,26 +889,104 @@
                 const latlngs = plan.trail.coordinates.map(c => [c[0], c[1]]);
                 trailPolyline = L.polyline(latlngs, {
                     color: '#10b981',
-                    weight: 4,
+                    weight: 5,
                     opacity: 0.95
                 }).addTo(map);
 
-                // Keretbe illesztés (Otthon + Túra)
-                const bounds = L.latLngBounds([
-                    [currentLat, currentLon],
-                    ...latlngs
-                ]);
-                map.fitBounds(bounds, { padding: [30, 30] });
+                // Rajt & Cél Jelölő tervezett időpontokkal a térképen
+                if (latlngs.length > 0) {
+                    const startPt = latlngs[0];
+                    const endPt = latlngs[latlngs.length - 1];
+                    allBoundsPoints.push(startPt);
+                    allBoundsPoints.push(endPt);
+
+                    const startMarker = L.circleMarker(startPt, {
+                        radius: 7,
+                        fillColor: '#10b981',
+                        color: '#ffffff',
+                        weight: 2.5,
+                        fillOpacity: 1
+                    });
+                    startMarker.bindTooltip(`<div class="font-bold text-xs text-emerald-400">🥾 Rajt: ${sc.trail_start_time}</div>`, {
+                        permanent: true,
+                        direction: 'top',
+                        className: 'map-time-label'
+                    });
+                    transitPolylineGroup.addLayer(startMarker);
+
+                    const endMarker = L.circleMarker(endPt, {
+                        radius: 7,
+                        fillColor: '#f43f5e',
+                        color: '#ffffff',
+                        weight: 2.5,
+                        fillOpacity: 1
+                    });
+                    endMarker.bindTooltip(`<div class="font-bold text-xs text-rose-400">🏁 Cél: ${sc.trail_finish_time}</div>`, {
+                        permanent: true,
+                        direction: 'bottom',
+                        className: 'map-time-label'
+                    });
+                    transitPolylineGroup.addLayer(endMarker);
+                }
+
+                // Keretbe illesztés (Otthon + Tranzit állomások + Túra nyomvonal)
+                const bounds = L.latLngBounds(allBoundsPoints);
+                map.fitBounds(bounds, { padding: [40, 40] });
             }
         }
 
         // Event Listeners
+        function updatePaceDisplay(kmhVal) {
+            const kmh = parseFloat(kmhVal);
+            document.getElementById('paceDisplay').textContent = `${kmh.toFixed(1)} km/h`;
+            
+            // perc/km számítása: (60 / kmh)
+            if (kmh > 0) {
+                const totalMinutes = 60 / kmh;
+                const m = Math.floor(totalMinutes);
+                const s = Math.round((totalMinutes - m) * 60);
+                const sStr = s === 60 ? '00' : s.toString().padStart(2, '0');
+                const mStr = (s === 60 ? m + 1 : m).toString().padStart(2, '0');
+                document.getElementById('pacePaceDisplay').textContent = `(${mStr}:${sStr}/km)`;
+            }
+        }
+
         document.getElementById('paceRange').addEventListener('input', (e) => {
-            document.getElementById('paceDisplay').textContent = `${parseFloat(e.target.value).toFixed(1)} km/h`;
+            updatePaceDisplay(e.target.value);
         });
 
         document.getElementById('calculateBtn').addEventListener('click', fetchPlan);
         document.getElementById('trailSelect').addEventListener('change', fetchPlan);
+
+        // Térkép kinagyítása / normál méretre váltása
+        let isMapExpanded = false;
+        const toggleMapBtn = document.getElementById('toggleMapExpandBtn');
+        if (toggleMapBtn) {
+            toggleMapBtn.addEventListener('click', () => {
+                isMapExpanded = !isMapExpanded;
+                const mapEl = document.getElementById('map');
+                const icon = document.getElementById('mapExpandIcon');
+                const text = document.getElementById('mapExpandText');
+
+                if (isMapExpanded) {
+                    mapEl.classList.add('map-expanded');
+                    icon.className = 'ph-bold ph-arrows-in-simple text-sm';
+                    text.textContent = 'Normál Méret';
+                    toggleMapBtn.classList.add('fixed', 'top-8', 'right-8', 'z-[10001]', 'bg-indigo-600', 'hover:bg-indigo-700');
+                } else {
+                    mapEl.classList.remove('map-expanded');
+                    icon.className = 'ph-bold ph-arrows-out-simple text-sm';
+                    text.textContent = 'Nagyobb Térkép';
+                    toggleMapBtn.classList.remove('fixed', 'top-8', 'right-8', 'z-[10001]', 'bg-indigo-600', 'hover:bg-indigo-700');
+                }
+
+                setTimeout(() => {
+                    if (map) {
+                        map.invalidateSize();
+                    }
+                }, 350);
+            });
+        }
 
         // Forgatókönyv váltó
         document.querySelectorAll('.scenario-tab').forEach(tab => {
@@ -573,6 +1013,7 @@
             if (dateInput) {
                 dateInput.value = new Date().toISOString().split('T')[0];
             }
+            populateSavedCustomTrails();
             initMap();
             fetchPlan();
         });
