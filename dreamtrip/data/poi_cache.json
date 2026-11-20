@@ -45848,15 +45848,15 @@
     ]
   },
   "oslo_no": {
-    "timestamp": 1789198131.4599352,
+    "timestamp": 1795198268.4421022,
     "pois": [
       {
         "id": "mock_oslo_no_attraction_0",
         "city_id": "oslo_no",
-        "name": "Vigeland Szoborpark",
+        "name": "Főtér és Történelmi Városközpont",
         "type": "attraction",
-        "rating": 4.9,
-        "user_ratings_total": 9415,
+        "rating": 4.6,
+        "user_ratings_total": 2484,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -45943,19 +45943,19 @@
           ]
         },
         "location": {
-          "lat": 59.90410562619654,
-          "lng": 10.740947291248881
+          "lat": 59.89776606214059,
+          "lng": 10.745565197909885
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 62."
+        "address": "Oslo, Main Street 26."
       },
       {
         "id": "mock_oslo_no_attraction_1",
         "city_id": "oslo_no",
-        "name": "Oslói Operaház Tetőterasza",
+        "name": "Királyi Palota és Vármúzeum",
         "type": "attraction",
         "rating": 4.8,
-        "user_ratings_total": 16022,
+        "user_ratings_total": 17724,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -46042,19 +46042,19 @@
           ]
         },
         "location": {
-          "lat": 59.924570657395115,
-          "lng": 10.742647067754255
+          "lat": 59.89983030191772,
+          "lng": 10.736302368486534
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 20."
+        "address": "Oslo, Main Street 123."
       },
       {
         "id": "mock_oslo_no_attraction_2",
         "city_id": "oslo_no",
-        "name": "Akershus Erőd & Kikötő",
+        "name": "Modern Művészeti Galéria",
         "type": "attraction",
-        "rating": 4.7,
-        "user_ratings_total": 3762,
+        "rating": 4.2,
+        "user_ratings_total": 351,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -46141,19 +46141,19 @@
           ]
         },
         "location": {
-          "lat": 59.89459063875937,
-          "lng": 10.748146294471052
+          "lat": 59.92737719069377,
+          "lng": 10.770878965936305
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 140."
+        "address": "Oslo, Main Street 149."
       },
       {
         "id": "mock_oslo_no_attraction_3",
         "city_id": "oslo_no",
-        "name": "Munch Múzeum (A Sikoly)",
+        "name": "Botanikus Kert és Pálmaház",
         "type": "attraction",
-        "rating": 4.8,
-        "user_ratings_total": 1737,
+        "rating": 4.4,
+        "user_ratings_total": 4426,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -46240,19 +46240,19 @@
           ]
         },
         "location": {
-          "lat": 59.90189027236963,
-          "lng": 10.734633666641908
+          "lat": 59.92280142960321,
+          "lng": 10.744403066364509
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 106."
+        "address": "Oslo, Main Street 94."
       },
       {
         "id": "mock_oslo_no_attraction_4",
         "city_id": "oslo_no",
-        "name": "Holmenkollen Sísánc és Panoráma",
+        "name": "Szent Katedrális",
         "type": "attraction",
-        "rating": 4.8,
-        "user_ratings_total": 17987,
+        "rating": 4.7,
+        "user_ratings_total": 17842,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -46339,11 +46339,11 @@
           ]
         },
         "location": {
-          "lat": 59.90173390685066,
-          "lng": 10.754640616362042
+          "lat": 59.91654989861771,
+          "lng": 10.764232831609961
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 64."
+        "address": "Oslo, Main Street 141."
       },
       {
         "id": "mock_oslo_no_attraction_5",
@@ -46351,7 +46351,7 @@
         "name": "Néprajzi Szabadtéri Múzeum",
         "type": "attraction",
         "rating": 4.4,
-        "user_ratings_total": 504,
+        "user_ratings_total": 2113,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -46438,19 +46438,19 @@
           ]
         },
         "location": {
-          "lat": 59.9051710003512,
-          "lng": 10.750235763686677
+          "lat": 59.90650413306151,
+          "lng": 10.748338034994088
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 108."
+        "address": "Oslo, Main Street 2."
       },
       {
         "id": "mock_oslo_no_attraction_6",
         "city_id": "oslo_no",
         "name": "Városi Népkert és Csónakázótó",
         "type": "attraction",
-        "rating": 4.6,
-        "user_ratings_total": 6267,
+        "rating": 4.5,
+        "user_ratings_total": 4174,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -46537,19 +46537,19 @@
           ]
         },
         "location": {
-          "lat": 59.91222834155262,
-          "lng": 10.768719038661883
+          "lat": 59.90110539072972,
+          "lng": 10.745249232376436
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 50."
+        "address": "Oslo, Main Street 62."
       },
       {
         "id": "mock_oslo_no_attraction_7",
         "city_id": "oslo_no",
         "name": "Tudományos és Technológiai Központ",
         "type": "attraction",
-        "rating": 4.5,
-        "user_ratings_total": 1327,
+        "rating": 4.7,
+        "user_ratings_total": 1348,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -46636,19 +46636,19 @@
           ]
         },
         "location": {
-          "lat": 59.918177068997494,
-          "lng": 10.75873647237823
+          "lat": 59.91523277455963,
+          "lng": 10.756589546185614
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 31."
+        "address": "Oslo, Main Street 81."
       },
       {
         "id": "mock_oslo_no_restaurant_0",
         "city_id": "oslo_no",
         "name": "Bistro Oslo - Helyi Ízek",
         "type": "restaurant",
-        "rating": 4.7,
-        "user_ratings_total": 1463,
+        "rating": 4.5,
+        "user_ratings_total": 1303,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -46735,11 +46735,11 @@
           ]
         },
         "location": {
-          "lat": 59.91478078654803,
-          "lng": 10.75544032831163
+          "lat": 59.92859992411394,
+          "lng": 10.764109034001063
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 112."
+        "address": "Oslo, Main Street 68."
       },
       {
         "id": "mock_oslo_no_restaurant_1",
@@ -46747,7 +46747,7 @@
         "name": "La Piazza Trattoria",
         "type": "restaurant",
         "rating": 4.6,
-        "user_ratings_total": 2117,
+        "user_ratings_total": 1115,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -46834,11 +46834,11 @@
           ]
         },
         "location": {
-          "lat": 59.914584198489635,
-          "lng": 10.75726780744508
+          "lat": 59.90217339286445,
+          "lng": 10.73978173541424
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 40."
+        "address": "Oslo, Main Street 28."
       },
       {
         "id": "mock_oslo_no_restaurant_2",
@@ -46846,7 +46846,7 @@
         "name": "Gourmet Garden Fine Dining",
         "type": "restaurant",
         "rating": 4.8,
-        "user_ratings_total": 600,
+        "user_ratings_total": 331,
         "price_level": 3,
         "opening_hours": {
           "open_now": true,
@@ -46933,19 +46933,19 @@
           ]
         },
         "location": {
-          "lat": 59.89799784886584,
-          "lng": 10.767703014807514
+          "lat": 59.92537963621194,
+          "lng": 10.766564888013454
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 138."
+        "address": "Oslo, Main Street 129."
       },
       {
         "id": "mock_oslo_no_restaurant_3",
         "city_id": "oslo_no",
         "name": "The Rusty Anchor Fish & Chips",
         "type": "restaurant",
-        "rating": 4.3,
-        "user_ratings_total": 767,
+        "rating": 4.4,
+        "user_ratings_total": 551,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -47032,19 +47032,19 @@
           ]
         },
         "location": {
-          "lat": 59.90923994243041,
-          "lng": 10.742599972395483
+          "lat": 59.933549464081125,
+          "lng": 10.736074795200997
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 72."
+        "address": "Oslo, Main Street 137."
       },
       {
         "id": "mock_oslo_no_restaurant_4",
         "city_id": "oslo_no",
         "name": "Burger & Craft Beer House",
         "type": "restaurant",
-        "rating": 4.4,
-        "user_ratings_total": 677,
+        "rating": 4.5,
+        "user_ratings_total": 1228,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -47131,19 +47131,19 @@
           ]
         },
         "location": {
-          "lat": 59.92907065955641,
-          "lng": 10.73294696314502
+          "lat": 59.919415351751475,
+          "lng": 10.742414353989416
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 111."
+        "address": "Oslo, Main Street 135."
       },
       {
         "id": "mock_oslo_no_restaurant_5",
         "city_id": "oslo_no",
         "name": "Zöld Kert Vegetáriánus Étterem",
         "type": "restaurant",
-        "rating": 4.6,
-        "user_ratings_total": 849,
+        "rating": 4.4,
+        "user_ratings_total": 377,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -47230,11 +47230,11 @@
           ]
         },
         "location": {
-          "lat": 59.91383372934734,
-          "lng": 10.74683407161044
+          "lat": 59.89850184594449,
+          "lng": 10.749579651371253
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 2."
+        "address": "Oslo, Main Street 70."
       },
       {
         "id": "mock_oslo_no_cafe_0",
@@ -47242,7 +47242,7 @@
         "name": "The Daily Grind Specialty Cafe",
         "type": "cafe",
         "rating": 4.6,
-        "user_ratings_total": 133,
+        "user_ratings_total": 590,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -47329,11 +47329,11 @@
           ]
         },
         "location": {
-          "lat": 59.90694143565489,
-          "lng": 10.753109649918477
+          "lat": 59.93012408874281,
+          "lng": 10.740941948300517
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 46."
+        "address": "Oslo, Main Street 83."
       },
       {
         "id": "mock_oslo_no_cafe_1",
@@ -47341,7 +47341,7 @@
         "name": "Vintage Coffee & Bookshop",
         "type": "cafe",
         "rating": 4.5,
-        "user_ratings_total": 991,
+        "user_ratings_total": 1059,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -47428,19 +47428,19 @@
           ]
         },
         "location": {
-          "lat": 59.91759319282924,
-          "lng": 10.759608299660076
+          "lat": 59.90994551238316,
+          "lng": 10.757556524533143
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 83."
+        "address": "Oslo, Main Street 102."
       },
       {
         "id": "mock_oslo_no_cafe_2",
         "city_id": "oslo_no",
         "name": "Central Park Espresso Bar",
         "type": "cafe",
-        "rating": 4.2,
-        "user_ratings_total": 414,
+        "rating": 4.3,
+        "user_ratings_total": 364,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -47527,19 +47527,19 @@
           ]
         },
         "location": {
-          "lat": 59.897826583975096,
-          "lng": 10.744168606320256
+          "lat": 59.903595254751394,
+          "lng": 10.747492818956527
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 94."
+        "address": "Oslo, Main Street 95."
       },
       {
         "id": "mock_oslo_no_cafe_3",
         "city_id": "oslo_no",
         "name": "Grand Patisserie és Kávéház",
         "type": "cafe",
-        "rating": 4.7,
-        "user_ratings_total": 462,
+        "rating": 4.6,
+        "user_ratings_total": 1115,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -47626,19 +47626,19 @@
           ]
         },
         "location": {
-          "lat": 59.89967676789293,
-          "lng": 10.734690699989866
+          "lat": 59.91615180441034,
+          "lng": 10.766298562919042
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 134."
+        "address": "Oslo, Main Street 69."
       },
       {
         "id": "mock_oslo_no_viewpoint_0",
         "city_id": "oslo_no",
         "name": "Oslo Panoráma Kilátóterasz",
         "type": "viewpoint",
-        "rating": 4.9,
-        "user_ratings_total": 4972,
+        "rating": 4.7,
+        "user_ratings_total": 4147,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -47725,11 +47725,11 @@
           ]
         },
         "location": {
-          "lat": 59.9047562077522,
-          "lng": 10.737048236664888
+          "lat": 59.914564198294144,
+          "lng": 10.769175632530578
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 148."
+        "address": "Oslo, Main Street 32."
       },
       {
         "id": "mock_oslo_no_viewpoint_1",
@@ -47737,7 +47737,7 @@
         "name": "Várhegy Kilátópont",
         "type": "viewpoint",
         "rating": 4.7,
-        "user_ratings_total": 943,
+        "user_ratings_total": 4642,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -47824,19 +47824,19 @@
           ]
         },
         "location": {
-          "lat": 59.90769733157056,
-          "lng": 10.756816555040446
+          "lat": 59.90308194418109,
+          "lng": 10.750734334919665
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 8."
+        "address": "Oslo, Main Street 110."
       },
       {
         "id": "mock_oslo_no_viewpoint_2",
         "city_id": "oslo_no",
         "name": "TV-Torony SkyBar",
         "type": "viewpoint",
-        "rating": 4.5,
-        "user_ratings_total": 1072,
+        "rating": 4.4,
+        "user_ratings_total": 698,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -47923,11 +47923,11 @@
           ]
         },
         "location": {
-          "lat": 59.90567007178072,
-          "lng": 10.735014582458259
+          "lat": 59.89650602123483,
+          "lng": 10.766848422180122
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Oslo, Main Street 112."
+        "address": "Oslo, Main Street 51."
       }
     ]
   },

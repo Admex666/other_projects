@@ -356,7 +356,32 @@ def calculate_destination_rankings(
         else:
             s_exp_raw = 0.70
 
-        s_exp = round(min(1.0, max(0.2, s_exp_raw)), 3)
+        # Live Event Intelligence integration (diversity, presence & NYE vibrancy)
+        event_count = c.get("event_count", 0)
+        event_categories = c.get("event_categories", [])
+        top_events = c.get("top_events", [])
+        is_event_enriched = c.get("is_event_enriched", False)
+        event_pricing = c.get("event_pricing", {
+            "min_program_cost_eur": None,
+            "is_estimated": False,
+            "price_provenance": "none",
+            "price_badge": "N/A"
+        })
+
+        if is_event_enriched and event_count > 0:
+            presence_ratio = min(1.0, event_count / 6.0)
+            cat_set = set(event_categories)
+            target_cats = {"music", "party_nightlife", "gastronomy", "culture_arts", "community_festival"}
+            diversity_ratio = min(1.0, len(cat_set & target_cats) / 3.0)
+            has_nye = any(e.get("is_nye_relevant") for e in top_events)
+            nye_bonus = 0.10 if has_nye else 0.0
+
+            event_vibe = min(1.0, 0.45 * presence_ratio + 0.45 * diversity_ratio + nye_bonus)
+            s_exp_final = min(1.0, max(0.20, s_exp_raw * 0.70 + event_vibe * 0.30))
+        else:
+            s_exp_final = s_exp_raw
+
+        s_exp = round(min(1.0, max(0.2, s_exp_final)), 3)
 
         # Végső Súlyozott Pontszám (0 - 100) 4 Pillér alapján
         final_score_raw = (
@@ -381,13 +406,20 @@ def calculate_destination_rankings(
 
         # Objektív indoklások generálása
         reasons_pos = []
+        if event_count > 0:
+            nye_count = sum(1 for e in top_events if e.get("is_nye_relevant"))
+            if nye_count > 0:
+                reasons_pos.append(f"🎆 {nye_count} kiemelt szilveszteri/újévi program és parti")
+            else:
+                reasons_pos.append(f"🎉 {event_count} kulturális & zenei program ({', '.join(event_categories[:3])})")
+
         if w_cost > 0 and s_cost >= 0.70:
             reasons_pos.append(f"💰 Kedvező teljes utazási költség (~{total_cost_str} Ft)")
         if w_weather > 0 and s_weather >= 0.80:
             reasons_pos.append(f"☀️ Ideális nappali klíma ({temp_max_val}°C, cél: {target_temp}°C)")
         if w_safety > 0 and s_safety >= 0.70:
             reasons_pos.append(f"🛡️ Kiemelkedő közbiztonság ({int(safety_idx_val)}/100)")
-        if w_experience > 0 and s_exp >= 0.70:
+        if w_experience > 0 and s_exp >= 0.70 and event_count == 0:
             if vibe_summary:
                 reasons_pos.append(f"🏛️ {vibe_summary}")
             elif exp_profile:
@@ -421,8 +453,15 @@ def calculate_destination_rankings(
             "region": c.get("region", "Europe"),
             "image": c.get("image", ""),
             "score": final_score,
+            "event_count": event_count,
+            "top_events": top_events,
+            "event_categories": event_categories,
+            "is_event_enriched": is_event_enriched,
+            "event_pricing": event_pricing,
             "subscores": {
                 "total_cost": s_cost,
+                "flight": s_cost,
+                "cost": s_cost,
                 "weather": s_weather,
                 "safety": s_safety,
                 "experience": s_exp
@@ -454,12 +493,21 @@ def calculate_destination_rankings(
                 "safety_formatted": f"{int(safety_idx_val)}/100 (Numbeo)",
                 "safety_raw": safety_idx_val,
                 "numbeo_breakdown": m.get("cost_breakdown", {}),
-                "adults": adults
+                "adults": adults,
+                "event_count": event_count,
+                "event_categories": event_categories,
+                "is_event_enriched": is_event_enriched,
+                "top_events": top_events,
+                "event_pricing": event_pricing,
+                "min_program_cost_eur": event_pricing.get("min_program_cost_eur"),
+                "program_cost_is_estimated": event_pricing.get("is_estimated", False),
+                "program_cost_provenance": event_pricing.get("price_provenance", "none"),
+                "program_cost_badge": event_pricing.get("price_badge", "N/A"),
             },
             "experience_profile": exp_profile,
-            "highlights": reasons_pos[:2],
+            "highlights": reasons_pos[:3],
             "tradeoff": tradeoff,
-            "explanation": " • ".join(reasons_pos[:2]) + (f" | Kompromisszum: {tradeoff}" if tradeoff else "")
+            "explanation": " • ".join(reasons_pos[:3]) + (f" | Kompromisszum: {tradeoff}" if tradeoff else "")
         })
 
     print("="*85 + "\n")

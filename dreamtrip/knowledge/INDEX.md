@@ -49,6 +49,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 ## 🔨 Work Items (Munkaszervezés)
 * [[WORK-003-advisor-workspace-v1]] — Optivoya Advisor Workspace v1 fázisonkénti feladatlista és ellenőrző négyzetei.
 * [[WORK-004-advisor-workspace-v2]] — Optivoya Advisor Workspace v2 implementációs roadmap, ResearchState és 5-fázisú UX folyamat feladatlistája.
+* [[WORK-005-event-intelligence-mvp]] — Event Intelligence Engine MVP: időfüggő eseményfelderítő, hitelesítő és AHP-integrációs munkaterv.
 
 ---
 
@@ -60,6 +61,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[accommodation]] — Szálláslehetőség és ár-érték attribútumai.
 * [[poi]] — Látványosság, étterem vagy programpont (Point of Interest).
 * [[experience-entity]] — Kanonikus, több forrásból szintetizált és deduplikált élmény- és látványosság-modell.
+* [[event]] — Dátum- és időponthoz kötött esemény entitás (koncert, fesztivál, buli, gasztro- és városi rendezvény) forráshitelesítéssel és megbízhatósági pontszámmal.
 
 ---
 
@@ -111,6 +113,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[google-places-service]] — Google Places POI és értékelés szolgáltatás.
 * [[trip-cart-engine]] — Kliensoldali JavaScript állapotkezelő és lebegő sáv/fiók UI.
 * [[experience-intelligence-engine]] — Többforrásos élmény- és aktivitás-intelligencia alrendszer és többszintű gyorsítótár.
+* [[event-intelligence-engine]] — Időfüggő esemény-intelligencia alrendszer, deduplikáció, dátumhitelesítés és AHP élményintegráció.
 * [[app-hub-and-workspace-switcher]] — Alkalmazásválasztó Hub és Munkaterület-Gyorsváltó Rendszer.
 
 ---
@@ -140,6 +143,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[ADR-008-supabase-cloud-database]] — Supabase Cloud PostgreSQL & Telemetry Adatbázis Bevezetése.
 * [[ADR-009-experience-activity-intelligence-engine]] — Az Élmény- és Aktivitás-Intelligencia Rendszer 6 fázisú architektúrája.
 * [[ADR-010-dual-auth-and-app-switcher]] — Kettős Bejelentkezés, Alkalmazásválasztó Hub és Szerepkör-alapú Hozzáféréskezelés.
+* [[ADR-011-event-intelligence-engine]] — Event Intelligence Engine Architektúra és Időfüggő Élményintegráció.
 
 
 

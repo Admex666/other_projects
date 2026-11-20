@@ -1,6 +1,6 @@
 # 👑 Project Workforce Operating Protocol & CEO Mandate
 
-> **Project:** Dreamtrip (Optivoya) Utazástervező (`dreamtrip`)  
+> **Project:** Dreamtrip (`dreamtrip`)  
 > **Control Plane:** Connected to **AI Operations Hub v2** (`E:\Data\AI_ops`)
 
 ---
@@ -30,11 +30,11 @@ The following specialized subagents are configured in `.agents/agents/` and disc
 
 | Agent Name | Title | Specialty / Domain | How to Invoke |
 | :--- | :--- | :--- | :--- |
-| **`product-decision-architect`** | 🧠 Product & UX Architect | Planner logika, UX specifikációk, Trip modell, AHP prioritások, trade-offok | `invoke_subagent(TypeName: "product-decision-architect")` |
-| **`travel-intelligence`** | 🔬 Travel Intelligence Agent | Destination/Experience KG, adatforrások, élményprofilok | `invoke_subagent(TypeName: "travel-intelligence")` |
-| **`ai-optimization`** | 🤖 AI / Optimization Agent | Recommendation, scoring, diversity & constraint optimization | `invoke_subagent(TypeName: "ai-optimization")` |
+| **`lead-developer`** | 💻 Lead Developer Agent | Architektúra, kódolás, refaktorálás és modularizáció | `invoke_subagent(TypeName: "lead-developer")` |
 | **`fullstack-engineer`** | 🌐 Full-Stack Engineer Agent | Backend + Frontend + API + State Management | `invoke_subagent(TypeName: "fullstack-engineer")` |
+| **`research-scout`** | 🔍 Research Scout Agent | Kutatás, Taktikai minták, Összefüggések | `invoke_subagent(TypeName: "research-scout")` |
 | **`qa-validator`** | 🧪 QA / Validation Agent | Automated tests, validáció, minőségellenőrzés | `invoke_subagent(TypeName: "qa-validator")` |
+| **`data-analyst`** | 📈 Data Analyst Agent | Adattisztítás, Statisztika, Elemzések | `invoke_subagent(TypeName: "data-analyst")` |
 
 ---
 
@@ -53,6 +53,11 @@ The following specialized subagents are configured in `.agents/agents/` and disc
 - **`ADR-008-supabase-cloud-database.md`**: --- — *id: ADR-008-supabase-cloud-database aliases: - ADR-008-supabase-cloud-database...*
 - **`ADR-009-experience-activity-intelligence-engine.md`**: --- — *id: ADR-009-experience-activity-intelligence-engine type: decision name: "ADR-009: Architecture of the Experience & Activity Intelligence Engine"...*
 - **`ADR-010-dual-auth-and-app-switcher.md`**: --- — *id: adr-010-dual-auth-and-app-switcher aliases: - ADR-010...*
+
+### 🎯 PROJECT MISSION & CONTEXT:
+# Overview: Dreamtrip
+
+Dreamtrip project managed by AI Ops v2 Workforce
 
 ---
 

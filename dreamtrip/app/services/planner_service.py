@@ -196,7 +196,32 @@ def calculate_planner_destinations_sync(
         futures = [executor.submit(process_dest, d) for d in all_dests]
         results = [f.result() for f in as_completed(futures)]
 
-    # 4. SÚLYOZOTT MULTIKRITÉRIUMOS PONTOZÁS (3-Pilléres Modell)
+    # 3.5. ÉLŐ ESEMÉNYEK FELKUTATÁSA (ADR-004 Honest Scraping)
+    if progress_callback:
+        progress_callback(85, "Élő események és szilveszteri programok felkutatása...")
+
+    try:
+        from app.services.destination_matching_service import DestinationMatchingService, resolve_query_dates, _run_async
+        start_d, end_d, is_nye = resolve_query_dates(
+            month=month,
+            year=year,
+            duration_days=duration_days,
+            out_from=actual_out_from,
+            out_to=actual_out_to,
+            in_from=actual_in_from,
+            in_to=actual_in_to
+        )
+        _run_async(DestinationMatchingService.enrich_destinations_with_events_async(
+            candidates=results,
+            start_date=start_d,
+            end_date=end_d,
+            is_nye_only=False
+        ))
+    except Exception as e:
+        # Graceful fallback ha a hálózat nem elérhető, Honest Scraping naplózás
+        print(f"[WARN] Live event enrichment skipped: {e}")
+
+    # 4. SÚLYOZOTT MULTIKRITÉRIUMOS PONTOZÁS (4-Pilléres Modell)
     if progress_callback:
         progress_callback(90, "Multikritériumos döntési mátrix kalkulációja...")
 

@@ -364,6 +364,36 @@
                                 ` : ''}
                             </div>
                             ` : ''}
+
+                            <!-- LIVE EVENT INTELLIGENCE BLOCK -->
+                            ${(dest.top_events && dest.top_events.length > 0) || dest.event_count > 0 ? `
+                            <div style="background: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                                    <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #059669; display: flex; align-items: center; gap: 5px;">
+                                        <span class="material-symbols-outlined" style="font-size: 15px;">celebration</span>
+                                        <span>Élő Programok (${dest.event_count || dest.top_events.length} db)</span>
+                                    </span>
+                                    ${dest.event_pricing?.min_program_cost_eur !== undefined && dest.event_pricing.min_program_cost_eur !== null ? `
+                                        <span style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 6px; ${dest.event_pricing.is_estimated ? 'background: rgba(234, 179, 8, 0.15); color: #b45309; border: 1px solid rgba(234, 179, 8, 0.35);' : 'background: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid rgba(16, 185, 129, 0.35);'}">
+                                            ${dest.event_pricing.is_estimated ? '[Becsült]' : '[Valós ár]'} Min: ${dest.event_pricing.min_program_cost_eur} EUR
+                                        </span>
+                                    ` : ''}
+                                </div>
+                                ${dest.top_events && dest.top_events.length > 0 ? `
+                                <div style="display: flex; flex-direction: column; gap: 5px;">
+                                    ${dest.top_events.slice(0, 2).map(ev => `
+                                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; padding: 4px 6px; background: var(--bg-surface); border-radius: 6px; border: 1px solid var(--border-subtle);">
+                                            <span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px;" title="${ev.title}">${ev.title}</span>
+                                            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                                                ${ev.price_min ? `<span style="font-weight: 700;">${ev.price_min} ${ev.currency || 'EUR'} <span style="font-size: 9px; color: #059669; font-weight: 700;">[Valós ár]</span></span>` : '<span style="font-size: 9px; color: #b45309; font-weight: 700;">[Becsült]</span>'}
+                                                <a href="${ev.source_url}" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; font-weight: 700;">${ev.source} ↗</a>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                ` : ''}
+                            </div>
+                            ` : ''}
                         </div>
 
                         <!-- CTA BUTTON -->
